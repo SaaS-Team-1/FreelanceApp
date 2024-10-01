@@ -1,0 +1,17 @@
+{
+    "name": "distributedfinalproject",
+    "version": "1.0.0",
+    "description": "Distributed Final Project",
+    "scripts": {
+        "watch:firebase": "firebase emulators:start",
+        "watch:api": "cd ./functions && npm run build:watch",
+        "dev": "concurrently -kill-others  \"npm:watch:*\""
+    },
+    "devDependencies": {
+        "concurrently": "^8.2.2"
+    },
+    "dependencies": {
+        "@firebasegen/default": "file:generated/javascript/default",
+        "axios": "^1.7.2"
+    }
+}
