@@ -1,11 +1,11 @@
 {
-  "name": "@firebasegen/default",
+  "name": "@utils/database",
   "version": "1.0.0",
   "author": "Firebase <firebase-support@google.com> (https://firebase.google.com/)",
   "description": "Generated SDK For default",
   "license": "Apache-2.0",
   "engines": {
-    "node": " >=20.0"
+    "node": " >=18.0"
   },
   "typings": "index.d.ts",
   "module": "esm/index.esm.js",
@@ -20,6 +20,6 @@
     "./package.json": "./package.json"
   },
   "peerDependencies": {
-    "firebase": "dataconnect-preview"
+    "firebase": "^10.14.0"
   }
 }

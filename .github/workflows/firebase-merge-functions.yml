@@ -1,0 +1,40 @@
+name: Production - Deploy to Functions on Merge
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "functions/**"
+
+jobs:
+  deploy-functions:
+    name: Deploy functions
+    runs-on: ubuntu-latest
+    permissions: write-all
+    env:
+      PROJECT_ID: saas-team-1
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.17.0"
+          cache: 'npm'
+          cache-dependency-path: |
+            functions/package-lock.json
+            package-lock.json
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Install dependencies and test
+        run: cd functions && npm ci && npm run test
+
+      - uses: "google-github-actions/auth@v2"
+        with:
+          credentials_json: "${{ secrets.FIREBASE_ADMIN_DEPLOY_SA_PROD }}"
+
+      - name: Deploy functions
+        run: firebase deploy -f --only functions --project ${{ env.PROJECT_ID }}

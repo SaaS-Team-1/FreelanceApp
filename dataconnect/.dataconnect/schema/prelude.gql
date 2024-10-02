@@ -27,7 +27,8 @@ enum AccessLevel {
   USER_EMAIL_VERIFIED
 
   """
-  This operation cannot be executed by anyone.
+  This operation cannot be executed by anyone. The operation can only be performed
+  by using the Admin SDK from a privileged environment.
   Equivalent to: `@auth(expr: "false")`
   """
   NO_ACCESS
@@ -64,12 +65,13 @@ fail. If any of the fields within the transaction fails, the entire transaction
 is rolled back. From a client standpoint, any failure behaves as if the entire
 request had failed with a request error and execution had not begun.
 
-Currently, it is undefined whether mutations without `@transaction` run in a
-transaction or not. Partial failures may occur if there is more than one
-top-level field in the mutation.
+Mutations without `@transaction` would execute each root field one after
+another in sequence. It surfaces any errors as partial [field errors](https://spec.graphql.org/October2021/#sec-Errors.Field-errors),
+but not impacts the subsequent executions.
 
-The `@transaction` directive cannot be added to queries for now. While queries
-currently cannot partially fail, response data is not guaranteed to be atomic.
+The `@transaction` directive cannot be added to queries for now.
+Currently, queries cannot fail partially, the response data is not guaranteed
+to be a consistent snapshot.
 """
 directive @transaction on MUTATION
 
@@ -463,9 +465,9 @@ UUIDs are always output as 32 lowercase hexadecimal digits without delimiters or
 curly braces.
 Inputs in the following formats are also accepted (case insensitive):
 
-    `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`
-    `urn:uuid:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`
-    `{xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}`
+- `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`
+- `urn:uuid:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`
+- `{xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}`
 
 In the PostgreSQL table, it's stored as [`uuid`](https://www.postgresql.org/docs/current/datatype-uuid.html).
 """
@@ -482,13 +484,13 @@ scalar Int64
 
 """
 The `Any` scalar represents any valid [JSON value](https://www.json.org/json-en.html).
-
 It can be an object, array, string, number, or boolean.
+
 Caution: JSON doesn't distinguish Int and Float.
 
 In the PostgreSQL table, it's stored as [`jsonb`](https://www.postgresql.org/docs/current/datatype-json.html).
 """
-scalar Any
+scalar Any @specifiedBy(url: "https://www.json.org/json-en.html")
 
 """
 The `Void` scalar type represents the absence of any value. It is typically used
@@ -499,8 +501,8 @@ scalar Void
 """
 The `True` scalar type only accepts the boolean value `true`.
 
-An optional field/argument typed as  `True` may either be set
-to `true` or omitted(not provided at all). The values `false` or `null` are not
+An optional field/argument typed as `True` may either be set
+to `true` or omitted (not provided at all). The values `false` or `null` are not
 accepted.
 """
 scalar True
@@ -514,8 +516,9 @@ A Common Expression Language (CEL) expression that returns a boolean at runtime.
 This expression can reference the `auth` variable, which is null when Firebase
 Auth is not used. When Firebase Auth is used, the following fields are available:
 
-    - `auth.uid`: The current user ID.
-    - `auth.token`: A map containing all token fields (e.g., claims).
+  - `auth.uid`: The current user ID.
+  - `auth.token`: A map containing all token fields (e.g., claims).
+
 """
 scalar Boolean_Expr
   @specifiedBy(url: "https://github.com/google/cel-spec")
@@ -527,8 +530,7 @@ scalar Boolean_Expr
 """
 A Common Expression Language (CEL) expression that returns a string at runtime.
 
-**Limitation**: Currently, only a limited set of expressions are supported. These are
-listed with the `@fdc_example` directive on this scalar.
+**Limitation**: Currently, only a limited set of expressions are supported.
 """
 scalar String_Expr
   @specifiedBy(url: "https://github.com/google/cel-spec")
@@ -541,8 +543,7 @@ scalar String_Expr
 """
 A Common Expression Language (CEL) expression that returns a UUID string at runtime.
 
-**Limitation**: Currently, only a limited set of expressions are supported. These are
-listed using the `@fdc_example` directive on this scalar.
+**Limitation**: Currently, only a limited set of expressions are supported.
 """
 scalar UUID_Expr
   @specifiedBy(url: "https://github.com/google/cel-spec")
@@ -555,8 +556,7 @@ scalar UUID_Expr
 A Common Expression Language (CEL) expression whose return type is unspecified.
 
 **Limitation**: Only a limited set of expressions are currently supported for each
-type. For the type `XXX`, refer to the `@fdc_example` directives on `XXX_Expr`
-for the complete list of supported expressions.
+type.
 """
 scalar Any_Expr
   @specifiedBy(url: "https://github.com/google/cel-spec")
@@ -580,13 +580,15 @@ scalar Any_SQL
 Defines a relational database table.
 
 In this example, we defined one table with a field named `myField`.
-```
+
+```graphql
 type TableName @table {
   myField: String
 }
 ```
 Data Connect adds an implicit `id` primary key column. So the above schema is equivalent to:
-```
+
+```graphql
 type TableName @table(key: "id") {
   id: String @default(expr: "uuidV4()")
   myField: String
@@ -594,7 +596,8 @@ type TableName @table(key: "id") {
 ```
 
 Data Connect generates the following SQL table and CRUD operations to use it.
-```
+
+```sql
 CREATE TABLE "public"."table_name" (
   "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
   "my_field" text NULL,
@@ -615,7 +618,8 @@ CREATE TABLE "public"."table_name" (
 - `@table(key)` can customize the primary key field name and type.
 
 For example, the `User` table often has a `uid` as its primary key.
-```
+
+```graphql
 type User @table(key: "uid") {
   uid: String!
   name: String
@@ -672,7 +676,8 @@ would map Graphql fields on `@view` type to columns in your SELECT statement.
 
 In this example, you can use `@view(sql)` to define an aggregation view on existing
 table.
-```
+
+```graphql
 type User @table {
   name: String
   score: Int
@@ -697,7 +702,7 @@ type UserAggregation @view(sql: '''
 
 ###### Example: Query Raw SQL View
 
-```
+```graphql
 query {
   userAggregations {
     count sum average median
@@ -711,7 +716,7 @@ query {
 An one-to-one companion `@view` can be handy if you want to argument a `@table`
 with additional implied content.
 
-```
+```graphql
 type Restaurant @table {
   name: String!
 }
@@ -738,7 +743,7 @@ have only one `RestaurantStats` object.
 
 ###### Example: Query One-to-One View
 
-```
+```graphql
 query ListRestaurants {
   restaurants {
     name
@@ -751,7 +756,8 @@ query ListRestaurants {
 ```
 
 ###### Example: Filter based on One-to-One View
-```
+
+```graphql
 query BestRestaurants($minAvgRating: Float, $minReviewCount: Int) {
   restaurants(where: {
     restaurantStats_on_restaurant: {
@@ -775,7 +781,7 @@ query BestRestaurants($minAvgRating: Float, $minReviewCount: Int) {
 
 ##### Limitations
 
-Raw SQL view doesn't has primary key, so it doesn't supports lookup. Other
+Raw SQL view doesn't have a primary key, so it doesn't support lookup. Other
 `@table` or `@view` cannot have `@ref` to a view either.
 
 View cannot be mutated. You can perform CRUD operations on the underlying
@@ -821,29 +827,35 @@ directive @view(
 """
 Customizes a field that represents a SQL database table column.
 
-Data Connect specifies a default SQL data type for each scalar.
+Data Connect maps scalar Fields on `@table` type to a SQL column of
+corresponding data type.
 
-- scalar `UUID`: `uuid`
-- scalar `String`: `text`
-- scalar `Int`: `int`
-- scalar `Int64`: `bigint`
-- scalar `Float`: `double precision`
-- scalar `Boolean`: `boolean`
-- scalar `Date`: `date`
-- scalar `Timestamp`: `timestampz`
-- scalar `Any`: `jsonb`
+- scalar `UUID`: [`uuid`](https://www.postgresql.org/docs/current/datatype-uuid.html).
+- scalar `String`: [`text`](https://www.postgresql.org/docs/current/datatype-character.html)
+- scalar `Int`: [`int`](https://www.postgresql.org/docs/current/datatype-numeric.html)
+- scalar `Int64`: [`bigint`](https://www.postgresql.org/docs/current/datatype-numeric.html)
+- scalar `Float`: [`double precision`](https://www.postgresql.org/docs/current/datatype-numeric.html)
+- scalar `Boolean`: [`boolean`](https://www.postgresql.org/docs/current/datatype-boolean.html)
+- scalar `Date`: [`date`](https://www.postgresql.org/docs/current/datatype-datetime.html)
+- scalar `Timestamp`: [`timestamptz`](https://www.postgresql.org/docs/current/datatype-datetime.html)
+- scalar `Any`: [`jsonb`](https://www.postgresql.org/docs/current/datatype-json.html)
+- scalar `Vector`: [`pgvector`](https://github.com/pgvector/pgvector)
+
+Array scalar fields are mapped to [Postgres arrays](https://www.postgresql.org/docs/current/arrays.html).
 
 ###### Example: Serial Primary Key
 
 For example, you can define auto-increment primary key.
-```
+
+```graphql
 type Post @table {
   id: Int! @col(name: "post_id", dataType: "serial")
 }
 ```
 
 Data Connect converts it to the following SQL table schema.
-```
+
+```sql
 CREATE TABLE "public"."post" (
   "post_id" serial NOT NULL,
   PRIMARY KEY ("id")
@@ -852,7 +864,7 @@ CREATE TABLE "public"."post" (
 
 ###### Example: Vector
 
-```
+```graphql
 type Post @table {
   content: String! @col(name: "post_content")
   contentEmbedding: Vector! @col(size:768)
@@ -884,7 +896,8 @@ directive @col(
 Defines a foreign key reference to another table.
 
 For example, we can define a many-to-one relation.
-```
+
+```graphql
 type ManyTable @table {
   refField: OneTable!
 }
@@ -894,7 +907,8 @@ type OneTable @table {
 ```
 Data Connect adds implicit foreign key column and relation query field. So the
 above schema is equivalent to the following schema.
-```
+
+```graphql
 type ManyTable @table {
   id: UUID! @default(expr: "uuidV4()")
   refField: OneTable! @ref(fields: "refFieldId", references: "id")
@@ -907,7 +921,8 @@ type OneTable @table {
 }
 ```
 Data Connect generates the necessary foreign key constraint.
-```
+
+```graphql
 CREATE TABLE "public"."many_table" (
   "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
   "ref_field_id" uuid NOT NULL,
@@ -916,9 +931,9 @@ CREATE TABLE "public"."many_table" (
 )
 ```
 
-###### Example: Transerse the Reference Field
+###### Example: Traverse the Reference Field
 
-```
+```graphql
 query ($id: UUID!) {
   manyTable(id: $id) {
     refField { id }
@@ -926,9 +941,9 @@ query ($id: UUID!) {
 }
 ```
 
-###### Example: Reverse Tranverse the Reference field
+###### Example: Reverse Traverse the Reference field
 
-```
+```graphql
 query ($id: UUID!) {
   oneTable(id: $id) {
     manyTables_on_refField { id }
@@ -942,7 +957,8 @@ An optional foreign key reference will be set to null if the referenced row is d
 
 In this example, if a `User` is deleted, the `assignee` and `reporter`
 references will be set to null.
-```
+
+```graphql
 type Bug @table {
   title: String!
   assignee: User
@@ -957,7 +973,8 @@ deleted.
 
 In this example, if a `Post` is deleted, associated comments will also be
 deleted.
-```
+
+```graphql
 type Comment @table {
   post: Post!
   content: String!
@@ -967,7 +984,8 @@ type Comment @table {
 ##### Many To Many Relation
 
 You can define a many-to-many relation with a join table.
-```
+
+```graphql
 type Membership @table(key: ["group", "user"]) {
   group: Group!
   user: User!
@@ -980,7 +998,8 @@ type User @table { name: String! }
 
 When Data Connect sees a table with two reference field as its primary key, it
 knows this is a join table, so expands the many-to-many query field.
-```
+
+```graphql
 type Group @table {
   name: String!
   users_via_Membership: [User!]!
@@ -995,7 +1014,7 @@ type User @table {
 
 ###### Example: Transerse the Many-To-Many Relation
 
-```
+```graphql
 query ($id: UUID!) {
   group(id: $id) {
     users: users_via_Membership {
@@ -1007,7 +1026,7 @@ query ($id: UUID!) {
 
 ###### Example: Transerse to the Join Table
 
-```
+```graphql
 query ($id: UUID!) {
   group(id: $id) {
     memberships: memberships_on_group {
@@ -1022,7 +1041,7 @@ query ($id: UUID!) {
 
 You can even define a one-to-one relation with the help of `@unique` or `@table(key)`.
 
-```
+```graphql
 type User @table {
   name: String
 }
@@ -1037,7 +1056,7 @@ type Account @table(key: "user") {
 
 ###### Example: Transerse the Reference Field
 
-```
+```graphql
 query ($id: UUID!) {
   account(id: $id) {
     user { id }
@@ -1047,7 +1066,7 @@ query ($id: UUID!) {
 
 ###### Example: Reverse Tranverse the Reference field
 
-```
+```graphql
 query ($id: UUID!) {
   user(id: $id) {
     account_on_user { id }
@@ -1065,10 +1084,10 @@ query ($id: UUID!) {
 
 """
 directive @ref(
-  "The SQL database foreign key constraint name. Defaults to <table_name>_<field_name>_fkey."
+  "The SQL database foreign key constraint name. Defaults to {table_name}_{field_name}_fkey."
   constraintName: String
   """
-  Foreign key fields. Defaults to <tableName><PrimaryIdName>.
+  Foreign key fields. Defaults to {tableName}{PrimaryIdName}.
   """
   fields: [String!]
   "The fields that the foreign key references in the other table. Defaults to its primary key."
@@ -1087,7 +1106,8 @@ enum OrderDirection {
 Specifies the default value for a column field.
 
 For example:
-```
+
+```graphql
 type User @table(key: "uid") {
   uid: String! @default(expr: "auth.uid")
   number: Int! @col(dataType: "serial")
@@ -1109,8 +1129,7 @@ directive @default(
 
   The value is any variable-free expression (in particular, cross-references to
   other columns in the current table are not allowed). Subqueries are not allowed either.
-  See [PostgreSQL defaults]
-  (https://www.postgresql.org/docs/current/sql-createtable.html#SQL-CREATETABLE-PARMS-DEFAULT)
+  See [PostgreSQL defaults](https://www.postgresql.org/docs/current/sql-createtable.html#SQL-CREATETABLE-PARMS-DEFAULT)
   for more details.
   """
   sql: Any_SQL @fdc_oneOf(required: true)
@@ -1119,7 +1138,7 @@ directive @default(
 """
 Defines a database index to optimize query performance.
 
-```
+```graphql
 type User @table @index(fields: ["name", "phoneNumber"], order: [ASC, DESC]) {
     name: String @index
     phoneNumber: Int64 @index
@@ -1200,7 +1219,8 @@ enum IndexType {
 Defines unique constraints on `@table`.
 
 For example,
-```
+
+```graphql
 type User @table {
     phoneNumber: Int64 @unique
 }
@@ -1275,8 +1295,7 @@ scalar Timestamp @specifiedBy(url: "https://scalars.graphql.org/andimarek/date-t
 """
 A Common Expression Language (CEL) expression that returns a Timestamp at runtime.
 
-Limitation: Right now, only a few expressions are supported. Those are listed
-using the @fdc_example directive on this scalar.
+Limitation: Right now, only a few expressions are supported.
 """
 scalar Timestamp_Expr
   @specifiedBy(url: "https://github.com/google/cel-spec")
@@ -1289,8 +1308,7 @@ scalar Timestamp_Expr
 A Common Expression Language (CEL) expression that returns a Timestamp at runtime,
 which is then truncated to UTC date only. The time-of-day parts are discarded.
 
-Limitation: Right now, only a few expressions are supported. Those are listed
-using the @fdc_example directive on this scalar.
+Limitation: Right now, only a few expressions are supported.
 """
 scalar Date_Expr
   @specifiedBy(url: "https://github.com/google/cel-spec")
@@ -1299,7 +1317,7 @@ scalar Date_Expr
   @fdc_forbiddenAsFieldType
   @fdc_example(value: "request.time", description: "The UTC date on which the request is received.")
 
-"Conditions on a `Date` value"
+"Conditions on a `Date` value."
 input Date_Filter {
   "Match if the field `IS NULL`."
   isNull: Boolean
@@ -1345,7 +1363,7 @@ input Date_Filter {
   le_date: Date_Relative @fdc_oneOf(group: "le")
 }
 
-"Conditions on a`Date` list"
+"Conditions on a`Date` list."
 input Date_ListFilter {
   "Match if the list contains the provided date."
   includes: Date @fdc_oneOf(group: "includes")
@@ -1365,7 +1383,7 @@ input Date_ListFilter {
   excludesAll: [Date!]
 }
 
-"Conditions on a `Timestamp` value"
+"Conditions on a `Timestamp` value."
 input Timestamp_Filter {
   "Match if the field `IS NULL`."
   isNull: Boolean
@@ -1411,7 +1429,7 @@ input Timestamp_Filter {
   le_time: Timestamp_Relative @fdc_oneOf(group: "le")
 }
 
-"Conditions on a `Timestamp` list"
+"Conditions on a `Timestamp` list."
 input Timestamp_ListFilter {
   "Match if the list contains the provided timestamp."
   includes: Timestamp @fdc_oneOf(group: "includes")
@@ -1431,7 +1449,7 @@ input Timestamp_ListFilter {
   excludesAll: [Timestamp!]
 }
 
-"Update input of a `Date` value"
+"Update input of a `Date` value."
 input Date_Update {
   "Set the field to the provided date."
   set: Date @fdc_oneOf(group: "set")
@@ -1441,7 +1459,7 @@ input Date_Update {
   set_date: Date_Relative @fdc_oneOf(group: "set")
 }
 
-"Update input of a `Date list value"
+"Update input of a `Date` list value."
 input Date_ListUpdate {
   "Replace the current list with the provided list of `Date` values."
   set: [Date!]
@@ -1457,7 +1475,7 @@ input Date_ListUpdate {
   update: Date
 }
 
-"Update input of a `Timestamp` value"
+"Update input of a `Timestamp` value."
 input Timestamp_Update {
   "Set the field to the provided timestamp."
   set: Timestamp @fdc_oneOf(group: "set")
@@ -1467,7 +1485,7 @@ input Timestamp_Update {
   set_time: Timestamp_Relative @fdc_oneOf(group: "set")
 }
 
-"Update input of an `Timestamp` list value"
+"Update input of an `Timestamp` list value."
 input Timestamp_ListUpdate {
   "Replace the current list with the provided list of `Timestamp` values."
   set: [Timestamp!]
@@ -1568,7 +1586,7 @@ enum Date_Interval @fdc_forbiddenAsFieldType {
   YEAR
 }
 
-"Update input of a `String` value"
+"Update input of a `String` value."
 input String_Update {
   "Set the field to a provided value."
   set: String @fdc_oneOf(group: "set")
@@ -1576,7 +1594,7 @@ input String_Update {
   set_expr: String_Expr @fdc_oneOf(group: "set")
 }
 
-"Update input of a `String` list value"
+"Update input of a `String` list value."
 input String_ListUpdate {
   "Set the list with the provided values."
   set: [String!]
@@ -1586,7 +1604,7 @@ input String_ListUpdate {
   prepend: [String!]
 }
 
-"Update input of a `UUID` value"
+"Update input of a `UUID` value."
 input UUID_Update {
   "Set the field to a provided UUID."
   set: UUID @fdc_oneOf(group: "set")
@@ -1594,7 +1612,7 @@ input UUID_Update {
   set_expr: UUID_Expr @fdc_oneOf(group: "set")
 }
 
-"Update input of an `ID` list value"
+"Update input of an `ID` list value."
 input UUID_ListUpdate {
   "Set the list with the provided list of UUIDs."
   set: [UUID!]
@@ -1604,7 +1622,7 @@ input UUID_ListUpdate {
   prepend: [UUID!]
 }
 
-"Update input of an `Int` value"
+"Update input of an `Int` value."
 input Int_Update {
   "Set the field to a provided value."
   set: Int
@@ -1614,7 +1632,7 @@ input Int_Update {
   dec: Int
 }
 
-"Update input of an `Int` list value"
+"Update input of an `Int` list value."
 input Int_ListUpdate {
   "Set the list with the provided values."
   set: [Int!]
@@ -1624,7 +1642,7 @@ input Int_ListUpdate {
   prepend: [Int!]
 }
 
-"Update input of an `Int64` value"
+"Update input of an `Int64` value."
 input Int64_Update {
   "Set the field to a provided value."
   set: Int64
@@ -1634,7 +1652,7 @@ input Int64_Update {
   dec: Int64
 }
 
-"Update input of an `Int64` list value"
+"Update input of an `Int64` list value."
 input Int64_ListUpdate {
   "Replace the list with the provided values."
   set: [Int64!]
@@ -1644,7 +1662,7 @@ input Int64_ListUpdate {
   prepend: [Int64!]
 }
 
-"Update input of a `Float` value"
+"Update input of a `Float` value."
 input Float_Update {
   "Set the field to a provided value."
   set: Float
@@ -1654,7 +1672,7 @@ input Float_Update {
   dec: Float
 }
 
-"Update input of a `Float` list value"
+"Update input of a `Float` list value."
 input Float_ListUpdate {
   "Set the list with the provided values."
   set: [Float!]
@@ -1664,13 +1682,13 @@ input Float_ListUpdate {
   prepend: [Float!]
 }
 
-"Update input of a `Boolean` value"
+"Update input of a `Boolean` value."
 input Boolean_Update {
   "Set the field to a provided value."
   set: Boolean
 }
 
-"Update input of a `Boolean` list value"
+"Update input of a `Boolean` list value."
 input Boolean_ListUpdate {
   "Set the list with the provided values."
   set: [Boolean!]
@@ -1680,13 +1698,13 @@ input Boolean_ListUpdate {
   prepend: [Boolean!]
 }
 
-"Update input of an `Any` value"
+"Update input of an `Any` value."
 input Any_Update {
   "Set the field to a provided value."
   set: Any
 }
 
-"Update input of an `Any` list value"
+"Update input of an `Any` list value."
 input Any_ListUpdate {
   "Set the list with the provided values."
   set: [Any!]
@@ -1708,6 +1726,8 @@ Vector is an array of single-precision floating-point numbers, serialized
 as a JSON array. All elements must be finite (no NaN, Infinity or -Infinity).
 
 Example: [1.1, 2, 3.3]
+
+In the PostgreSQL table, it's stored as [`pgvector`](https://github.com/pgvector/pgvector).
 """
 scalar Vector
 
@@ -1727,7 +1747,7 @@ enum VectorSimilarityMethod {
   INNER_PRODUCT
 }
 
-"Conditions on a Vector value"
+"Conditions on a Vector value."
 input Vector_Filter {
   "Match if the field is exactly equal to the provided vector."
   eq: Vector
@@ -1752,7 +1772,7 @@ input Vector_ListFilter {
   excludesAll: [Vector!]
 }
 
-"Update input of a Vector value"
+"Update input of a Vector value."
 input Vector_Update {
   "Set the field to the provided vector value."
   set: Vector @fdc_oneOf(group: "set")
@@ -1761,7 +1781,7 @@ input Vector_Update {
 }
 
 
-"Update input of a Vector list value"
+"Update input of a Vector list value."
 input Vector_ListUpdate {
   "Replace the current list with the provided list of Vector values."
   set: [Vector]
@@ -1783,12 +1803,13 @@ Create a vector embedding of text using the given model on Vertex AI.
 Cloud SQL for Postgresql natively integrates with [Vertex AI Text embeddings API](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text-embeddings-api)
 to effectively generate text embeddings.
 
-If you uses `Vector` in your schema, Firebase Data Connect automatically installs
+If you uses [`Vector`](scalar.md#Vector) in your schema, Firebase Data Connect automatically installs
 [`pgvector`](https://github.com/pgvector/pgvector) and [`google_ml_integration`](https://cloud.google.com/sql/docs/postgres/integrate-cloud-sql-with-vertex-ai)
 Postgres extensions in your Cloud SQL database.
 
 Given a Post table with a `Vector` embedding field.
-```
+
+```graphql
 type Post @table {
   content: String!
   contentEmbedding: Vector @col(size:768)
@@ -1796,7 +1817,8 @@ type Post @table {
 ```
 
 ###### Example: Insert embedding
-```
+
+```graphql
 mutation CreatePost($content: String!) {
   post_insert(data: {
     content: $content,
@@ -1806,7 +1828,8 @@ mutation CreatePost($content: String!) {
 ```
 
 ###### Example: Vector similarity Search
-```
+
+```graphql
 query SearchPost($query: String!) {
   posts_contentEmbedding_similarity(compare_embed: {model: "textembedding-gecko@003", text: $query}) {
     id
@@ -1830,11 +1853,6 @@ The Vertex AI model version that is required in input `Vector_Embed`.
 
 It is recommended to use the latest stable model version: `textembedding-gecko@003`.
 
-Other available models include:
-
-- `textembedding-gecko@001`
-- `text-embedding-004`
-
 View all supported [Vertex AI Text embeddings APIs](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text-embeddings-api).
 """
 scalar Vector_Embed_Model
@@ -1842,4 +1860,6 @@ scalar Vector_Embed_Model
   @fdc_forbiddenAsVariableType
   @fdc_forbiddenAsFieldType
   @fdc_example(value: "textembedding-gecko@003", description: "A stable version of the textembedding-gecko model")
+  @fdc_example(value: "textembedding-gecko@001", description: "An older version of the textembedding-gecko model")
+  @fdc_example(value: "text-embedding-004", description: "Annother textembedding model")
 
