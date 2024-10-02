@@ -1,12 +1,13 @@
 specVersion: "v1beta"
 serviceId: "FreelanceApp"
-location: "us-central1"
+location: "europe-west1"
 schema:
   source: "./schema"
   datasource:
     postgresql:
       database: "fdcdb"
       cloudSql:
-        instanceId: "FreelanceApp-fdc"
+        instanceId: "freelance-app-fdc"
       # schemaValidation: "COMPATIBLE"
 connectorDirs: ["./connector"]
+

@@ -13,3 +13,9 @@ npm install -g firebase-tools
 firebase login
 
 npm i
+
+cd functions 
+npm i
+
+cd ../frontend
+npm i
