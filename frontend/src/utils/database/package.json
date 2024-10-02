@@ -1,5 +1,5 @@
 {
-  "name": "@firebasegen/default",
+  "name": "@utils/database",
   "version": "1.0.0",
   "author": "Firebase <firebase-support@google.com> (https://firebase.google.com/)",
   "description": "Generated SDK For default",
