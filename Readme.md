@@ -5,6 +5,7 @@ To set up the project for the first time run the following:
 chmod +x ./setup.sh
 ./setup.sh
 ```
+asd
 
 ## Running
 The setup script automatically builds the sites so you only have to run:
