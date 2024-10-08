@@ -1,4 +1,4 @@
-#!/bin/bash
+!/bin/bash
 
 sudo apt install -y curl python3.10 python3.10-venv openjdk-17-jdk
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
@@ -13,3 +13,6 @@ npm install -g firebase-tools
 firebase login
 
 npm i
+
+cd frontend ; npm i ; cd ../functions ; npm i ; cd ..
+firebase experiments:enable webframeworks
