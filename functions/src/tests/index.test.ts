@@ -1,6 +1,6 @@
 const test = require("firebase-functions-test")();
 import { expect } from "expect";
-import { helloWorld } from "../src/index"; // Adjust path to where your helloWorld function is located
+import { helloWorld } from "../index"; // Adjust path to where your helloWorld function is located
 
 // Unit test for helloWorld function
 describe("helloWorld Cloud Function", () => {
