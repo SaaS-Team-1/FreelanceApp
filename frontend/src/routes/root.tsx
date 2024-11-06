@@ -2,6 +2,8 @@ import { DarkThemeToggle } from "flowbite-react";
 import { httpsCallable, Functions } from "firebase/functions";
 import { useContext, useEffect, useState } from "react";
 import { FirebaseContext, FirebaseContextApps } from "@/utils/firebase";
+import AddButton from "@/components/Buttons/AddButton";
+import FilterButton from "@/components/Buttons/FilterButton";
 // import MyPostedGigList from "@/components/Gigs/MyPostedGigList";
 
 export default function Root() {
@@ -27,6 +29,8 @@ export default function Root() {
       <DarkThemeToggle />
       
       {/* The following codes were added just to preview the components */}
+      <AddButton />
+      <FilterButton />
       {/* <Avatar /> */}
       {/* <MyPostedGigList></MyPostedGigList> */}
       {/* <Label text="Hello World" /> */}
