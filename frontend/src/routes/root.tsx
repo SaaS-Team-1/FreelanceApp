@@ -2,6 +2,7 @@ import { DarkThemeToggle } from "flowbite-react";
 import { httpsCallable, Functions } from "firebase/functions";
 import { useContext, useEffect, useState } from "react";
 import { FirebaseContext, FirebaseContextApps } from "@/utils/firebase";
+// import Avatar from "../components/Avatar/Avatar";
 
 export default function Root() {
   const firebase = useContext(FirebaseContext) as FirebaseContextApps;
@@ -24,6 +25,7 @@ export default function Root() {
     <main className="flex min-h-screen items-center justify-center gap-2 dark:bg-gray-800">
       <h1 className="text-2xl dark:text-white">Flowbite React + Vite </h1>
       <DarkThemeToggle />
+      {/* <Avatar /> */}
       {hello}
     </main>
   );
