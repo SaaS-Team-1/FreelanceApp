@@ -20,7 +20,7 @@ const MyPostedGigItem: React.FC<MyPostedGigItemProps> = ({
     <div className="flex items-center justify-between p-4 bg-gray-900 rounded-xl">
       <div className="flex items-start space-x-4">
         <Avatar image={avatarUrl} alt="User Avatar" /> {/* Custom Avatar */}
-        <div className="flex flex-col">
+        <div className="flex flex-col text-left"> {/* Added text-left class */}
           <h2 className="text-white font-semibold">{title}</h2>
           <p className="text-gray-400 text-sm">{dateRange}</p>
         </div>
