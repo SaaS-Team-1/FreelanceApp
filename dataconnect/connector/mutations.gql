@@ -1,50 +1,157 @@
-# Example mutations for a simple movie app
+mutation CreateUser(
+  $username: String!
+  $name: String!
+  $bio: String!
+  ){
+  user_insert(data: {
+    username: $username
+    name :$name
+    bio: $bio
+  })
+}
 
-# Create a movie based on user input
-mutation CreateMovie(
+# # Create a new Language
+# mutation createLanguage(
+#   $languageName: String!
+#   $userId: UUID!
+#   ){
+#   Language_insert(data: {
+#     languageName: $languageName
+#     user: {id: $userId}
+#     )}
+# }
+
+# Create a new Gig
+mutation CreateGig(
+  $userId: UUID!
   $title: String!
-  $genre: String!
-  $imageUrl: String!
-) @auth(level: USER_EMAIL_VERIFIED) {
-  movie_insert(
-    data: {
-      title: $title
-      genre: $genre
-      imageUrl: $imageUrl
-    }
-  )
+  $description: String!
+  $price: Int
+  $status: String!
+) {
+  Gig_insert(data: {
+    user: { id: $userId }
+    title: $title
+    description: $description
+    price: $price
+    status: $status
+  })
 }
 
-# Upsert (update or insert) a user's username based on their auth.uid
-mutation UpsertUser($username: String!) @auth(level: USER) {
-  user_upsert(
-    data: {
-      id_expr: "auth.uid"
-      username: $username
-    }
-  )
+
+
+
+# Create a new Transaction
+mutation createTransaction(
+  $senderId: UUID!
+  $receiverId: UUID!
+  $gigId: UUID!
+  $amount: Int!
+  ){
+  Transaction_insert(data: {
+    sender: {id: $senderId}
+    receiver: {id: $receiverId}
+    gig: {id: $gigId}
+    amount: $amount
+  })
 }
 
-# Add a review for a movie
-mutation AddReview(
-  $movieId: UUID!
-  $rating: Int!
-  $reviewText: String!
-) @auth(level: USER) {
-  review_upsert(
-    data: {
-      userId_expr: "auth.uid"
-      movieId: $movieId
-      rating: $rating
-      reviewText: $reviewText
-      # reviewDate defaults to today in the schema. No need to set it manually.
-    }
-  )
+# Create a new Message
+mutation createMessage(
+  $senderId: UUID!
+  $receiverId: UUID!
+  $textContent: String!
+  ){
+  message_insert(data: {
+    sender: {id: $senderId}
+    receiver: {id: $receiverId}
+    textContent: $textContent
+    })
 }
 
-# Logged in user can delete their review for a movie
-mutation DeleteReview(
-  $movieId: UUID!
-) @auth(level: USER) {
-  review_delete(key: { userId_expr: "auth.uid", movieId: $movieId })
+mutation createCategory(
+  $categoryName: String!
+  $gigId: UUID
+  $userId: UUID
+  ){
+  category_insert(data:{
+    categoryName: $categoryName
+    gig: {id: $gigId}
+    user: {id: $userId}
+    })
 }
+
+# Create a new Rating
+mutation createRating(
+  $userId: UUID!
+  $gigId: UUID!
+  $ratingValue: Int!
+  ){
+  Rating_insert(data: {
+    user: {id: $userId}
+    gig: {id: $gigId}
+    ratingValue: $ratingValue
+    })
+}
+
+# Create a new Application
+mutation creatingApplicatipon(
+  $userId: UUID!
+  $gigId: UUID!
+  $status: String!
+  ){
+  Application_insert(data: {
+    user: {id: $userId}
+    gig: {id: $gigId}
+    status: $status})
+}
+
+
+# # Create a movie based on user input
+# mutation CreateMovie(
+#   $title: String!
+#   $genre: String!
+#   $imageUrl: String!
+# ) @auth(level: USER_EMAIL_VERIFIED) {
+#   movie_insert(
+#     data: {
+#       title: $title
+#       genre: $genre
+#       imageUrl: $imageUrl
+#     }
+#   )
+# }
+
+# # Upsert (update or insert) a user's username based on their auth.uid
+# mutation UpsertUser($username: String!) @auth(level: USER) {
+#   user_upsert(
+#     data: {
+#       id_expr: "auth.uid"
+#       username: $username
+#     }
+#   )
+# }
+
+# # Add a review for a movie
+# mutation AddReview(
+#   $movieId: UUID!
+#   $rating: Int!
+#   $reviewText: String!
+# ) @auth(level: USER) {
+#   review_upsert(
+#     data: {
+#       userId_expr: "auth.uid"
+#       movieId: $movieId
+#       rating: $rating
+#       reviewText: $reviewText
+#       # reviewDate defaults to today in the schema. No need to set it manually.
+#     }
+#   )
+# }
+
+# # Logged in user can delete their review for a movie
+# mutation DeleteReview(
+#   $movieId: UUID!
+# ) @auth(level: USER) {
+#   review_delete(key: { userId_expr: "auth.uid", movieId: $movieId })
+# }
