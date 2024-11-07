@@ -2,7 +2,8 @@ import { DarkThemeToggle } from "flowbite-react";
 import { httpsCallable, Functions } from "firebase/functions";
 import { useContext, useEffect, useState } from "react";
 import { FirebaseContext, FirebaseContextApps } from "@/utils/firebase";
-// import MyPostedGigList from "@/components/Gigs/MyPostedGigList";
+import MyPostedGigListCompressed from "@/components/Gigs/MyPostedGigListCompressed";
+import MyPostedGigList from "@/components/Gigs/MyPostedGigList";
 
 export default function Root() {
   const firebase = useContext(FirebaseContext) as FirebaseContextApps;
@@ -28,7 +29,8 @@ export default function Root() {
       
       {/* The following codes were added just to preview the components */}
       {/* <Avatar /> */}
-      {/* <MyPostedGigList></MyPostedGigList> */}
+      {/* <MyPostedGigListCompressed /> */}
+      <MyPostedGigList />
       {/* <Label text="Hello World" /> */}
       {hello}
     </main>
