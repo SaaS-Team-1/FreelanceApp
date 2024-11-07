@@ -4,7 +4,37 @@ import { useContext, useEffect, useState } from "react";
 import { FirebaseContext, FirebaseContextApps } from "@/utils/firebase";
 import AddButton from "@/components/Buttons/AddButton";
 import FilterButton from "@/components/Buttons/FilterButton";
+import NotificationIndicator from "@/components/Notifications/NotificationIndicator";
+import NotificationList from "@/components/Notifications/NotificationsList";
 // import MyPostedGigList from "@/components/Gigs/MyPostedGigList";
+
+const notificationsData = [
+  {
+    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    time: '1m ago',
+    count: 2,
+  },
+  {
+    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    time: '1m ago',
+    count: 2,
+  },
+  {
+    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    time: '1m ago',
+    count: 2,
+  },
+  {
+    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    time: '1m ago',
+    count: 2,
+  },
+  {
+    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    time: '1m ago',
+    count: 2,
+  },
+];
 
 export default function Root() {
   const firebase = useContext(FirebaseContext) as FirebaseContextApps;
@@ -31,10 +61,14 @@ export default function Root() {
       {/* The following codes were added just to preview the components */}
       <AddButton />
       <FilterButton />
+      <NotificationIndicator shape="square" count="20" /> 
       {/* <Avatar /> */}
       {/* <MyPostedGigList></MyPostedGigList> */}
       {/* <Label text="Hello World" /> */}
       {hello}
+      <div className="flex justify-center items-center min-h-screen bg-gray-900">
+        <NotificationList notifications={notificationsData} />
+      </div>
     </main>
   );
 }
