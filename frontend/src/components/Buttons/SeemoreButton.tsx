@@ -7,7 +7,6 @@ export function SeeMoreButton() {
           borderRadius: "9999px", // Fully rounded corners
           padding: "4px 8px", // Minimal padding to match the text size
           lineHeight: "1.4", // Adjusts the line height for vertical centering
-          fontFamily: "'Inter', sans-serif", // Apply Inter font
         }}
       >
         See more
