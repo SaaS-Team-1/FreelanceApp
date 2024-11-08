@@ -24,8 +24,8 @@ const MyPostedGigListCompressed: React.FC = () => {
 
   return (
     <div className="text-center mb-4">
-      <h2 className="text-white text-lg mb-2">My Posted Gigs</h2> {/* Title outside the frame */}
       <div className="p-6 bg-gray-900 rounded-2xl shadow-xl border border-gray-700">
+      <h2 className="text-white text-lg mb-2">My Posted Gigs</h2> {/* Title outside the frame */}
         {gigs.map((gig, index) => (
           <React.Fragment key={index}>
             <MyPostedGigItemCompressed

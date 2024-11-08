@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Avatar } from "flowbite-react";
 import {
   FaHome,
   FaClipboardList,
@@ -11,6 +10,7 @@ import {
   FaSignOutAlt,
   FaBars,
 } from "react-icons/fa";
+import { useNavigate, useLocation } from "react-router-dom"; // Import useLocation
 import UserProfilePicture from "@/components/Avatar/UserProfilePicture";
 
 // Define the user interface
@@ -27,6 +27,8 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ user }) => {
   const [isExpanded, setIsExpanded] = useState(true);
+  const navigate = useNavigate();
+  const location = useLocation(); // Initialize useLocation to get the current path
 
   // Toggle the sidebar expanded/collapsed state
   const toggleSidebar = () => {
@@ -34,16 +36,16 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
   };
 
   return (
-    <div
-      className={`h-screen ${
+    <aside
+      className={`sticky top-0 h-screen ${
         isExpanded ? "w-64" : "w-20"
-      } bg-slate-800 bg-opacity-80 text-white flex flex-col justify-between p-4 fixed transition-all duration-300`}
+      } fixed flex flex-col justify-between bg-slate-800 p-4 text-white transition-all duration-300`}
       style={{ fontFamily: "Inter, sans-serif" }}
     >
       {/* Toggle Button */}
       <button
         onClick={toggleSidebar}
-        className="text-white text-lg mb-4 self-end hover:bg-slate-700 p-2 rounded-md"
+        className="mb-4 self-end rounded-md p-2 text-lg text-white hover:bg-slate-700"
       >
         <FaBars />
       </button>
@@ -55,26 +57,75 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
           <h2 className="text-lg font-semibold text-blue-300">{user.name}</h2>
           <p className="text-sm text-gray-400">{user.title}</p>
           <p className="text-xs text-gray-500">{user.location}</p>
-          <div className="w-full border-t border-gray-600 my-3" />
+          <div className="my-3 w-full border-t border-gray-600" />
         </div>
       )}
 
       {/* Navigation Items */}
       <nav className="flex flex-col gap-1">
-        <SidebarItem icon={<FaHome />} label="Home" isActive={true} isExpanded={isExpanded} />
-        <SidebarItem icon={<FaClipboardList />} label="My posted Gigs" isExpanded={isExpanded} />
-        <SidebarItem icon={<FaComments />} label="Chat" isExpanded={isExpanded} />
-        <SidebarItem icon={<FaCalendarAlt />} label="Schedule" isExpanded={isExpanded} />
-        <SidebarItem icon={<FaBell />} label="Notifications" isExpanded={isExpanded} />
-        <SidebarItem icon={<FaUser />} label="Profile" isExpanded={isExpanded} />
-        <SidebarItem icon={<FaCog />} label="Settings" isExpanded={isExpanded} />
+        <SidebarItem
+          icon={<FaHome />}
+          label="Home"
+          isExpanded={isExpanded}
+          isActive={location.pathname === "/app"}
+          onClick={() => navigate("/app")}
+        />
+        <SidebarItem
+          icon={<FaClipboardList />}
+          label="My posted Gigs"
+          isExpanded={isExpanded}
+          isActive={location.pathname === "/app/posted-gigs"}
+          onClick={() => navigate("/app/posted-gigs")}
+        />
+        <SidebarItem
+          icon={<FaComments />}
+          label="Chat"
+          isExpanded={isExpanded}
+          isActive={location.pathname === "/app/chat"}
+          onClick={() => navigate("/app/chat")}
+        />
+        <SidebarItem
+          icon={<FaCalendarAlt />}
+          label="Schedule"
+          isExpanded={isExpanded}
+          isActive={location.pathname === "/app/schedule"}
+          onClick={() => navigate("/app/schedule")}
+        />
+        <SidebarItem
+          icon={<FaBell />}
+          label="Notifications"
+          isExpanded={isExpanded}
+          isActive={location.pathname === "/app/notifications"}
+          onClick={() => navigate("/app/notifications")}
+        />
+        <SidebarItem
+          icon={<FaUser />}
+          label="Profile"
+          isExpanded={isExpanded}
+          isActive={location.pathname === "/app/user/123"}
+          onClick={() => navigate("/app/user/123")}
+        />
+        <SidebarItem
+          icon={<FaCog />}
+          label="Settings"
+          isExpanded={isExpanded}
+          isActive={location.pathname === "/app/settings"}
+          onClick={() => navigate("/app/settings")}
+        />
       </nav>
 
       {/* Logout Section */}
-      <div className="border-t border-gray-600 mt-3 pt-3">
-        <SidebarItem icon={<FaSignOutAlt />} label="Logout" isExpanded={isExpanded} />
+      <div className="mt-3 border-t border-gray-600 pt-3">
+        <SidebarItem
+          icon={<FaSignOutAlt />}
+          label="Logout"
+          isExpanded={isExpanded}
+          onClick={() => {
+            /* add logout logic here */
+          }}
+        />
       </div>
-    </div>
+    </aside>
   );
 };
 
@@ -84,16 +135,26 @@ interface SidebarItemProps {
   label: string;
   isActive?: boolean;
   isExpanded: boolean;
+  onClick?: () => void;
 }
 
-const SidebarItem: React.FC<SidebarItemProps> = ({ icon, label, isActive, isExpanded }) => (
+const SidebarItem: React.FC<SidebarItemProps> = ({
+  icon,
+  label,
+  isActive,
+  isExpanded,
+  onClick,
+}) => (
   <div
-    className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors duration-200 ${
-      isActive ? "bg-orange-500 text-white" : "text-blue-300"
+    onClick={onClick}
+    className={`flex cursor-pointer items-center rounded-lg p-3 transition-colors duration-200 ${
+      isActive ? "bg-gray-900 text-white" : "text-blue-300"
     } ${isExpanded ? "justify-start gap-3" : "justify-center"}
       hover:bg-blue-500 hover:bg-opacity-20`}
   >
-    <div className={`text-lg ${isActive ? "text-white" : "text-blue-300"}`}>{icon}</div>
+    <div className={`text-lg ${isActive ? "text-white" : "text-blue-300"}`}>
+      {icon}
+    </div>
     {isExpanded && <span>{label}</span>}
   </div>
 );
