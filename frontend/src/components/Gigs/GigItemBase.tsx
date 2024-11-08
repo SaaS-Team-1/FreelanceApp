@@ -1,10 +1,10 @@
-// src/components/Gigs/MyPostedGigItemBase.tsx
+// /home/shusaku/projects/FreelanceApp/frontend/src/components/Gigs/GigItemBase.tsx
 import React from "react";
-// import Avatar from "../Avatar/Avatar"; // Custom Avatar
 import Label from "../Common/Label"; // Custom Label
 import UserProfilePicture from "../Avatar/UserProfilePicture"; // New UserProfilePicture import
+import { SeeMoreButton } from "../Buttons/SeemoreButton"; // Import the custom SeeMoreButton
 
-export type MyPostedGigItemBaseProps = {
+export type GigItemBaseProps = {
   title: string;
   dateRange: string;
   category: string;
@@ -15,7 +15,7 @@ export type MyPostedGigItemBaseProps = {
   isCompressed?: boolean; // Flag to toggle between views
 };
 
-// the data below is only give some dummy values to the profilepicture atm
+// Dummy data for the profile picture
 const mockUserData = {
   name: "John Doe",
   title: "Graphic Designer",
@@ -23,7 +23,7 @@ const mockUserData = {
   profilePicture: "", // Placeholder image URL
 };
 
-const MyPostedGigItemBase: React.FC<MyPostedGigItemBaseProps> = ({
+const GigItemBase: React.FC<GigItemBaseProps> = ({
   title,
   dateRange,
   category,
@@ -35,12 +35,12 @@ const MyPostedGigItemBase: React.FC<MyPostedGigItemBaseProps> = ({
 }) => {
   return (
     <div
-      className={`p-4 ${isCompressed ? "bg-gray-900" : "bg-teal-900"} rounded-xl shadow-lg ${
+      className={`p-4 rounded-xl shadow-lg ${
         isCompressed ? "space-y-0" : "space-y-2"
-      }`}
+      } bg-slate-800 bg-opacity-80 text-white`} // Updated background styles
+      style={{ fontFamily: "Inter, sans-serif" }} // Custom font style
     >
       <div className="flex items-start space-x-4">
-        {/* <Avatar image={avatarUrl} alt="User Avatar" /> */}
         <UserProfilePicture
           user={{
             profilePicture: mockUserData.profilePicture,
@@ -51,22 +51,27 @@ const MyPostedGigItemBase: React.FC<MyPostedGigItemBaseProps> = ({
         />
 
         <div className="flex flex-col text-left">
-          <h2 className="text-white font-semibold text-lg">{title}</h2>
+          <h2 className="font-semibold text-lg">{title}</h2>
           <p className="text-gray-400 text-sm">{dateRange}</p>
           {!isCompressed && description && (
             <p className="text-gray-200 text-sm mt-1">{description}</p>
           )}
           {!isCompressed && (
-            <div className="flex space-x-3 mt-2"> {/* Align labels to the text */}
-              <Label text={category} />
-              <Label text={location} />
-              <Label text={price} />
+            <div className="flex items-center justify-between mt-2">
+              <div className="flex space-x-3">
+                {/* Labels on the left */}
+                <Label text={category} />
+                <Label text={location} />
+                <Label text={price} />
+              </div>
+              {/* See More button aligned to the right */}
+              <SeeMoreButton />
             </div>
           )}
         </div>
       </div>
       {isCompressed && (
-        <div className="ml-4"> {/* Label positioned to the right when compressed */}
+        <div className="ml-4">
           <Label text={category} />
         </div>
       )}
@@ -74,4 +79,4 @@ const MyPostedGigItemBase: React.FC<MyPostedGigItemBaseProps> = ({
   );
 };
 
-export default MyPostedGigItemBase;
+export default GigItemBase;
