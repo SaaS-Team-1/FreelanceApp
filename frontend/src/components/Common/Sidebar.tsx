@@ -34,10 +34,10 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
   };
 
   return (
-    <div
-      className={`h-screen ${
+    <aside
+      className={`h-screen sticky top-0 ${
         isExpanded ? "w-64" : "w-20"
-      } bg-slate-800 bg-opacity-80 text-white flex flex-col justify-between p-4 fixed transition-all duration-300`}
+      } bg-slate-800  text-white flex flex-col justify-between p-4 fixed transition-all duration-300 `}
       style={{ fontFamily: "Inter, sans-serif" }}
     >
       {/* Toggle Button */}
@@ -74,7 +74,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
       <div className="border-t border-gray-600 mt-3 pt-3">
         <SidebarItem icon={<FaSignOutAlt />} label="Logout" isExpanded={isExpanded} />
       </div>
-    </div>
+    </aside>
   );
 };
 

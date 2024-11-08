@@ -46,19 +46,21 @@ export default function AppRoot() {
 
   return (
     <FirebaseInitializer>
-      <Suspense fallback={<Loading />}>
-        <Sidebar 
-        user={{
-          name: "Amina Agile",
-          title: "Computer Science Student",
-          location: "Leuven City",
-          profilePicture: ""
-        }}
-      />
       <AuthWrapper signedIn fallback={<Navigate to={"/login"} />}>
-        <Outlet />
-        </AuthWrapper>
-      </Suspense>
+        <Suspense fallback={<Loading />}>
+          <div className="flex w-screen">
+            <Sidebar
+              user={{
+                name: "Amina Agile",
+                title: "Computer Science Student",
+                location: "Leuven City",
+                profilePicture: "",
+              }}
+            />
+            <Outlet />
+          </div>
+        </Suspense>
+      </AuthWrapper>
     </FirebaseInitializer>
   );
 }
