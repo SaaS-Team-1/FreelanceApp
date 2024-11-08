@@ -1,6 +1,0 @@
-connectorId: default
-generate:
-  javascriptSdk:
-    outputDir: ../../frontend/src/utils/database
-    package: "@utils/database"
-    packageJsonDir: ../../frontend/src/utils
