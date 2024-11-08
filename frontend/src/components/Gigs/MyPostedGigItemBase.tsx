@@ -1,7 +1,8 @@
 // src/components/Gigs/MyPostedGigItemBase.tsx
 import React from "react";
-import Avatar from "../Avatar/Avatar"; // Custom Avatar
+// import Avatar from "../Avatar/Avatar"; // Custom Avatar
 import Label from "../Common/Label"; // Custom Label
+import UserProfilePicture from "../Avatar/UserProfilePicture"; // New UserProfilePicture import
 
 export type MyPostedGigItemBaseProps = {
   title: string;
@@ -12,6 +13,14 @@ export type MyPostedGigItemBaseProps = {
   location?: string;
   price?: string;
   isCompressed?: boolean; // Flag to toggle between views
+};
+
+// the data below is only give some dummy values to the profilepicture atm
+const mockUserData = {
+  name: "John Doe",
+  title: "Graphic Designer",
+  location: "San Francisco, CA",
+  profilePicture: "", // Placeholder image URL
 };
 
 const MyPostedGigItemBase: React.FC<MyPostedGigItemBaseProps> = ({
@@ -31,7 +40,16 @@ const MyPostedGigItemBase: React.FC<MyPostedGigItemBaseProps> = ({
       }`}
     >
       <div className="flex items-start space-x-4">
-        <Avatar image={avatarUrl} alt="User Avatar" />
+        {/* <Avatar image={avatarUrl} alt="User Avatar" /> */}
+        <UserProfilePicture
+          user={{
+            profilePicture: mockUserData.profilePicture,
+            name: mockUserData.name,
+          }}
+          size="medium"
+          rounded={true}
+        />
+
         <div className="flex flex-col text-left">
           <h2 className="text-white font-semibold text-lg">{title}</h2>
           <p className="text-gray-400 text-sm">{dateRange}</p>
