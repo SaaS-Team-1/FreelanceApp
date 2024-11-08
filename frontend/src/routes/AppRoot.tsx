@@ -12,7 +12,8 @@ import {
 } from "@/utils/reactfire";
 import { Database } from "firebase/database";
 import { Firestore } from "firebase/firestore";
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
+import { AuthWrapper } from "@/utils/firebase/auth";
 import Sidebar from "@/components/Common/Sidebar";
 
 // Separate component to handle Firebase initialization
@@ -44,8 +45,9 @@ export default function AppRoot() {
   }
 
   return (
-    <Suspense fallback={<Loading />}>
-      <Sidebar 
+    <FirebaseInitializer>
+      <Suspense fallback={<Loading />}>
+        <Sidebar 
         user={{
           name: "Amina Agile",
           title: "Computer Science Student",
@@ -53,11 +55,10 @@ export default function AppRoot() {
           profilePicture: ""
         }}
       />
-      <FirebaseInitializer>
-        <div className="min-h-screen bg-gray-900" >
+      <AuthWrapper signedIn fallback={<Navigate to={"/login"} />}>
         <Outlet />
-        </ div> 
-      </FirebaseInitializer>
-    </Suspense>
+        </AuthWrapper>
+      </Suspense>
+    </FirebaseInitializer>
   );
 }

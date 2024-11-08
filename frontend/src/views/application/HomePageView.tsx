@@ -1,4 +1,3 @@
-import Sidebar from "@/components/Common/Sidebar";
 import  {SearchBar} from "@/components/Common/SearchBar";
 import NotificationList from "@/components/Notifications/NotificationsList";
 import MyPostedGigListCompressed from "@/components/Gigs/MyPostedGigListCompressed";
