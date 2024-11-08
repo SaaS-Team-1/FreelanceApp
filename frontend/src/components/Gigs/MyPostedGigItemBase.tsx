@@ -1,8 +1,7 @@
 // src/components/Gigs/MyPostedGigItemBase.tsx
 import React from "react";
-// import Avatar from "../Avatar/Avatar"; // Custom Avatar
 import Label from "../Common/Label"; // Custom Label
-import UserProfilePicture from "../Avatar/UserProfilePicture"; // New UserProfilePicture import
+import UserProfilePicture from "../Avatar/UserProfilePicture"; // UserProfilePicture component
 
 export type MyPostedGigItemBaseProps = {
   title: string;
@@ -13,14 +12,6 @@ export type MyPostedGigItemBaseProps = {
   location?: string;
   price?: string;
   isCompressed?: boolean; // Flag to toggle between views
-};
-
-// the data below is only give some dummy values to the profilepicture atm
-const mockUserData = {
-  name: "John Doe",
-  title: "Graphic Designer",
-  location: "San Francisco, CA",
-  profilePicture: "", // Placeholder image URL
 };
 
 const MyPostedGigItemBase: React.FC<MyPostedGigItemBaseProps> = ({
@@ -35,41 +26,39 @@ const MyPostedGigItemBase: React.FC<MyPostedGigItemBaseProps> = ({
 }) => {
   return (
     <div
-      className={`p-4 ${isCompressed ? "bg-gray-900" : "bg-teal-900"} rounded-xl shadow-lg ${
-        isCompressed ? "space-y-0" : "space-y-2"
-      }`}
+      className={`p-3 ${isCompressed ? "bg-transparent" : "bg-gray-800"} rounded-lg shadow-md flex items-start space-x-3`}
     >
-      <div className="flex items-start space-x-4">
-        {/* <Avatar image={avatarUrl} alt="User Avatar" /> */}
-        <UserProfilePicture
-          user={{
-            profilePicture: mockUserData.profilePicture,
-            name: mockUserData.name,
-          }}
-          size="medium"
-          rounded={true}
-        />
+      {/* Smaller Profile Picture for a more compact look */}
+      <UserProfilePicture
+        user={{
+          profilePicture: avatarUrl || "",
+          name: title, // Use title for fallback initials if no picture
+        }}
+        size="medium" // Use smaller size
+        rounded={true}
+      />
 
-        <div className="flex flex-col text-left">
-          <h2 className="text-white font-semibold text-lg">{title}</h2>
-          <p className="text-gray-400 text-sm">{dateRange}</p>
-          {!isCompressed && description && (
-            <p className="text-gray-200 text-sm mt-1">{description}</p>
-          )}
-          {!isCompressed && (
-            <div className="flex space-x-3 mt-2"> {/* Align labels to the text */}
-              <Label text={category} />
-              <Label text={location} />
-              <Label text={price} />
-            </div>
-          )}
+      <div className="flex-1 flex flex-col">
+        <div className="flex items-start justify-between">
+          <div className="flex flex-col text-left">
+            <h2 className="text-white font-medium text-sm">{title}</h2>
+            <span className="text-xs text-gray-400">{dateRange}</span>
+          </div>
+          {isCompressed && <Label text={category} />} {/* Label aligned to the right */}
         </div>
+
+        {!isCompressed && description && (
+          <p className="text-gray-300 text-xs mt-1 text-left">{description}</p>
+        )}
+
+        {!isCompressed && (
+          <div className="flex space-x-2 mt-2">
+            <Label text={category} />
+            {location && <Label text={location} />}
+            {price && <Label text={price} />}
+          </div>
+        )}
       </div>
-      {isCompressed && (
-        <div className="ml-4"> {/* Label positioned to the right when compressed */}
-          <Label text={category} />
-        </div>
-      )}
     </div>
   );
 };
