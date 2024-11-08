@@ -13,6 +13,7 @@ import {
 import { Database } from "firebase/database";
 import { Firestore } from "firebase/firestore";
 import { Outlet } from "react-router-dom";
+import Sidebar from "@/components/Common/Sidebar";
 
 // Separate component to handle Firebase initialization
 function FirebaseInitializer({ children }: { children: React.ReactNode }) {
@@ -44,8 +45,18 @@ export default function AppRoot() {
 
   return (
     <Suspense fallback={<Loading />}>
+      <Sidebar 
+        user={{
+          name: "Amina Agile",
+          title: "Computer Science Student",
+          location: "Leuven City",
+          profilePicture: ""
+        }}
+      />
       <FirebaseInitializer>
+        <div className="min-h-screen bg-gray-900" >
         <Outlet />
+        </ div> 
       </FirebaseInitializer>
     </Suspense>
   );

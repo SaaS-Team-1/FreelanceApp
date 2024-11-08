@@ -40,22 +40,28 @@ const router = createBrowserRouter([
         children: [{ index: true, element: <Landing /> }],
       },
       {
+        path: "login",
+        element: (
+          <AuthWrapper fallback={<Navigate to={"/app"} />}>
+            <LoginView />
+          </AuthWrapper>
+        ),
+      },
+      {
         path: "/app",
         element: <AppRoot />,
         children: [
           {
             index: true,
             element: (
-              <AuthWrapper signedIn fallback={<Navigate to={"login"} />}>
+              <AuthWrapper signedIn fallback={<Navigate to={"/login"} />}>
                 <OverviewView />
-              </AuthWrapper>
-            ),
-          },
-          {
-            path: "login",
-            element: (
-              <AuthWrapper fallback={<Navigate to={"/app"} />}>
-                <LoginView />
+                {/* <>
+                <div className="h-[200vh] bg-gray-800">
+                  <h1 className="text-center text-2xl pt-10">Scroll Down to Test Background</h1>
+                  <p className="text-center text-lg pt-5">This div is twice the height of the viewport.</p>
+                </div>
+                </> */}
               </AuthWrapper>
             ),
           },

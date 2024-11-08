@@ -3,7 +3,8 @@ import NotificationItem from './NotificationItem';
 
 const NotificationList = ({ notifications }) => {
   return (
-    <div className="max-w-sm bg-gray-800 p-4 rounded-xl shadow-lg">
+    <div className="max-w-sm bg-gray-900 p-4 rounded-xl shadow-lg">
+      <h2 className="text-white text-lg mb-4 text-center">Notifications</h2>
       {notifications.map((notification, index) => (
         <NotificationItem
           key={index}
