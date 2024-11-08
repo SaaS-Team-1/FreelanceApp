@@ -3,7 +3,6 @@ import { httpsCallable, Functions } from "firebase/functions";
 import { useContext, useEffect, useState } from "react";
 import { FirebaseContext, FirebaseContextApps } from "@/utils/firebase";
 
-
 export default function Root() {
   const firebase = useContext(FirebaseContext) as FirebaseContextApps;
   const [hello, setHello] = useState<string | null>();
@@ -26,9 +25,7 @@ export default function Root() {
       <h1 className="text-2xl dark:text-white">Flowbite React + Vite </h1>
       <DarkThemeToggle />
       {hello}
-      {/* The following codes were added just to preview the components */}
-
-    
+      {/* The following codes were added just to preview the components */} 
     </main>
   );
 }
