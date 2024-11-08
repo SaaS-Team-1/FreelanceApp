@@ -2,8 +2,7 @@ import { DarkThemeToggle } from "flowbite-react";
 import { httpsCallable, Functions } from "firebase/functions";
 import { useContext, useEffect, useState } from "react";
 import { FirebaseContext, FirebaseContextApps } from "@/utils/firebase";
-import MyPostedGigListCompressed from "@/components/Gigs/MyPostedGigListCompressed";
-import MyPostedGigList from "@/components/Gigs/MyPostedGigList";
+
 
 export default function Root() {
   const firebase = useContext(FirebaseContext) as FirebaseContextApps;
@@ -26,13 +25,10 @@ export default function Root() {
     <main className="flex min-h-screen items-center justify-center gap-2 dark:bg-gray-800">
       <h1 className="text-2xl dark:text-white">Flowbite React + Vite </h1>
       <DarkThemeToggle />
-      
-      {/* The following codes were added just to preview the components */}
-      {/* <Avatar /> */}
-      {/* <MyPostedGigListCompressed /> */}
-      <MyPostedGigList />
-      {/* <Label text="Hello World" /> */}
       {hello}
+      {/* The following codes were added just to preview the components */}
+
+    
     </main>
   );
 }
