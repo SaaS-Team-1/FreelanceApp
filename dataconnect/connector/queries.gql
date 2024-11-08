@@ -21,6 +21,14 @@ query ListUsers @auth(level: NO_ACCESS) {
   }
 }
 
+query ListLanguages @auth(level: PUBLIC) {
+  Languages{
+    languageName
+    id
+    userId
+  }
+}
+
 query ListGigs @auth(level: PUBLIC) {
   Gigs {
     id
@@ -41,22 +49,112 @@ query ListGigs @auth(level: PUBLIC) {
   }
 }
 
-# query ListAllApplications {
-#   Application {
-    
-#     status
-#     createdAt
-#     user {
-#       id
-#       username
-#       name
-#     }
-#     gig {
-#       id
-#       title
-#     }
-#   }
-# }
+query ListUserGigs($userId: UUID_Filter!) {
+  Gigs(where: { user: { id: $userId } }) {
+    id
+    title
+    description
+    price
+    createdAt
+    updatedAt
+    status
+    rating {
+      id
+      ratingValue
+    }
+    user {
+      id
+      username
+      name
+      bio
+    }
+  }
+}
+
+query ListTransactions @auth(level: PUBLIC) {
+  Transactions {
+    id
+    sender {
+      id
+      username
+    }
+    receiver {
+      id
+      username
+    }
+    gig {
+      id
+      title
+    }
+    transactionDate
+    transactionTime
+    amount
+  }
+}
+
+query ListMessages @auth(level: NO_ACCESS) {
+  Messages {
+    id
+    sender {
+      id
+      username
+    }
+    receiver {
+      id
+      username
+    }
+    textContent
+    createdAt
+  }
+}
+
+query ListCategories @auth(level: PUBLIC) {
+  Categories {
+    id
+    categoryName
+    gig {
+      id
+      title
+    }
+    user {
+      id
+      username
+    }
+  }
+}
+
+query ListRatings @auth(level: PUBLIC) {
+  Ratings {
+    id
+    ratingValue
+    createdAt
+    user {
+      id
+      username
+    }
+    gig {
+      id
+      title
+    }
+  }
+}
+
+query ListApplications @auth(level: PUBLIC) {
+  Applications {
+    status
+    createdAt
+    user {
+      id
+      username
+      name
+    }
+    gig {
+      id
+      title
+    }
+  }
+}
+
 
 # # Logged in user can list all their reviews and movie titles associated with the review 
 # # Since the query requires the uid of the current authenticated user, the auth level is set to USER

@@ -1,21 +1,45 @@
 """
-✨ `Movie_KeyOutput` returns the primary key fields of table type `Movie`.
+✨ `Application_KeyOutput` returns the primary key fields of table type `Application`.
 
-It has the same format as `Movie_Key`, but is only used as mutation return value.
+It has the same format as `Application_Key`, but is only used as mutation return value.
 """
-scalar Movie_KeyOutput
+scalar Application_KeyOutput
 """
-✨ `MovieMetadata_KeyOutput` returns the primary key fields of table type `MovieMetadata`.
+✨ `Category_KeyOutput` returns the primary key fields of table type `Category`.
 
-It has the same format as `MovieMetadata_Key`, but is only used as mutation return value.
+It has the same format as `Category_Key`, but is only used as mutation return value.
 """
-scalar MovieMetadata_KeyOutput
+scalar Category_KeyOutput
 """
-✨ `Review_KeyOutput` returns the primary key fields of table type `Review`.
+✨ `Gig_KeyOutput` returns the primary key fields of table type `Gig`.
 
-It has the same format as `Review_Key`, but is only used as mutation return value.
+It has the same format as `Gig_Key`, but is only used as mutation return value.
 """
-scalar Review_KeyOutput
+scalar Gig_KeyOutput
+"""
+✨ `Language_KeyOutput` returns the primary key fields of table type `Language`.
+
+It has the same format as `Language_Key`, but is only used as mutation return value.
+"""
+scalar Language_KeyOutput
+"""
+✨ `Message_KeyOutput` returns the primary key fields of table type `Message`.
+
+It has the same format as `Message_Key`, but is only used as mutation return value.
+"""
+scalar Message_KeyOutput
+"""
+✨ `Rating_KeyOutput` returns the primary key fields of table type `Rating`.
+
+It has the same format as `Rating_Key`, but is only used as mutation return value.
+"""
+scalar Rating_KeyOutput
+"""
+✨ `Transaction_KeyOutput` returns the primary key fields of table type `Transaction`.
+
+It has the same format as `Transaction_Key`, but is only used as mutation return value.
+"""
+scalar Transaction_KeyOutput
 """
 ✨ `User_KeyOutput` returns the primary key fields of table type `User`.
 
@@ -23,445 +47,145 @@ It has the same format as `User_Key`, but is only used as mutation return value.
 """
 scalar User_KeyOutput
 """
-✨ Generated data input type for table 'Movie'. It includes all necessary fields for creating or upserting rows into table.
+✨ Generated data input type for table 'Application'. It includes all necessary fields for creating or upserting rows into table.
 """
-input Movie_Data {
+input Application_Data {
   """
-  ✨ Generated from Field `Movie`.`id` of type `UUID!`
+  ✨ Generated from Field `Application`.`userId` of type `UUID!`
   """
-  id: UUID
+  userId: UUID
   """
-  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Movie`.`id` of type `UUID!`)
+  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `Application`.`userId` of type `UUID!`)
   """
-  id_expr: UUID_Expr
+  userId_expr: UUID_Expr
   """
-  ✨ Generated from Field `Movie`.`genre` of type `String`
+  ✨ Generated from Field `Application`.`gigId` of type `UUID!`
   """
-  genre: String
+  gigId: UUID
   """
-  ✨ `_expr` server value variant of `genre` (✨ Generated from Field `Movie`.`genre` of type `String`)
+  ✨ `_expr` server value variant of `gigId` (✨ Generated from Field `Application`.`gigId` of type `UUID!`)
   """
-  genre_expr: String_Expr
+  gigId_expr: UUID_Expr
   """
-  ✨ Generated from Field `Movie`.`imageUrl` of type `String!`
+  ✨ Generated from Field `Application`.`gig` of type `Gig!`
   """
-  imageUrl: String
+  gig: Gig_Key
   """
-  ✨ `_expr` server value variant of `imageUrl` (✨ Generated from Field `Movie`.`imageUrl` of type `String!`)
-  """
-  imageUrl_expr: String_Expr
-  """
-  ✨ Generated from Field `Movie`.`title` of type `String!`
-  """
-  title: String
-  """
-  ✨ `_expr` server value variant of `title` (✨ Generated from Field `Movie`.`title` of type `String!`)
-  """
-  title_expr: String_Expr
-}
-"""
-✨ Generated filter input type for table 'Movie'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
-"""
-input Movie_Filter {
-  """
-  Apply multiple filter conditions using `AND` logic.
-  """
-  _and: [Movie_Filter!]
-  """
-  Negate the result of the provided filter condition.
-  """
-  _not: Movie_Filter
-  """
-  Apply multiple filter conditions using `OR` logic.
-  """
-  _or: [Movie_Filter!]
-  """
-  ✨ Generated from Field `Movie`.`id` of type `UUID!`
-  """
-  id: UUID_Filter
-  """
-  ✨ Generated from Field `Movie`.`genre` of type `String`
-  """
-  genre: String_Filter
-  """
-  ✨ Generated from Field `Movie`.`imageUrl` of type `String!`
-  """
-  imageUrl: String_Filter
-  """
-  ✨ Generated from Field `Movie`.`title` of type `String!`
-  """
-  title: String_Filter
-  """
-  ✨ Generated from Field `Movie`.`reviews_on_movie` of type `[Review!]!`
-  """
-  reviews_on_movie: Review_ListFilter
-  """
-  ✨ Generated from Field `Movie`.`movieMetadata_on_movie` of type `MovieMetadata`
-  """
-  movieMetadata_on_movie: MovieMetadata_Filter
-  """
-  ✨ Generated from Field `Movie`.`users_via_Review` of type `[User!]!`
-  """
-  users_via_Review: User_ListFilter
-}
-"""
-✨ Generated first-row input type for table 'Movie'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
-"""
-input Movie_FirstRow {
-  """
-  Order the result by the specified fields.
-  """
-  orderBy: [Movie_Order!]
-  """
-  Filters rows based on the specified conditions.
-  """
-  where: Movie_Filter
-}
-"""
-✨ Generated key input type for table 'Movie'. It represents the primary key fields used to uniquely identify a row in the table.
-"""
-input Movie_Key {
-  """
-  ✨ Generated from Field `Movie`.`id` of type `UUID!`
-  """
-  id: UUID
-  """
-  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Movie`.`id` of type `UUID!`)
-  """
-  id_expr: UUID_Expr
-}
-"""
-✨ Generated list filter input type for table 'Movie'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
-"""
-input Movie_ListFilter {
-  """
-  The desired number of objects that match the condition (defaults to at least one).
-  """
-  count: Int_Filter = {gt:0}
-  """
-  Condition of the related objects to filter for.
-  """
-  exist: Movie_Filter
-}
-"""
-✨ Generated order input type for table 'Movie'. This input defines the sorting order of rows in query results based on one or more fields.
-"""
-input Movie_Order {
-  """
-  ✨ Generated from Field `Movie`.`id` of type `UUID!`
-  """
-  id: OrderDirection
-  """
-  ✨ Generated from Field `Movie`.`genre` of type `String`
-  """
-  genre: OrderDirection
-  """
-  ✨ Generated from Field `Movie`.`imageUrl` of type `String!`
-  """
-  imageUrl: OrderDirection
-  """
-  ✨ Generated from Field `Movie`.`title` of type `String!`
-  """
-  title: OrderDirection
-}
-"""
-✨ Generated data input type for table 'MovieMetadata'. It includes all necessary fields for creating or upserting rows into table.
-"""
-input MovieMetadata_Data {
-  """
-  ✨ Generated from Field `MovieMetadata`.`id` of type `UUID!`
-  """
-  id: UUID
-  """
-  ✨ `_expr` server value variant of `id` (✨ Generated from Field `MovieMetadata`.`id` of type `UUID!`)
-  """
-  id_expr: UUID_Expr
-  """
-  ✨ Generated from Field `MovieMetadata`.`movieId` of type `UUID!`
-  """
-  movieId: UUID
-  """
-  ✨ `_expr` server value variant of `movieId` (✨ Generated from Field `MovieMetadata`.`movieId` of type `UUID!`)
-  """
-  movieId_expr: UUID_Expr
-  """
-  ✨ Generated from Field `MovieMetadata`.`movie` of type `Movie!`
-  """
-  movie: Movie_Key
-  """
-  ✨ Generated from Field `MovieMetadata`.`description` of type `String`
-  """
-  description: String
-  """
-  ✨ `_expr` server value variant of `description` (✨ Generated from Field `MovieMetadata`.`description` of type `String`)
-  """
-  description_expr: String_Expr
-  """
-  ✨ Generated from Field `MovieMetadata`.`rating` of type `Float`
-  """
-  rating: Float
-  """
-  ✨ Generated from Field `MovieMetadata`.`releaseYear` of type `Int`
-  """
-  releaseYear: Int
-}
-"""
-✨ Generated filter input type for table 'MovieMetadata'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
-"""
-input MovieMetadata_Filter {
-  """
-  Apply multiple filter conditions using `AND` logic.
-  """
-  _and: [MovieMetadata_Filter!]
-  """
-  Negate the result of the provided filter condition.
-  """
-  _not: MovieMetadata_Filter
-  """
-  Apply multiple filter conditions using `OR` logic.
-  """
-  _or: [MovieMetadata_Filter!]
-  """
-  ✨ Generated from Field `MovieMetadata`.`id` of type `UUID!`
-  """
-  id: UUID_Filter
-  """
-  ✨ Generated from Field `MovieMetadata`.`movieId` of type `UUID!`
-  """
-  movieId: UUID_Filter
-  """
-  ✨ Generated from Field `MovieMetadata`.`movie` of type `Movie!`
-  """
-  movie: Movie_Filter
-  """
-  ✨ Generated from Field `MovieMetadata`.`description` of type `String`
-  """
-  description: String_Filter
-  """
-  ✨ Generated from Field `MovieMetadata`.`rating` of type `Float`
-  """
-  rating: Float_Filter
-  """
-  ✨ Generated from Field `MovieMetadata`.`releaseYear` of type `Int`
-  """
-  releaseYear: Int_Filter
-}
-"""
-✨ Generated first-row input type for table 'MovieMetadata'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
-"""
-input MovieMetadata_FirstRow {
-  """
-  Order the result by the specified fields.
-  """
-  orderBy: [MovieMetadata_Order!]
-  """
-  Filters rows based on the specified conditions.
-  """
-  where: MovieMetadata_Filter
-}
-"""
-✨ Generated key input type for table 'MovieMetadata'. It represents the primary key fields used to uniquely identify a row in the table.
-"""
-input MovieMetadata_Key {
-  """
-  ✨ Generated from Field `MovieMetadata`.`id` of type `UUID!`
-  """
-  id: UUID
-  """
-  ✨ `_expr` server value variant of `id` (✨ Generated from Field `MovieMetadata`.`id` of type `UUID!`)
-  """
-  id_expr: UUID_Expr
-}
-"""
-✨ Generated list filter input type for table 'MovieMetadata'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
-"""
-input MovieMetadata_ListFilter {
-  """
-  The desired number of objects that match the condition (defaults to at least one).
-  """
-  count: Int_Filter = {gt:0}
-  """
-  Condition of the related objects to filter for.
-  """
-  exist: MovieMetadata_Filter
-}
-"""
-✨ Generated order input type for table 'MovieMetadata'. This input defines the sorting order of rows in query results based on one or more fields.
-"""
-input MovieMetadata_Order {
-  """
-  ✨ Generated from Field `MovieMetadata`.`id` of type `UUID!`
-  """
-  id: OrderDirection
-  """
-  ✨ Generated from Field `MovieMetadata`.`movieId` of type `UUID!`
-  """
-  movieId: OrderDirection
-  """
-  ✨ Generated from Field `MovieMetadata`.`movie` of type `Movie!`
-  """
-  movie: Movie_Order
-  """
-  ✨ Generated from Field `MovieMetadata`.`description` of type `String`
-  """
-  description: OrderDirection
-  """
-  ✨ Generated from Field `MovieMetadata`.`rating` of type `Float`
-  """
-  rating: OrderDirection
-  """
-  ✨ Generated from Field `MovieMetadata`.`releaseYear` of type `Int`
-  """
-  releaseYear: OrderDirection
-}
-"""
-✨ Generated data input type for table 'Review'. It includes all necessary fields for creating or upserting rows into table.
-"""
-input Review_Data {
-  """
-  ✨ Generated from Field `Review`.`movieId` of type `UUID!`
-  """
-  movieId: UUID
-  """
-  ✨ `_expr` server value variant of `movieId` (✨ Generated from Field `Review`.`movieId` of type `UUID!`)
-  """
-  movieId_expr: UUID_Expr
-  """
-  ✨ Generated from Field `Review`.`userId` of type `String!`
-  """
-  userId: String
-  """
-  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `Review`.`userId` of type `String!`)
-  """
-  userId_expr: String_Expr
-  """
-  ✨ Generated from Field `Review`.`movie` of type `Movie!`
-  """
-  movie: Movie_Key
-  """
-  ✨ Generated from Field `Review`.`user` of type `User!`
+  ✨ Generated from Field `Application`.`user` of type `User!`
   """
   user: User_Key
   """
-  ✨ Generated from Field `Review`.`id` of type `UUID!`
+  ✨ Generated from Field `Application`.`createdAt` of type `Timestamp`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `Application`.`createdAt` of type `Timestamp`)
+  """
+  createdAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `Application`.`createdAt` of type `Timestamp`)
+  """
+  createdAt_time: Timestamp_Relative
+  """
+  ✨ Generated from Field `Application`.`id` of type `UUID!`
   """
   id: UUID
   """
-  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Review`.`id` of type `UUID!`)
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Application`.`id` of type `UUID!`)
   """
   id_expr: UUID_Expr
   """
-  ✨ Generated from Field `Review`.`rating` of type `Int`
+  ✨ Generated from Field `Application`.`status` of type `String!`
   """
-  rating: Int
+  status: String
   """
-  ✨ Generated from Field `Review`.`reviewDate` of type `Date!`
+  ✨ `_expr` server value variant of `status` (✨ Generated from Field `Application`.`status` of type `String!`)
   """
-  reviewDate: Date
-  """
-  ✨ `_date` server value variant of `reviewDate` (✨ Generated from Field `Review`.`reviewDate` of type `Date!`)
-  """
-  reviewDate_date: Date_Relative
-  """
-  ✨ `_expr` server value variant of `reviewDate` (✨ Generated from Field `Review`.`reviewDate` of type `Date!`)
-  """
-  reviewDate_expr: Date_Expr
-  """
-  ✨ Generated from Field `Review`.`reviewText` of type `String`
-  """
-  reviewText: String
-  """
-  ✨ `_expr` server value variant of `reviewText` (✨ Generated from Field `Review`.`reviewText` of type `String`)
-  """
-  reviewText_expr: String_Expr
+  status_expr: String_Expr
 }
 """
-✨ Generated filter input type for table 'Review'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+✨ Generated filter input type for table 'Application'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
 """
-input Review_Filter {
+input Application_Filter {
   """
   Apply multiple filter conditions using `AND` logic.
   """
-  _and: [Review_Filter!]
+  _and: [Application_Filter!]
   """
   Negate the result of the provided filter condition.
   """
-  _not: Review_Filter
+  _not: Application_Filter
   """
   Apply multiple filter conditions using `OR` logic.
   """
-  _or: [Review_Filter!]
+  _or: [Application_Filter!]
   """
-  ✨ Generated from Field `Review`.`movieId` of type `UUID!`
+  ✨ Generated from Field `Application`.`userId` of type `UUID!`
   """
-  movieId: UUID_Filter
+  userId: UUID_Filter
   """
-  ✨ Generated from Field `Review`.`userId` of type `String!`
+  ✨ Generated from Field `Application`.`gigId` of type `UUID!`
   """
-  userId: String_Filter
+  gigId: UUID_Filter
   """
-  ✨ Generated from Field `Review`.`movie` of type `Movie!`
+  ✨ Generated from Field `Application`.`gig` of type `Gig!`
   """
-  movie: Movie_Filter
+  gig: Gig_Filter
   """
-  ✨ Generated from Field `Review`.`user` of type `User!`
+  ✨ Generated from Field `Application`.`user` of type `User!`
   """
   user: User_Filter
   """
-  ✨ Generated from Field `Review`.`id` of type `UUID!`
+  ✨ Generated from Field `Application`.`createdAt` of type `Timestamp`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `Application`.`id` of type `UUID!`
   """
   id: UUID_Filter
   """
-  ✨ Generated from Field `Review`.`rating` of type `Int`
+  ✨ Generated from Field `Application`.`status` of type `String!`
   """
-  rating: Int_Filter
-  """
-  ✨ Generated from Field `Review`.`reviewDate` of type `Date!`
-  """
-  reviewDate: Date_Filter
-  """
-  ✨ Generated from Field `Review`.`reviewText` of type `String`
-  """
-  reviewText: String_Filter
+  status: String_Filter
 }
 """
-✨ Generated first-row input type for table 'Review'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+✨ Generated first-row input type for table 'Application'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
 """
-input Review_FirstRow {
+input Application_FirstRow {
   """
   Order the result by the specified fields.
   """
-  orderBy: [Review_Order!]
+  orderBy: [Application_Order!]
   """
   Filters rows based on the specified conditions.
   """
-  where: Review_Filter
+  where: Application_Filter
 }
 """
-✨ Generated key input type for table 'Review'. It represents the primary key fields used to uniquely identify a row in the table.
+✨ Generated key input type for table 'Application'. It represents the primary key fields used to uniquely identify a row in the table.
 """
-input Review_Key {
+input Application_Key {
   """
-  ✨ Generated from Field `Review`.`movieId` of type `UUID!`
+  ✨ Generated from Field `Application`.`userId` of type `UUID!`
   """
-  movieId: UUID
+  userId: UUID
   """
-  ✨ `_expr` server value variant of `movieId` (✨ Generated from Field `Review`.`movieId` of type `UUID!`)
+  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `Application`.`userId` of type `UUID!`)
   """
-  movieId_expr: UUID_Expr
+  userId_expr: UUID_Expr
   """
-  ✨ Generated from Field `Review`.`userId` of type `String!`
+  ✨ Generated from Field `Application`.`gigId` of type `UUID!`
   """
-  userId: String
+  gigId: UUID
   """
-  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `Review`.`userId` of type `String!`)
+  ✨ `_expr` server value variant of `gigId` (✨ Generated from Field `Application`.`gigId` of type `UUID!`)
   """
-  userId_expr: String_Expr
+  gigId_expr: UUID_Expr
 }
 """
-✨ Generated list filter input type for table 'Review'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+✨ Generated list filter input type for table 'Application'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
 """
-input Review_ListFilter {
+input Application_ListFilter {
   """
   The desired number of objects that match the condition (defaults to at least one).
   """
@@ -469,57 +193,1165 @@ input Review_ListFilter {
   """
   Condition of the related objects to filter for.
   """
-  exist: Review_Filter
+  exist: Application_Filter
 }
 """
-✨ Generated order input type for table 'Review'. This input defines the sorting order of rows in query results based on one or more fields.
+✨ Generated order input type for table 'Application'. This input defines the sorting order of rows in query results based on one or more fields.
 """
-input Review_Order {
+input Application_Order {
   """
-  ✨ Generated from Field `Review`.`movieId` of type `UUID!`
-  """
-  movieId: OrderDirection
-  """
-  ✨ Generated from Field `Review`.`userId` of type `String!`
+  ✨ Generated from Field `Application`.`userId` of type `UUID!`
   """
   userId: OrderDirection
   """
-  ✨ Generated from Field `Review`.`movie` of type `Movie!`
+  ✨ Generated from Field `Application`.`gigId` of type `UUID!`
   """
-  movie: Movie_Order
+  gigId: OrderDirection
   """
-  ✨ Generated from Field `Review`.`user` of type `User!`
+  ✨ Generated from Field `Application`.`gig` of type `Gig!`
+  """
+  gig: Gig_Order
+  """
+  ✨ Generated from Field `Application`.`user` of type `User!`
   """
   user: User_Order
   """
-  ✨ Generated from Field `Review`.`id` of type `UUID!`
+  ✨ Generated from Field `Application`.`createdAt` of type `Timestamp`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `Application`.`id` of type `UUID!`
   """
   id: OrderDirection
   """
-  ✨ Generated from Field `Review`.`rating` of type `Int`
+  ✨ Generated from Field `Application`.`status` of type `String!`
   """
-  rating: OrderDirection
+  status: OrderDirection
+}
+"""
+✨ Generated data input type for table 'Category'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Category_Data {
   """
-  ✨ Generated from Field `Review`.`reviewDate` of type `Date!`
+  ✨ Generated from Field `Category`.`id` of type `UUID!`
   """
-  reviewDate: OrderDirection
+  id: UUID
   """
-  ✨ Generated from Field `Review`.`reviewText` of type `String`
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Category`.`id` of type `UUID!`)
   """
-  reviewText: OrderDirection
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Category`.`gigId` of type `UUID`
+  """
+  gigId: UUID
+  """
+  ✨ `_expr` server value variant of `gigId` (✨ Generated from Field `Category`.`gigId` of type `UUID`)
+  """
+  gigId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Category`.`userId` of type `UUID`
+  """
+  userId: UUID
+  """
+  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `Category`.`userId` of type `UUID`)
+  """
+  userId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Category`.`gig` of type `Gig`
+  """
+  gig: Gig_Key
+  """
+  ✨ Generated from Field `Category`.`user` of type `User`
+  """
+  user: User_Key
+  """
+  ✨ Generated from Field `Category`.`categoryName` of type `String!`
+  """
+  categoryName: String
+  """
+  ✨ `_expr` server value variant of `categoryName` (✨ Generated from Field `Category`.`categoryName` of type `String!`)
+  """
+  categoryName_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'Category'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Category_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Category_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Category_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Category_Filter!]
+  """
+  ✨ Generated from Field `Category`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `Category`.`gigId` of type `UUID`
+  """
+  gigId: UUID_Filter
+  """
+  ✨ Generated from Field `Category`.`userId` of type `UUID`
+  """
+  userId: UUID_Filter
+  """
+  ✨ Generated from Field `Category`.`gig` of type `Gig`
+  """
+  gig: Gig_Filter
+  """
+  ✨ Generated from Field `Category`.`user` of type `User`
+  """
+  user: User_Filter
+  """
+  ✨ Generated from Field `Category`.`categoryName` of type `String!`
+  """
+  categoryName: String_Filter
+}
+"""
+✨ Generated first-row input type for table 'Category'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Category_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Category_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Category_Filter
+}
+"""
+✨ Generated key input type for table 'Category'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Category_Key {
+  """
+  ✨ Generated from Field `Category`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Category`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'Category'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Category_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Category_Filter
+}
+"""
+✨ Generated order input type for table 'Category'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Category_Order {
+  """
+  ✨ Generated from Field `Category`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Category`.`gigId` of type `UUID`
+  """
+  gigId: OrderDirection
+  """
+  ✨ Generated from Field `Category`.`userId` of type `UUID`
+  """
+  userId: OrderDirection
+  """
+  ✨ Generated from Field `Category`.`gig` of type `Gig`
+  """
+  gig: Gig_Order
+  """
+  ✨ Generated from Field `Category`.`user` of type `User`
+  """
+  user: User_Order
+  """
+  ✨ Generated from Field `Category`.`categoryName` of type `String!`
+  """
+  categoryName: OrderDirection
+}
+"""
+✨ Generated data input type for table 'Gig'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Gig_Data {
+  """
+  ✨ Generated from Field `Gig`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Gig`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Gig`.`ratingId` of type `UUID`
+  """
+  ratingId: UUID
+  """
+  ✨ `_expr` server value variant of `ratingId` (✨ Generated from Field `Gig`.`ratingId` of type `UUID`)
+  """
+  ratingId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Gig`.`userId` of type `UUID`
+  """
+  userId: UUID
+  """
+  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `Gig`.`userId` of type `UUID`)
+  """
+  userId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Gig`.`rating` of type `Rating`
+  """
+  rating: Rating_Key
+  """
+  ✨ Generated from Field `Gig`.`user` of type `User`
+  """
+  user: User_Key
+  """
+  ✨ Generated from Field `Gig`.`createdAt` of type `Timestamp`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `Gig`.`createdAt` of type `Timestamp`)
+  """
+  createdAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `Gig`.`createdAt` of type `Timestamp`)
+  """
+  createdAt_time: Timestamp_Relative
+  """
+  ✨ Generated from Field `Gig`.`description` of type `String!`
+  """
+  description: String
+  """
+  ✨ `_expr` server value variant of `description` (✨ Generated from Field `Gig`.`description` of type `String!`)
+  """
+  description_expr: String_Expr
+  """
+  ✨ Generated from Field `Gig`.`price` of type `Int`
+  """
+  price: Int
+  """
+  ✨ Generated from Field `Gig`.`status` of type `String!`
+  """
+  status: String
+  """
+  ✨ `_expr` server value variant of `status` (✨ Generated from Field `Gig`.`status` of type `String!`)
+  """
+  status_expr: String_Expr
+  """
+  ✨ Generated from Field `Gig`.`title` of type `String!`
+  """
+  title: String
+  """
+  ✨ `_expr` server value variant of `title` (✨ Generated from Field `Gig`.`title` of type `String!`)
+  """
+  title_expr: String_Expr
+  """
+  ✨ Generated from Field `Gig`.`updatedAt` of type `Timestamp`
+  """
+  updatedAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `updatedAt` (✨ Generated from Field `Gig`.`updatedAt` of type `Timestamp`)
+  """
+  updatedAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `updatedAt` (✨ Generated from Field `Gig`.`updatedAt` of type `Timestamp`)
+  """
+  updatedAt_time: Timestamp_Relative
+}
+"""
+✨ Generated filter input type for table 'Gig'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Gig_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Gig_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Gig_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Gig_Filter!]
+  """
+  ✨ Generated from Field `Gig`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `Gig`.`ratingId` of type `UUID`
+  """
+  ratingId: UUID_Filter
+  """
+  ✨ Generated from Field `Gig`.`userId` of type `UUID`
+  """
+  userId: UUID_Filter
+  """
+  ✨ Generated from Field `Gig`.`rating` of type `Rating`
+  """
+  rating: Rating_Filter
+  """
+  ✨ Generated from Field `Gig`.`user` of type `User`
+  """
+  user: User_Filter
+  """
+  ✨ Generated from Field `Gig`.`createdAt` of type `Timestamp`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `Gig`.`description` of type `String!`
+  """
+  description: String_Filter
+  """
+  ✨ Generated from Field `Gig`.`price` of type `Int`
+  """
+  price: Int_Filter
+  """
+  ✨ Generated from Field `Gig`.`status` of type `String!`
+  """
+  status: String_Filter
+  """
+  ✨ Generated from Field `Gig`.`title` of type `String!`
+  """
+  title: String_Filter
+  """
+  ✨ Generated from Field `Gig`.`updatedAt` of type `Timestamp`
+  """
+  updatedAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `Gig`.`Applications_on_gig` of type `[Application!]!`
+  """
+  Applications_on_gig: Application_ListFilter
+  """
+  ✨ Generated from Field `Gig`.`Categories_on_gig` of type `[Category!]!`
+  """
+  Categories_on_gig: Category_ListFilter
+  """
+  ✨ Generated from Field `Gig`.`Ratings_on_gig` of type `[Rating!]!`
+  """
+  Ratings_on_gig: Rating_ListFilter
+  """
+  ✨ Generated from Field `Gig`.`Transactions_on_gig` of type `[Transaction!]!`
+  """
+  Transactions_on_gig: Transaction_ListFilter
+  """
+  ✨ Generated from Field `Gig`.`users_via_Application` of type `[User!]!`
+  """
+  users_via_Application: User_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'Gig'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Gig_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Gig_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Gig_Filter
+}
+"""
+✨ Generated key input type for table 'Gig'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Gig_Key {
+  """
+  ✨ Generated from Field `Gig`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Gig`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'Gig'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Gig_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Gig_Filter
+}
+"""
+✨ Generated order input type for table 'Gig'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Gig_Order {
+  """
+  ✨ Generated from Field `Gig`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Gig`.`ratingId` of type `UUID`
+  """
+  ratingId: OrderDirection
+  """
+  ✨ Generated from Field `Gig`.`userId` of type `UUID`
+  """
+  userId: OrderDirection
+  """
+  ✨ Generated from Field `Gig`.`rating` of type `Rating`
+  """
+  rating: Rating_Order
+  """
+  ✨ Generated from Field `Gig`.`user` of type `User`
+  """
+  user: User_Order
+  """
+  ✨ Generated from Field `Gig`.`createdAt` of type `Timestamp`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `Gig`.`description` of type `String!`
+  """
+  description: OrderDirection
+  """
+  ✨ Generated from Field `Gig`.`price` of type `Int`
+  """
+  price: OrderDirection
+  """
+  ✨ Generated from Field `Gig`.`status` of type `String!`
+  """
+  status: OrderDirection
+  """
+  ✨ Generated from Field `Gig`.`title` of type `String!`
+  """
+  title: OrderDirection
+  """
+  ✨ Generated from Field `Gig`.`updatedAt` of type `Timestamp`
+  """
+  updatedAt: OrderDirection
+}
+"""
+✨ Generated data input type for table 'Language'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Language_Data {
+  """
+  ✨ Generated from Field `Language`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Language`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Language`.`userId` of type `UUID!`
+  """
+  userId: UUID
+  """
+  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `Language`.`userId` of type `UUID!`)
+  """
+  userId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Language`.`user` of type `User!`
+  """
+  user: User_Key
+  """
+  ✨ Generated from Field `Language`.`languageName` of type `String!`
+  """
+  languageName: String
+  """
+  ✨ `_expr` server value variant of `languageName` (✨ Generated from Field `Language`.`languageName` of type `String!`)
+  """
+  languageName_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'Language'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Language_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Language_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Language_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Language_Filter!]
+  """
+  ✨ Generated from Field `Language`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `Language`.`userId` of type `UUID!`
+  """
+  userId: UUID_Filter
+  """
+  ✨ Generated from Field `Language`.`user` of type `User!`
+  """
+  user: User_Filter
+  """
+  ✨ Generated from Field `Language`.`languageName` of type `String!`
+  """
+  languageName: String_Filter
+}
+"""
+✨ Generated first-row input type for table 'Language'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Language_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Language_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Language_Filter
+}
+"""
+✨ Generated key input type for table 'Language'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Language_Key {
+  """
+  ✨ Generated from Field `Language`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Language`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'Language'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Language_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Language_Filter
+}
+"""
+✨ Generated order input type for table 'Language'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Language_Order {
+  """
+  ✨ Generated from Field `Language`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Language`.`userId` of type `UUID!`
+  """
+  userId: OrderDirection
+  """
+  ✨ Generated from Field `Language`.`user` of type `User!`
+  """
+  user: User_Order
+  """
+  ✨ Generated from Field `Language`.`languageName` of type `String!`
+  """
+  languageName: OrderDirection
+}
+"""
+✨ Generated data input type for table 'Message'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Message_Data {
+  """
+  ✨ Generated from Field `Message`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Message`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Message`.`receiverId` of type `UUID!`
+  """
+  receiverId: UUID
+  """
+  ✨ `_expr` server value variant of `receiverId` (✨ Generated from Field `Message`.`receiverId` of type `UUID!`)
+  """
+  receiverId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Message`.`senderId` of type `UUID!`
+  """
+  senderId: UUID
+  """
+  ✨ `_expr` server value variant of `senderId` (✨ Generated from Field `Message`.`senderId` of type `UUID!`)
+  """
+  senderId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Message`.`receiver` of type `User!`
+  """
+  receiver: User_Key
+  """
+  ✨ Generated from Field `Message`.`sender` of type `User!`
+  """
+  sender: User_Key
+  """
+  ✨ Generated from Field `Message`.`createdAt` of type `Timestamp`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `Message`.`createdAt` of type `Timestamp`)
+  """
+  createdAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `Message`.`createdAt` of type `Timestamp`)
+  """
+  createdAt_time: Timestamp_Relative
+  """
+  ✨ Generated from Field `Message`.`textContent` of type `String`
+  """
+  textContent: String
+  """
+  ✨ `_expr` server value variant of `textContent` (✨ Generated from Field `Message`.`textContent` of type `String`)
+  """
+  textContent_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'Message'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Message_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Message_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Message_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Message_Filter!]
+  """
+  ✨ Generated from Field `Message`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `Message`.`receiverId` of type `UUID!`
+  """
+  receiverId: UUID_Filter
+  """
+  ✨ Generated from Field `Message`.`senderId` of type `UUID!`
+  """
+  senderId: UUID_Filter
+  """
+  ✨ Generated from Field `Message`.`receiver` of type `User!`
+  """
+  receiver: User_Filter
+  """
+  ✨ Generated from Field `Message`.`sender` of type `User!`
+  """
+  sender: User_Filter
+  """
+  ✨ Generated from Field `Message`.`createdAt` of type `Timestamp`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `Message`.`textContent` of type `String`
+  """
+  textContent: String_Filter
+}
+"""
+✨ Generated first-row input type for table 'Message'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Message_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Message_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Message_Filter
+}
+"""
+✨ Generated key input type for table 'Message'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Message_Key {
+  """
+  ✨ Generated from Field `Message`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Message`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'Message'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Message_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Message_Filter
+}
+"""
+✨ Generated order input type for table 'Message'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Message_Order {
+  """
+  ✨ Generated from Field `Message`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Message`.`receiverId` of type `UUID!`
+  """
+  receiverId: OrderDirection
+  """
+  ✨ Generated from Field `Message`.`senderId` of type `UUID!`
+  """
+  senderId: OrderDirection
+  """
+  ✨ Generated from Field `Message`.`receiver` of type `User!`
+  """
+  receiver: User_Order
+  """
+  ✨ Generated from Field `Message`.`sender` of type `User!`
+  """
+  sender: User_Order
+  """
+  ✨ Generated from Field `Message`.`createdAt` of type `Timestamp`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `Message`.`textContent` of type `String`
+  """
+  textContent: OrderDirection
+}
+"""
+✨ Generated data input type for table 'Rating'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Rating_Data {
+  """
+  ✨ Generated from Field `Rating`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Rating`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Rating`.`gigId` of type `UUID!`
+  """
+  gigId: UUID
+  """
+  ✨ `_expr` server value variant of `gigId` (✨ Generated from Field `Rating`.`gigId` of type `UUID!`)
+  """
+  gigId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Rating`.`userId` of type `UUID!`
+  """
+  userId: UUID
+  """
+  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `Rating`.`userId` of type `UUID!`)
+  """
+  userId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Rating`.`gig` of type `Gig!`
+  """
+  gig: Gig_Key
+  """
+  ✨ Generated from Field `Rating`.`user` of type `User!`
+  """
+  user: User_Key
+  """
+  ✨ Generated from Field `Rating`.`createdAt` of type `Timestamp`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `Rating`.`createdAt` of type `Timestamp`)
+  """
+  createdAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `Rating`.`createdAt` of type `Timestamp`)
+  """
+  createdAt_time: Timestamp_Relative
+  """
+  ✨ Generated from Field `Rating`.`ratingValue` of type `Int`
+  """
+  ratingValue: Int
+}
+"""
+✨ Generated filter input type for table 'Rating'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Rating_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Rating_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Rating_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Rating_Filter!]
+  """
+  ✨ Generated from Field `Rating`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `Rating`.`gigId` of type `UUID!`
+  """
+  gigId: UUID_Filter
+  """
+  ✨ Generated from Field `Rating`.`userId` of type `UUID!`
+  """
+  userId: UUID_Filter
+  """
+  ✨ Generated from Field `Rating`.`gig` of type `Gig!`
+  """
+  gig: Gig_Filter
+  """
+  ✨ Generated from Field `Rating`.`user` of type `User!`
+  """
+  user: User_Filter
+  """
+  ✨ Generated from Field `Rating`.`createdAt` of type `Timestamp`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `Rating`.`ratingValue` of type `Int`
+  """
+  ratingValue: Int_Filter
+  """
+  ✨ Generated from Field `Rating`.`Gigs_on_rating` of type `[Gig!]!`
+  """
+  Gigs_on_rating: Gig_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'Rating'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Rating_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Rating_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Rating_Filter
+}
+"""
+✨ Generated key input type for table 'Rating'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Rating_Key {
+  """
+  ✨ Generated from Field `Rating`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Rating`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'Rating'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Rating_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Rating_Filter
+}
+"""
+✨ Generated order input type for table 'Rating'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Rating_Order {
+  """
+  ✨ Generated from Field `Rating`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Rating`.`gigId` of type `UUID!`
+  """
+  gigId: OrderDirection
+  """
+  ✨ Generated from Field `Rating`.`userId` of type `UUID!`
+  """
+  userId: OrderDirection
+  """
+  ✨ Generated from Field `Rating`.`gig` of type `Gig!`
+  """
+  gig: Gig_Order
+  """
+  ✨ Generated from Field `Rating`.`user` of type `User!`
+  """
+  user: User_Order
+  """
+  ✨ Generated from Field `Rating`.`createdAt` of type `Timestamp`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `Rating`.`ratingValue` of type `Int`
+  """
+  ratingValue: OrderDirection
+}
+"""
+✨ Generated data input type for table 'Transaction'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Transaction_Data {
+  """
+  ✨ Generated from Field `Transaction`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Transaction`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Transaction`.`gigId` of type `UUID!`
+  """
+  gigId: UUID
+  """
+  ✨ `_expr` server value variant of `gigId` (✨ Generated from Field `Transaction`.`gigId` of type `UUID!`)
+  """
+  gigId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Transaction`.`receiverId` of type `UUID!`
+  """
+  receiverId: UUID
+  """
+  ✨ `_expr` server value variant of `receiverId` (✨ Generated from Field `Transaction`.`receiverId` of type `UUID!`)
+  """
+  receiverId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Transaction`.`senderId` of type `UUID!`
+  """
+  senderId: UUID
+  """
+  ✨ `_expr` server value variant of `senderId` (✨ Generated from Field `Transaction`.`senderId` of type `UUID!`)
+  """
+  senderId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Transaction`.`gig` of type `Gig!`
+  """
+  gig: Gig_Key
+  """
+  ✨ Generated from Field `Transaction`.`receiver` of type `User!`
+  """
+  receiver: User_Key
+  """
+  ✨ Generated from Field `Transaction`.`sender` of type `User!`
+  """
+  sender: User_Key
+  """
+  ✨ Generated from Field `Transaction`.`amount` of type `Int`
+  """
+  amount: Int
+  """
+  ✨ Generated from Field `Transaction`.`transactionDate` of type `Timestamp`
+  """
+  transactionDate: Timestamp
+  """
+  ✨ `_expr` server value variant of `transactionDate` (✨ Generated from Field `Transaction`.`transactionDate` of type `Timestamp`)
+  """
+  transactionDate_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `transactionDate` (✨ Generated from Field `Transaction`.`transactionDate` of type `Timestamp`)
+  """
+  transactionDate_time: Timestamp_Relative
+  """
+  ✨ Generated from Field `Transaction`.`transactionTime` of type `Timestamp`
+  """
+  transactionTime: Timestamp
+  """
+  ✨ `_expr` server value variant of `transactionTime` (✨ Generated from Field `Transaction`.`transactionTime` of type `Timestamp`)
+  """
+  transactionTime_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `transactionTime` (✨ Generated from Field `Transaction`.`transactionTime` of type `Timestamp`)
+  """
+  transactionTime_time: Timestamp_Relative
+}
+"""
+✨ Generated filter input type for table 'Transaction'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Transaction_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Transaction_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Transaction_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Transaction_Filter!]
+  """
+  ✨ Generated from Field `Transaction`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `Transaction`.`gigId` of type `UUID!`
+  """
+  gigId: UUID_Filter
+  """
+  ✨ Generated from Field `Transaction`.`receiverId` of type `UUID!`
+  """
+  receiverId: UUID_Filter
+  """
+  ✨ Generated from Field `Transaction`.`senderId` of type `UUID!`
+  """
+  senderId: UUID_Filter
+  """
+  ✨ Generated from Field `Transaction`.`gig` of type `Gig!`
+  """
+  gig: Gig_Filter
+  """
+  ✨ Generated from Field `Transaction`.`receiver` of type `User!`
+  """
+  receiver: User_Filter
+  """
+  ✨ Generated from Field `Transaction`.`sender` of type `User!`
+  """
+  sender: User_Filter
+  """
+  ✨ Generated from Field `Transaction`.`amount` of type `Int`
+  """
+  amount: Int_Filter
+  """
+  ✨ Generated from Field `Transaction`.`transactionDate` of type `Timestamp`
+  """
+  transactionDate: Timestamp_Filter
+  """
+  ✨ Generated from Field `Transaction`.`transactionTime` of type `Timestamp`
+  """
+  transactionTime: Timestamp_Filter
+}
+"""
+✨ Generated first-row input type for table 'Transaction'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Transaction_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Transaction_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Transaction_Filter
+}
+"""
+✨ Generated key input type for table 'Transaction'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Transaction_Key {
+  """
+  ✨ Generated from Field `Transaction`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Transaction`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'Transaction'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Transaction_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Transaction_Filter
+}
+"""
+✨ Generated order input type for table 'Transaction'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Transaction_Order {
+  """
+  ✨ Generated from Field `Transaction`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Transaction`.`gigId` of type `UUID!`
+  """
+  gigId: OrderDirection
+  """
+  ✨ Generated from Field `Transaction`.`receiverId` of type `UUID!`
+  """
+  receiverId: OrderDirection
+  """
+  ✨ Generated from Field `Transaction`.`senderId` of type `UUID!`
+  """
+  senderId: OrderDirection
+  """
+  ✨ Generated from Field `Transaction`.`gig` of type `Gig!`
+  """
+  gig: Gig_Order
+  """
+  ✨ Generated from Field `Transaction`.`receiver` of type `User!`
+  """
+  receiver: User_Order
+  """
+  ✨ Generated from Field `Transaction`.`sender` of type `User!`
+  """
+  sender: User_Order
+  """
+  ✨ Generated from Field `Transaction`.`amount` of type `Int`
+  """
+  amount: OrderDirection
+  """
+  ✨ Generated from Field `Transaction`.`transactionDate` of type `Timestamp`
+  """
+  transactionDate: OrderDirection
+  """
+  ✨ Generated from Field `Transaction`.`transactionTime` of type `Timestamp`
+  """
+  transactionTime: OrderDirection
 }
 """
 ✨ Generated data input type for table 'User'. It includes all necessary fields for creating or upserting rows into table.
 """
 input User_Data {
   """
-  ✨ Generated from Field `User`.`id` of type `String!`
+  ✨ Generated from Field `User`.`id` of type `UUID!`
   """
-  id: String
+  id: UUID
   """
-  ✨ `_expr` server value variant of `id` (✨ Generated from Field `User`.`id` of type `String!`)
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `User`.`id` of type `UUID!`)
   """
-  id_expr: String_Expr
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `User`.`bio` of type `String!`
+  """
+  bio: String
+  """
+  ✨ `_expr` server value variant of `bio` (✨ Generated from Field `User`.`bio` of type `String!`)
+  """
+  bio_expr: String_Expr
   """
   ✨ Generated from Field `User`.`name` of type `String!`
   """
@@ -554,9 +1386,13 @@ input User_Filter {
   """
   _or: [User_Filter!]
   """
-  ✨ Generated from Field `User`.`id` of type `String!`
+  ✨ Generated from Field `User`.`id` of type `UUID!`
   """
-  id: String_Filter
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `User`.`bio` of type `String!`
+  """
+  bio: String_Filter
   """
   ✨ Generated from Field `User`.`name` of type `String!`
   """
@@ -566,13 +1402,45 @@ input User_Filter {
   """
   username: String_Filter
   """
-  ✨ Generated from Field `User`.`reviews_on_user` of type `[Review!]!`
+  ✨ Generated from Field `User`.`Applications_on_user` of type `[Application!]!`
   """
-  reviews_on_user: Review_ListFilter
+  Applications_on_user: Application_ListFilter
   """
-  ✨ Generated from Field `User`.`movies_via_Review` of type `[Movie!]!`
+  ✨ Generated from Field `User`.`Categories_on_user` of type `[Category!]!`
   """
-  movies_via_Review: Movie_ListFilter
+  Categories_on_user: Category_ListFilter
+  """
+  ✨ Generated from Field `User`.`Gigs_on_user` of type `[Gig!]!`
+  """
+  Gigs_on_user: Gig_ListFilter
+  """
+  ✨ Generated from Field `User`.`Languages_on_user` of type `[Language!]!`
+  """
+  Languages_on_user: Language_ListFilter
+  """
+  ✨ Generated from Field `User`.`Messages_on_receiver` of type `[Message!]!`
+  """
+  Messages_on_receiver: Message_ListFilter
+  """
+  ✨ Generated from Field `User`.`Messages_on_sender` of type `[Message!]!`
+  """
+  Messages_on_sender: Message_ListFilter
+  """
+  ✨ Generated from Field `User`.`Ratings_on_user` of type `[Rating!]!`
+  """
+  Ratings_on_user: Rating_ListFilter
+  """
+  ✨ Generated from Field `User`.`Transactions_on_receiver` of type `[Transaction!]!`
+  """
+  Transactions_on_receiver: Transaction_ListFilter
+  """
+  ✨ Generated from Field `User`.`Transactions_on_sender` of type `[Transaction!]!`
+  """
+  Transactions_on_sender: Transaction_ListFilter
+  """
+  ✨ Generated from Field `User`.`Gigs_via_Application` of type `[Gig!]!`
+  """
+  Gigs_via_Application: Gig_ListFilter
 }
 """
 ✨ Generated first-row input type for table 'User'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
@@ -592,13 +1460,13 @@ input User_FirstRow {
 """
 input User_Key {
   """
-  ✨ Generated from Field `User`.`id` of type `String!`
+  ✨ Generated from Field `User`.`id` of type `UUID!`
   """
-  id: String
+  id: UUID
   """
-  ✨ `_expr` server value variant of `id` (✨ Generated from Field `User`.`id` of type `String!`)
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `User`.`id` of type `UUID!`)
   """
-  id_expr: String_Expr
+  id_expr: UUID_Expr
 }
 """
 ✨ Generated list filter input type for table 'User'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
@@ -618,9 +1486,13 @@ input User_ListFilter {
 """
 input User_Order {
   """
-  ✨ Generated from Field `User`.`id` of type `String!`
+  ✨ Generated from Field `User`.`id` of type `UUID!`
   """
   id: OrderDirection
+  """
+  ✨ Generated from Field `User`.`bio` of type `String!`
+  """
+  bio: OrderDirection
   """
   ✨ Generated from Field `User`.`name` of type `String!`
   """

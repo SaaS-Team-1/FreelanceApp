@@ -50,7 +50,10 @@ type Transaction
 }
 
 type Message 
-  @table{
+  @table(
+    name: "Messages", 
+    singular: "Message", 
+    plural: "Messages"){
   id: UUID! @col(name: "id") @default(expr: "uuidV4()")
   sender: User! @ref
   receiver: User! @ref
@@ -59,7 +62,10 @@ type Message
 }
 
 type Category 
-  @table{
+  @table(
+    name: "Categories", 
+    singular: "Category", 
+    plural: "Categories"){
   id: UUID! @col(name: "id") @default(expr: "uuidV4()")
   categoryName: String!
   gig: Gig @ref 

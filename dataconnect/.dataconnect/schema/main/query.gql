@@ -1,8 +1,22 @@
 extend type Query {
   """
-  ✨ Look up a single `Movie` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  ✨ Look up a single `Application` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
   """
-  movie(
+  Application(
+    """
+    The key used to identify the object.
+    """
+    key: Application_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Application_FirstRow
+  ): Application @fdc_generated(from: "Application", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Category` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  Category(
     """
     The unique ID of the object.
     """
@@ -11,17 +25,17 @@ extend type Query {
     """
     The key used to identify the object.
     """
-    key: Movie_Key
+    key: Category_Key
 
     """
     Fetch the first row based on the filters and ordering.
     """
-    first: Movie_FirstRow
-  ): Movie @fdc_generated(from: "Movie", purpose: QUERY_SINGLE)
+    first: Category_FirstRow
+  ): Category @fdc_generated(from: "Category", purpose: QUERY_SINGLE)
   """
-  ✨ Look up a single `MovieMetadata` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  ✨ Look up a single `Gig` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
   """
-  movieMetadata(
+  Gig(
     """
     The unique ID of the object.
     """
@@ -30,27 +44,89 @@ extend type Query {
     """
     The key used to identify the object.
     """
-    key: MovieMetadata_Key
+    key: Gig_Key
 
     """
     Fetch the first row based on the filters and ordering.
     """
-    first: MovieMetadata_FirstRow
-  ): MovieMetadata @fdc_generated(from: "MovieMetadata", purpose: QUERY_SINGLE)
+    first: Gig_FirstRow
+  ): Gig @fdc_generated(from: "Gig", purpose: QUERY_SINGLE)
   """
-  ✨ Look up a single `Review` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  ✨ Look up a single `Language` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
   """
-  review(
+  Language(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
     """
     The key used to identify the object.
     """
-    key: Review_Key
+    key: Language_Key
 
     """
     Fetch the first row based on the filters and ordering.
     """
-    first: Review_FirstRow
-  ): Review @fdc_generated(from: "Review", purpose: QUERY_SINGLE)
+    first: Language_FirstRow
+  ): Language @fdc_generated(from: "Language", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Message` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  Message(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Message_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Message_FirstRow
+  ): Message @fdc_generated(from: "Message", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Rating` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  Rating(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Rating_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Rating_FirstRow
+  ): Rating @fdc_generated(from: "Rating", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Transaction` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  Transaction(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Transaction_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Transaction_FirstRow
+  ): Transaction @fdc_generated(from: "Transaction", purpose: QUERY_SINGLE)
   """
   ✨ Look up a single `User` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
   """
@@ -58,12 +134,7 @@ extend type Query {
     """
     The unique ID of the object.
     """
-    id: String
-
-    """
-    ✨ `_expr` server value variant of `id` (The unique ID of the object.)
-    """
-    id_expr: String_Expr
+    id: UUID
 
     """
     The key used to identify the object.
@@ -76,18 +147,18 @@ extend type Query {
     first: User_FirstRow
   ): User @fdc_generated(from: "User", purpose: QUERY_SINGLE)
   """
-  ✨ List `Movie` objects in the table, optionally filtered by `where` conditions.
+  ✨ List `Application` objects in the table, optionally filtered by `where` conditions.
   """
-  movies(
+  Applications(
     """
     Filter condition to narrow down the query results.
     """
-    where: Movie_Filter
+    where: Application_Filter
 
     """
     Order the query results by specific fields.
     """
-    orderBy: [Movie_Order!]
+    orderBy: [Application_Order!]
 
     """
     Number of rows to skip before starting to return the results.
@@ -98,20 +169,20 @@ extend type Query {
     Maximum number of rows to return (defaults to 100 rows).
     """
     limit: Int = 100
-  ): [Movie!]! @fdc_generated(from: "Movie", purpose: QUERY_MULTIPLE)
+  ): [Application!]! @fdc_generated(from: "Application", purpose: QUERY_MULTIPLE)
   """
-  ✨ List `MovieMetadata` objects in the table, optionally filtered by `where` conditions.
+  ✨ List `Category` objects in the table, optionally filtered by `where` conditions.
   """
-  movieMetadatas(
+  Categories(
     """
     Filter condition to narrow down the query results.
     """
-    where: MovieMetadata_Filter
+    where: Category_Filter
 
     """
     Order the query results by specific fields.
     """
-    orderBy: [MovieMetadata_Order!]
+    orderBy: [Category_Order!]
 
     """
     Number of rows to skip before starting to return the results.
@@ -122,20 +193,20 @@ extend type Query {
     Maximum number of rows to return (defaults to 100 rows).
     """
     limit: Int = 100
-  ): [MovieMetadata!]! @fdc_generated(from: "MovieMetadata", purpose: QUERY_MULTIPLE)
+  ): [Category!]! @fdc_generated(from: "Category", purpose: QUERY_MULTIPLE)
   """
-  ✨ List `Review` objects in the table, optionally filtered by `where` conditions.
+  ✨ List `Gig` objects in the table, optionally filtered by `where` conditions.
   """
-  reviews(
+  Gigs(
     """
     Filter condition to narrow down the query results.
     """
-    where: Review_Filter
+    where: Gig_Filter
 
     """
     Order the query results by specific fields.
     """
-    orderBy: [Review_Order!]
+    orderBy: [Gig_Order!]
 
     """
     Number of rows to skip before starting to return the results.
@@ -146,7 +217,103 @@ extend type Query {
     Maximum number of rows to return (defaults to 100 rows).
     """
     limit: Int = 100
-  ): [Review!]! @fdc_generated(from: "Review", purpose: QUERY_MULTIPLE)
+  ): [Gig!]! @fdc_generated(from: "Gig", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Language` objects in the table, optionally filtered by `where` conditions.
+  """
+  Languages(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Language_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Language_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+  ): [Language!]! @fdc_generated(from: "Language", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Message` objects in the table, optionally filtered by `where` conditions.
+  """
+  Messages(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Message_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Message_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+  ): [Message!]! @fdc_generated(from: "Message", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Rating` objects in the table, optionally filtered by `where` conditions.
+  """
+  Ratings(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Rating_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Rating_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+  ): [Rating!]! @fdc_generated(from: "Rating", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Transaction` objects in the table, optionally filtered by `where` conditions.
+  """
+  Transactions(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Transaction_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Transaction_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+  ): [Transaction!]! @fdc_generated(from: "Transaction", purpose: QUERY_MULTIPLE)
   """
   ✨ List `User` objects in the table, optionally filtered by `where` conditions.
   """

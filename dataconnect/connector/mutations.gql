@@ -10,16 +10,42 @@ mutation CreateUser(
   })
 }
 
-# # Create a new Language
-# mutation createLanguage(
-#   $languageName: String!
-#   $userId: UUID!
-#   ){
-#   Language_insert(data: {
-#     languageName: $languageName
-#     user: {id: $userId}
-#     )}
-# }
+mutation InsertManyUsers{
+  user_insertMany(data: [
+    {username: "testuser1", 
+    name: "Test User1", 
+    bio: "test user 1 bio."
+    },
+    {
+    username: "testuser2", 
+    name: "Test User2", 
+    bio: "test user 2 bio."
+    }, 
+    {
+    username: "testuser3", 
+    name: "Test User3", 
+    bio: "test user 3 bio."
+    }]
+
+  )
+}
+
+mutation DeleteUser($userId: UUID!) {
+  user_delete(id: $userId)
+}
+
+# Create a new Language
+mutation createLanguage(
+  $languageName: String!
+  $userId: UUID!
+  ){
+  Language_insert(data: {
+    languageName: $languageName
+    user: {id: $userId}
+  })
+}
+
+
 
 # Create a new Gig
 mutation CreateGig(
@@ -38,8 +64,9 @@ mutation CreateGig(
   })
 }
 
-
-
+mutation DeleteGig($gigId: UUID!) {
+  Gig_delete(id: $gigId)
+}
 
 # Create a new Transaction
 mutation createTransaction(
@@ -56,30 +83,42 @@ mutation createTransaction(
   })
 }
 
+mutation DeleteTransaction($transactionId: UUID!) {
+  Transaction_delete(id: $transactionId)
+}
+
 # Create a new Message
 mutation createMessage(
   $senderId: UUID!
   $receiverId: UUID!
   $textContent: String!
   ){
-  message_insert(data: {
+  Message_insert(data: {
     sender: {id: $senderId}
     receiver: {id: $receiverId}
     textContent: $textContent
     })
 }
 
+# mutation DeleteMessage($messageId: UUID!) {
+#   message_delete(id: $messageId)
+# }
+
 mutation createCategory(
   $categoryName: String!
   $gigId: UUID
   $userId: UUID
   ){
-  category_insert(data:{
+  Category_insert(data:{
     categoryName: $categoryName
     gig: {id: $gigId}
     user: {id: $userId}
     })
 }
+
+# mutation DeleteCategory($categoryId: UUID!) {
+#   category_delete(id: $categoryId)
+# }
 
 # Create a new Rating
 mutation createRating(
@@ -94,6 +133,10 @@ mutation createRating(
     })
 }
 
+mutation DeleteRating($ratingId: UUID!) {
+  Rating_delete(id: $ratingId)
+}
+
 # Create a new Application
 mutation creatingApplicatipon(
   $userId: UUID!
@@ -106,6 +149,9 @@ mutation creatingApplicatipon(
     status: $status})
 }
 
+# mutation DeleteApplication($applicationId: UUID!) {
+#   Application_delete(id: $applicationId)
+# }
 
 # # Create a movie based on user input
 # mutation CreateMovie(

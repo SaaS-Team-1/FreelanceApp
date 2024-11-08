@@ -1,20 +1,70 @@
-extend type MovieMetadata {
+extend type Application {
   """
-  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  ✨ Implicit foreign key field based on `Application`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
   """
-  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "MovieMetadata", purpose: IMPLICIT_KEY_FIELD)
+  userId: UUID! @fdc_generated(from: "Application.user", purpose: IMPLICIT_REF_FIELD)
   """
-  ✨ Implicit foreign key field based on `MovieMetadata`.`movie`. It must match the value of `Movie`.`id`. See `@ref` for how to customize it.
+  ✨ Implicit foreign key field based on `Application`.`gig`. It must match the value of `Gig`.`id`. See `@ref` for how to customize it.
   """
-  movieId: UUID! @fdc_generated(from: "MovieMetadata.movie", purpose: IMPLICIT_REF_FIELD)
+  gigId: UUID! @fdc_generated(from: "Application.gig", purpose: IMPLICIT_REF_FIELD)
 }
-extend type Review {
+extend type Category {
   """
-  ✨ Implicit foreign key field based on `Review`.`movie`. It must match the value of `Movie`.`id`. See `@ref` for how to customize it.
+  ✨ Implicit foreign key field based on `Category`.`gig`. It must match the value of `Gig`.`id`. See `@ref` for how to customize it.
   """
-  movieId: UUID! @fdc_generated(from: "Review.movie", purpose: IMPLICIT_REF_FIELD)
+  gigId: UUID @fdc_generated(from: "Category.gig", purpose: IMPLICIT_REF_FIELD)
   """
-  ✨ Implicit foreign key field based on `Review`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  ✨ Implicit foreign key field based on `Category`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
   """
-  userId: String! @fdc_generated(from: "Review.user", purpose: IMPLICIT_REF_FIELD)
+  userId: UUID @fdc_generated(from: "Category.user", purpose: IMPLICIT_REF_FIELD)
+}
+extend type Gig {
+  """
+  ✨ Implicit foreign key field based on `Gig`.`rating`. It must match the value of `Rating`.`id`. See `@ref` for how to customize it.
+  """
+  ratingId: UUID @fdc_generated(from: "Gig.rating", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Gig`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  userId: UUID @fdc_generated(from: "Gig.user", purpose: IMPLICIT_REF_FIELD)
+}
+extend type Language {
+  """
+  ✨ Implicit foreign key field based on `Language`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  userId: UUID! @fdc_generated(from: "Language.user", purpose: IMPLICIT_REF_FIELD)
+}
+extend type Message {
+  """
+  ✨ Implicit foreign key field based on `Message`.`receiver`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  receiverId: UUID! @fdc_generated(from: "Message.receiver", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Message`.`sender`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  senderId: UUID! @fdc_generated(from: "Message.sender", purpose: IMPLICIT_REF_FIELD)
+}
+extend type Rating {
+  """
+  ✨ Implicit foreign key field based on `Rating`.`gig`. It must match the value of `Gig`.`id`. See `@ref` for how to customize it.
+  """
+  gigId: UUID! @fdc_generated(from: "Rating.gig", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Rating`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  userId: UUID! @fdc_generated(from: "Rating.user", purpose: IMPLICIT_REF_FIELD)
+}
+extend type Transaction {
+  """
+  ✨ Implicit foreign key field based on `Transaction`.`gig`. It must match the value of `Gig`.`id`. See `@ref` for how to customize it.
+  """
+  gigId: UUID! @fdc_generated(from: "Transaction.gig", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Transaction`.`receiver`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  receiverId: UUID! @fdc_generated(from: "Transaction.receiver", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Transaction`.`sender`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  senderId: UUID! @fdc_generated(from: "Transaction.sender", purpose: IMPLICIT_REF_FIELD)
 }
