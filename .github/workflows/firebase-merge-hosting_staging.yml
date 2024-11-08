@@ -39,12 +39,12 @@ jobs:
     needs: test_frontend
 
     steps:
+      - uses: actions/checkout@v4
+
       - name: "Create env file"
         run: |
-          echo "${{ secrets.FIREBASE_HOSTING_STAGING_TOKENS }}" > .env
+          echo '${{ secrets.FIREBASE_HOSTING_STAGING_TOKENS }}' | sed 's/\\n/\n/g' > .env
           cat .env
-
-      - uses: actions/checkout@v4
 
       - run: npm ci
 
