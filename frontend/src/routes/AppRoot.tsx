@@ -12,7 +12,8 @@ import {
 } from "@/utils/reactfire";
 import { Database } from "firebase/database";
 import { Firestore } from "firebase/firestore";
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
+import { AuthWrapper } from "@/utils/firebase/auth";
 
 // Separate component to handle Firebase initialization
 function FirebaseInitializer({ children }: { children: React.ReactNode }) {
@@ -43,10 +44,12 @@ export default function AppRoot() {
   }
 
   return (
-    <Suspense fallback={<Loading />}>
-      <FirebaseInitializer>
-        <Outlet />
-      </FirebaseInitializer>
-    </Suspense>
+    <FirebaseInitializer>
+      <Suspense fallback={<Loading />}>
+        <AuthWrapper signedIn fallback={<Navigate to={"/login"} />}>
+          <Outlet />
+        </AuthWrapper>
+      </Suspense>
+    </FirebaseInitializer>
   );
 }
