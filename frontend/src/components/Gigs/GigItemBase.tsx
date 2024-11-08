@@ -1,9 +1,9 @@
-// src/components/Gigs/MyPostedGigItemBase.tsx
+// src/components/Gigs/GigItemBase.tsxGigItemBase
 import React from "react";
 import Label from "../Common/Label"; // Custom Label
 import UserProfilePicture from "../Avatar/UserProfilePicture"; // UserProfilePicture component
 
-export type MyPostedGigItemBaseProps = {
+export type GigItemBaseProps = {
   title: string;
   dateRange: string;
   category: string;
@@ -14,7 +14,7 @@ export type MyPostedGigItemBaseProps = {
   isCompressed?: boolean; // Flag to toggle between views
 };
 
-const MyPostedGigItemBase: React.FC<MyPostedGigItemBaseProps> = ({
+const GigItemBase: React.FC<GigItemBaseProps> = ({
   title,
   dateRange,
   category,
@@ -63,4 +63,4 @@ const MyPostedGigItemBase: React.FC<MyPostedGigItemBaseProps> = ({
   );
 };
 
-export default MyPostedGigItemBase;
+export default GigItemBase;

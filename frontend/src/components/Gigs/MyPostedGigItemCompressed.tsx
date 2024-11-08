@@ -1,9 +1,9 @@
 // src/components/Gigs/MyPostedGigItemCompressed.tsx
 import React from "react";
-import MyPostedGigItemBase, { MyPostedGigItemBaseProps } from "./MyPostedGigItemBase"; // Import the type
+import GigItemBase, { GigItemBaseProps } from "./GigItemBase"; // Import the type
 
-const MyPostedGigItemCompressed: React.FC<MyPostedGigItemBaseProps> = (props) => {
-  return <MyPostedGigItemBase {...props} isCompressed={true} />;
+const MyPostedGigItemCompressed: React.FC<GigItemBaseProps> = (props) => {
+  return <GigItemBase {...props} isCompressed={true} />;
 };
 
 export default MyPostedGigItemCompressed;

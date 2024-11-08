@@ -1,6 +1,7 @@
 import { SearchBar } from "@/components/Common/SearchBar";
 import NotificationList from "@/components/Notifications/NotificationsList";
 import MyPostedGigListCompressed from "@/components/Gigs/MyPostedGigListCompressed";
+import PostedGigListHome from "@/components/Gigs/PostedGigListHome";
 
 export default function OverviewView() {
   const notifications = [
@@ -81,6 +82,7 @@ export default function OverviewView() {
                 Machine Learning
               </button>
             </div>
+            <div className = "p-10"><PostedGigListHome /></div>
           </div>
 
           <div className="flex w-120 flex-col space-y-6">
@@ -94,14 +96,6 @@ export default function OverviewView() {
               + Upload new gig
             </button>
           </div>
-        </div>
-
-        {/* Main Content Section */}
-        <div className="flex space-x-6">
-          {/* Main Content */}
-          <div className="flex-1">{/* Add gig listing here if needed */}</div>
-
-          {/* Right Sidebar with Posted Gigs and Upload Button */}
         </div>
 
         <div className="pb-10"></div>
