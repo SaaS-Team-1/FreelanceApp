@@ -57,7 +57,9 @@ export default function AppRoot() {
                 profilePicture: "",
               }}
             />
-            <Outlet />
+            <div className="flex min-h-[105vh] w-full bg-slate-600">
+              <Outlet />
+            </div>
           </div>
         </Suspense>
       </AuthWrapper>
