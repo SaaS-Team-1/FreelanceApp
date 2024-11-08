@@ -65,7 +65,7 @@ export default function Root() {
     <main className="flex min-h-screen items-center justify-center gap-2 dark:bg-gray-800">
       <h1 className="text-2xl dark:text-white">Flowbite React + Vite </h1>
       <DarkThemeToggle />
-      
+      {hello}
       {/* The following codes were added just to preview the components */}
       <AddButton />
       <FilterButton />
@@ -73,7 +73,7 @@ export default function Root() {
       {/* <Avatar /> */}
       {/* <MyPostedGigList></MyPostedGigList> */}
       {/* <Label text="Hello World" /> */}
-      {hello}
+      
       <div className="flex justify-center items-center min-h-screen bg-gray-900">
         <NotificationList notifications={notificationsData} />
       </div>
