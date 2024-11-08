@@ -31,15 +31,23 @@ jobs:
           working-directory: frontend/
           start: firebase --project=demo-saas-team-1 emulators:start
           wait-on-timeout: 120
-          wait-on: 'http://localhost:8081'
+          wait-on: "http://localhost:8081"
 
   deploy-hosting:
     name: Deploy hosting
     runs-on: ubuntu-latest
     needs: test_frontend
+
     steps:
+      - name: "Create env file"
+        run: |
+          echo "${{ secrets.FIREBASE_HOSTING_STAGING_TOKENS }}" > .env
+          cat .env
+
       - uses: actions/checkout@v4
+
       - run: npm ci
+
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
