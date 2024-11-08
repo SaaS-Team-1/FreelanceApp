@@ -7,7 +7,7 @@ const NotificationList = ({ notifications }) => {
       {notifications.map((notification, index) => (
         <NotificationItem
           key={index}
-          avatarSrc={notification.avatarSrc}
+          user={notification.user}
           text={notification.text}
           time={notification.time}
           count={notification.count}
