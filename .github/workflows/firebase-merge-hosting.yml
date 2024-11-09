@@ -16,22 +16,22 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20.17.0"
-          cache: 'npm'
+          cache: "npm"
           cache-dependency-path: |
             functions/package-lock.json
             frontend/package-lock.json
             package-lock.json
-      
+
       - name: Build dependencies
         run: npm install -g firebase-tools && cd functions && npm ci && npm run build && firebase experiments:enable webframeworks
-        
+
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
           working-directory: frontend/
           start: firebase --project=demo-saas-team-1 emulators:start
           wait-on-timeout: 120
-          wait-on: 'http://localhost:8081'
+          wait-on: "http://localhost:8081"
 
   deploy-hosting:
     name: Deploy hosting
@@ -39,6 +39,12 @@ jobs:
     needs: test_rules
     steps:
       - uses: actions/checkout@v4
+
+      - name: "Create env file"
+        run: |
+          echo '${{ secrets.FIREBASE_HOSTING_PROD_TOKENS }}' | sed 's/\\n/\n/g' > .env
+          cat .env
+
       - run: npm ci
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:

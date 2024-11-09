@@ -23,14 +23,8 @@
     "hosting": {
       "port": 8081
     },
-    "pubsub": {
-      "port": 8085
-    },
     "storage": {
       "port": 9199
-    },
-    "dataconnect": {
-      "port": 9399
     },
     "ui": {
       "enabled": true
@@ -69,8 +63,5 @@
         "npm --prefix \"$RESOURCE_DIR\" run build"
       ]
     }
-  ],
-  "dataconnect": {
-    "source": "dataconnect"
-  }
+  ]
 }
