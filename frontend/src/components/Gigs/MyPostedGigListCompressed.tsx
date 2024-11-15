@@ -35,8 +35,8 @@ const MyPostedGigListCompressed: React.FC = () => {
   ];
 
   return (
-    <div className="scrollbar h-96 max-w-sm overflow-y-scroll rounded-xl border border-gray-700 bg-gray-900 p-4 shadow-lg">
-      <h2 className="header-bg-extension sticky top-0 z-10 bg-gray-900 p-2 text-center text-lg text-white">
+    <div className="scrollbar h-96 max-w-sm overflow-y-scroll rounded-xl border border-gray-700 bg-gray-800 p-4 shadow-lg">
+      <h2 className="header-bg-extension sticky top-0 z-10 bg-gray-800 p-2 text-center text-lg text-white">
         My Posted Gigs
       </h2>
       {gigs.map((gig, index) => (

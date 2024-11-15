@@ -46,7 +46,7 @@ export default function SettingsView() {
       <div className="w-full max-w-3xl p-6">
         {/* Header */}
         <div className="mb-4 text-center">
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+          <h2 className="text-2xl font-semibold text-white">
             Settings
           </h2>
         </div>
