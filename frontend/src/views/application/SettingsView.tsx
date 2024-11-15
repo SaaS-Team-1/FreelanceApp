@@ -20,8 +20,8 @@ export default function SettingsView() {
   ];
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-gray-50 dark:bg-gray-900">
-      <div className="w-full max-w-xl p-6">
+    <div className="flex min-h-screen w-full items-center justify-center">
+      <div className="w-full max-w-3xl p-6">
         {/* Header */}
         <div className="mb-4 text-center">
           <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
@@ -30,7 +30,7 @@ export default function SettingsView() {
         </div>
 
         {/* Setting Groups */}
-        <div className="space-y-6">
+        <div className="space-y-6 max-w-full">
           <SettingGroup title="Account" settings={accountSettings} />
           <SettingGroup title="Privacy" settings={privacySettings} />
           <SettingGroup title="App" settings={appSettings} />
