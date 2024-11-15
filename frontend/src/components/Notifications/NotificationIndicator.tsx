@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { NotificationBaseProps } from './NotificationItem';
 
-const NotificationIndicator = ({ shape = 'circle', count = 0 }) => {
+
+const NotificationIndicator = ({ shape = 'circle', count = 0 }: NotificationBaseProps) => {
     {/* const [count, setCount] = useState(2); // Set an initial number here */}
   
     // Function to handle count changes

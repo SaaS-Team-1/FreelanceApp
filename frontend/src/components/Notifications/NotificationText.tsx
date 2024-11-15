@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import { NotificationItemProps } from './NotificationItem';
 
-const NotificationText = ({ text, time }) => {
+const NotificationText = ({ text, time }: Omit <NotificationItemProps, "user" | "shape" | "count">) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Define the maximum length for the text before truncation

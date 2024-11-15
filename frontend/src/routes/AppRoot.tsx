@@ -51,10 +51,18 @@ export default function AppRoot() {
           <div className="flex w-screen">
             <Sidebar
               user={{
-                name: "Amina Agile",
-                title: "Computer Science Student",
-                location: "Leuven City",
-                profilePicture: "",
+                email: "amina.agile@example.com",
+                displayName: "Amina Agile",
+                profile: {
+                  bio: "Computer Science Student in Leuven City.",
+                  credits: 100,
+                  picture: "", // Optional: Can remain blank or include a valid URL
+                  location: "Leuven",
+                },
+                completedGigs: ["gig1", "gig2"],
+                activeGigs: ["gig3"],
+                listedGigs: ["gig4", "gig5"],
+                averageRating: 4.5,
               }}
             />
             <div className="flex min-h-[105vh] w-full bg-slate-600">

@@ -6,6 +6,8 @@ export interface User {
   profile: {
     bio: string;
     credits: number;
+    picture?: string;
+    location: string;
   };
   completedGigs: string[];
   activeGigs: string[];

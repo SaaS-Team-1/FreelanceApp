@@ -1,7 +1,11 @@
 import React from "react";
-import NotificationItem from "./NotificationItem";
+import NotificationItem, { NotificationItemProps } from "./NotificationItem";
 
-const NotificationList = ({ notifications }) => {
+interface NotificationListProps {
+  notifications: NotificationItemProps[];
+}
+
+const NotificationList = ({ notifications }: NotificationListProps) => {
   return (
     <div className="scrollbar h-96 max-w-sm overflow-y-scroll rounded-xl border border-gray-700 bg-gray-800 p-4 shadow-lg">
       <h2 className="sticky top-0 z-10 mb-4 rounded-t-xl bg-gray-800 p-2 text-center text-lg text-white header-bg-extension">

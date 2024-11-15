@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import SettingGroup from '@/components/Settings/SettingGroup';
+import DeleteAccount from '@/components/Settings/DeleteAccount'; // Import DeleteAccount
+import { SettingItemProps } from '@/components/Settings/SettingItem';
 
 export default function SettingsView() {
   // State for toggle switches
@@ -9,10 +11,14 @@ export default function SettingsView() {
   const [gigNotificationsEnabled, setGigNotificationsEnabled] = useState(true);
 
   // Define the settings for each group
-  const accountSettings = [
+  const accountSettings: SettingItemProps[] = [
     { name: 'Email', subtitle: 'aymericbaume@gmail.com', type: 'none' },
     { name: 'Password', subtitle: 'Update your password', type: 'arrow' },
-    { name: 'Delete Account', subtitle: 'Permanently delete your account', type: 'arrow' },
+    {
+      name: 'Delete Account',
+      subtitle: 'Permanently delete your account',
+      type: 'custom', // Custom type to render a custom component
+    },
   ];
 
   const privacySettings = [
@@ -64,6 +70,7 @@ export default function SettingsView() {
           <SettingGroup title="Account" settings={accountSettings} />
           <SettingGroup title="Privacy" settings={privacySettings} />
           <SettingGroup title="App" settings={appSettings} />
+          <DeleteAccount />
         </div>
       </div>
     </div>

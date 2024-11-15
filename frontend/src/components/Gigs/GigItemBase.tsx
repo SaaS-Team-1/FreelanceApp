@@ -1,40 +1,25 @@
-// src/components/Gigs/GigItemBase.tsxGigItemBase
 import React from "react";
 import Label from "../Common/Label"; // Custom Label
 import UserProfilePicture from "../Avatar/UserProfilePicture"; // UserProfilePicture component
+import { Gig, User } from "@/utils/database/schema"; // Import updated interfaces
 
 export type GigItemBaseProps = {
-  title: string;
-  dateRange: string;
-  category: string;
-  avatarUrl: string;
-  description?: string;
-  location?: string;
-  price?: string;
+  gig: Gig; // Use the Gig interface
+  lister: User; // Include the user who listed the gig
   isCompressed?: boolean; // Flag to toggle between views
 };
 
-const GigItemBase: React.FC<GigItemBaseProps> = ({
-  title,
-  dateRange,
-  category,
-  avatarUrl,
-  description,
-  location,
-  price,
-  isCompressed = false,
-}) => {
+const GigItemBase: React.FC<GigItemBaseProps> = ({ gig, lister, isCompressed = false }) => {
+  const { title, description, category, price, dueDate, status } = gig;
+
   return (
     <div
       className={`p-3 ${isCompressed ? "bg-transparent" : "bg-gray-800"} rounded-lg flex items-start space-x-3`}
     >
-      {/* Smaller Profile Picture for a more compact look */}
+      {/* User Profile Picture */}
       <UserProfilePicture
-        user={{
-          profilePicture: avatarUrl || "",
-          name: title, // Use title for fallback initials if no picture
-        }}
-        size="medium" // Use smaller size
+        user={lister}
+        size="medium"
         rounded={true}
       />
 
@@ -42,9 +27,11 @@ const GigItemBase: React.FC<GigItemBaseProps> = ({
         <div className="flex items-start justify-between">
           <div className="flex flex-col text-left">
             <h2 className="text-white font-medium text-sm">{title}</h2>
-            <span className="text-xs text-gray-400">{dateRange}</span>
+            <span className="text-xs text-gray-400">
+              {dueDate.toDate().toLocaleDateString()} {/* Convert Timestamp to readable date */}
+            </span>
           </div>
-          {isCompressed && <Label text={category} />} {/* Label aligned to the right */}
+          {isCompressed && <Label text={category} />}
         </div>
 
         {!isCompressed && description && (
@@ -54,8 +41,8 @@ const GigItemBase: React.FC<GigItemBaseProps> = ({
         {!isCompressed && (
           <div className="flex space-x-2 mt-2">
             <Label text={category} />
-            {location && <Label text={location} />}
-            {price && <Label text={price} />}
+            <Label text={`$${price.toFixed(2)}`} />
+            <Label text={`Status: ${status}`} />
           </div>
         )}
       </div>

@@ -12,14 +12,9 @@ import {
 } from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom"; // Import useLocation
 import UserProfilePicture from "@/components/Avatar/UserProfilePicture";
+import { User } from "@/utils/database/schema";
 
 // Define the user interface
-interface User {
-  name: string;
-  title: string;
-  location: string;
-  profilePicture: string;
-}
 
 interface SidebarProps {
   user: User;
@@ -54,9 +49,8 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
       {isExpanded && (
         <div className="flex flex-col items-center">
           <UserProfilePicture user={user} size="large" rounded />
-          <h2 className="text-lg font-semibold text-blue-300">{user.name}</h2>
-          <p className="text-sm text-gray-400">{user.title}</p>
-          <p className="text-xs text-gray-500">{user.location}</p>
+          <h2 className="text-lg font-semibold text-blue-300">{user.displayName}</h2>
+          <p className="text-xs text-gray-500">{user.profile.location}</p>
           <div className="my-3 w-full border-t border-gray-600" />
         </div>
       )}
