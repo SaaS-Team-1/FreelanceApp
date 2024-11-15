@@ -10,7 +10,7 @@ export default function SettingsView() {
 
   // Define the settings for each group
   const accountSettings = [
-    { name: 'Email', subtitle: 'Change your email address', type: 'arrow' },
+    { name: 'Email', subtitle: 'aymericbaume@gmail.com', type: 'none' },
     { name: 'Password', subtitle: 'Update your password', type: 'arrow' },
     { name: 'Delete Account', subtitle: 'Permanently delete your account', type: 'arrow' },
   ];

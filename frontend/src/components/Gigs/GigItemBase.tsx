@@ -26,7 +26,7 @@ const GigItemBase: React.FC<GigItemBaseProps> = ({
 }) => {
   return (
     <div
-      className={`p-3 ${isCompressed ? "bg-transparent" : "bg-gray-800"} rounded-lg shadow-md flex items-start space-x-3`}
+      className={`p-3 ${isCompressed ? "bg-transparent" : "bg-gray-800"} rounded-lg flex items-start space-x-3`}
     >
       {/* Smaller Profile Picture for a more compact look */}
       <UserProfilePicture

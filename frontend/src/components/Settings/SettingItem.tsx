@@ -23,9 +23,11 @@ const SettingItem = ({ name, subtitle, type = 'arrow', onToggle, isToggled }) =>
           ></div>
         </label>
       )}
+      {type === 'none' && <div className="w-11 h-6"></div>} {/* Render nothing for `none` */}
     </div>
   );
 };
 
 export default SettingItem;
+
 
