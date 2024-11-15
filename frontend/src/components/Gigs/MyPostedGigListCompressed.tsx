@@ -22,26 +22,26 @@ const MyPostedGigListCompressed: React.FC = () => {
   ];
 
   return (
-    <div className="text-center mb-4">
-      <div className="max-w-sm p-4 bg-gray-900 rounded-xl shadow-lg border border-gray-700 h-96 overflow-y-scroll scrollbar">
-        <h2 className="text-white text-lg mb-4 text-center">My Posted Gigs</h2>
-        {gigs.map((gig, index) => (
-          <React.Fragment key={index}>
-            <MyPostedGigItemCompressed
-              title={gig.title}
-              dateRange={gig.dateRange}
-              category={gig.category}
-              avatarUrl={gig.avatarUrl}
-            />
-            {index < gigs.length - 1 && (
-              <hr className="my-4 border-gray-700" /> // Divider between items
-            )}
-          </React.Fragment>
-        ))}
-        <a href="#" className="text-blue-400 text-sm mt-4 block text-center">
-          See Details
-        </a>
-      </div>
+    <div className="scrollbar h-96 max-w-sm overflow-y-scroll rounded-xl border border-gray-700 bg-gray-900 p-4 shadow-lg">
+      <h2 className="sticky top-0 z-10 mb-4 rounded-t-xl bg-gray-900 p-2 text-center text-lg text-white">
+        My Posted Gigs
+      </h2>
+      {gigs.map((gig, index) => (
+        <>
+          <MyPostedGigItemCompressed
+            title={gig.title}
+            dateRange={gig.dateRange}
+            category={gig.category}
+            avatarUrl={gig.avatarUrl}
+          />
+          {index < gigs.length - 1 && (
+            <hr className="my-4 border-gray-700" /> // Divider between items
+          )}
+        </>
+      ))}
+      <a href="#" className="mt-4 block text-center text-sm text-blue-400">
+        See Details
+      </a>
     </div>
   );
 };
