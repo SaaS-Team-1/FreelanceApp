@@ -19,15 +19,25 @@ const MyPostedGigListCompressed: React.FC = () => {
       dateRange: "23 November",
       category: "Transport",
     },
+    {
+      title: "Airport Pickup Charleroi",
+      dateRange: "23 November",
+      category: "Transport",
+    },
+    {
+      title: "Airport Pickup Charleroi",
+      dateRange: "23 November",
+      category: "Transport",
+    },
   ];
 
   return (
     <div className="scrollbar h-96 max-w-sm overflow-y-scroll rounded-xl border border-gray-700 bg-gray-900 p-4 shadow-lg">
-      <h2 className="sticky top-0 z-10 mb-4 rounded-t-xl bg-gray-900 p-2 text-center text-lg text-white">
+      <h2 className="sticky top-0 z-10 bg-gray-900 p-2 text-center text-lg text-white header-bg-extension">
         My Posted Gigs
       </h2>
       {gigs.map((gig, index) => (
-        <>
+        <React.Fragment key={index}>
           <MyPostedGigItemCompressed
             title={gig.title}
             dateRange={gig.dateRange}
@@ -37,7 +47,7 @@ const MyPostedGigListCompressed: React.FC = () => {
           {index < gigs.length - 1 && (
             <hr className="my-4 border-gray-700" /> // Divider between items
           )}
-        </>
+        </React.Fragment>
       ))}
       <a href="#" className="mt-4 block text-center text-sm text-blue-400">
         See Details
