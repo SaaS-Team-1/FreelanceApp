@@ -70,7 +70,7 @@ export default function OverviewView() {
             </button>
           </div>
           <div className="p-10">
-            <PostedGigListHome gigs={gigs} />
+            <PostedGigListHome gigs={gigs}  showSeeMoreButton={true}/>
           </div>
         </div>
 
