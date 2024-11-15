@@ -179,7 +179,7 @@ export default function OverviewView() {
             </button>
           </div>
           <div className="p-10">
-            <PostedGigListHome gigs={gigs}  showSeeMoreButton={true}/>
+            {/* <PostedGigListHome gigs={gigs}  showSeeMoreButton={true}/> */}
           </div>
         </div>
 
