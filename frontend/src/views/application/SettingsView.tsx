@@ -1,22 +1,44 @@
-import React from 'react';
+import React, { useState } from 'react';
 import SettingGroup from '@/components/Settings/SettingGroup';
 
 export default function SettingsView() {
+  // State for toggle switches
+  const [showPublicProfile, setShowPublicProfile] = useState(true);
+  const [allowSearch, setAllowSearch] = useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+
   // Define the settings for each group
   const accountSettings = [
-    { name: 'Email', subtitle: 'Change your email address' },
-    { name: 'Password', subtitle: 'Update your password' },
-    { name: 'Sign Out', subtitle: 'Log out of your account' },
-    { name: 'Delete Account', subtitle: 'Permanently delete your account' },
+    { name: 'Email', subtitle: 'Change your email address', type: 'arrow' },
+    { name: 'Password', subtitle: 'Update your password', type: 'arrow' },
+    { name: 'Delete Account', subtitle: 'Permanently delete your account', type: 'arrow' },
   ];
 
   const privacySettings = [
-    { name: 'Show Public Profile', subtitle: 'Allow others to see your profile information' },
-    { name: 'Allow Search', subtitle: 'Allow users to search for you' },
+    {
+      name: 'Show Public Profile',
+      subtitle: 'Allow others to see your profile information',
+      type: 'toggle',
+      isToggled: showPublicProfile,
+      onToggle: () => setShowPublicProfile(!showPublicProfile),
+    },
+    {
+      name: 'Allow Search',
+      subtitle: 'Allow users to search for you',
+      type: 'toggle',
+      isToggled: allowSearch,
+      onToggle: () => setAllowSearch(!allowSearch),
+    },
   ];
 
   const appSettings = [
-    { name: 'Notification Settings', subtitle: 'Manage notification preferences' },
+    {
+      name: 'Notification Settings',
+      subtitle: 'Manage notification preferences',
+      type: 'toggle',
+      isToggled: notificationsEnabled,
+      onToggle: () => setNotificationsEnabled(!notificationsEnabled),
+    },
   ];
 
   return (
