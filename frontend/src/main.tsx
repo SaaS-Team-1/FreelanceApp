@@ -34,8 +34,7 @@ import SettingsView from "./views/application/SettingsView.tsx";
 import WalletView from "./views/application/WalletView.tsx";
 import NotificationsView from "./views/application/NotificationsView.tsx";
 import UserView, { userLoader } from "./views/application/UserView.tsx";
-import  Test  from "./views/Test.tsx";
-
+import AdminView from "./views/application/AdminView.tsx";
 
 const router = createBrowserRouter([
   {
@@ -99,7 +98,11 @@ const router = createBrowserRouter([
             path: "wallet",
             element: <WalletView />,
           },
-          
+          {
+            path: "admin",
+            element: <AdminView />,
+          },
+
         ],
       },
     ],

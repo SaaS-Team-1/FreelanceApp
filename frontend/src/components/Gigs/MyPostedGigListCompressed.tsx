@@ -1,8 +1,10 @@
-// src/components/Gigs/MyPostedGigList.tsx
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import MyPostedGigItemCompressed from "./MyPostedGigItemCompressed";
 
 const MyPostedGigListCompressed: React.FC = () => {
+  const navigate = useNavigate(); // Initialize navigate
+
   // Sample data for the list of gigs
   const gigs = [
     {
@@ -20,29 +22,42 @@ const MyPostedGigListCompressed: React.FC = () => {
       dateRange: "23 November",
       category: "Transport",
     },
+    {
+      title: "Airport Pickup Charleroi",
+      dateRange: "23 November",
+      category: "Transport",
+    },
+    {
+      title: "Airport Pickup Charleroi",
+      dateRange: "23 November",
+      category: "Transport",
+    },
   ];
 
   return (
-    <div className="text-center mb-4">
-      <div className="p-6 bg-gray-900 rounded-2xl shadow-xl border border-gray-700">
-      <h2 className="text-white text-lg mb-2">My Posted Gigs</h2> {/* Title outside the frame */}
-        {gigs.map((gig, index) => (
-          <React.Fragment key={index}>
-            <MyPostedGigItemCompressed
-              title={gig.title}
-              dateRange={gig.dateRange}
-              category={gig.category}
-              avatarUrl={gig.avatarUrl}
-            />
-            {index < gigs.length - 1 && (
-              <hr className="my-4 border-gray-700" /> // Divider between items
-            )}
-          </React.Fragment>
-        ))}
-        <a href="#" className="text-blue-400 text-sm mt-4 block text-center">
-          See Details
-        </a>
-      </div>
+    <div className="scrollbar h-96 max-w-sm overflow-y-scroll rounded-xl border border-gray-700 bg-gray-800 p-4 shadow-lg">
+      <h2 className="header-bg-extension sticky top-0 z-10 bg-gray-800 p-2 text-center text-lg text-white">
+        My Posted Gigs
+      </h2>
+      {gigs.map((gig, index) => (
+        <React.Fragment key={index}>
+          <MyPostedGigItemCompressed
+            title={gig.title}
+            dateRange={gig.dateRange}
+            category={gig.category}
+            avatarUrl={gig.avatarUrl}
+          />
+          {index < gigs.length - 1 && (
+            <hr className="my-4 border-gray-700" /> // Divider between items
+          )}
+        </React.Fragment>
+      ))}
+      <button
+        onClick={() => navigate("/app/posted-gigs")}
+        className="mt-4 block text-center text-sm text-blue-400"
+      >
+        See Details
+      </button>
     </div>
   );
 };
