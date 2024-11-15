@@ -1,12 +1,39 @@
+import React from 'react';
+import SettingGroup from '@/components/Settings/SettingGroup';
+
 export default function SettingsView() {
+  // Define the settings for each group
+  const accountSettings = [
+    { name: 'Email', subtitle: 'Change your email address' },
+    { name: 'Password', subtitle: 'Update your password' },
+    { name: 'Sign Out', subtitle: 'Log out of your account' },
+    { name: 'Delete Account', subtitle: 'Permanently delete your account' },
+  ];
+
+  const privacySettings = [
+    { name: 'Show Public Profile', subtitle: 'Allow others to see your profile information' },
+    { name: 'Allow Search', subtitle: 'Allow users to search for you' },
+  ];
+
+  const appSettings = [
+    { name: 'Notification Settings', subtitle: 'Manage notification preferences' },
+  ];
+
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="flex-1 p-6">
-        <div className="mb-4 flex items-center justify-between">
+    <div className="flex min-h-screen w-full items-center justify-center bg-gray-50 dark:bg-gray-900">
+      <div className="w-full max-w-xl p-6">
+        {/* Header */}
+        <div className="mb-4 text-center">
           <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
-            SettingsView
+            Settings
           </h2>
-          <div className="flex space-x-4"></div>
+        </div>
+
+        {/* Setting Groups */}
+        <div className="space-y-6">
+          <SettingGroup title="Account" settings={accountSettings} />
+          <SettingGroup title="Privacy" settings={privacySettings} />
+          <SettingGroup title="App" settings={appSettings} />
         </div>
       </div>
     </div>
