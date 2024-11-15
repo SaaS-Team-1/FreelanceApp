@@ -30,7 +30,6 @@ export default function OverviewView() {
       price: { label: "60", icon: FaEuroSign }, // Pass icon as IconType
       avatarUrl: "https://via.placeholder.com/40",
       description: "I'm looking for a creative video editor to produce a captivating 10-20 second intro for my project centered around peaceful...",
-      
     },
     {
       title: "Airport Pickup Charleroi",
@@ -71,7 +70,7 @@ export default function OverviewView() {
             </button>
           </div>
           <div className="p-10">
-            <PostedGigListHome gigs={gigs} showSeeMoreButton={true}  />
+            <PostedGigListHome gigs={gigs} />
           </div>
         </div>
 

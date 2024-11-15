@@ -1,8 +1,8 @@
 import React from "react";
 import PostedGigItemHome from "./PostedGigItemHome";
 import Badge from "@/components/Buttons/CustomBadge"; // Ensure the correct import path for Badge
-import CustomButton from "@/components/Buttons/CustomButton"; // Import the CustomButton component
 import { IconType } from "react-icons"; // Import IconType for typing
+import { FaEuroSign } from "react-icons/fa"; // Import icon if needed
 
 interface Gig {
   title: string;
@@ -16,10 +16,9 @@ interface Gig {
 
 interface PostedGigListHomeProps {
   gigs: Gig[];
-  showSeeMoreButton?: boolean; // Add a prop to control the display of the "See More" button
 }
 
-const PostedGigListHome: React.FC<PostedGigListHomeProps> = ({ gigs, showSeeMoreButton = false }) => {
+const PostedGigListHome: React.FC<PostedGigListHomeProps> = ({ gigs }) => {
   return (
     <div className="space-y-4"> {/* Reduce spacing between gig containers */}
       {gigs.map((gig, index) => (
@@ -43,7 +42,7 @@ const PostedGigListHome: React.FC<PostedGigListHomeProps> = ({ gigs, showSeeMore
               outline={true}
               outlineColor="beige"
               rounded={true}
-              size="small"
+              size ="small"
             />
             <Badge
               label={gig.location.label}
@@ -52,7 +51,7 @@ const PostedGigListHome: React.FC<PostedGigListHomeProps> = ({ gigs, showSeeMore
               outline={true}
               outlineColor="beige"
               rounded={true}
-              size="small"
+              size ="small"
             />
             {gig.price.icon ? (
               <Badge
@@ -64,7 +63,7 @@ const PostedGigListHome: React.FC<PostedGigListHomeProps> = ({ gigs, showSeeMore
                 rounded={true}
                 icon={gig.price.icon} // Pass icon as IconType
                 iconPosition="right"
-                size="small"
+                size ="small"
               />
             ) : (
               <Badge
@@ -74,23 +73,10 @@ const PostedGigListHome: React.FC<PostedGigListHomeProps> = ({ gigs, showSeeMore
                 outline={true}
                 outlineColor="beige"
                 rounded={true}
-                size="small"
+                size ="small"
               />
             )}
           </div>
-          {/* Conditionally render the "See More" button */}
-          {showSeeMoreButton && (
-            <div className="mt-4 flex justify-end">
-              <CustomButton
-                label="See More"
-                onClick={() => alert("See more clicked!")} // Replace with desired function
-                color="primary"
-                textColor="white"
-                size="small"
-                rounded={true}
-              />
-            </div>
-          )}
         </div>
       ))}
     </div>
