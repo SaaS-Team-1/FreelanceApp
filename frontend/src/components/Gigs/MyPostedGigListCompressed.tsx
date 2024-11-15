@@ -1,7 +1,10 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import MyPostedGigItemCompressed from "./MyPostedGigItemCompressed";
 
 const MyPostedGigListCompressed: React.FC = () => {
+  const navigate = useNavigate(); // Initialize navigate
+
   // Sample data for the list of gigs
   const gigs = [
     {
@@ -33,7 +36,7 @@ const MyPostedGigListCompressed: React.FC = () => {
 
   return (
     <div className="scrollbar h-96 max-w-sm overflow-y-scroll rounded-xl border border-gray-700 bg-gray-900 p-4 shadow-lg">
-      <h2 className="sticky top-0 z-10 bg-gray-900 p-2 text-center text-lg text-white header-bg-extension">
+      <h2 className="header-bg-extension sticky top-0 z-10 bg-gray-900 p-2 text-center text-lg text-white">
         My Posted Gigs
       </h2>
       {gigs.map((gig, index) => (
@@ -49,9 +52,12 @@ const MyPostedGigListCompressed: React.FC = () => {
           )}
         </React.Fragment>
       ))}
-      <a href="#" className="mt-4 block text-center text-sm text-blue-400">
+      <button
+        onClick={() => navigate("/app/posted-gigs")}
+        className="mt-4 block text-center text-sm text-blue-400"
+      >
         See Details
-      </a>
+      </button>
     </div>
   );
 };
