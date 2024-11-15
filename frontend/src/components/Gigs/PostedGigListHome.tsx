@@ -34,7 +34,7 @@ const PostedGigListHome: React.FC<PostedGigListHomeProps> = ({ gigs }) => {
             category={""}
           />
           {/* Remove excessive spacing between description and badges */}
-          <div className="flex flex-wrap gap-2 mt-2 items-center"> {/* Use flex wrap and align items */}
+          <div className="mt-2 flex flex-wrap items-center gap-2"> {/* Use flex wrap and align items */}
             <Badge
               label={gig.category.label}
               color="beige"
@@ -42,6 +42,7 @@ const PostedGigListHome: React.FC<PostedGigListHomeProps> = ({ gigs }) => {
               outline={true}
               outlineColor="beige"
               rounded={true}
+              size ="small"
             />
             <Badge
               label={gig.location.label}
@@ -50,6 +51,7 @@ const PostedGigListHome: React.FC<PostedGigListHomeProps> = ({ gigs }) => {
               outline={true}
               outlineColor="beige"
               rounded={true}
+              size ="small"
             />
             {gig.price.icon ? (
               <Badge
@@ -61,6 +63,7 @@ const PostedGigListHome: React.FC<PostedGigListHomeProps> = ({ gigs }) => {
                 rounded={true}
                 icon={gig.price.icon} // Pass icon as IconType
                 iconPosition="right"
+                size ="small"
               />
             ) : (
               <Badge
@@ -70,6 +73,7 @@ const PostedGigListHome: React.FC<PostedGigListHomeProps> = ({ gigs }) => {
                 outline={true}
                 outlineColor="beige"
                 rounded={true}
+                size ="small"
               />
             )}
           </div>
