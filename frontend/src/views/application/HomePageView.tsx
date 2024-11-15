@@ -80,7 +80,7 @@ export default function OverviewView() {
               Machine Learning
             </button>
           </div>
-          <div className = "p-10"><PostedGigListHome /></div> 
+          <div className = "p-10"><PostedGigListHome gigs={[]}/></div> 
         </div>
 
         <div className="w-120 flex flex-col space-y-6">
