@@ -5,7 +5,8 @@ export default function SettingsView() {
   // State for toggle switches
   const [showPublicProfile, setShowPublicProfile] = useState(true);
   const [allowSearch, setAllowSearch] = useState(false);
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [msgNotificationsEnabled, setMsgNotificationsEnabled] = useState(true);
+  const [gigNotificationsEnabled, setGigNotificationsEnabled] = useState(true);
 
   // Define the settings for each group
   const accountSettings = [
@@ -33,11 +34,18 @@ export default function SettingsView() {
 
   const appSettings = [
     {
-      name: 'Notification Settings',
-      subtitle: 'Manage notification preferences',
+      name: 'Message Notifications',
+      subtitle: 'Get notifications when receiving messages from other users',
       type: 'toggle',
-      isToggled: notificationsEnabled,
-      onToggle: () => setNotificationsEnabled(!notificationsEnabled),
+      isToggled: msgNotificationsEnabled,
+      onToggle: () => setMsgNotificationsEnabled(!msgNotificationsEnabled),
+    },
+    {
+      name: 'Gig Notifications',
+      subtitle: 'Get notifications regarding gig updates',
+      type: 'toggle',
+      isToggled: gigNotificationsEnabled,
+      onToggle: () => setGigNotificationsEnabled(!gigNotificationsEnabled),
     },
   ];
 
