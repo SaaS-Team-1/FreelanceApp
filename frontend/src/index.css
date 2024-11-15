@@ -1,8 +1,26 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
 
 body {
-    font-family: 'Inter', sans-serif;
-  }
+  font-family: "Inter", sans-serif;
+}
+
+.scrollbar::-webkit-scrollbar {
+  width: 6px; 
+}
+
+.notification-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3); 
+  border-radius: 3px;
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}

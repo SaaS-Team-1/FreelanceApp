@@ -1,4 +1,3 @@
-// src/components/Gigs/MyPostedGigList.tsx
 import React from "react";
 import MyPostedGigItemCompressed from "./MyPostedGigItemCompressed";
 
@@ -24,8 +23,8 @@ const MyPostedGigListCompressed: React.FC = () => {
 
   return (
     <div className="text-center mb-4">
-      <div className="p-6 bg-gray-900 rounded-2xl shadow-xl border border-gray-700">
-      <h2 className="text-white text-lg mb-2">My Posted Gigs</h2> {/* Title outside the frame */}
+      <div className="max-w-sm p-4 bg-gray-900 rounded-xl shadow-lg border border-gray-700 h-96 overflow-y-scroll scrollbar">
+        <h2 className="text-white text-lg mb-4 text-center">My Posted Gigs</h2>
         {gigs.map((gig, index) => (
           <React.Fragment key={index}>
             <MyPostedGigItemCompressed
