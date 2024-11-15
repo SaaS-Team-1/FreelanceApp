@@ -1,4 +1,3 @@
-// src/components/Gigs/MyPostedGigsView.tsx
 import React from "react";
 import PostedGigListHome from "@/components/Gigs/PostedGigListHome";
 import { FaEuroSign } from "react-icons/fa"; // Import icon for the price badge
@@ -42,8 +41,8 @@ const MyPostedGigsView: React.FC = () => {
         My Posted Gigs
       </h2>
 
-      {/* Pass data to the PostedGigListHome component */}
-      <div className="rounded-2xl bg-gray-800 p-6 shadow-lg">
+      {/* Remove or change background color */}
+      <div className="rounded-2xl p-6 shadow-lg">
         <PostedGigListHome gigs={gigs} />
       </div>
     </div>

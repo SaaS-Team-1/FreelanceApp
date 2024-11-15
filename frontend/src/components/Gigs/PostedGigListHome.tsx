@@ -1,9 +1,8 @@
-// src/components/Gigs/PostedGigListHome.tsx
 import React from "react";
 import PostedGigItemHome from "./PostedGigItemHome";
 import Badge from "@/components/Buttons/CustomBadge"; // Ensure the correct import path for Badge
+import CustomButton from "@/components/Buttons/CustomButton"; // Import the CustomButton component
 import { IconType } from "react-icons"; // Import IconType for typing
-import { FaEuroSign } from "react-icons/fa"; // Import icon if needed
 
 interface Gig {
   title: string;
@@ -17,16 +16,16 @@ interface Gig {
 
 interface PostedGigListHomeProps {
   gigs: Gig[];
+  showSeeMoreButton?: boolean; // Add a prop to control the display of the "See More" button
 }
 
-const PostedGigListHome: React.FC<PostedGigListHomeProps> = ({ gigs }) => {
+const PostedGigListHome: React.FC<PostedGigListHomeProps> = ({ gigs, showSeeMoreButton = false }) => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4"> {/* Reduce spacing between gig containers */}
       {gigs.map((gig, index) => (
         <div
           key={index}
-          className="mb-4 space-y-2 rounded-lg  bg-gray-800 p-6 shadow-lg transition-transform hover:scale-105"
-          style={{ marginBottom: '20px' }} // Adds space between gig containers
+          className="rounded-lg bg-gray-800 p-4 shadow-lg transition-transform hover:scale-105" // Adjust padding to remove unnecessary space
         >
           <PostedGigItemHome
             title={gig.title}
@@ -35,8 +34,8 @@ const PostedGigListHome: React.FC<PostedGigListHomeProps> = ({ gigs }) => {
             description={gig.description}
             category={""}
           />
-          <div className="mt-4 flex flex-wrap gap-4">
-            {/* Category badge without icon */}
+          {/* Remove excessive spacing between description and badges */}
+          <div className="mt-2 flex flex-wrap items-center gap-2"> {/* Use flex wrap and align items */}
             <Badge
               label={gig.category.label}
               color="beige"
@@ -44,8 +43,8 @@ const PostedGigListHome: React.FC<PostedGigListHomeProps> = ({ gigs }) => {
               outline={true}
               outlineColor="beige"
               rounded={true}
+              size="small"
             />
-            {/* Location badge without icon */}
             <Badge
               label={gig.location.label}
               color="beige"
@@ -53,8 +52,8 @@ const PostedGigListHome: React.FC<PostedGigListHomeProps> = ({ gigs }) => {
               outline={true}
               outlineColor="beige"
               rounded={true}
+              size="small"
             />
-            {/* Price badge with icon on the right */}
             {gig.price.icon ? (
               <Badge
                 label={gig.price.label}
@@ -65,6 +64,7 @@ const PostedGigListHome: React.FC<PostedGigListHomeProps> = ({ gigs }) => {
                 rounded={true}
                 icon={gig.price.icon} // Pass icon as IconType
                 iconPosition="right"
+                size="small"
               />
             ) : (
               <Badge
@@ -74,9 +74,23 @@ const PostedGigListHome: React.FC<PostedGigListHomeProps> = ({ gigs }) => {
                 outline={true}
                 outlineColor="beige"
                 rounded={true}
+                size="small"
               />
             )}
           </div>
+          {/* Conditionally render the "See More" button */}
+          {showSeeMoreButton && (
+            <div className="mt-4 flex justify-end">
+              <CustomButton
+                label="See More"
+                onClick={() => alert("See more clicked!")} // Replace with desired function
+                color="primary"
+                textColor="white"
+                size="small"
+                rounded={true}
+              />
+            </div>
+          )}
         </div>
       ))}
     </div>

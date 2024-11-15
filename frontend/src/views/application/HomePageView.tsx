@@ -5,6 +5,7 @@ import PostedGigListHome from "@/components/Gigs/PostedGigListHome";
 import { Timestamp } from "firebase/firestore";
 import { Gig, User } from "@/utils/database/schema";
 import { NotificationItemProps } from "@/components/Notifications/NotificationItem";
+import { FaEuroSign } from "react-icons/fa"; // Import the icon for the price badge if needed
 
 export default function OverviewView() {
   const notifications:NotificationItemProps[] = [
@@ -178,7 +179,7 @@ export default function OverviewView() {
             </button>
           </div>
           <div className="p-10">
-            <PostedGigListHome gigs={[]} />
+            <PostedGigListHome gigs={gigs}  showSeeMoreButton={true}/>
           </div>
         </div>
 
@@ -198,9 +199,7 @@ export default function OverviewView() {
       {/* Main Content Section */}
       <div className="flex space-x-6">
         {/* Main Content */}
-        <div className="flex-1">{/* Add gig listing here if needed */}</div>
-
-        {/* Right Sidebar with Posted Gigs and Upload Button */}
+        <div className="flex-1">{/* Add additional content if needed */}</div>
       </div>
 
       <div className="pb-10"></div>
