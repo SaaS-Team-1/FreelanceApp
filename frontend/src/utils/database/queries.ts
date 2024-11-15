@@ -1,17 +1,4 @@
-import {
-  query,
-  where,
-  orderBy,
-  getDocs,
-  addDoc,
-  updateDoc,
-  doc,
-  Timestamp,
-  getDoc,
-  Firestore,
-} from "firebase/firestore";
-// import { db } from '../firebase/firebaseConfig';
-import { User, Gig, Application, Message, Rating, Transaction } from "./schema";
+import { query, where, orderBy, getDocs, Firestore } from "firebase/firestore";
 import {
   gigsRef,
   applicationsRef,
@@ -20,7 +7,7 @@ import {
   transactionsRef,
 } from "./collections";
 
-const getOpenGigs = (db: Firestore, category?: string) => {
+const getOpenGigs = async (db: Firestore, category?: string) => {
   const q = category
     ? query(
         gigsRef(db),
@@ -33,77 +20,47 @@ const getOpenGigs = (db: Firestore, category?: string) => {
         where("status", "==", "open"),
         orderBy("createdAt", "desc"),
       );
-  return getDocs(q);
+
+  return (await getDocs(q)).docs;
 };
 
-// Application queries
-const getGigApplications = (db: Firestore, gigId: string) => {
+const getGigApplications = async (db: Firestore, gigId: string) => {
   const q = query(applicationsRef(db), where("gigId", "==", gigId));
-  return getDocs(q);
+  return (await getDocs(q)).docs;
 };
 
-const getUserApplications = (db: Firestore, userId: string) => {
+const getUserApplications = async (db: Firestore, userId: string) => {
   const q = query(applicationsRef(db), where("applicantId", "==", userId));
-  return getDocs(q);
+  return (await getDocs(q)).docs;
 };
 
-// Message queries
-const getApplicationMessages = (db: Firestore, applicationId: string) => {
+const getApplicationMessages = async (db: Firestore, applicationId: string) => {
   const q = query(
     messagesRef(db),
     where("applicationId", "==", applicationId),
     orderBy("sentAt"),
   );
-  return getDocs(q);
+  return (await getDocs(q)).docs;
 };
 
 // Rating queries
-const getUserRatings = (db: Firestore, userId: string) => {
+const getUserRatings = async (db: Firestore, userId: string) => {
   const q = query(ratingsRef(db), where("toUserId", "==", userId));
-  return getDocs(q);
+  return (await getDocs(q)).docs;
 };
 
-// Add new document helpers
-const createGig = (
-  db: Firestore,
-  gigData: Omit<Gig, "createdAt" | "applicantIds">,
-) => {
-  return addDoc(gigsRef(db), {
-    ...gigData,
-    createdAt: Timestamp.fromDate(new Date()),
-    applicantIds: [],
-  });
-};
-
-const createApplication = (
-  db: Firestore,
-  applicationData: Omit<Application, "appliedAt">,
-) => {
-  return addDoc(applicationsRef(db), {
-    ...applicationData,
-    appliedAt: Timestamp.fromDate(new Date()),
-  });
-};
-
-const sendMessage = (db: Firestore, messageData: Omit<Message, "sentAt">) => {
-  return addDoc(messagesRef(db), {
-    ...messageData,
-    sentAt: Timestamp.fromDate(new Date()),
-  });
-};
-
-const getUserTransactions = (db: Firestore, userId: string) => {
+const getUserTransactions = async (db: Firestore, userId: string) => {
   const q = query(
     transactionsRef(db),
     where("senderId", "==", userId),
     where("receiverId", "==", userId),
   );
-  return getDocs(q);
+  return (await getDocs(q)).docs;
 };
 
-const getGigTransactions = (db: Firestore, gigId: string) => {
+const getGigTransactions = async (db: Firestore, gigId: string) => {
   const q = query(transactionsRef(db), where("gigId", "==", gigId));
-  return getDocs(q);
+  return (await getDocs(q)).docs;
 };
 
 export default {

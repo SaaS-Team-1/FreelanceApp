@@ -33,6 +33,7 @@ import ProfileView from "./views/application/ProfileVIew.tsx";
 import ScheduleView from "./views/application/ScheduleView.tsx";
 import SettingsView from "./views/application/SettingsView.tsx";
 import WalletView from "./views/application/WalletView.tsx";
+import AdminView from "./views/application/AdminView.tsx";
 
 const router = createBrowserRouter([
   {
@@ -90,6 +91,11 @@ const router = createBrowserRouter([
             path: "wallet",
             element: <WalletView />,
           },
+          {
+            path: "admin",
+            element: <AdminView />,
+          },
+
         ],
       },
     ],

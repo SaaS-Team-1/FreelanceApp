@@ -1,4 +1,3 @@
-// import { getFirestoreInstance } from '../firebase/firebaseConfig';
 import {
   addDoc,
   updateDoc,
@@ -6,76 +5,54 @@ import {
   serverTimestamp,
   Firestore,
 } from "firebase/firestore";
-import { User, Gig, Application, Message, Rating } from "./schema";
-import {
-  usersRef,
-  gigsRef,
-  applicationsRef,
-  messagesRef,
-  ratingsRef,
-} from "./collections";
+import { Gig, Application, Rating } from "./schema";
+import { gigsRef, applicationsRef, ratingsRef } from "./collections";
 
-const createGig = (
+const createGig = async (
   db: Firestore,
   gigData: Omit<Gig, "createdAt" | "applicantIds">,
 ) => {
-  return addDoc(gigsRef(db), {
+  return await addDoc(gigsRef(db), {
     ...gigData,
     createdAt: serverTimestamp(),
     applicantIds: [],
   });
 };
 
-const applyToGig = (
-  db: Firestore, 
-  applicationData: Omit<Application, 'appliedAt'>
-) => {
-  return addDoc(applicationsRef(db), {
-    ...applicationData,
-    appliedAt: serverTimestamp()
-  });
-};
-
-const leaveRating = (
+const applyToGig = async (
   db: Firestore,
-  ratingData: Omit<Rating, 'createdAt'>
+  applicationData: Omit<Application, "appliedAt">,
 ) => {
-  return addDoc(ratingsRef(db), {
-    ...ratingData,
-    createdAt: serverTimestamp()
+  return await addDoc(applicationsRef(db), {
+    ...applicationData,
+    appliedAt: serverTimestamp(),
   });
 };
 
-// sendMessage: async (messageData: Omit<Message, 'sentAt'>) => {
-//   const newMessageRef = await addDoc(messagesRef, {
-//     ...messageData,
-//     sentAt: serverTimestamp()
-//   });
-//   return newMessageRef.id;
-// },
+const leaveRating = async (
+  db: Firestore,
+  ratingData: Omit<Rating, "createdAt">,
+) => {
+  return await addDoc(ratingsRef(db), {
+    ...ratingData,
+    createdAt: serverTimestamp(),
+  });
+};
 
-
-
-const acceptApplication = (
-  db: Firestore, 
-  applicationId: string, 
-  selectedApplicantId: string
+const acceptApplication = async (
+  db: Firestore,
+  applicationId: string,
+  selectedApplicantId: string,
 ) => {
   const applicationRef = doc(applicationsRef(db), applicationId);
-  updateDoc(applicationRef, {
-    status: 'accepted'
+  await updateDoc(applicationRef, {
+    status: "accepted",
   });
 
   const gigRef = doc(gigsRef(db), applicationId);
-  updateDoc(gigRef, {
-    selectedApplicantId
+  await updateDoc(gigRef, {
+    selectedApplicantId,
   });
-
 };
-
-// updateUserInfo: async (userId: string, userData: Partial<Omit<User, 'userId'>>) => {
-//   const userRef = doc(usersRef, userId);
-//   await updateDoc(userRef, userData);
-// }
 
 export default { createGig, applyToGig, leaveRating, acceptApplication };
