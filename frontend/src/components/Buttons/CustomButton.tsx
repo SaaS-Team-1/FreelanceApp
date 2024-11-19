@@ -3,13 +3,13 @@ import React from "react";
 import { IconType } from "react-icons";
 
 interface CustomButtonProps {
-  label: string;
+  label?: string;
   onClick: () => void;
   color?: "primary" | "secondary" | "warning" | "gray" | "black" | "green" | "red" | "white"; // Background color
   outlineColor?: "primary" | "secondary" | "warning" | "gray" | "black" | "green" | "red" | "white"; // Border color
   size?: "small" | "medium" | "large"; // Size of the button
   icon?: IconType; // Icon component from react-icons
-  iconPosition?: "left" | "right"; // Position of the icon
+  iconPosition?: "left" | "right" | "middle"; // Position of the icon
   outline?: boolean; // Whether the button is outlined
   rounded?: boolean; // Rounded corners
   disabled?: boolean; // Disable button
@@ -79,6 +79,8 @@ const CustomButton: React.FC<CustomButtonProps> = ({
       {Icon && iconPosition === "left" && <Icon className="mr-2" />}
       <span>{label}</span>
       {Icon && iconPosition === "right" && <Icon className="ml-2" />}
+      {Icon && iconPosition === "middle" && <Icon className="mx-0" />}
+
     </button>
   );
 };
