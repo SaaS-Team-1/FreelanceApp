@@ -1,6 +1,7 @@
 import { Timestamp } from "firebase/firestore";
 
 export interface User {
+  userId : string,
   email: string;
   displayName: string;
   profile: {
@@ -16,6 +17,7 @@ export interface User {
 }
 
 export interface Gig {
+  gigId: string,
   title: string;
   description: string;
   category: string;
@@ -26,6 +28,7 @@ export interface Gig {
   selectedApplicantId?: string;
   createdAt: Timestamp;
   applicantIds: string[];
+  location:string;
 }
 
 export interface Application {

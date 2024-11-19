@@ -17,7 +17,6 @@ interface PostedGigListHomeProps {
   showDateWithLine?: boolean; // Optional prop to show/hide the date with a white line
   showUndoButton?: boolean; // New prop to optionally display the UndoButton
   hoverEffect?: boolean; // Prop to conditionally apply hover effect
-
 }
 
 function PostedGigListHome({
@@ -31,23 +30,22 @@ function PostedGigListHome({
   showDateWithLine = false, // Default to true for displaying the date with a line
   showUndoButton = false, // Default to false to not show the UndoButton
   hoverEffect = true, // Default to false to not apply hover effect unless specified
-
 }: PostedGigListHomeProps) {
   return (
     <div className="space-y-4">
       {gigs.map(({ gig, lister }, index) => (
         <div
           key={index}
-         className={`relative rounded-lg p-4 shadow-lg transition-transform duration-200 ease-in-out ${
+          className={`relative rounded-lg p-4 shadow-lg transition-transform duration-200 ease-in-out ${
             selectedGig && selectedGig.title === gig.title
               ? "bg-[rgba(5,54,78,0.59)] text-white" // Selected gig style
-              : "bg-gray-800 text-gray-300"
+              : "bg-gray-900 text-gray-300"
           } ${enableSelection ? "cursor-pointer" : ""} 
             ${hoverEffect ? "hover:bg-gray-700" : ""}`} // Hover effect applied conditionally
           onClick={() => enableSelection && onSelectGig && onSelectGig(gig)} // Conditional click handler
         >
-           {/* Conditionally render UndoButton at the top-right corner */}
-           {showUndoButton && (
+          {/* Conditionally render UndoButton at the top-right corner */}
+          {showUndoButton && (
             <div className="absolute right-2 top-4">
               <UndoButton onClick={() => alert(`Undo clicked for gig: ${gig.title}`)} />
             </div>
@@ -81,8 +79,8 @@ function PostedGigListHome({
             </div>
           )}
 
-           {/* Render profile picture and title/date in the same row */}
-           <div className="mb-2 flex items-center">
+          {/* Render profile picture and title/date in the same row */}
+          <div className="mb-2 flex items-center">
             <img
               src={lister.profile.picture || "https://via.placeholder.com/40"}
               alt={lister.displayName}
@@ -93,11 +91,11 @@ function PostedGigListHome({
               {/* Optional date display next to avatar */}
               {showDateWithLine && (
                 <p className="mt-1 text-xs text-orange-500">
-                  {new Date(gig.dueDate.seconds * 1000).toLocaleDateString('en-GB', {
-                    weekday: 'long',
-                    day: '2-digit',
-                    month: 'long',
-                    year: 'numeric',
+                  {new Date(gig.dueDate.seconds * 1000).toLocaleDateString("en-GB", {
+                    weekday: "long",
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
                   })}
                 </p>
               )}
@@ -131,9 +129,9 @@ function PostedGigListHome({
               rounded={true}
               size="small"
             />
-            {/* Display only the location name */}
+            {/* Display the location based on the gig */}
             <Badge
-              label={lister.profile.location}
+              label={gig.location}
               color="beige"
               textColor="black"
               outline={true}
