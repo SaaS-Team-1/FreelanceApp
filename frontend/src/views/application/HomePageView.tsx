@@ -8,7 +8,7 @@ import { NotificationItemProps } from "@/components/Notifications/NotificationIt
 import { FaEuroSign } from "react-icons/fa"; // Import the icon for the price badge if needed
 
 export default function OverviewView() {
-  const notifications:NotificationItemProps[] = [
+  const notifications: NotificationItemProps[] = [
     {
       user: {
         email: "amina.agile@example.com",
@@ -28,92 +28,17 @@ export default function OverviewView() {
       time: "1m ago",
       count: 2,
     },
-    {
-      user: {
-        email: "amina.agile@example.com",
-        displayName: "Amina Agile",
-        profile: {
-          bio: "Computer Science Student in Leuven City.",
-          credits: 100,
-          picture: "",
-          location: "Leuven",
-        },
-        completedGigs: ["gig1", "gig2"],
-        activeGigs: ["gig3"],
-        listedGigs: ["gig4", "gig5"],
-        averageRating: 4.5,
-      },
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      time: "1m ago",
-      count: 2,
-    },
-    {
-      user: {
-        email: "amina.agile@example.com",
-        displayName: "Amina Agile",
-        profile: {
-          bio: "Computer Science Student in Leuven City.",
-          credits: 100,
-          picture: "",
-          location: "Leuven",
-        },
-        completedGigs: ["gig1", "gig2"],
-        activeGigs: ["gig3"],
-        listedGigs: ["gig4", "gig5"],
-        averageRating: 4.5,
-      },
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      time: "1m ago",
-      count: 2,
-    },
-    {
-      user: {
-        email: "amina.agile@example.com",
-        displayName: "Amina Agile",
-        profile: {
-          bio: "Computer Science Student in Leuven City.",
-          credits: 100,
-          picture: "",
-          location: "Leuven",
-        },
-        completedGigs: ["gig1", "gig2"],
-        activeGigs: ["gig3"],
-        listedGigs: ["gig4", "gig5"],
-        averageRating: 4.5,
-      },
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      time: "1m ago",
-      count: 2,
-    },
-    {
-      user: {
-        email: "amina.agile@example.com",
-        displayName: "Amina Agile",
-        profile: {
-          bio: "Computer Science Student in Leuven City.",
-          credits: 100,
-          picture: "",
-          location: "Leuven",
-        },
-        completedGigs: ["gig1", "gig2"],
-        activeGigs: ["gig3"],
-        listedGigs: ["gig4", "gig5"],
-        averageRating: 4.5,
-      },
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      time: "1m ago",
-      count: 2,
-    },
+    // Additional notifications...
   ];
 
-  const user:User = {
+  const user: User = {
     email: "amina.agile@example.com",
     displayName: "Amina Agile",
     profile: {
       bio: "Computer Science Student in Leuven City.",
       credits: 100,
       picture: "", // Optional: Can remain blank or include a valid URL
-      location: "Leuven"
+      location: "Leuven",
     },
     completedGigs: ["gig1", "gig2"],
     activeGigs: ["gig3"],
@@ -121,14 +46,14 @@ export default function OverviewView() {
     averageRating: 4.5,
   };
 
-  const gigs = [
+  const gigs: Gig[] = [
     {
       title: "Dog Sitter Needed",
       description: "Looking for a reliable dog sitter for my two dogs.",
       category: "Dogsitting",
       price: 50,
       dueDate: Timestamp.now(),
-      status: "open" as const,
+      status: "open",
       listerId: "user1",
       selectedApplicantId: undefined,
       createdAt: Timestamp.now(),
@@ -140,7 +65,7 @@ export default function OverviewView() {
       category: "Video Editing",
       price: 150,
       dueDate: Timestamp.now(),
-      status: "in-progress" as const,
+      status: "in-progress",
       listerId: "user2",
       selectedApplicantId: "applicant3",
       createdAt: Timestamp.now(),
@@ -152,7 +77,7 @@ export default function OverviewView() {
       category: "Transport",
       price: 75,
       dueDate: Timestamp.now(),
-      status: "completed" as const,
+      status: "completed",
       listerId: "user3",
       selectedApplicantId: "applicant5",
       createdAt: Timestamp.now(),
@@ -160,14 +85,19 @@ export default function OverviewView() {
     },
   ];
 
+  // Sample list of gigs by other users for display
+  const postedGigs = gigs.map(gig => ({ gig, lister: user }));
+
   return (
     <div className="flex flex-1 flex-col space-y-6 p-6">
-      {/* Top Section with Search and Notifications */}
-      <div className="mb-4 flex items-start justify-between">
+    {/* Top Section with Search and Notifications */}
+    <div className="flex items-start justify-between space-x-6">
+      {/* Left Column with Sidebar, Search, and Posted Gigs */}
+      <div className="flex w-2/3 flex-col space-y-6">
         {/* Search and Tags Container */}
-        <div className="flex w-full flex-col items-center">
+        <div className="flex flex-col items-center">
           <SearchBar />
-          <div className="flex space-x-4">
+          <div className="mt-4 flex space-x-4">
             <button className="rounded-full bg-gray-800 px-4 py-2 text-sm font-semibold text-white">
               Computer Science
             </button>
@@ -178,31 +108,29 @@ export default function OverviewView() {
               Machine Learning
             </button>
           </div>
-          <div className="p-10">
-            {/* <PostedGigListHome gigs={gigs}  showSeeMoreButton={true}/> */}
-          </div>
         </div>
 
-        <div className="w-120 flex flex-col space-y-6">
-          {/* Notifications Container */}
-          <NotificationList notifications={notifications} />
-
-          <MyPostedGigListCompressed gigs={gigs} user={user} />
-
-          {/* Upload Button */}
-          <button className="flex w-full items-center justify-center rounded-full bg-orange-500 py-3 text-sm font-semibold text-white">
-            + Upload new gig
-          </button>
+        {/* Main content section containing scrollable gigs */}
+        <div className="flex flex-col justify-center space-y-8">
+          {/* Scrollable Posted Gigs List */}
+          <PostedGigListHome gigs={postedGigs} showSeeMoreButton={true} />
         </div>
       </div>
-
-      {/* Main Content Section */}
-      <div className="flex space-x-6">
-        {/* Main Content */}
-        <div className="flex-1">{/* Add additional content if needed */}</div>
-      </div>
-
-      <div className="pb-10"></div>
     </div>
-  );
+
+    {/* Fixed Right Column for Notifications and Posted Gigs */}
+    <div className="fixed  right-0 flex h-screen w-1/4 flex-col space-y-6 p-6" style={{ bottom: "2px" }}>
+      <NotificationList notifications={notifications} />
+
+      {/* My Posted Gigs List */}
+      <MyPostedGigListCompressed gigs={gigs} user={user} />
+
+      <button className="flex w-full items-center justify-center rounded-full bg-orange-500 py-3 text-sm font-semibold text-white">
+        + Upload new gig
+      </button>
+    </div>
+
+    <div className="pb-10"></div>
+  </div>
+);
 }

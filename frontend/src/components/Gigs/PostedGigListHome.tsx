@@ -16,6 +16,7 @@ interface PostedGigListHomeProps {
   showCompletedButton?: boolean; // Optional prop to show the "Completed Gig" button
   showDateWithLine?: boolean; // Optional prop to show/hide the date with a white line
   showUndoButton?: boolean; // New prop to optionally display the UndoButton
+  hoverEffect?: boolean; // Prop to conditionally apply hover effect
 
 }
 
@@ -27,8 +28,9 @@ function PostedGigListHome({
   showSeeMoreButton = true,
   showChatIcon = false, // Default to show chat icon
   showCompletedButton = false, // Default to show completed button
-  showDateWithLine = true, // Default to true for displaying the date with a line
-  showUndoButton = true, // Default to false to not show the UndoButton
+  showDateWithLine = false, // Default to true for displaying the date with a line
+  showUndoButton = false, // Default to false to not show the UndoButton
+  hoverEffect = true, // Default to false to not apply hover effect unless specified
 
 }: PostedGigListHomeProps) {
   return (
@@ -36,11 +38,12 @@ function PostedGigListHome({
       {gigs.map(({ gig, lister }, index) => (
         <div
           key={index}
-          className={`relative rounded-lg p-4 shadow-lg transition-transform ${
+         className={`relative rounded-lg p-4 shadow-lg transition-transform duration-200 ease-in-out ${
             selectedGig && selectedGig.title === gig.title
-              ? "bg-[rgba(5,54,78,0.59)] text-white"
+              ? "bg-[rgba(5,54,78,0.59)] text-white" // Selected gig style
               : "bg-gray-800 text-gray-300"
-          } ${enableSelection ? "cursor-pointer" : ""}`}
+          } ${enableSelection ? "cursor-pointer" : ""} 
+            ${hoverEffect ? "hover:bg-gray-700" : ""}`} // Hover effect applied conditionally
           onClick={() => enableSelection && onSelectGig && onSelectGig(gig)} // Conditional click handler
         >
            {/* Conditionally render UndoButton at the top-right corner */}
