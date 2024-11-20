@@ -72,7 +72,7 @@ function MyPostedGigsView() {
     },
     {
       userId: "user5",
-      email: "applicant.two@example.com",
+      email: "applicant.three@example.com",
       displayName: "Ompa Lompa",
       profile: {
         bio: "Video editor with 5 years of experience.",
@@ -119,7 +119,7 @@ function MyPostedGigsView() {
     {
       gigId: "gig3",
       title: "Chemistry Tutoring",
-      description: "Looking for an experienced tutor for chemistry lessons...",
+      description: "Seeking an experienced chemistry tutor to provide personalized lessons tailored to individual learning needs. ",
       category: "Tutoring",
       price: 0,
       dueDate: Timestamp.now(),
@@ -133,7 +133,7 @@ function MyPostedGigsView() {
     {
       gigId: "gig4",
       title: "Graphic Design Project",
-      description: "Seeking a graphic designer to create a logo and branding for a new startup.",
+      description: " The project includes designing a unique logo, color palette, typography, and brand guidelines that reflect the startup's mission and vision.",
       category: "Graphic Design",
       price: 100,
       dueDate: Timestamp.now(),
@@ -147,7 +147,7 @@ function MyPostedGigsView() {
     {
       gigId: "gig5",
       title: "Website Development",
-      description: "Looking for a skilled web developer to build a responsive website for a local business.",
+      description: "Looking for a skilled web developer to build a responsive website for a local business.The ideal candidate should have experience in modern web technologies, user-centric design, and the ability to deliver a high-quality product within a tight deadline",
       category: "Web Development",
       price: 500,
       dueDate: Timestamp.now(),
@@ -161,7 +161,7 @@ function MyPostedGigsView() {
     {
       gigId: "gig5",
       title: "Website Dev",
-      description: "Looking for a skilled web developer to build a responsive website for a local business.",
+      description: "Looking for a skilled web developer to build a responsive website for a local business.They should  have prior experience in web Development",
       category: "Web Development",
       price: 500,
       dueDate: Timestamp.now(),
