@@ -28,8 +28,8 @@ const GigDetails: React.FC<GigDetailsProps> = ({ gig, user, onEditSave, onDelete
   };
 
   return (
-    <div className="relative rounded-lg bg-gray-900 p-6 shadow-lg">
-      <div className="max-h-[450px] overflow-y-auto pr-4">
+    <div className="relative  rounded-lg bg-gray-900 p-4 shadow-lg">
+      <div className="max-h-[400px] overflow-y-auto pr-4">
         {/* Header */}
         <div className="mb-4 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-white sm:text-4xl">Gig Details</h1>
