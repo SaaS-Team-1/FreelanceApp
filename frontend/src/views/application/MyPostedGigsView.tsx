@@ -193,7 +193,7 @@ function MyPostedGigsView() {
   };
 
   return (
-    <div className="flex space-x-6 p-6">
+    <div className="flex space-x-6 p-4">
       {/* Left section with the list of gigs */}
       <div className="h-full w-3/5">
         <h2 className="mb-4 text-2xl font-semibold text-gray-900 dark:text-white">

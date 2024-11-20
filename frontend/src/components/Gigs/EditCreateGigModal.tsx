@@ -46,8 +46,8 @@ const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
   const handleSave = () => {
     const wordCount = editedGig.description.trim().split(/\s+/).length;
 
-    if (wordCount < 50) {
-      alert("Description must contain at least 50 words.");
+    if (wordCount < 25) {
+      alert("Description must contain at least 25 words.");
       return;
     }
 
