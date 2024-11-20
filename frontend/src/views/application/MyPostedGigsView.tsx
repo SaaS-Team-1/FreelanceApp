@@ -216,7 +216,7 @@ function MyPostedGigsView() {
               <GigDetails
                 gig={selectedGig}
                 user={users.find(user => user.userId === selectedGig.listerId)!} // Find the lister by userId
-                onEdit={function (): void {
+                onEditSave={function (): void {
                   throw new Error("Function not implemented.");
                 } } onDelete={function (): void {
                   throw new Error("Function not implemented.");
