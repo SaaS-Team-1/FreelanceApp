@@ -70,13 +70,28 @@ function MyPostedGigsView() {
       listedGigs: [],
       averageRating: 4.0,
     },
+    {
+      userId: "user5",
+      email: "applicant.two@example.com",
+      displayName: "Ompa Lompa",
+      profile: {
+        bio: "Video editor with 5 years of experience.",
+        credits: 90,
+        picture: "https://via.placeholder.com/40",
+        location: "Antwerp",
+      },
+      completedGigs: [],
+      activeGigs: ["gig2"],
+      listedGigs: [],
+      averageRating: 4.0,
+    },
   ];
 
   const gigs: Gig[] = [
     {
       gigId: "gig1",
       title: "Video Editor Needed",
-      description: "I'm looking for a creative video editor to produce a captivating 10-20 second intro for my project centered around peaceful...",
+      description: "I'm looking for as creative video editor to produce a captivating 10-20 second intro for my project centered around peaceful.I'm looking for a creative video editor to produce a captivating 10-20 second intro for my project centered around peacefulI'm looking for a creative video editor to produce a captivating 10-20 second intro for my project centered around peacefulI'm looking for a creative video editor to produce a captivating 10-20 second intro for my project centered around peacefulI'm looking for a creative video editor to produce a captivating 10-20 second intro for my project centered around peacefulI'm looking for a creative video editor to produce a captivating 10-20 second intro for my project centered around peacefulI'm looking for a creative video editor to produce a captivating 10-20 second intro for my project centered around peacefulI'm looking for a creative video editor to produce a captivating 10-20 second intro for my project centered around peacefulI'm looking for a creative video editor to produce a captivating 10-20 second intro for my project centered around peacefulI'm looking for a creative video editor to produce a captivating 10-20 second intro for my project centered around peacefulI'm looking for a creative video editor to produce a captivating 10-20 second intro for my project centered around peacefulI'm looking for a creative video editor to produce a captivating 10-20 second intro for my project centered around peaceful.",
       category: "Video Editing",
       price: 60,
       dueDate: Timestamp.now(),
@@ -85,7 +100,7 @@ function MyPostedGigsView() {
       selectedApplicantId: "user3",
       createdAt: Timestamp.now(),
       location: "Remote",
-      applicantIds: ["user3", "user4","user2"], // Replaced applicant IDs with user IDs
+      applicantIds: ["user3", "user4","user2","user5"], // Replaced applicant IDs with user IDs
     },
     {
       gigId: "gig2",
@@ -164,7 +179,7 @@ function MyPostedGigsView() {
 
   // Map and filter gigs with their corresponding listers for the current user
   const gigsWithListers = gigs
-    .filter(gig => currentUser?.listedGigs.includes(gig.gigId)) // Filter gigs based on `listedGigs`
+    .filter(gig => currentUser?.listedGigs.includes(gig.gigId)) // Filter gigs based on listedGigs
     .map(gig => {
       const lister = users.find(user => user.userId === gig.listerId);
       return lister ? { gig, lister } : undefined;
@@ -180,7 +195,7 @@ function MyPostedGigsView() {
   return (
     <div className="flex space-x-6 p-6">
       {/* Left section with the list of gigs */}
-      <div className="h-full w-2/5">
+      <div className="h-full w-4/5">
         <h2 className="mb-4 text-2xl font-semibold text-gray-900 dark:text-white">
           My Posted Gigs
         </h2>

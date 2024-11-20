@@ -51,6 +51,7 @@ export default function AppRoot() {
           <div className="flex w-screen">
             <Sidebar
               user={{
+                userId : "user1",
                 email: "amina.agile@example.com",
                 displayName: "Amina Agile",
                 profile: {
