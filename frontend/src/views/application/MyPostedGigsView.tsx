@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import PostedGigListHome from "@/components/Gigs/PostedGigListHome";
 import GigDetails from "@/components/Gigs/GigDetails";
 import InterestedGigglers from "@/components/Gigs/InterestedGigglers"; // Import the new component
-import { Gig, User } from "@/utils/database/schema";
+import { Gig, User, Application } from "@/utils/database/schema";
 import { useAuth, useFirestore } from "@/utils/reactfire";
 import {getUserListedGigs} from "@/utils/database/queries"
 import { setCurrentScreen } from "firebase/analytics";
-import { gigsRef } from "@/utils/database/collections";
-import { query, where, orderBy, getDocs } from "firebase/firestore";
+import { applicationsRef, gigsRef, usersRef } from "@/utils/database/collections";
+import { query, where, orderBy, getDocs, doc } from "firebase/firestore";
 
 
 function MyPostedGigsView() {
@@ -33,6 +33,52 @@ function MyPostedGigsView() {
 
     fetchUserGigs();
   }, []);
+
+  const [currentUserDetails, setCurrentUserDetails] = useState<User | null>(null);
+
+useEffect(() => {
+  const fetchCurrentUserDetails = async () => {
+    if (currUser) {
+      const q = query(usersRef(db), where("userId", "==", currUser.uid)); // Replace usersRef with your collection reference for users
+      const userSnap = (await getDocs(q));
+
+      const currentUserDetails = userSnap.docs.map(doc => ({
+        user: doc.data() as User
+      }))
+    }
+  };
+
+  fetchCurrentUserDetails();
+}, []);
+
+const [applicants, setApplicants] = useState<User[]>([]);
+
+useEffect(() => {
+  const fetchApplicantsForGig = async () => {
+    if (selectedGig) {
+      const q = query(applicationsRef(db), where("gigId", "==", selectedGig.gigId));
+      const querySnapshot = await getDocs(q);
+
+      // Get applicant IDs from applications
+      const userIds = querySnapshot.docs.map(doc => (doc.data() as Application).applicantId);
+
+      // Fetch user details for each userId using queries
+      const userSnapshots = await Promise.all(
+        userIds.map(userId => getDocs(query(usersRef(db), where("userId", "==", userId))))
+      );
+
+      // Flatten and map data from each QuerySnapshot
+      const users = userSnapshots.flatMap(userSnapshot =>
+        userSnapshot.docs.map(userDoc => userDoc.data() as User)
+      );
+
+      setApplicants(users);
+    }
+  };
+
+  fetchApplicantsForGig();
+}, []);
+
 
   const [selectedGig, setSelectedGig] = useState<Gig | null>(gigsWithListers[0]?.gig || null);
 
@@ -62,19 +108,19 @@ function MyPostedGigsView() {
         <div className="rounded-lg p-6 ">
           {selectedGig ? (
             <>
-              {/* <GigDetails
-                gig={selectedGig}
-                user= {currUser} // Find the lister by userId
+              { <GigDetails
+                gig = {selectedGig}
+                user = {currentUserDetails} // Find the lister by userId
                 onEditSave={function (): void {
                   throw new Error("Function not implemented.");
                 } } onDelete={function (): void {
                   throw new Error("Function not implemented.");
-                } }              /> */}
+                } }              />}
               {/* Display interested gigglers */}
-              {/* <InterestedGigglers
+               { <InterestedGigglers
                 gig={selectedGig}
-                users={users} // Pass the full list of users
-              /> */}
+                users={applicants} // Pass the full list of users
+              /> }
             </>
           ) : (
             <p className="text-gray-500">Select a gig to see the details</p>
