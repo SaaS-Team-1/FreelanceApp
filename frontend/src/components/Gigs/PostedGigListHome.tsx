@@ -84,11 +84,11 @@ function PostedGigListHome({
 
           {/* Render profile picture and title/date in the same row */}
           <div className="mb-2 flex items-center">
-            <img
+            {/* <img
               src={lister.profile.picture || "https://via.placeholder.com/40"}
               alt={lister.displayName}
               className="size-10 rounded-full"
-            />
+            /> */}
             <div className="ml-3 flex flex-col">
               <h3 className="text-lg font-semibold text-white">{gig.title}</h3>
               {/* Optional date display next to avatar */}
