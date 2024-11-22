@@ -43,10 +43,8 @@ function Sidebar() {
       {isExpanded && user && (
         <div className="flex flex-col items-center">
           <UserProfilePicture
-            user={{
-              displayName: user.displayName || "Anonymous",
-              picture: user.photoURL,
-            }}
+            displayName={user.displayName || "Anonymous"}
+            picture={user.photoURL || ""}
             size="large"
             rounded
           />
