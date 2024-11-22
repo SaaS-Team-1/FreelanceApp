@@ -19,11 +19,13 @@ export interface Gig {
   category: string;
   price: number;
   dueDate: Timestamp;
-  status: "open" | "in-progress" | "completed";
+  status: "open" | "in-progress" | "completed" | "cancelled";
   listerId: string;
   selectedApplicantId?: string;
+  updatedAt: Timestamp;
   createdAt: Timestamp;
   applicantIds: string[];
+  location: string;
 }
 
 export interface Application {
@@ -57,4 +59,15 @@ export interface Transaction {
   gigId: string;
   amount: number;
   createdAt: Timestamp;
+}
+
+export interface Notification {
+  userId: string;
+  type: 'application' | 'message' | 'gig_status' | 'rating' | 'transaction';
+  relatedEntityId: string;
+  notificationMessage: string;
+  isRead: boolean;
+  createdAt: Timestamp;
+  navigationPath: string;
+  isDeleted: boolean
 }
