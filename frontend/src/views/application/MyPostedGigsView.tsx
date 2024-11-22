@@ -20,9 +20,9 @@ function MyPostedGigsView() {
         picture: "https://via.placeholder.com/40",
         location: "Leuven",
       },
-      completedGigs: ["gig2", "gig4"],
-      activeGigs: ["gig3", "gig5"],
-      listedGigs: ["gig1", "gig3", "gig5", "gig6", "gig7"],
+      completedGigs: ["gig2", "gig4"],//A list of gig IDs that the user has successfully completed. 
+      activeGigs: ["gig3", "gig5"],//list of gig IDs the user is currently working on
+      listedGigs: ["gig1", "gig3", "gig5", "gig6"],//A list of gig IDs that the user has posted
       averageRating: 4.5,
     },
     {
@@ -159,7 +159,7 @@ function MyPostedGigsView() {
       applicantIds: ["user4"], // Replaced applicant ID with user ID
     },
     {
-      gigId: "gig5",
+      gigId: "gig6",
       title: "Website Dev",
       description: "Looking for a skilled web developer to build a responsive website for a local business.They should  have prior experience in web Development",
       category: "Web Development",

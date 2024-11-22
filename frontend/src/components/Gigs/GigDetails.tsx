@@ -10,9 +10,18 @@ interface GigDetailsProps {
   user: User | null; // Allow user to be nullable
   onEditSave: (updatedGig: Gig) => void;
   onDelete: () => void;
+  showEdit?: boolean; // Optional prop to show/hide Edit button
+  showDelete?: boolean; // Optional prop to show/hide Delete button
 }
 
-const GigDetails: React.FC<GigDetailsProps> = ({ gig, user, onEditSave, onDelete }) => {
+const GigDetails: React.FC<GigDetailsProps> = ({
+  gig,
+  user,
+  onEditSave,
+  onDelete,
+  showEdit = true, // Default to show the Edit button
+  showDelete = true, // Default to show the Delete button
+}) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentGig, setCurrentGig] = useState<Gig>(gig);
 
@@ -28,40 +37,54 @@ const GigDetails: React.FC<GigDetailsProps> = ({ gig, user, onEditSave, onDelete
   };
 
   return (
-    <div className="relative  rounded-lg bg-gray-900 p-4 shadow-lg">
+    <div className="relative rounded-lg bg-gray-900 p-4 shadow-lg">
       <div className="max-h-[400px] overflow-y-auto pr-4">
         {/* Header */}
         <div className="mb-4 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-white sm:text-4xl">Gig Details</h1>
           <div className="flex flex-col gap-2">
-            <CustomButton
-              label="Edit"
-              onClick={handleEditClick}
-              color="primary"
-              textColor="black"
-              size="medium"
-              rounded={true}
-              icon={FaPen}
-              iconPosition="left"
-              customStyle={{ backgroundColor: "#44B0E8", padding: "6px 20px", width: "120px" }}
-            />
-            <CustomButton
-              label="Delete"
-              onClick={onDelete}
-              color="primary"
-              textColor="black"
-              size="medium"
-              rounded={true}
-              icon={FaTrashAlt}
-              iconPosition="left"
-              customStyle={{ backgroundColor: "#44B0E8", padding: "6px 20px", width: "120px" }}
-            />
+            {showEdit && (
+              <CustomButton
+                label="Edit"
+                onClick={handleEditClick}
+                color="primary"
+                textColor="black"
+                size="medium"
+                rounded={true}
+                icon={FaPen}
+                iconPosition="left"
+                customStyle={{
+                  backgroundColor: "#44B0E8",
+                  padding: "6px 20px",
+                  width: "120px",
+                }}
+              />
+            )}
+            {showDelete && (
+              <CustomButton
+                label="Delete"
+                onClick={onDelete}
+                color="primary"
+                textColor="black"
+                size="medium"
+                rounded={true}
+                icon={FaTrashAlt}
+                iconPosition="left"
+                customStyle={{
+                  backgroundColor: "#44B0E8",
+                  padding: "6px 20px",
+                  width: "120px",
+                }}
+              />
+            )}
           </div>
         </div>
 
         {/* Status */}
         <div className="mb-6 flex items-center">
-          <p className="mr-2 text-sm text-white"><strong>Status:</strong></p>
+          <p className="mr-2 text-sm text-white">
+            <strong>Status:</strong>
+          </p>
           <Badge
             label={gig.status}
             color={gig.status === "open" ? "green" : gig.status === "in-progress" ? "secondary" : "gray"}
@@ -101,7 +124,14 @@ const GigDetails: React.FC<GigDetailsProps> = ({ gig, user, onEditSave, onDelete
             <div className="flex items-center">
               <FaCalendarAlt className="mr-2" />
               <span>
-                {gig.dueDate ? new Date(gig.dueDate.seconds * 1000).toLocaleDateString() : "N/A"}
+                {gig.dueDate
+                  ? `${new Date(gig.dueDate.seconds * 1000).toLocaleDateString("en-GB")} at ${new Date(
+                      gig.dueDate.seconds * 1000
+                    ).toLocaleTimeString("en-GB", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}`
+                  : "N/A"}
               </span>
             </div>
             <span className="ml-2 text-xs text-gray-400">Due Date</span>

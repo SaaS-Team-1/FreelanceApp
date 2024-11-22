@@ -17,6 +17,7 @@ interface PostedGigListHomeProps {
   showDateWithLine?: boolean; // Optional prop to show/hide the date with a white line
   showUndoButton?: boolean; // New prop to optionally display the UndoButton
   hoverEffect?: boolean; // Prop to conditionally apply hover effect
+
 }
 
 function PostedGigListHome({
@@ -46,7 +47,7 @@ function PostedGigListHome({
         >
           {/* Conditionally render UndoButton at the top-right corner */}
           {showUndoButton && (
-            <div className="absolute right-2 top-4">
+            <div className="absolute right-4 top-4">
               <UndoButton onClick={() => alert(`Undo clicked for gig: ${gig.title}`)} />
             </div>
           )}
@@ -96,6 +97,8 @@ function PostedGigListHome({
                     day: "2-digit",
                     month: "long",
                     year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
                   })}
                 </p>
               )}
@@ -142,11 +145,11 @@ function PostedGigListHome({
           </div>
 
           {/* Conditionally render the "See More" button */}
-          {showSeeMoreButton && (
+          {showSeeMoreButton && onSelectGig && (
             <div className="mt-1 flex justify-end">
               <CustomButton
                 label="See More"
-                onClick={() => alert("See more clicked!")} // Replace with your navigation function or logic
+                onClick={() => onSelectGig(gig)} // Replace with your navigation function or logic
                 color="primary"
                 textColor="white"
                 size="small"

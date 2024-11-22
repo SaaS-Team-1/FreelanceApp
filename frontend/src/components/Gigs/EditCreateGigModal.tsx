@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Gig } from "@/utils/database/schema";
 import { Timestamp } from "firebase/firestore";
 import CustomButton from "@/components/Buttons/CustomButton";
+import { FaDollarSign, FaTag, FaMapMarkerAlt } from "react-icons/fa";
+import DatePicker from "@/components/Calendar/DatePicker";
 
 interface EditCreateGigModalProps {
   gig?: Gig;
@@ -62,6 +64,7 @@ const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
       <div className="w-[800px] max-w-full rounded-lg bg-gray-900 p-6 text-white shadow-lg">
         <h2 className="mb-4 text-3xl font-bold">{title}</h2>
         <div className="space-y-4">
+          {/* Title Input */}
           <div>
             <label className="mb-2 block text-sm font-bold">Title</label>
             <input
@@ -71,6 +74,7 @@ const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
               className="w-full rounded border-gray-700 bg-gray-800 p-2 text-white"
             />
           </div>
+          {/* Description Input */}
           <div>
             <label className="mb-2 block text-sm font-bold">Description</label>
             <textarea
@@ -79,54 +83,47 @@ const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
               className="h-40 w-full rounded border-gray-700 bg-gray-800 p-2 text-white"
             />
           </div>
+          {/* Price and Location on the Same Line */}
           <div className="flex gap-4">
-            <div className="w-1/2">
+            <div className="relative w-1/2">
               <label className="mb-2 block text-sm font-bold">Price</label>
               <input
                 type="number"
                 value={editedGig.price}
                 onChange={(e) => setEditedGig({ ...editedGig, price: Number(e.target.value) })}
-                className="w-full rounded border-gray-700 bg-gray-800 p-2 text-white"
+                className="w-full rounded border-gray-700 bg-gray-800 p-2 pr-10 text-white"
               />
+              <FaDollarSign className="absolute bottom-3 right-3 text-gray-100" />
             </div>
-            <div className="w-1/2">
-              <label className="mb-2 block text-sm font-bold">Category</label>
+            <div className="relative w-1/2">
+              <label className="mb-2 block text-sm font-bold">Location</label>
               <input
                 type="text"
-                value={editedGig.category}
-                onChange={(e) => setEditedGig({ ...editedGig, category: e.target.value })}
-                className="w-full rounded border-gray-700 bg-gray-800 p-2 text-white"
+                value={editedGig.location}
+                onChange={(e) => setEditedGig({ ...editedGig, location: e.target.value })}
+                className="w-full rounded border-gray-700 bg-gray-800 p-2 pr-10 text-white"
               />
+              <FaMapMarkerAlt className="absolute bottom-3 right-3 text-gray-100" />
             </div>
           </div>
-          <div>
-            <label className="mb-2 block text-sm font-bold">Location</label>
+          {/* Category Input */}
+          <div className="relative">
+            <label className="mb-2 block text-sm font-bold">Category</label>
             <input
               type="text"
-              value={editedGig.location}
-              onChange={(e) => setEditedGig({ ...editedGig, location: e.target.value })}
-              className="w-full rounded border-gray-700 bg-gray-800 p-2 text-white"
+              value={editedGig.category}
+              onChange={(e) => setEditedGig({ ...editedGig, category: e.target.value })}
+              className="w-full rounded border-gray-700 bg-gray-800 p-2 pr-10 text-white"
             />
+            <FaTag className="absolute bottom-3 right-3 text-gray-100" />
           </div>
-          <div>
-            <label className="mb-2 block text-sm font-bold">Due Date</label>
-            <input
-              type="date"
-              value={
-                editedGig.dueDate
-                  ? new Date(editedGig.dueDate.seconds * 1000).toISOString().split("T")[0]
-                  : ""
-              }
-              onChange={(e) =>
-                setEditedGig({
-                  ...editedGig,
-                  dueDate: new Timestamp(new Date(e.target.value).getTime() / 1000, 0),
-                })
-              }
-              className="w-full rounded border-gray-700 bg-gray-800 p-2 text-white"
-            />
-          </div>
+          {/* Date Picker */}
+          <DatePicker
+            dueDate={editedGig.dueDate}
+            onDateChange={(newTimestamp) => setEditedGig({ ...editedGig, dueDate: newTimestamp })}
+          />
         </div>
+        {/* Buttons */}
         <div className="mt-6 flex justify-end gap-4">
           <CustomButton
             label="Cancel"
