@@ -192,7 +192,7 @@ function ScheduleView() {
           showCompletedButton={true}
           showSeeMoreButton={true}
           showChatIcon={true}
-          onSelectGig={handleSeeMoreClick} // Pass handler for See More button
+          onSeeMoreClick={handleSeeMoreClick} // Pass handler for See More button
         />
         <h1 className="mb-4 mt-8 text-xl font-bold">Pending Gigs</h1>
         <PostedGigListHome

@@ -58,12 +58,12 @@ const Calendar: React.FC<CalendarProps> = ({ scheduledGigs, pendingGigs }) => {
 
   return (
     <div className="rounded-lg bg-gray-900 p-6 shadow-lg">
-      <div className="bg-gray-800 p-4 rounded-lg shadow-md text-white">
+      <div className="rounded-lg bg-gray-800 p-4 text-white shadow-md">
         {/* Calendar Header */}
-        <div className="flex items-center justify-between mb-4">
+        <div className="mb-4 flex items-center justify-between">
           <button
             onClick={handlePrevMonth}
-            className="bg-gray-700 p-2 rounded-full hover:bg-gray-600"
+            className="rounded-full bg-gray-700 p-2 hover:bg-gray-600"
           >
             &lt;
           </button>
@@ -75,14 +75,14 @@ const Calendar: React.FC<CalendarProps> = ({ scheduledGigs, pendingGigs }) => {
           </h2>
           <button
             onClick={handleNextMonth}
-            className="bg-gray-700 p-2 rounded-full hover:bg-gray-600"
+            className="rounded-full bg-gray-700 p-2 hover:bg-gray-600"
           >
             &gt;
           </button>
         </div>
 
         {/* Days of the Week */}
-        <div className="grid grid-cols-7 text-gray-400 mb-2">
+        <div className="mb-2 grid grid-cols-7 text-gray-400">
           {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
             <div key={day} className="text-center">
               {day}
@@ -112,7 +112,7 @@ const Calendar: React.FC<CalendarProps> = ({ scheduledGigs, pendingGigs }) => {
             return (
               <div
                 key={day}
-                className={`p-2 text-center rounded-lg ${
+                className={`rounded-lg p-2 text-center ${
                   isScheduled
                     ? "bg-orange-500 text-white"
                     : isPending

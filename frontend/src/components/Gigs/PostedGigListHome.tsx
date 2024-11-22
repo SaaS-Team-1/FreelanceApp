@@ -9,6 +9,7 @@ import { UndoButton } from "@/components/Buttons/UndoButton"; // Import the Undo
 interface PostedGigListHomeProps {
   gigs: { gig: Gig; lister: User }[]; // List of gigs with lister data
   onSelectGig?: (gig: Gig) => void; // Optional prop for selecting a gig
+  onSeeMoreClick?: (gig: Gig) => void; // Prop for the "See More" button functionality
   enableSelection?: boolean; // Prop to enable/disable selection
   selectedGig?: Gig | null; // To determine the selected gig for background change
   showSeeMoreButton?: boolean; // Prop to conditionally show "See More" button
@@ -23,6 +24,7 @@ interface PostedGigListHomeProps {
 function PostedGigListHome({
   gigs,
   onSelectGig,
+  onSeeMoreClick,
   enableSelection = true,
   selectedGig = null,
   showSeeMoreButton = true,
@@ -145,11 +147,11 @@ function PostedGigListHome({
           </div>
 
           {/* Conditionally render the "See More" button */}
-          {showSeeMoreButton && onSelectGig && (
+          {showSeeMoreButton && (
             <div className="mt-1 flex justify-end">
               <CustomButton
                 label="See More"
-                onClick={() => onSelectGig(gig)} // Replace with your navigation function or logic
+                onClick={() => onSeeMoreClick && onSeeMoreClick(gig)} // Replace with your navigation function or logic
                 color="primary"
                 textColor="white"
                 size="small"
