@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import PostedGigListHome from "@/components/Gigs/PostedGigListHome";
-import GigDetails from "@/components/Gigs/GigDetails"; // Import GigDetails component
+import GigDetails from "@/components/Gigs/GigDetails";
 import { Gig, User } from "@/utils/database/schema";
 import { Timestamp } from "firebase/firestore";
-import Calendar from "@/components/Calendar/Calendar";
 import CustomButton from "@/components/Buttons/CustomButton";
 
 function ScheduleView() {
@@ -101,7 +100,7 @@ function ScheduleView() {
       dueDate: Timestamp.fromDate(new Date(2025, 4, 25)), // May 25, 2025
       status: "in-progress",
       listerId: "user2",
-      selectedApplicantId: "user1", // User 1 is working on this gig
+      selectedApplicantId: "user1",
       createdAt: Timestamp.now(),
       location: "Leuven",
       applicantIds: ["user1", "user3"],
@@ -179,9 +178,9 @@ function ScheduleView() {
   };
 
   return (
-    <div className="flex flex-wrap gap-8 p-10 text-white">
-      {/* Scheduled and Pending Gigs */}
-      <div className="container mx-auto flex-1 rounded-lg bg-gray-800 p-6 shadow-lg">
+    <div className="flex gap-8 p-10 text-white">
+      {/* Scheduled Gigs */}
+      <div className="flex-1 rounded-lg bg-gray-800 p-6 shadow-lg">
         <h1 className="mb-3 text-xl font-bold">Scheduled Gigs</h1>
         <PostedGigListHome
           gigs={scheduledGigs.map((gig) => ({
@@ -192,9 +191,13 @@ function ScheduleView() {
           showCompletedButton={true}
           showSeeMoreButton={true}
           showChatIcon={true}
-          onSeeMoreClick={handleSeeMoreClick} // Pass handler for See More button
+          onSeeMoreClick={handleSeeMoreClick}
         />
-        <h1 className="mb-4 mt-8 text-xl font-bold">Pending Gigs</h1>
+      </div>
+
+      {/* Pending Gigs */}
+      <div className="flex-1 rounded-lg bg-gray-800 p-6 shadow-lg">
+        <h1 className="mb-3 text-xl font-bold">Pending Gigs</h1>
         <PostedGigListHome
           gigs={pendingGigs.map((gig) => ({
             gig,
@@ -202,19 +205,14 @@ function ScheduleView() {
           }))}
           showDateWithLine={true}
           showUndoButton={true}
-          onSelectGig={handleSeeMoreClick} // Pass handler for See More button
+          onSeeMoreClick={handleSeeMoreClick}
         />
-      </div>
-
-      {/* Calendar */}
-      <div className="w-1/3">
-        <Calendar scheduledGigs={scheduledGigs} pendingGigs={pendingGigs} />
       </div>
 
       {/* Gig Details Modal */}
       {selectedGig && isGigDetailsOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
-          <div className="w-[800px] rounded-lg bg-gray-900 p-6 shadow-lg ">
+          <div className="w-[800px] rounded-lg bg-gray-900 p-6 shadow-lg">
             <GigDetails
               gig={selectedGig}
               user={users.find((user) => user.userId === selectedGig.listerId)!}
