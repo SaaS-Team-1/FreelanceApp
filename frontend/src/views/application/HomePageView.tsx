@@ -42,21 +42,6 @@ export default function OverviewView() {
     fetchNotifications();
   }, [user]);
 
-  const userInfo: User = {
-    email: "amina.agile@example.com",
-    displayName: "Amina Agile",
-    profile: {
-      bio: "Computer Science Student in Leuven City.",
-      credits: 100,
-      picture: "",
-      location: "Leuven",
-    },
-    completedGigs: ["gig1", "gig2"],
-    activeGigs: ["gig3"],
-    listedGigs: ["gig4", "gig5"],
-    averageRating: 4.5,
-  };
-
   return (
     <div className="flex flex-1 flex-col space-y-6 p-6">
       {/* Top Section with Search and Notifications */}
