@@ -63,6 +63,35 @@ const getGigTransactions = async (db: Firestore, gigId: string) => {
   return (await getDocs(q)).docs;
 };
 
+//////////////////////////// ADDED QUERIES //////////////////////////
+
+const getGigById = async (db: Firestore, gigId: string) => {
+  const q = query(gigsRef(db), where("gigID", "==", gigId));
+  return (await getDocs(q)).docs;
+};
+
+
+const getApplicationByGigAndApplicant = async (
+  db: Firestore,
+  gigId: string,
+  applicantId: string,
+) => {
+  const q = query(
+    applicationsRef(db),
+    where("gigId", "==", gigId),
+    where("applicantId", "==", applicantId),
+  );
+  return (await getDocs(q)).docs.map((doc) => doc.data());
+};
+
+const getChatByApplication = async (db: Firestore, applicationId: string) => {
+  const q = query(messagesRef(db), where("applicationID", "==", applicationId));
+  return (await getDocs(q)).docs;
+};
+
+
+
+
 export default {
   getOpenGigs,
   getGigApplications,
@@ -71,4 +100,7 @@ export default {
   getUserRatings,
   getUserTransactions,
   getGigTransactions,
+  getGigById,
+  getApplicationByGigAndApplicant,
+  getChatByApplication
 };
