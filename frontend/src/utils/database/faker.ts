@@ -19,7 +19,11 @@ import {
   Rating,
   Transaction,
 } from "./schema";
-import { Auth, createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  Auth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
 
 // Configuration
 const NUM_USERS = 20;
@@ -76,15 +80,18 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
       email,
       "password123",
     );
-
+    await updateProfile(authUser.user, {
+      displayName: faker.person.fullName(),
+      photoURL: faker.image.avatar(),
+    });
     const userData: User = {
       userId: authUser.user.uid,
       email: email,
-      displayName: faker.person.fullName(),
+      displayName: authUser.user.displayName || "",
       profile: {
         bio: faker.lorem.paragraph(),
         credits: faker.number.int({ min: 100, max: 1000 }),
-        picture: faker.image.avatar(),
+        picture: authUser.user.photoURL || "",
         location: faker.helpers.arrayElement(LOCATIONS),
       },
       stats: {
