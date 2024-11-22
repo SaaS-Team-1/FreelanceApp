@@ -1,7 +1,16 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import ArrowButton from '../Buttons/ArrowButton';
 
-const SettingItem = ({ name, subtitle, type = 'arrow', onToggle, isToggled }) => {
+export interface SettingItemProps{
+  name: string;
+  subtitle: string;
+  type: string;
+  onToggle?: () => void;
+  isToggled?: boolean;
+  children?: ReactNode;
+}
+
+const SettingItem = ({ name, subtitle, type = 'arrow', onToggle, isToggled, children }: SettingItemProps) => {
   return (
     <div className="flex items-center justify-between py-4">
       <div className="flex flex-col">
@@ -23,7 +32,8 @@ const SettingItem = ({ name, subtitle, type = 'arrow', onToggle, isToggled }) =>
           ></div>
         </label>
       )}
-      {type === 'none' && <div className="w-11 h-6"></div>} {/* Render nothing for `none` */}
+      {type === 'none' && <div className="w-11 h-6"></div>} 
+      {type === 'custom' && children && <div>{children}</div>}
     </div>
   );
 };

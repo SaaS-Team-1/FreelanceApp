@@ -1,9 +1,5 @@
+import { User } from "@/utils/database/schema";
 import React from "react";
-
-interface User {
-  profilePicture?: string;
-  name: string;
-}
 
 interface UserProfilePictureProps {
   user: User;
@@ -20,8 +16,8 @@ const sizeClasses = {
 const UserProfilePicture: React.FC<UserProfilePictureProps> = ({ user, size = "medium", rounded = true }) => {
   // Calculate initials from user's name
   const getInitials = (name: string) => {
-    const initials = name.split(" ").map((word) => word[0]).join("");
-    return initials.toUpperCase();
+    const initials = name?.split(" ").map((word) => word[0]).join("");
+    return initials?.toUpperCase();
   };
 
   return (
@@ -30,17 +26,17 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({ user, size = "m
         rounded ? "rounded-full" : "rounded-md"
       } bg-gray-300 flex items-center justify-center overflow-hidden`}
     >
-      {user.profilePicture ? (
+      {user.profile?.picture ? (
         // Display profile picture if available
         <img
-          src={user.profilePicture}
-          alt={user.name}
+          src={user.profile.picture}
+          alt={user.displayName}
           className={`object-cover w-full h-full ${rounded ? "rounded-full" : "rounded-md"}`}
         />
       ) : (
         // Display initials if no profile picture is available
         <span className="text-white font-bold">
-          {getInitials(user.name)}
+          {getInitials(user.displayName)}
         </span>
       )}
     </div>

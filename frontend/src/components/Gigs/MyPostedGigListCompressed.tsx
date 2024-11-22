@@ -1,38 +1,10 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import MyPostedGigItemCompressed from "./MyPostedGigItemCompressed";
+import { Gig, Timestamp, User } from "@/utils/database/schema";
 
-const MyPostedGigListCompressed: React.FC = () => {
+function MyPostedGigListCompressed({gigs, user}:{gigs: Gig[], user: User}) {
   const navigate = useNavigate(); // Initialize navigate
-
-  // Sample data for the list of gigs
-  const gigs = [
-    {
-      title: "Dog Sitter Needed",
-      dateRange: "20 November - 23 November",
-      category: "Dogsitting",
-    },
-    {
-      title: "Video Editing (7min Video)",
-      dateRange: "12 December",
-      category: "Video Editing",
-    },
-    {
-      title: "Airport Pickup Charleroi",
-      dateRange: "23 November",
-      category: "Transport",
-    },
-    {
-      title: "Airport Pickup Charleroi",
-      dateRange: "23 November",
-      category: "Transport",
-    },
-    {
-      title: "Airport Pickup Charleroi",
-      dateRange: "23 November",
-      category: "Transport",
-    },
-  ];
 
   return (
     <div className="scrollbar h-96 max-w-sm overflow-y-scroll rounded-xl border border-gray-700 bg-gray-800 p-4 shadow-lg">
@@ -41,12 +13,7 @@ const MyPostedGigListCompressed: React.FC = () => {
       </h2>
       {gigs.map((gig, index) => (
         <React.Fragment key={index}>
-          <MyPostedGigItemCompressed
-            title={gig.title}
-            dateRange={gig.dateRange}
-            category={gig.category}
-            avatarUrl={gig.avatarUrl}
-          />
+          <MyPostedGigItemCompressed gig={gig} lister={user} />
           {index < gigs.length - 1 && (
             <hr className="my-4 border-gray-700" /> // Divider between items
           )}
@@ -60,6 +27,7 @@ const MyPostedGigListCompressed: React.FC = () => {
       </button>
     </div>
   );
-};
+}
 
 export default MyPostedGigListCompressed;
+

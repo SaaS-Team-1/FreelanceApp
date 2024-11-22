@@ -1,7 +1,13 @@
 import React from "react";
-import SettingItem from "./SettingItem";
+import SettingItem, { SettingItemProps } from "./SettingItem";
+import DeleteAccount from "./DeleteAccount";
 
-const SettingGroup = ({ title, settings }) => {
+interface SettingGroupProps{
+  title: string;
+  settings: SettingItemProps[];
+}
+
+const SettingGroup = ({ title, settings }: SettingGroupProps) => {
   return (
     <div className="rounded-lg bg-gray-800 p-4 shadow-md">
       <h2 className="mb-4 text-lg font-bold text-white">{title}</h2>
@@ -15,7 +21,9 @@ const SettingGroup = ({ title, settings }) => {
               type={setting.type} // Pass the type for the input (arrow/toggle)
               onToggle={setting.onToggle} // Pass the toggle handler
               isToggled={setting.isToggled} // Pass the toggle state
-            />
+            >
+            <DeleteAccount />
+            </SettingItem>
             {index < settings.length - 1 && (
               <hr className="my-4 border-gray-700" /> // Divider between items
             )}
