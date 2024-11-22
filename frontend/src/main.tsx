@@ -29,10 +29,11 @@ import ErrorView from "./views/ErrorView.tsx";
 import ChatView from "./views/application/ChatView.tsx";
 import MyPostedGigsView from "./views/application/MyPostedGigsView.tsx";
 import PortfolioView from "./views/application/PortfolioView.tsx";
-import ProfileView from "./views/application/ProfileVIew.tsx";
 import ScheduleView from "./views/application/ScheduleView.tsx";
 import SettingsView from "./views/application/SettingsView.tsx";
 import WalletView from "./views/application/WalletView.tsx";
+import NotificationsView from "./views/application/NotificationsView.tsx";
+import UserView, { userLoader } from "./views/application/UserView.tsx";
 import AdminView from "./views/application/AdminView.tsx";
 
 const router = createBrowserRouter([
@@ -59,6 +60,7 @@ const router = createBrowserRouter([
         path: "/app",
         element: <AppRoot />,
         children: [
+         
           {
             index: true,
             element: <HomePageView />,
@@ -76,12 +78,17 @@ const router = createBrowserRouter([
             element: <PortfolioView />,
           },
           {
-            path: "profile",
-            element: <ProfileView />,
-          },
-          {
             path: "schedule",
             element: <ScheduleView />,
+          },
+          {
+            path: "notifications",
+            element: <NotificationsView />,
+          },
+          {
+            path: "user/:UID",
+            loader: userLoader,
+            element: <UserView />,
           },
           {
             path: "settings",

@@ -16,3 +16,4 @@ const NotificationItem = ({ user, text, time, count, shape = 'circle' }) => {
 };
 
 export default NotificationItem;
+

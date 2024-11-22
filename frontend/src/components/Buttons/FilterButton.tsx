@@ -4,7 +4,7 @@ import { Dropdown } from 'flowbite-react';
 const FilterButton = () => {
   const [selectedFilter, setSelectedFilter] = useState("All");
 
-  const handleSelect = (filter) => {
+  const handleSelect = (filter: React.SetStateAction<string>) => {
     setSelectedFilter(filter);
   };
 
@@ -15,7 +15,7 @@ const FilterButton = () => {
           <div className="flex items-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 text-gray-500"
+              className="size-5 text-gray-500"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
