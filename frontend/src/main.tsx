@@ -12,6 +12,7 @@ import { FirebaseAppProvider } from "./utils/reactfire/index.ts";
 import { config } from "./utils/firebase/firebaseConfig.ts";
 import { AuthWrapper } from "./utils/firebase/auth.ts";
 
+
 // Flowbite
 import { Flowbite } from "flowbite-react";
 import { flowbiteTheme } from "./theme.ts";
