@@ -12,7 +12,8 @@ const sizeClasses = {
 };
 
 function UserProfilePicture({
-  user,
+  displayName,
+  picture,
   size = "medium",
   rounded = true,
 }: UserProfilePictureProps) {
@@ -29,18 +30,16 @@ function UserProfilePicture({
     <div
       className={`${sizeClasses[size]} ${rounded ? "rounded-full" : "rounded-md"} flex items-center justify-center overflow-hidden bg-gray-300`}
     >
-      {user.profile?.picture ? (
+      {picture ? (
         // Display profile picture if available
         <img
-          src={user.profile.picture}
-          alt={user.displayName}
+          src={picture}
+          alt={displayName}
           className={`h-full w-full object-cover ${rounded ? "rounded-full" : "rounded-md"}`}
         />
       ) : (
         // Display initials if no profile picture is available
-        <span className="font-bold text-white">
-          {getInitials(user.displayName)}
-        </span>
+        <span className="font-bold text-white">{getInitials(displayName)}</span>
       )}
     </div>
   );
