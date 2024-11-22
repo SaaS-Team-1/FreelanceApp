@@ -9,6 +9,7 @@ import {
   chatMessagesRef,
   ratingsRef,
   transactionsRef,
+  notificationsRef,
 } from "./collections";
 import {
   User,
@@ -18,6 +19,7 @@ import {
   ChatMessage,
   Rating,
   Transaction,
+  Notification,
 } from "./schema";
 import {
   Auth,
@@ -32,6 +34,7 @@ const APPLICATIONS_PER_GIG = 2;
 const MESSAGES_PER_CHAT = 3;
 const COMPLETION_RATE = 0.7;
 const RATING_RATE = 0.8;
+const NOTIFICATIONS_PER_USER = 5;
 
 const GIG_CATEGORIES = [
   "Web Development",
@@ -247,6 +250,23 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
 
       const transactionDoc = await addDoc(transactionsRef(db), transactionData);
       transactionData.transactionId = transactionDoc.id;
+    }
+  }
+
+  console.log("Creating notifications...");
+  for (const gigRef of gigRefs.filter(
+    (g) => g.gig.status === "completed" && g.gig.selectedApplicantId,
+  )) {
+    if (gigRef.gig.selectedApplicantId) {
+      const notifData: Notification = {
+        notificationId: faker.string.uuid(),
+        userId: gigRef.gig.listerId,
+        notificationMessage: "Your posted gig has been completed by " + gigRef.gig.selectedApplicantId,
+        createdAt: getRecentDate(),
+      };
+
+      const notifDoc = await addDoc(notificationsRef(db), notifData);
+      notifData.notificationId = notifDoc.id;
     }
   }
 

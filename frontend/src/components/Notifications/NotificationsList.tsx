@@ -1,8 +1,9 @@
 import React from "react";
-import NotificationItem, { NotificationItemProps } from "./NotificationItem";
+import { Notification } from "@/utils/database/schema";
+import NotificationItem from "./NotificationItem";
 
 interface NotificationListProps {
-  notifications: NotificationItemProps[];
+  notifications: Notification[];
 }
 
 const NotificationList = ({ notifications }: NotificationListProps) => {
@@ -15,11 +16,8 @@ const NotificationList = ({ notifications }: NotificationListProps) => {
         <React.Fragment key={index}>
           <NotificationItem
             key={index}
-            user={notification.user}
-            text={notification.text}
-            time={notification.time}
-            count={notification.count}
-            shape="circle"
+            notificationMessage={notification.notificationMessage}
+            createdAt={notification.createdAt}
           />
           {index < notifications.length - 1 && (
             <hr className="my-4 border-gray-700" /> // Divider between items

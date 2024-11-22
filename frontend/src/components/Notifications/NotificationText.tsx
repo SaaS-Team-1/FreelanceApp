@@ -1,7 +1,12 @@
+import { Timestamp } from 'firebase/firestore';
 import React, { useState } from 'react';
-import { NotificationItemProps } from './NotificationItem';
 
-const NotificationText = ({ text, time }: Omit <NotificationItemProps, "user" | "shape" | "count">) => {
+interface NotificationTextProps{
+  text: string,
+  time: Timestamp,
+}
+
+const NotificationText = ({ text, time }: NotificationTextProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Define the maximum length for the text before truncation
@@ -15,11 +20,11 @@ const NotificationText = ({ text, time }: Omit <NotificationItemProps, "user" | 
   return (
     <div className="flex flex-col">
       <p className="text-sm text-white">
-        {isExpanded || text.length <= MAX_LENGTH ? (
+        {text && (isExpanded || text.length <= MAX_LENGTH) ? (
           text
         ) : (
           <>
-            {text.slice(0, MAX_LENGTH)}...
+            {text && text.slice(0, MAX_LENGTH)}...
             <span
               className="text-blue-400 cursor-pointer"
               onClick={toggleExpanded}
@@ -37,9 +42,10 @@ const NotificationText = ({ text, time }: Omit <NotificationItemProps, "user" | 
           </span>
         )}
       </p>
-      <span className="text-xs text-blue-500">{time}</span>
+      <span className="text-xs text-blue-500">{time.toString()}</span>
     </div>
   );
+  
 };
 
 export default NotificationText;
