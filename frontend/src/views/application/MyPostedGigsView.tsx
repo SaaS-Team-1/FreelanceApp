@@ -15,6 +15,8 @@ function MyPostedGigsView() {
   const auth = useAuth();
   const currUser = auth.currentUser;
 
+  
+
   const [gigsWithListers, setGigsWithListers] = useState<{ gig: Gig; lister: User }[]>([]);
 
   useEffect(() => {
@@ -34,6 +36,12 @@ function MyPostedGigsView() {
 
     fetchUserGigs();
   }, []);
+
+  const [selectedGig, setSelectedGig] = useState<Gig | null>(gigsWithListers[0]?.gig || null);
+
+  const handleSelectGig = (gig: Gig) => {
+    setSelectedGig(gig);
+  };
 
   const [currentUserDetails, setCurrentUserDetails] = useState<{user: User} | null>(null);
 
@@ -83,15 +91,9 @@ useEffect(() => {
   };
 
   fetchApplicantsForGig();
-}, []);
+}, [selectedGig, db]);
 
   console.log(applicants);
-
-  const [selectedGig, setSelectedGig] = useState<Gig | null>(gigsWithListers[0]?.gig || null);
-
-  const handleSelectGig = (gig: Gig) => {
-    setSelectedGig(gig);
-  };
 
 
   return (
