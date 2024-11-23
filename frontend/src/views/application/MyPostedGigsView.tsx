@@ -14,6 +14,7 @@ function MyPostedGigsView() {
   const db = useFirestore();
   const auth = useAuth();
   const currUser = auth.currentUser;
+
   const [gigsWithListers, setGigsWithListers] = useState<{ gig: Gig; lister: User }[]>([]);
 
   useEffect(() => {
@@ -34,17 +35,17 @@ function MyPostedGigsView() {
     fetchUserGigs();
   }, []);
 
-  const [currentUserDetails, setCurrentUserDetails] = useState<User | null>(null);
+  const [currentUserDetails, setCurrentUserDetails] = useState<{user: User} | null>(null);
 
 useEffect(() => {
   const fetchCurrentUserDetails = async () => {
     if (currUser) {
-      const q = query(usersRef(db), where("userId", "==", currUser.uid)); // Replace usersRef with your collection reference for users
-      const userSnap = (await getDocs(q));
+      const q = query(usersRef(db), where("userId", "==", currUser.uid));
+      const userSnapshot = (await getDocs(q));
 
-      const currentUserDetails = userSnap.docs.map(doc => ({
-        user: doc.data() as User
-      }))
+      const userDetails = {user: userSnapshot.docs[0].data() as User};
+
+      setCurrentUserDetails(userDetails);
     }
   };
 
@@ -56,29 +57,35 @@ const [applicants, setApplicants] = useState<User[]>([]);
 useEffect(() => {
   const fetchApplicantsForGig = async () => {
     if (selectedGig) {
-      const q = query(applicationsRef(db), where("gigId", "==", selectedGig.gigId));
-      const querySnapshot = await getDocs(q);
+      try {
+        // Step 1: Fetch Applications
+        const q = query(applicationsRef(db), where("gigId", "==", selectedGig.gigId));
+        const applicationSnapshot = await getDocs(q);
 
-      // Get applicant IDs from applications
-      const userIds = querySnapshot.docs.map(doc => (doc.data() as Application).applicantId);
+        // Step 2: Extract Applicant IDs
+        const userIds = applicationSnapshot.docs.map(doc => (doc.data() as Application).applicantId);
 
-      // Fetch user details for each userId using queries
-      const userSnapshots = await Promise.all(
-        userIds.map(userId => getDocs(query(usersRef(db), where("userId", "==", userId))))
-      );
+        // Step 3: Fetch User Data for Each Applicant
+        const userSnapshots = await Promise.all(
+          userIds.map(userId => getDocs(query(usersRef(db), where("userId", "==", userId))))
+        );
 
-      // Flatten and map data from each QuerySnapshot
-      const users = userSnapshots.flatMap(userSnapshot =>
-        userSnapshot.docs.map(userDoc => userDoc.data() as User)
-      );
+        // Step 4: Flatten and Extract User Data
+        const users = userSnapshots.flatMap(userSnapshot =>
+          userSnapshot.docs.map(userDoc => userDoc.data() as User)
+        );
 
-      setApplicants(users);
+        setApplicants(users);
+      } catch (error) {
+        console.error("Error fetching applicants:", error);
+      }
     }
   };
 
   fetchApplicantsForGig();
 }, []);
 
+  console.log(applicants);
 
   const [selectedGig, setSelectedGig] = useState<Gig | null>(gigsWithListers[0]?.gig || null);
 
@@ -110,7 +117,7 @@ useEffect(() => {
             <>
               { <GigDetails
                 gig = {selectedGig}
-                user = {currentUserDetails} // Find the lister by userId
+                user = {currentUserDetails}
                 onEditSave={function (): void {
                   throw new Error("Function not implemented.");
                 } } onDelete={function (): void {

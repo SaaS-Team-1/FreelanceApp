@@ -17,9 +17,10 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({ gig, users }) =
   const assignedGiggler = users.find(user => user.userId === gig.selectedApplicantId);
 
   // Find other applicants (excluding assigned giggler)
-  const otherApplicants = users.filter(
-    user => gig.applicantIds.includes(user.userId) && user.userId !== gig.selectedApplicantId
-  );
+  const otherApplicants = users.filter(user => {
+    if (!assignedGiggler) return true; // Include all users if no assigned giggler
+    return user.userId !== assignedGiggler.userId;
+  });
 
   const handleMessageClick = (userId: string) => {
     navigate(`/app/chat?user=${userId}`);
