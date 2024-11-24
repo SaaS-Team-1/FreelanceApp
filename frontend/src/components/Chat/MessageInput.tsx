@@ -28,7 +28,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSend }) => {
   };
 
   return (
-    <div className="p-4 bg-slate-700 flex items-center border-t border-gray-700">
+    <div className="w-4/5 p-4 bg-gray-900 flex items-center border-t border-gray-700">
       <textarea
         value={message}
         onChange={(e) => setMessage(e.target.value)}
