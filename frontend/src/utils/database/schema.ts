@@ -97,20 +97,21 @@ export interface Rating {
 
 export interface Transaction {
   transactionId: string; // transaction ID
-  senderId: string;
+  senderId?: string;
   receiverId: string;
-  gigId: string;
+  gigId?: string;
   amount: number;
   createdAt: Timestamp;
+  kind: "deposit" | "withdraw" | "send" | "recieve";
 }
 
 export interface Notification {
   userId: string;
-  type: 'application' | 'message' | 'gig_status' | 'rating' | 'transaction';
+  type: "application" | "message" | "gig_status" | "rating" | "transaction";
   relatedEntityId: string;
   notificationMessage: string;
   isRead: boolean;
   createdAt: Timestamp;
   navigationPath: string;
-  isDeleted: boolean
+  isDeleted: boolean;
 }

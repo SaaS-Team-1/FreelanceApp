@@ -1,4 +1,4 @@
-import { doc, setDoc, Timestamp } from "firebase/firestore";
+import { doc, setDoc, Timestamp, updateDoc } from "firebase/firestore";
 import { faker } from "@faker-js/faker";
 import { addDoc, Firestore } from "firebase/firestore";
 import {

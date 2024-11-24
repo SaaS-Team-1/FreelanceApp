@@ -15,6 +15,7 @@ import { Firestore } from "firebase/firestore";
 import { Navigate, Outlet } from "react-router-dom";
 import { AuthWrapper } from "@/utils/firebase/auth";
 import Sidebar from "@/components/Common/Sidebar";
+import { useThemeMode } from "flowbite-react";
 
 // Separate component to handle Firebase initialization
 function FirebaseInitializer({ children }: { children: React.ReactNode }) {
@@ -32,7 +33,6 @@ function FirebaseInitializer({ children }: { children: React.ReactNode }) {
 
 export default function AppRoot() {
   const [isReady, setIsReady] = useState(false);
-
   useEffect(() => {
     // Wrap the state update in startTransition
     startTransition(() => {
