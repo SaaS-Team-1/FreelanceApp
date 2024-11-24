@@ -18,7 +18,7 @@
   "dependencies": {
     "firebase": "^10.14.0",
     "firebaseui": "^6.1.0",
-    "flowbite-react": "^0.8.0",
+    "flowbite-react": "^0.10.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-loading": "^2.0.3",

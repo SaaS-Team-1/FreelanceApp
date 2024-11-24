@@ -18,6 +18,7 @@ import { Firestore } from "firebase/firestore";
 import { Navigate, Outlet } from "react-router-dom";
 import { AuthWrapper } from "@/utils/firebase/auth";
 import Sidebar from "@/components/Common/Sidebar";
+import { useThemeMode } from "flowbite-react";
 
 function FirebaseInitializer({ children }: { children: React.ReactNode }) {
   const { data: firestoreInstance } = useInitFirestore(getFirestoreInstance);

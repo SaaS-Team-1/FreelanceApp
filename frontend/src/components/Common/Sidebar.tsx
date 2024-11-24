@@ -9,6 +9,7 @@ import {
   FaCog,
   FaSignOutAlt,
   FaBars,
+  FaWallet,
 } from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth, useUser } from "@/utils/reactfire";
@@ -106,6 +107,13 @@ function Sidebar() {
           isExpanded={isExpanded}
           isActive={location.pathname === "/app/settings"}
           onClick={() => navigate("/app/settings")}
+        />
+        <SidebarItem
+          icon={<FaWallet />}
+          label="Wallet"
+          isExpanded={isExpanded}
+          isActive={location.pathname === "/app/wallet"}
+          onClick={() => navigate("/app/wallet")}
         />
       </nav>
 
