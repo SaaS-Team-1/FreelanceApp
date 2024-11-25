@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import ReactDOM from "react-dom"; // Import ReactDOM for portals
 import { User, Gig } from "@/utils/database/schema";
 import { doc, updateDoc, serverTimestamp, Timestamp } from "firebase/firestore";
 import CustomButton from "@/components/Buttons/CustomButton";
@@ -45,9 +46,89 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({ gig, users, onG
     }
   };
 
+  const handleMarkComplete = async () => {
+    try {
+      const gigDocRef = doc(db, "gigs", gig.gigId);
+      await updateDoc(gigDocRef, {
+        status: "completed",
+        updatedAt: serverTimestamp(),
+      });
+
+      const updatedGig: Gig = {
+        ...gig,
+        status: "completed",
+        updatedAt: serverTimestamp() as unknown as Timestamp,
+      };
+
+      onGigUpdate(updatedGig);
+    } catch (error) {
+      console.error("Error marking gig as completed:", error);
+      alert("Failed to mark gig as completed. Please try again.");
+    }
+  };
+
   const handleMessageClick = (userId: string) => {
     navigate(`/app/chat?user=${userId}`);
   };
+
+  // Modal JSX
+  const Modal = () => (
+    <>
+      <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"></div>
+      <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="w-full max-w-3xl rounded-lg bg-gray-800 p-6">
+          <h3 className="mb-4 text-xl font-semibold text-white">All Interested Gigglers</h3>
+          <div className="max-h-[400px] overflow-y-auto">
+            {otherApplicants.map((applicant) => (
+              <div key={applicant.userId} className="p-2">
+                <div className="flex items-center justify-between">
+                  <div
+                    className="flex cursor-pointer items-center"
+                    onClick={() => alert(`View profile of ${applicant.displayName}`)}
+                  >
+                    <img
+                      src={applicant.profile.picture || "https://via.placeholder.com/40"}
+                      alt={applicant.displayName}
+                      className="mr-3 size-10 rounded-full"
+                    />
+                    <span className="text-white">{applicant.displayName} has shown interest in this gig</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CustomButton
+                      label="Assign Gig"
+                      onClick={() => handleAssignGig(applicant.userId)}
+                      color="green"
+                      textColor="black"
+                      size="small"
+                      rounded={true}
+                    />
+                    <CustomButton
+                      label="Message"
+                      onClick={() => handleMessageClick(applicant.userId)}
+                      color="primary"
+                      textColor="black"
+                      size="small"
+                      rounded={true}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-2 flex justify-end">
+            <CustomButton
+              label="Close"
+              onClick={() => setShowModal(false)}
+              color="red"
+              textColor="black"
+              size="medium"
+              rounded={true}
+            />
+          </div>
+        </div>
+      </div>
+    </>
+  );
 
   return (
     <div className="relative mt-4 rounded-lg bg-gray-900 p-4">
@@ -72,6 +153,16 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({ gig, users, onG
               </span>
             </div>
             <div className="flex items-center space-x-2">
+              {gig.status === "awaiting-confirmation" && (
+                <CustomButton
+                  label="Complete"
+                  onClick={handleMarkComplete}
+                  color="green"
+                  textColor="black"
+                  size="small"
+                  rounded={true}
+                />
+              )}
               <CustomButton
                 label="Message"
                 onClick={() => handleMessageClick(assignedGiggler.userId)}
@@ -151,64 +242,8 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({ gig, users, onG
         </>
       )}
 
-      {/* Modal for showing all interested gigglers */}
-      {showModal && (
-        <>
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm"></div>
-          <div className="fixed inset-0 z-50 flex items-center justify-center">
-            <div className="w-full max-w-3xl rounded-lg bg-gray-800 p-6">
-              <h3 className="mb-4 text-xl font-semibold text-white">All Interested Gigglers</h3>
-              <div className="max-h-[400px] overflow-y-auto">
-                {otherApplicants.map((applicant) => (
-                  <div key={applicant.userId} className="p-2">
-                    <div className="flex items-center justify-between">
-                      <div
-                        className="flex cursor-pointer items-center"
-                        onClick={() => alert(`View profile of ${applicant.displayName}`)}
-                      >
-                        <img
-                          src={applicant.profile.picture || "https://via.placeholder.com/40"}
-                          alt={applicant.displayName}
-                          className="mr-3 size-10 rounded-full"
-                        />
-                        <span className="text-white">{applicant.displayName} has shown interest in this gig</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <CustomButton
-                          label="Assign Gig"
-                          onClick={() => handleAssignGig(applicant.userId)}
-                          color="green"
-                          textColor="black"
-                          size="small"
-                          rounded={true}
-                        />
-                        <CustomButton
-                          label="Message"
-                          onClick={() => handleMessageClick(applicant.userId)}
-                          color="primary"
-                          textColor="black"
-                          size="small"
-                          rounded={true}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-2 flex justify-end">
-                <CustomButton
-                  label="Close"
-                  onClick={() => setShowModal(false)}
-                  color="red"
-                  textColor="black"
-                  size="medium"
-                  rounded={true}
-                />
-              </div>
-            </div>
-          </div>
-        </>
-      )}
+      {/* Use React Portal for the Modal */}
+      {showModal && ReactDOM.createPortal(<Modal />, document.body)}
     </div>
   );
 };

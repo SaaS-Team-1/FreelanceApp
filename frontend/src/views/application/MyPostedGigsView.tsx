@@ -142,7 +142,22 @@ function MyPostedGigsView() {
 
     setSelectedGig(updatedGig);
   };
+  const handleGigDelete = (gigId: string) => {
+    const remainingGigs = gigsWithListers.filter((item) => item.gig.gigId !== gigId);
 
+    const sortedRemainingGigs = remainingGigs.sort(
+      (a, b) => STATUS_ORDER.indexOf(a.gig.status) - STATUS_ORDER.indexOf(b.gig.status)
+    );
+
+    setGigsWithListers(sortedRemainingGigs);
+    setFilteredGigs(
+      filterStatus === "all"
+        ? sortedRemainingGigs
+        : sortedRemainingGigs.filter((gigWithLister) => gigWithLister.gig.status === filterStatus)
+    );
+
+    setSelectedGig(sortedRemainingGigs.length > 0 ? sortedRemainingGigs[0].gig : null);
+  };
   if (loadingGigs) {
     return <p>Loading your gigs...</p>;
   }
@@ -201,7 +216,8 @@ function MyPostedGigsView() {
                 gig={selectedGig}
                 user={currUser as unknown as User}
                 onEditSave={handleGigUpdate}
-                onDelete={() => console.log("Delete Gig")}
+                onDelete={handleGigDelete}
+
               />
               {loadingApplicants ? (
                 <p className="text-gray-500">Loading interested gigglers...</p>
