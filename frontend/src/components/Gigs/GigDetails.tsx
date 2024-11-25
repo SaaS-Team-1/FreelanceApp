@@ -54,7 +54,7 @@ const GigDetails: React.FC<GigDetailsProps> = ({
 
   const renderGigDetails = (isModal: boolean = false) => (
     <div className={isModal ? "pr-4" : "max-h-[600px] overflow-auto pr-4"}>
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-1 flex items-center justify-between">
         <h1 className="text-2xl font-bold text-white sm:text-4xl">Gig Details</h1>
         <div className="flex flex-col gap-2">
           {showEdit && (

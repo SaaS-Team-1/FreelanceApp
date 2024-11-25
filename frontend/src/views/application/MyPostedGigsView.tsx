@@ -6,7 +6,14 @@ import InterestedGigglers from "@/components/Gigs/InterestedGigglers";
 import { Gig, User, Application } from "@/utils/database/schema";
 import { useAuth, useFirestore } from "@/utils/reactfire";
 import { applicationsRef, gigsRef, usersRef } from "@/utils/database/collections";
-import { query, where, getDocs, updateDoc, doc } from "firebase/firestore";
+import {
+  query,
+  where,
+  getDocs,
+  updateDoc,
+  doc,
+  serverTimestamp,
+} from "firebase/firestore";
 
 function MyPostedGigsView() {
   const db = useFirestore();
@@ -22,7 +29,12 @@ function MyPostedGigsView() {
   const [filterStatus, setFilterStatus] = useState<string | "all">("all");
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
-  const STATUS_ORDER = ["open", "in-progress", "awaiting-confirmation", "completed"];
+  const STATUS_ORDER: Gig["status"][] = [
+    "open",
+    "in-progress",
+    "awaiting-confirmation",
+    "completed",
+  ];
 
   useEffect(() => {
     const fetchUserGigs = async () => {
@@ -112,25 +124,23 @@ function MyPostedGigsView() {
     }
   };
 
-  const handleGigSave = async (updatedGig: Gig) => {
-    try {
-      const gigDocRef = doc(db, "gigs", updatedGig.gigId);
-      await updateDoc(gigDocRef, {
-        ...updatedGig,
-        updatedAt: new Date(), // Ensure updated timestamp
-      });
+  const handleGigUpdate = (updatedGig: Gig) => {
+    const updatedGigs = gigsWithListers.map((item) =>
+      item.gig.gigId === updatedGig.gigId ? { ...item, gig: updatedGig } : item
+    );
 
-      console.log("Gig updated successfully:", updatedGig);
-      const updatedGigs = gigsWithListers.map((item) =>
-        item.gig.gigId === updatedGig.gigId ? { ...item, gig: updatedGig } : item
-      );
+    const sortedUpdatedGigs = updatedGigs.sort(
+      (a, b) => STATUS_ORDER.indexOf(a.gig.status) - STATUS_ORDER.indexOf(b.gig.status)
+    );
 
-      setGigsWithListers(updatedGigs);
-      setFilteredGigs(updatedGigs);
-      setSelectedGig(updatedGig); // Reflect changes in the current selected gig
-    } catch (error) {
-      console.error("Error updating gig:", error);
-    }
+    setGigsWithListers(sortedUpdatedGigs);
+    setFilteredGigs(
+      filterStatus === "all"
+        ? sortedUpdatedGigs
+        : sortedUpdatedGigs.filter((gigWithLister) => gigWithLister.gig.status === filterStatus)
+    );
+
+    setSelectedGig(updatedGig);
   };
 
   if (loadingGigs) {
@@ -190,13 +200,17 @@ function MyPostedGigsView() {
               <GigDetails
                 gig={selectedGig}
                 user={currUser as unknown as User}
-                onEditSave={handleGigSave}
+                onEditSave={handleGigUpdate}
                 onDelete={() => console.log("Delete Gig")}
               />
               {loadingApplicants ? (
                 <p className="text-gray-500">Loading interested gigglers...</p>
               ) : (
-                <InterestedGigglers gig={selectedGig} users={applicants} />
+                <InterestedGigglers
+                  gig={selectedGig}
+                  users={applicants}
+                  onGigUpdate={handleGigUpdate}
+                />
               )}
             </>
           ) : (
