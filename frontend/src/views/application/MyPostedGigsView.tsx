@@ -1,100 +1,110 @@
 import React, { useState, useEffect } from "react";
 import PostedGigListHome from "@/components/Gigs/PostedGigListHome";
 import GigDetails from "@/components/Gigs/GigDetails";
-import InterestedGigglers from "@/components/Gigs/InterestedGigglers"; // Import the new component
+import InterestedGigglers from "@/components/Gigs/InterestedGigglers";
 import { Gig, User, Application } from "@/utils/database/schema";
 import { useAuth, useFirestore } from "@/utils/reactfire";
-import {getUserListedGigs} from "@/utils/database/queries"
-import { setCurrentScreen } from "firebase/analytics";
 import { applicationsRef, gigsRef, usersRef } from "@/utils/database/collections";
-import { query, where, orderBy, getDocs, doc } from "firebase/firestore";
-
+import { query, where, getDocs } from "firebase/firestore";
 
 function MyPostedGigsView() {
   const db = useFirestore();
   const auth = useAuth();
   const currUser = auth.currentUser;
 
-  
-
   const [gigsWithListers, setGigsWithListers] = useState<{ gig: Gig; lister: User }[]>([]);
+  const [selectedGig, setSelectedGig] = useState<Gig | null>(null);
+  const [applicants, setApplicants] = useState<User[]>([]);
+  const [loadingGigs, setLoadingGigs] = useState(true);
+  const [loadingApplicants, setLoadingApplicants] = useState(false);
 
+  // Custom order of statuses
+  const STATUS_ORDER = ["open", "in-progress", "awaiting-confirmation", "completed"];
+
+  // Fetch user's gigs
   useEffect(() => {
     const fetchUserGigs = async () => {
       if (currUser) {
-        const q = query(gigsRef(db), where("listerId", "==", currUser.uid));
-        const querySnapshot = await getDocs(q);
+        try {
+          setLoadingGigs(true); // Start loading gigs
+          const q = query(gigsRef(db), where("listerId", "==", currUser.uid));
+          const querySnapshot = await getDocs(q);
 
-        const gigsWithListersData = querySnapshot.docs.map(doc => ({
-          gig: doc.data() as Gig,
-          lister: currUser as unknown as User
-        }));
+          const gigsWithListersData = querySnapshot.docs.map((doc) => ({
+            gig: { ...doc.data(), gigId: doc.id } as Gig, // Ensure gigId is set
+            lister: currUser as unknown as User,
+          }));
 
-        setGigsWithListers(gigsWithListersData);
+          // Sort gigs by status using STATUS_ORDER
+          const sortedGigs = gigsWithListersData.sort(
+            (a, b) => STATUS_ORDER.indexOf(a.gig.status) - STATUS_ORDER.indexOf(b.gig.status)
+          );
+
+          setGigsWithListers(sortedGigs);
+
+          // Automatically select the first gig
+          if (sortedGigs.length > 0) {
+            setSelectedGig(sortedGigs[0].gig);
+          }
+        } catch (error) {
+          console.error("Error fetching gigs:", error);
+        } finally {
+          setLoadingGigs(false); // Stop loading gigs
+        }
       }
     };
 
     fetchUserGigs();
-  }, []);
+  }, [currUser, db]);
 
-  const [selectedGig, setSelectedGig] = useState<Gig | null>(gigsWithListers[0]?.gig || null);
+  // Fetch applicants for the selected gig
+  useEffect(() => {
+    const fetchApplicantsForGig = async () => {
+      if (selectedGig) {
+        try {
+          setLoadingApplicants(true); // Start loading applicants
+          const q = query(applicationsRef(db), where("gigId", "==", selectedGig.gigId));
+          const applicationSnapshot = await getDocs(q);
 
+          // Extract Applicant IDs
+          const userIds = applicationSnapshot.docs.map((doc) => (doc.data() as Application).applicantId);
+
+          // Fetch User Data for Each Applicant
+          const userSnapshots = await Promise.all(
+            userIds.map((userId) => getDocs(query(usersRef(db), where("userId", "==", userId))))
+          );
+
+          // Flatten and Extract User Data
+          const users = userSnapshots.flatMap((userSnapshot) =>
+            userSnapshot.docs.map((userDoc) => userDoc.data() as User)
+          );
+
+          setApplicants(users);
+        } catch (error) {
+          console.error("Error fetching applicants:", error);
+        } finally {
+          setLoadingApplicants(false); // Stop loading applicants
+        }
+      } else {
+        setApplicants([]); // Clear applicants when no gig is selected
+      }
+    };
+
+    fetchApplicantsForGig();
+  }, [selectedGig, db]);
+
+  // Handle gig selection
   const handleSelectGig = (gig: Gig) => {
     setSelectedGig(gig);
   };
 
-  const [currentUserDetails, setCurrentUserDetails] = useState<{user: User} | null>(null);
+  console.log("Gigs:", gigsWithListers);
+  console.log("Selected Gig:", selectedGig);
+  console.log("Applicants:", applicants);
 
-useEffect(() => {
-  const fetchCurrentUserDetails = async () => {
-    if (currUser) {
-      const q = query(usersRef(db), where("userId", "==", currUser.uid));
-      const userSnapshot = (await getDocs(q));
-
-      const userDetails = {user: userSnapshot.docs[0].data() as User};
-
-      setCurrentUserDetails(userDetails);
-    }
-  };
-
-  fetchCurrentUserDetails();
-}, []);
-
-const [applicants, setApplicants] = useState<User[]>([]);
-
-useEffect(() => {
-  const fetchApplicantsForGig = async () => {
-    if (selectedGig) {
-      try {
-        // Step 1: Fetch Applications
-        const q = query(applicationsRef(db), where("gigId", "==", selectedGig.gigId));
-        const applicationSnapshot = await getDocs(q);
-
-        // Step 2: Extract Applicant IDs
-        const userIds = applicationSnapshot.docs.map(doc => (doc.data() as Application).applicantId);
-
-        // Step 3: Fetch User Data for Each Applicant
-        const userSnapshots = await Promise.all(
-          userIds.map(userId => getDocs(query(usersRef(db), where("userId", "==", userId))))
-        );
-
-        // Step 4: Flatten and Extract User Data
-        const users = userSnapshots.flatMap(userSnapshot =>
-          userSnapshot.docs.map(userDoc => userDoc.data() as User)
-        );
-
-        setApplicants(users);
-      } catch (error) {
-        console.error("Error fetching applicants:", error);
-      }
-    }
-  };
-
-  fetchApplicantsForGig();
-}, [selectedGig, db]);
-
-  console.log(applicants);
-
+  if (loadingGigs) {
+    return <p>Loading your gigs...</p>;
+  }
 
   return (
     <div className="flex space-x-6 p-4">
@@ -108,28 +118,29 @@ useEffect(() => {
           onSelectGig={handleSelectGig}
           selectedGig={selectedGig}
           enableSelection={true}
-          showSeeMoreButton={false} // Toggle this prop to show/hide the button
+          showSeeMoreButton={false}
         />
       </div>
 
       {/* Right section with gig details */}
-      <div className="h-full w-3/5">
-        <div className="rounded-lg p-6 ">
+      <div className="h-full w-4/5  ">
+        <div className="rounded-lg p-6 rounded-lg bg-gray-700 p-6 shadow-lg">
           {selectedGig ? (
             <>
-              { <GigDetails
-                gig = {selectedGig}
-                user = {currentUserDetails}
-                onEditSave={function (): void {
-                  throw new Error("Function not implemented.");
-                } } onDelete={function (): void {
-                  throw new Error("Function not implemented.");
-                } }              />}
-              {/* Display interested gigglers */}
-               { <InterestedGigglers
+              <GigDetails
                 gig={selectedGig}
-                users={applicants} // Pass the full list of users
-              /> }
+                user={currUser as unknown as User}
+                onEditSave={() => console.log("Edit Save")}
+                onDelete={() => console.log("Delete Gig")}
+              />
+              {loadingApplicants ? (
+                <p className="text-gray-500">Loading interested gigglers...</p>
+              ) : (
+                <InterestedGigglers
+                  gig={selectedGig}
+                  users={applicants}
+                />
+              )}
             </>
           ) : (
             <p className="text-gray-500">Select a gig to see the details</p>

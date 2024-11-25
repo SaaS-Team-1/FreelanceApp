@@ -14,10 +14,10 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({ gig, users }) =
   const [showUnassignModal, setShowUnassignModal] = useState(false); // For "Unassign Confirmation" modal
 
   // Find the assigned giggler
-  const assignedGiggler = users.find(user => user.userId === gig.selectedApplicantId);
+  const assignedGiggler = users.find((user) => user.userId === gig.selectedApplicantId);
 
   // Find other applicants (excluding assigned giggler)
-  const otherApplicants = users.filter(user => {
+  const otherApplicants = users.filter((user) => {
     if (!assignedGiggler) return true; // Include all users if no assigned giggler
     return user.userId !== assignedGiggler.userId;
   });
@@ -34,7 +34,8 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({ gig, users }) =
 
   return (
     <div className={`relative mt-4 rounded-lg bg-gray-900 p-4`}>
-      {assignedGiggler && (
+      {/* Assigned Giggler Section */}
+      {assignedGiggler && gig.status !== "open" && (
         <div className="mb-1">
           <h4 className="mb-2 mt-4 text-2xl font-semibold text-white">Assigned Giggler</h4>
           <div className="flex items-center justify-between p-2">
@@ -50,14 +51,16 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({ gig, users }) =
               <span className="font-semibold text-white">{assignedGiggler.displayName} is assigned</span>
             </div>
             <div className="flex items-center space-x-2">
-              <CustomButton
-                label="Unassign"
-                onClick={() => setShowUnassignModal(true)}
-                color="red"
-                textColor="black"
-                size="small"
-                rounded={true}
-              />
+              {gig.status === "awaiting-confirmation" && (
+                <CustomButton
+                  label="Confirm Completion"
+                  onClick={() => alert("Gig marked as completed")}
+                  color="green"
+                  textColor="black"
+                  size="small"
+                  rounded={true}
+                />
+              )}
               <CustomButton
                 label="Message"
                 onClick={() => handleMessageClick(assignedGiggler.userId)}
@@ -71,67 +74,73 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({ gig, users }) =
         </div>
       )}
 
-      {assignedGiggler && <div className="mb-3 border-t-2 border-white"></div>}
+      {/* Divider for Assigned Giggler */}
+      {assignedGiggler && gig.status !== "open" }
 
-      <h4 className="mb-2 text-2xl font-semibold text-white">Interested Gigglers</h4>
-      <div>
-        {otherApplicants.length > 0 ? (
-          <>
-            {otherApplicants.slice(0, 2).map((applicant, index) => (
-              <div key={applicant.userId} className="p-2">
-                <div className="flex items-center justify-between">
-                  <div
-                    className="flex cursor-pointer items-center"
-                    onClick={() => alert(`View profile of ${applicant.displayName}`)}
-                  >
-                    <img
-                      src={applicant.profile.picture || "https://via.placeholder.com/40"}
-                      alt={applicant.displayName}
-                      className="mr-3 size-10 rounded-full"
-                    />
-                    <span className="text-white">{applicant.displayName} has shown interest in this Gig</span>
+      {/* Interested Gigglers Section */}
+      {gig.status === "open" && (
+        <>
+          <h4 className="mb-2 text-2xl font-semibold text-white">Interested Gigglers</h4>
+          <div>
+            {otherApplicants.length > 0 ? (
+              <>
+                {otherApplicants.slice(0, 2).map((applicant, index) => (
+                  <div key={applicant.userId} className="p-2">
+                    <div className="flex items-center justify-between">
+                      <div
+                        className="flex cursor-pointer items-center"
+                        onClick={() => alert(`View profile of ${applicant.displayName}`)}
+                      >
+                        <img
+                          src={applicant.profile.picture || "https://via.placeholder.com/40"}
+                          alt={applicant.displayName}
+                          className="mr-3 size-10 rounded-full"
+                        />
+                        <span className="text-white">{applicant.displayName} has shown interest in this Gig</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <CustomButton
+                          label="Assign Gig"
+                          onClick={() => alert(`Assigned to ${applicant.displayName}`)}
+                          color="green"
+                          textColor="black"
+                          size="small"
+                          rounded={true}
+                        />
+                        <CustomButton
+                          label="Message"
+                          onClick={() => handleMessageClick(applicant.userId)}
+                          color="primary"
+                          textColor="black"
+                          size="small"
+                          rounded={true}
+                        />
+                      </div>
+                    </div>
+                    {otherApplicants.length > 1 && index < otherApplicants.length - 1 && (
+                      <div className="my-2 border-t border-white"></div>
+                    )}
                   </div>
-                  <div className="flex items-center space-x-2">
+                ))}
+                {otherApplicants.length > 2 && (
+                  <div className="mt-1 flex justify-end">
                     <CustomButton
-                      label="Assign Gig"
-                      onClick={() => alert(`Assigned to ${applicant.displayName}`)}
-                      color="green"
-                      textColor="black"
-                      size="small"
-                      rounded={true}
-                    />
-                    <CustomButton
-                      label="Message"
-                      onClick={() => handleMessageClick(applicant.userId)}
+                      label="See More"
+                      onClick={() => setShowModal(true)}
                       color="primary"
                       textColor="black"
                       size="small"
                       rounded={true}
                     />
                   </div>
-                </div>
-                {otherApplicants.length > 1 && index < otherApplicants.length - 1 && (
-                  <div className="my-2 border-t border-white"></div>
                 )}
-              </div>
-            ))}
-            {otherApplicants.length > 2 && (
-              <div className="mt-1 flex justify-end">
-                <CustomButton
-                  label="See More"
-                  onClick={() => setShowModal(true)}
-                  color="primary"
-                  textColor="black"
-                  size="small"
-                  rounded={true}
-                />
-              </div>
+              </>
+            ) : (
+              <p className="text-gray-500">No other applicants yet.</p>
             )}
-          </>
-        ) : (
-          <p className="text-gray-500">No other applicants yet.</p>
-        )}
-      </div>
+          </div>
+        </>
+      )}
 
       {/* Modal for showing all interested gigglers */}
       {showModal && (
