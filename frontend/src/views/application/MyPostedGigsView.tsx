@@ -6,7 +6,7 @@ import InterestedGigglers from "@/components/Gigs/InterestedGigglers";
 import { Gig, User, Application } from "@/utils/database/schema";
 import { useAuth, useFirestore } from "@/utils/reactfire";
 import { applicationsRef, gigsRef, usersRef } from "@/utils/database/collections";
-import { query, where, getDocs } from "firebase/firestore";
+import { query, where, getDocs, updateDoc, doc } from "firebase/firestore";
 
 function MyPostedGigsView() {
   const db = useFirestore();
@@ -62,35 +62,33 @@ function MyPostedGigsView() {
     const fetchApplicantsForGig = async () => {
       if (selectedGig) {
         try {
-          setLoadingApplicants(true); // Show loading state for applicants
+          setLoadingApplicants(true);
           const q = query(applicationsRef(db), where("gigId", "==", selectedGig.gigId));
           const applicationSnapshot = await getDocs(q);
-  
+
           const userIds = applicationSnapshot.docs.map((doc) => (doc.data() as Application).applicantId);
-  
-          // Fetch user data for each applicant
+
           const userSnapshots = await Promise.all(
             userIds.map((userId) => getDocs(query(usersRef(db), where("userId", "==", userId))))
           );
-  
+
           const users = userSnapshots.flatMap((userSnapshot) =>
             userSnapshot.docs.map((userDoc) => userDoc.data() as User)
           );
-  
+
           setApplicants(users);
         } catch (error) {
           console.error("Error fetching applicants:", error);
         } finally {
-          setLoadingApplicants(false); // End loading state
+          setLoadingApplicants(false);
         }
       } else {
-        setApplicants([]); // Clear applicants if no gig is selected
+        setApplicants([]);
       }
     };
-  
+
     fetchApplicantsForGig();
   }, [selectedGig, db]);
-  
 
   const handleSelectGig = (gig: Gig) => {
     setSelectedGig(gig);
@@ -111,6 +109,27 @@ function MyPostedGigsView() {
       setSelectedGig(filtered[0].gig);
     } else {
       setSelectedGig(null);
+    }
+  };
+
+  const handleGigSave = async (updatedGig: Gig) => {
+    try {
+      const gigDocRef = doc(db, "gigs", updatedGig.gigId);
+      await updateDoc(gigDocRef, {
+        ...updatedGig,
+        updatedAt: new Date(), // Ensure updated timestamp
+      });
+
+      console.log("Gig updated successfully:", updatedGig);
+      const updatedGigs = gigsWithListers.map((item) =>
+        item.gig.gigId === updatedGig.gigId ? { ...item, gig: updatedGig } : item
+      );
+
+      setGigsWithListers(updatedGigs);
+      setFilteredGigs(updatedGigs);
+      setSelectedGig(updatedGig); // Reflect changes in the current selected gig
+    } catch (error) {
+      console.error("Error updating gig:", error);
     }
   };
 
@@ -146,7 +165,7 @@ function MyPostedGigsView() {
                   <button
                     key={status}
                     onClick={() => handleFilterChange(status)}
-                    className="block w-full px-4 py-2 text-left  text-white hover:bg-gray-700"
+                    className="block w-full px-4 py-2 text-left text-white hover:bg-gray-700"
                   >
                     {status.charAt(0).toUpperCase() + status.slice(1)} Gigs
                   </button>
@@ -171,7 +190,7 @@ function MyPostedGigsView() {
               <GigDetails
                 gig={selectedGig}
                 user={currUser as unknown as User}
-                onEditSave={() => console.log("Edit Save")}
+                onEditSave={handleGigSave}
                 onDelete={() => console.log("Delete Gig")}
               />
               {loadingApplicants ? (
