@@ -1,4 +1,5 @@
 
+
 import React, { useState } from "react";
 
 interface MessageInputProps {
@@ -18,23 +19,22 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSend }) => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter") {
       if (e.shiftKey) {
-        // setMessage((prevMessage) => prevMessage + "\n");
+        // Allow newline with Shift+Enter
       } else {
-        // enter = send the message
-        e.preventDefault();
+        e.preventDefault(); // Prevent default Enter behavior
         handleSend();
       }
     }
   };
 
   return (
-    <div className="w-4/5 p-4 bg-gray-900 flex items-center border-t border-gray-700">
+    <div className="w-4/5 p-4 bg-gray-800 flex items-center border-t border-gray-700">
       <textarea
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="Type your message here..."
-        className="flex-1 p-3 rounded-lg bg-gray-800 text-white outline-none placeholder-gray-500 resize-none h-12"
+        className="flex-1 p-3 rounded-lg bg-gray-800 text-white outline-none placeholder-gray-500 resize-none h-12 overflow-y-auto scrollbar"
       />
       <button
         onClick={handleSend}
@@ -47,3 +47,5 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSend }) => {
 };
 
 export default MessageInput;
+
+

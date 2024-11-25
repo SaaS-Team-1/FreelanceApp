@@ -19,7 +19,7 @@ const ChatCard: React.FC<ChatCardProps> = ({ gig, application, userId }) => {
       case "open":
         return application?.status === "pending" ? (
           <>
-            <p>Application pending. Assign gig?</p>
+            <p>Application pending. Assign gig to ${application.applicantId}?</p>
             <CustomButton
               label="Assign Gig"
               onClick={() =>
@@ -36,7 +36,7 @@ const ChatCard: React.FC<ChatCardProps> = ({ gig, application, userId }) => {
       case "awaiting-confirmation":
         return (
           <>
-            <p>{application?.applicantId} reported completion.</p>
+            <p>{application?.applicantId} reported completion of the gig. Confirm to release payment.</p>
             <CustomButton
               label="Confirm Completion"
               onClick={() => console.log("Confirming gig completion")}
@@ -47,7 +47,21 @@ const ChatCard: React.FC<ChatCardProps> = ({ gig, application, userId }) => {
         );
 
       case "completed":
-        return <p>Gig completed.</p>;
+        return <p>Gig completed successfully.</p>;
+
+
+      case "in-progress":
+        return application?.status === "assigned" ? (
+          <>
+            <p>You have assigned gig to ${gig.selectedApplicantId}?</p>
+          
+          </>
+        ): (
+          <p>You have assigned gig to another applicant.</p>
+        );
+      
+      case "deleted":
+        return <p> Gig deleted.</p>
 
       default:
         return <p>Status: {gig.status}</p>;
@@ -72,7 +86,7 @@ const ChatCard: React.FC<ChatCardProps> = ({ gig, application, userId }) => {
       case "assigned":
         return (
           <>
-            <p>Assigned to you. Complete the gig?</p>
+            <p>Gig assigned to you. Complete gig and report completion.</p>
             <CustomButton
               label="Mark as Complete"
               onClick={() => console.log("Marking gig as complete")}
@@ -84,7 +98,13 @@ const ChatCard: React.FC<ChatCardProps> = ({ gig, application, userId }) => {
 
       case "completed":
         return <p>Gig completed! Payment is being processed.</p>;
+      
+      case "awaiting-lister-completion":
+        return <p> Gig marked as completed. Wait for lister to confirm.</p>
 
+      case "discarded":
+        return <p> Gig no longer available.</p>
+        
       default:
         return <p>Status: {application?.status}</p>;
     }
@@ -92,7 +112,6 @@ const ChatCard: React.FC<ChatCardProps> = ({ gig, application, userId }) => {
 
   return (
     <div className="flex flex-col items-center bg-orange-300 p-4 rounded-md shadow-md">
-      
       {isLister ? renderListerView() : renderApplicantView()}
     </div>
   );

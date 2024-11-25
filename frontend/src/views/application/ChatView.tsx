@@ -1,13 +1,24 @@
-
-
 import { useState, useEffect } from "react";
 import { useFirestore, useUser } from "@/utils/reactfire";
-import { getDocs, query, where, orderBy } from "firebase/firestore";
+import {
+  getDocs,
+  query,
+  where,
+  orderBy,
+  doc,
+  getDoc,
+  limit,
+  Timestamp,
+  onSnapshot,
+  addDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 import {
   chatsRef,
   chatMessagesRef,
   gigsRef,
   applicationsRef,
+  usersRef,
 } from "@/utils/database/collections";
 import ChatHeader from "@/components/Chat/ChatHeader";
 import ChatWindow from "@/components/Chat/ChatWindow";
@@ -15,126 +26,198 @@ import MessageInput from "@/components/Chat/MessageInput";
 import ChatCard from "@/components/Chat/ChatCard";
 import GigDetailsModal from "@/components/Chat/GigDetailsModal";
 
+interface ExtendedChat {
+  id: string;
+  chatId: string;
+  gigId: string;
+  listerId: string;
+  applicantId: string;
+  applicationId: string;
+  partnerName?: string;
+  gigTitle?: string;
+  lastMessageTimestamp?: Timestamp | null;
+}
+
 function ChatPage() {
   const { data: user } = useUser();
   const db = useFirestore();
-  const [chats, setChats] = useState<any[]>([]);
-  const [selectedChat, setSelectedChat] = useState<any | null>(null);
+  const [chats, setChats] = useState<ExtendedChat[]>([]);
+  const [selectedChat, setSelectedChat] = useState<ExtendedChat | null>(null);
   const [messages, setMessages] = useState<any[]>([]);
   const [gig, setGig] = useState<any | null>(null);
   const [application, setApplication] = useState<any | null>(null);
+  const [chatPartner, setChatPartner] = useState<any | null>(null);
   const [isGigDetailsOpen, setIsGigDetailsOpen] = useState(false);
-
-  // Disable body scroll when this component is mounted
-  useEffect(() => {
-    document.body.style.overflow = "hidden"; // Disable scrolling on the body
-    return () => {
-      document.body.style.overflow = ""; // Restore scrolling when component unmounts
-    };
-  }, []);
 
   useEffect(() => {
     if (user) {
-      const q = query(chatsRef(db), where("userId", "==", user.uid));
-      getDocs(q).then((snapshot) => {
-        const chatData = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setChats(chatData);
+      const fetchChats = async () => {
+        try {
+          const listerChatsQuery = query(chatsRef(db), where("listerId", "==", user.uid));
+          const applicantChatsQuery = query(chatsRef(db), where("applicantId", "==", user.uid));
 
-        if (chatData.length > 0) {
-          setSelectedChat(chatData[0]);
+          const listerChatsSnapshot = await getDocs(listerChatsQuery);
+          const listerChats = listerChatsSnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+
+          const applicantChatsSnapshot = await getDocs(applicantChatsQuery);
+          const applicantChats = applicantChatsSnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+
+          const allChats = [...listerChats, ...applicantChats] as ExtendedChat[];
+          for (const chat of allChats) {
+            const partnerId =
+              user.uid === chat.listerId ? chat.applicantId : chat.listerId;
+            const partnerDoc = await getDoc(doc(usersRef(db), partnerId));
+            const partnerData = partnerDoc.data();
+
+            const gigDoc = await getDoc(doc(gigsRef(db), chat.gigId));
+            const gigData = gigDoc.data();
+
+            const messageQuery = query(
+              chatMessagesRef(db),
+              where("chatId", "==", chat.chatId),
+              orderBy("timestamp", "desc"),
+              limit(1)
+            );
+            const lastMessageSnapshot = await getDocs(messageQuery);
+            const lastMessage = lastMessageSnapshot.docs[0]?.data() || null;
+
+            chat.partnerName = partnerData?.displayName || "Unknown User";
+            chat.gigTitle = truncateString(gigData?.title || "Untitled Gig", 30);
+            chat.lastMessageTimestamp = lastMessage?.timestamp || null;
+          }
+
+          // Sort chats by the last message timestamp
+          const sortedChats = allChats.sort((a, b) => {
+            const aTime = a.lastMessageTimestamp?.seconds || 0;
+            const bTime = b.lastMessageTimestamp?.seconds || 0;
+            return bTime - aTime; // Descending order
+          });
+
+          setChats(sortedChats);
+
+          if (sortedChats.length > 0) {
+            setSelectedChat(sortedChats[0]);
+          }
+        } catch (error) {
+          console.error("Error fetching chats:", error);
         }
-      });
+      };
+
+      fetchChats();
     }
   }, [user, db]);
 
   useEffect(() => {
-    if (selectedChat) {
-      const fetchGigAndApplication = async () => {
-        const gigDoc = await getDocs(
-          query(gigsRef(db), where("gigId", "==", selectedChat.gigId))
+    const fetchDetails = async () => {
+      if (selectedChat) {
+        const gigDoc = await getDoc(doc(gigsRef(db), selectedChat.gigId));
+        setGig(gigDoc.data());
+
+        const applicationDoc = await getDoc(
+          doc(applicationsRef(db), selectedChat.applicationId)
         );
-        const gigData = gigDoc.docs[0]?.data() || null;
-        setGig(gigData);
+        setApplication(applicationDoc.data());
 
-        if (gigData) {
-          const appDoc = await getDocs(
-            query(
-              applicationsRef(db),
-              where("gigId", "==", gigData.gigId),
-              where("applicantId", "==", user?.uid)
-            )
-          );
-          const appData = appDoc.docs[0]?.data() || null;
-          setApplication(appData);
-        }
-      };
+        const partnerId =
+          user?.uid === selectedChat.listerId
+            ? selectedChat.applicantId
+            : selectedChat.listerId;
+        const partnerDoc = await getDoc(doc(usersRef(db), partnerId));
+        setChatPartner(partnerDoc.data());
+      }
+    };
 
-      fetchGigAndApplication();
-    }
+    fetchDetails();
   }, [selectedChat, user, db]);
 
   useEffect(() => {
     if (selectedChat) {
       const q = query(
         chatMessagesRef(db),
-        where("chatId", "==", selectedChat.id),
+        where("chatId", "==", selectedChat.chatId),
         orderBy("timestamp", "asc")
       );
 
-      getDocs(q).then((snapshot) => {
+      const unsubscribe = onSnapshot(q, (snapshot) => {
         const messagesData = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
         setMessages(messagesData);
       });
+
+      return () => unsubscribe();
     }
   }, [selectedChat, db]);
 
+  const truncateString = (str: string, maxLength: number) => {
+    return str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
+  };
+
+  const formatTimestamp = (timestamp: Timestamp | null) => {
+    if (!timestamp) return "";
+    const now = new Date();
+    const date = new Date(timestamp.seconds * 1000);
+
+    if (now.toDateString() === date.toDateString()) {
+      return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    } else if (now.getTime() - date.getTime() < 7 * 24 * 60 * 60 * 1000) {
+      return date.toLocaleDateString([], { weekday: "long" });
+    } else {
+      return date.toLocaleDateString([], { month: "short", day: "numeric" });
+    }
+  };
+
   return (
     <div className="h-screen bg-slate-600 rounded-lg p-4">
-      {/* Main Chat Container */}
-      <div className="flex max-w-7xl h-full max-h-[95%] bg-gray-900 rounded-lg overflow-hidden">
-        {/* Chat List */}
-        <div className="w-1/4 bg-gray-900 overflow-y-auto border-r scrollbar">
-          <h2 className="text-lg font-bold p-4 bg-gray-900 text-white">Active Chats</h2>
+      <div className="flex max-w-7xl h-full max-h-[95%] bg-gray-800 rounded-lg overflow-hidden">
+        <div className="w-3/8 bg-gray-800 overflow-y-auto border-r scrollbar">
+          <h2 className="text-lg font-bold p-4 text-white">Active Chats</h2>
           {chats.map((chat) => (
             <div
-              key={chat.id}
+              key={chat.chatId}
               onClick={() => setSelectedChat(chat)}
-              className={`p-4 cursor-pointer ${
-                chat.id === selectedChat?.id ? "bg-blue-700 text-white" : "bg-gray-700 text-gray-100"
+              className={`p-4 cursor-pointer flex justify-between ${
+                chat.chatId === selectedChat?.chatId
+                  ? "bg-blue-700 text-white"
+                  : "bg-gray-700 text-gray-100"
               } hover:bg-blue-500`}
             >
-              <p className="font-bold truncate">{chat.gigId}</p>
-              <p className="text-sm truncate">{chat.userId}</p>
+              <div>
+                <p className="font-bold truncate">{chat.partnerName}</p>
+                <p className="text-sm text-gray-400 truncate">{chat.gigTitle}</p>
+              </div>
+              <p className="text-sm text-gray-300">
+                {formatTimestamp(chat.lastMessageTimestamp)}
+              </p>
             </div>
           ))}
         </div>
 
-        {/* Chat Content */}
         <div className="w-4/5 flex-1 flex flex-col overflow-y-auto bg-slate-600">
           {selectedChat ? (
             <>
               <ChatHeader
                 user={{
-                  name: selectedChat.userName,
-                  profilePicture: selectedChat.userProfilePicture,
+                  name: chatPartner?.displayName || "Unknown User",
+                  profilePicture: chatPartner?.profile?.picture || "",
                 }}
                 status={
-                  gig
-                    ? user?.uid === gig.listerId
-                      ? gig.status
-                      : application?.status || "no application"
-                    : "unknown"
+                  user?.uid === selectedChat?.listerId
+                    ? gig?.status || "Unknown"
+                    : application?.status || "Unknown"
                 }
+                isLister={user?.uid === selectedChat?.listerId} // Ensure isLister is passed
                 onSeeGigDetails={() => setIsGigDetailsOpen(true)}
               />
 
-              <div className="w-4/5 flex-1 overflow-y-auto bg-gray-900 p-4 scrollbar ">
+              <div className="w-4/5 flex-1 overflow-y-auto bg-gray-800 p-4 scrollbar">
                 <ChatWindow
                   messages={messages.map((message) => ({
                     text: message.content,
@@ -156,24 +239,28 @@ function ChatPage() {
               </div>
 
               <MessageInput
-                onSend={(message) => {
-                  console.log("Message sent:", message);
-                }}
+                chatId={selectedChat.chatId}
+                currentUserId={user?.uid || ""}
+                recipientId={
+                  selectedChat.listerId === user?.uid
+                    ? selectedChat.applicantId
+                    : selectedChat.listerId
+                }
+                db={db}
               />
             </>
           ) : (
-            <div className="w-4/5 flex-1 flex items-center justify-center text-gray-500">
+            <div className="flex items-center justify-center text-gray-500">
               No chat selected
             </div>
           )}
         </div>
       </div>
 
-      {/* Gig Details Modal */}
       {isGigDetailsOpen && gig && (
         <GigDetailsModal
           gig={gig}
-          lister={selectedChat.lister} // Pass lister details
+          lister={chatPartner}
           onClose={() => setIsGigDetailsOpen(false)}
         />
       )}
@@ -182,3 +269,4 @@ function ChatPage() {
 }
 
 export default ChatPage;
+

@@ -71,15 +71,18 @@ export interface Application {
 export interface Chat {
   chatId: string;
   gigId: string;
-  userId: string; // (applicant and lister)
-  applicationId?: string;
+  listerId: string; 
+  applicantId: string;
+  applicationId: string;
 }
 
 export interface ChatMessage {
   senderId: string;
+  sentToId: string; // id of user message is sent to 
   content: string;
   timestamp: Timestamp;
   chatId: string;
+  isRead: boolean; // is it read by the user it is sent to
 }
 
 export interface Rating {
