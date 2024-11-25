@@ -134,10 +134,14 @@ const GigDetails: React.FC<GigDetailsProps> = ({
 
       <div className="mb-6 flex flex-col justify-center gap-6 text-sm text-white sm:flex-row">
         <div className="flex flex-col items-center">
+        <div className="flex items-center">
           <FaDollarSign className="mr-2" />
           <span>{gig.price ? `${gig.price} Tokens` : "TBD"}</span>
         </div>
+        <span className="ml-4 text-xs text-gray-400">Price</span>
+        </div>
         <div className="flex flex-col items-center">
+        <div className="flex  items-center">
           <FaCalendarAlt className="mr-2" />
           <span>
             {gig.dueDate
@@ -145,12 +149,16 @@ const GigDetails: React.FC<GigDetailsProps> = ({
               : "N/A"}
           </span>
         </div>
+        <span className="ml-2 text-xs text-gray-400">Due Date</span>
+        </div>
         <div className="flex flex-col items-center">
+        <div className="flex items-center">
           <FaMapMarkerAlt className="mr-2" />
           <span>{location}</span>
         </div>
-      </div>
-
+        <span className="ml-6 text-xs text-gray-400">Location</span>
+        </div>
+        </div>
       <div>
         <h4 className="text-sm font-semibold text-gray-400">Tags:</h4>
         <div className="mt-2 flex gap-2">
