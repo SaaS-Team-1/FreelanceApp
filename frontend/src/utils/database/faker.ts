@@ -23,7 +23,7 @@ import { Auth, createUserWithEmailAndPassword } from "firebase/auth";
 
 // Configuration
 const NUM_USERS = 20;
-const GIGS_PER_USER = 6;
+const GIGS_PER_USER = 8;
 const APPLICATIONS_PER_GIG = 4;
 const MESSAGES_PER_CHAT = 3;
 const COMPLETION_RATE = 0.2;
