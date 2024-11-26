@@ -14,6 +14,8 @@ interface CustomButtonProps {
   rounded?: boolean; // Rounded corners
   disabled?: boolean; // Disable button
   textColor?: "black" | "white" | "primary"; // Text color
+  customStyle?: React.CSSProperties;  // Add this line to accept custom styles
+
 }
 
 const sizeClasses: { [key: string]: string } = {
@@ -62,6 +64,8 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   rounded = false,
   disabled = false,
   textColor = "white", // Default text color
+  customStyle, // Use customStyle here
+
 }) => {
   const borderClass = outline ? `border ${borderColorClasses[outlineColor || color]}` : "";
   const backgroundClass = colorClasses[color]; // Always apply the background color
@@ -75,6 +79,8 @@ const CustomButton: React.FC<CustomButtonProps> = ({
       className={`flex items-center justify-center ${sizeClasses[size]} ${borderClass} ${backgroundClass} ${textClass} ${roundedClass} transition-colors duration-200 ${
         disabled ? "cursor-not-allowed opacity-50" : "hover:opacity-90"
       }`}
+      style={customStyle} // Apply customStyle here
+
     >
       {Icon && iconPosition === "left" && <Icon className="mr-2" />}
       <span>{label}</span>
