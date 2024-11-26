@@ -114,8 +114,6 @@ function ScheduleView() {
 
     fetchAppliedGigs();
   }, [currUser, db]);
-
-  // Rest of the component remains the same...
   
   useEffect(() => {
     const fetchListedUser = async () => {
