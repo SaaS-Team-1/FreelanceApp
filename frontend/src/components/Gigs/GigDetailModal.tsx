@@ -5,6 +5,8 @@ import { Gig } from "@/utils/database/schema";
 import { FaDollarSign, FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
 import Badge from "@/components/Buttons/CustomBadge";
 import { Firestore, doc, setDoc } from "firebase/firestore";
+import { v4 as uuidv4 } from "uuid";
+import { collection, query, where, getDocs } from "firebase/firestore";
 
 interface GigDetailModalProps {
   gig: Gig;
@@ -19,20 +21,69 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({ gig, isOpen, onClose, u
 
   const handleApply = async () => {
     if (!userId || !db) return;
-
-    // try {
-    //   const applicationRef = doc(db, "applications", `${userId}_${gig.gigId}`);
-    //   await setDoc(applicationRef, {
-    //     gigId: gig.gigId,
-    //     userId: userId,
-    //     appliedAt: new Date().toISOString(),
-    //   });
-    //   alert("Application submitted successfully!");
-    //   onClose(); // Close the modal after applying
-    // } catch (error) {
-    //   console.error("Error applying to gig:", error);
-    //   alert("Failed to apply for the gig. Please try again.");
-    // }
+  
+    // Generate a random Latin cover letter
+    const latinPhrases = [
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      "Vestibulum venenatis augue a felis aliquam bibendum.",
+      "Curabitur auctor magna ut orci sodales, id vestibulum nunc mollis.",
+      "Nullam ultricies ligula vel nulla feugiat pellentesque.",
+      "Proin sed felis vel erat interdum tincidunt eget ac ligula.",
+    ];
+    const randomCoverLetter = latinPhrases[Math.floor(Math.random() * latinPhrases.length)];
+  
+    try {
+      // Check if an application already exists for this gig and applicant
+      const applicationsRef = collection(db, "applications");
+      const existingApplicationQuery = query(
+        applicationsRef,
+        where("gigId", "==", gig.gigId),
+        where("applicantId", "==", userId)
+      );
+      const existingApplications = await getDocs(existingApplicationQuery);
+  
+      if (!existingApplications.empty) {
+        alert("You have already applied for this gig!");
+        return; // Exit the function if an application already exists
+      }
+  
+      // Create a unique ID for the application
+      const applicationId = uuidv4();
+  
+      // Create a unique ID for the chat
+      const chatId = uuidv4();
+  
+      // Reference to the application document
+      const applicationRef = doc(db, "applications", applicationId);
+  
+      // Create the application document
+      await setDoc(applicationRef, {
+        applicantId: userId, // Current signed-in user's ID
+        applicationId: applicationId, // Unique application ID
+        appliedAt: new Date().toISOString(), // Current timestamp
+        gigId: gig.gigId, // The ID of the gig
+        listerId: gig.listerId, // The ID of the user who posted the gig
+        coverLetter: randomCoverLetter, // Random Latin cover letter
+        status: "pending", // Status of the application
+        chatId: chatId, // Associated chat ID
+      });
+  
+      // Reference to the chat document
+      const chatRef = doc(db, "chats", chatId);
+  
+      // Create the chat document
+      await setDoc(chatRef, {
+        chatId: chatId, // Unique chat ID
+        gigId: gig.gigId, // The ID of the gig
+        userId: userId, // The ID of the applicant
+      });
+  
+      alert("Application and chat created successfully!");
+      onClose(); // Close the modal after applying
+    } catch (error) {
+      console.error("Error applying to gig:", error);
+      alert("Failed to apply for the gig. Please try again.");
+    }
   };
 
   const location = gig.location || "Remote";
