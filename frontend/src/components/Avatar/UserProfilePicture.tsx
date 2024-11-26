@@ -1,6 +1,7 @@
 
+
+
 import React from "react";
-import { User } from "@/utils/database/schema";
 
 interface UserProfilePictureProps {
   user: {
@@ -30,6 +31,7 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
 }) => {
   return (
     <div className="relative group">
+      {/* Profile Picture */}
       <div
         className={`${sizeClasses[size]} ${rounded ? "rounded-full" : "rounded-md"} 
         flex items-center justify-center overflow-hidden bg-gray-300`}
@@ -53,21 +55,53 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
         )}
       </div>
 
+      {/* Hover Details */}
       {hoverDetails && (
         <div
-          className="absolute z-10 invisible w-64 p-3 text-sm text-gray-700 transition-opacity 
+          className="absolute z-10 invisible w-64 p-4 text-sm text-gray-800 transition-opacity 
           duration-200 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 
           group-hover:opacity-100 group-hover:visible dark:text-gray-300 dark:bg-gray-800 dark:border-gray-600"
         >
-          <p className="font-semibold">{user.name}</p>
-          {user.location && <p className="text-sm">Location: {user.location}</p>}
-          {user.bio && <p className="text-sm">{user.bio}</p>}
-          <ul className="text-sm">
+          <div className="flex items-center mb-3">
+            <img
+              src={user.profilePicture || "/default-avatar.jpg"}
+              alt={user.name}
+              className="w-10 h-10 rounded-full object-cover border border-gray-200 dark:border-gray-700"
+            />
+            <div className="ml-3">
+              <p className="text-base font-semibold text-gray-900 dark:text-white">
+                {user.name}
+              </p>
+              {user.location && (
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {user.location}
+                </p>
+              )}
+            </div>
+          </div>
+          <div className="mb-3">
+            {user.bio && (
+              <p className="text-sm text-gray-600 dark:text-gray-400 italic">
+                {user.bio}
+              </p>
+            )}
+          </div>
+          <ul className="space-y-2 text-sm">
             {user.completedGigs !== undefined && (
-              <li>Completed Gigs: {user.completedGigs}</li>
+              <li className="flex items-center">
+                <span className="text-blue-500 mr-2">🏆</span>
+                <span>
+                  <strong>Completed Gigs:</strong> {user.completedGigs}
+                </span>
+              </li>
             )}
             {user.averageRating !== undefined && (
-              <li>Average Rating: {user.averageRating.toFixed(1)}</li>
+              <li className="flex items-center">
+                <span className="text-yellow-500 mr-2">⭐</span>
+                <span>
+                  <strong>Average Rating:</strong> {user.averageRating.toFixed(1)}
+                </span>
+              </li>
             )}
           </ul>
         </div>
@@ -75,5 +109,4 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
     </div>
   );
 };
-
 export default UserProfilePicture;
