@@ -1,171 +1,144 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PostedGigListHome from "@/components/Gigs/PostedGigListHome";
 import GigDetails from "@/components/Gigs/GigDetails";
 import { Gig, User } from "@/utils/database/schema";
-import { Timestamp } from "firebase/firestore";
+import { query, Timestamp, where, getDocs, doc, getDoc } from "firebase/firestore";
 import CustomButton from "@/components/Buttons/CustomButton";
+import { useAuth, useFirestore } from "@/utils/reactfire";
+import { applicationsRef, gigsRef, usersRef } from "@/utils/database/collections";
 
 function ScheduleView() {
-  const currentUserId = "user1";
+  const db = useFirestore();
+  const auth = useAuth();
+  const currUser = auth.currentUser;
 
-  const [selectedGig, setSelectedGig] = useState<Gig | null>(null); // State to hold the selected gig
-  const [isGigDetailsOpen, setIsGigDetailsOpen] = useState(false); // State to control modal visibility
+  const [selectedGig, setSelectedGig] = useState<Gig | null>(null);
+  const [selectedLister, setSelectedLister] = useState<User | null>(null);
+  const [isGigDetailsOpen, setIsGigDetailsOpen] = useState(false);
+  const [inProgressGigs, setInProgressGigs] = useState<{ gig: Gig; lister: User }[]>([]);
+  const [pendingGigs, setPendingGigs] = useState<{ gig: Gig; lister: User }[]>([]);
 
-  const users: User[] = [
-    {
-      userId: "user1",
-      email: "amina.agile@example.com",
-      displayName: "Amina Agile",
-      profile: {
-        bio: "Computer Science Student in Leuven City.",
-        credits: 100,
-        picture: "https://via.placeholder.com/40",
-        location: "Leuven",
-      },
-      completedGigs: ["gig4"],
-      activeGigs: ["gig1", "gig5", "gig3"],
-      listedGigs: ["gig2"],
-      averageRating: 4.5,
-    },
-    {
-      userId: "user2",
-      email: "john.doe@example.com",
-      displayName: "John Doe",
-      profile: {
-        bio: "Freelance photographer based in Antwerp.",
-        credits: 150,
-        picture: "https://via.placeholder.com/40",
-        location: "Antwerp",
-      },
-      completedGigs: ["gig2"],
-      activeGigs: [],
-      listedGigs: ["gig3"],
-      averageRating: 4.7,
-    },
-    {
-      userId: "user3",
-      email: "applicant.one@example.com",
-      displayName: "Alice Applicant",
-      profile: {
-        bio: "Freelance graphic designer.",
-        credits: 80,
-        picture: "https://via.placeholder.com/40",
-        location: "Brussels",
-      },
-      completedGigs: [],
-      activeGigs: [],
-      listedGigs: [],
-      averageRating: 4.2,
-    },
-  ];
+  const processGigData = (gigData: any, docId: string): Gig => {
+    return {
+      ...gigData,
+      gigId: docId,
+      dueDate: gigData.dueDate instanceof Timestamp 
+        ? gigData.dueDate.toDate() 
+        : new Date(gigData.dueDate),
+      createdAt: gigData.createdAt instanceof Timestamp 
+        ? gigData.createdAt.toDate() 
+        : new Date(gigData.createdAt)
+    } as Gig;
+  };
 
-  const gigs: Gig[] = [
-    {
-      gigId: "gig1",
-      title: "Video Editor Needed",
-      description:
-        "Looking for a creative video editor to produce a short 10-20 second intro for a project.",
-      category: "Video Editing",
-      price: 80,
-      dueDate: Timestamp.fromDate(new Date(2025, 2, 10)),
-      status: "in-progress",
-      listerId: "user2",
-      selectedApplicantId: "user1",
-      createdAt: Timestamp.now(),
-      location: "Remote",
-      applicantIds: ["user1", "user3"],
-    },
-    {
-      gigId: "gig2",
-      title: "Looking for a Photographer",
-      description:
-        "Need a photographer to take a professional photo for my LinkedIn profile.",
-      category: "Photography",
-      price: 50,
-      dueDate: Timestamp.fromDate(new Date(2025, 2, 19)), // March 19, 2025
-      status: "completed",
-      listerId: "user1",
-      selectedApplicantId: "user3",
-      createdAt: Timestamp.now(),
-      location: "Antwerp",
-      applicantIds: ["user3"],
-    },
-    {
-      gigId: "gig3",
-      title: "Chemistry Tutor Needed",
-      description:
-        "Looking for a chemistry tutor for 1-on-1 sessions for exam preparation.",
-      category: "Tutoring",
-      price: 0,
-      dueDate: Timestamp.fromDate(new Date(2025, 4, 25)), // May 25, 2025
-      status: "in-progress",
-      listerId: "user2",
-      selectedApplicantId: "user1",
-      createdAt: Timestamp.now(),
-      location: "Leuven",
-      applicantIds: ["user1", "user3"],
-    },
-    {
-      gigId: "gig4",
-      title: "Logo Design for Startup",
-      description:
-        "Need a logo for a tech startup. Deliverables include vector files and branding guidelines.",
-      category: "Graphic Design",
-      price: 150,
-      dueDate: Timestamp.fromDate(new Date(2025, 2, 28)), // March 28, 2025
-      status: "completed",
-      listerId: "user3",
-      selectedApplicantId: "user1",
-      createdAt: Timestamp.now(),
-      location: "Brussels",
-      applicantIds: ["user1"],
-    },
-    {
-      gigId: "gig5",
-      title: "Website Development",
-      description:
-        "Build a responsive website for a local business, including design and deployment.",
-      category: "Web Development",
-      price: 500,
-      dueDate: Timestamp.fromDate(new Date(2025, 2, 25)), // March 25, 2025
-      status: "in-progress",
-      listerId: "user2",
-      selectedApplicantId: "user1",
-      createdAt: Timestamp.now(),
-      location: "Remote",
-      applicantIds: ["user1"],
-    },
-    {
-      gigId: "gig6",
-      title: "Website Dev",
-      description:
-        "Build a responsive website for a local business, including design and deployment.",
-      category: "Web Development",
-      price: 500,
-      dueDate: Timestamp.fromDate(new Date(2025, 2, 15)), // March 15, 2025
-      status: "open",
-      listerId: "user2",
-      selectedApplicantId: undefined,
-      createdAt: Timestamp.now(),
-      location: "Remote",
-      applicantIds: ["user1"],
-    },
-  ];
+  useEffect(() => {
+    const fetchInProgressGigs = async () => {
+      if (currUser) {
+        try {
+          const q = query(
+            gigsRef(db),
+            where("selectedApplicantId", "==", currUser.uid),
+            where("status", "==", "in-progress")
+          );
+          const querySnapshot = await getDocs(q);
 
-  const currentUser = users.find((user) => user.userId === currentUserId);
+          const gigsData = querySnapshot.docs.map((doc) => ({
+            gig: processGigData(doc.data(), doc.id),
+            lister: currUser as unknown as User,
+          }));
+          setInProgressGigs(gigsData);
+        } catch (error) {
+          console.error("Error fetching in-progress gigs:", error);
+        }
+      }
+    };
 
-  const scheduledGigs = gigs.filter(
-    (gig) =>
-      currentUser?.activeGigs.includes(gig.gigId) &&
-      gig.selectedApplicantId === currentUserId &&
-      gig.status === "in-progress"
-  );
+    fetchInProgressGigs();
+  }, [currUser, db]);
 
-  const pendingGigs = gigs.filter(
-    (gig) =>
-      gig.applicantIds.includes(currentUserId) &&
-      (!gig.selectedApplicantId || gig.selectedApplicantId === undefined)
-  );
+  useEffect(() => {
+    const fetchAppliedGigs = async () => {
+      if (currUser) {
+        try {
+          // First, get all applications for the current user
+          const applicationsQuery = query(
+            applicationsRef(db),
+            where("applicantId", "==", currUser.uid),
+            where("status", "==", "pending") // Add this if you have a status field
+          );
+          const applicationSnapshot = await getDocs(applicationsQuery);
+
+          // Get all the gigIds from the applications
+          const gigIds = applicationSnapshot.docs.map(doc => {
+            const data = doc.data();
+            return data.gigId;
+          });
+
+          if (gigIds.length === 0) {
+            setPendingGigs([]);
+            return;
+          }
+
+          // Get all gigs documents directly using their IDs
+          const gigPromises = gigIds.map(async (gigId) => {
+            try {
+              const gigDocRef = doc(gigsRef(db), gigId);
+              const gigDoc = await getDoc(gigDocRef);
+              
+              if (gigDoc.exists()) {
+                const gigData = gigDoc.data();
+                // Get the lister's data
+                const listerDoc = await getDoc(doc(usersRef(db), gigData.listerId));
+                const listerData = listerDoc.exists() ? listerDoc.data() as User : null;
+                
+                return {
+                  gig: processGigData(gigData, gigId),
+                  lister: listerData || currUser as unknown as User,
+                };
+              }
+              return null;
+            } catch (error) {
+              console.error(`Error fetching gig ${gigId}:`, error);
+              return null;
+            }
+          });
+
+          const gigsData = (await Promise.all(gigPromises)).filter((item): item is { gig: Gig; lister: User } => item !== null);
+          setPendingGigs(gigsData);
+          
+        } catch (error) {
+          console.error("Error fetching applied gigs:", error);
+        }
+      }
+    };
+
+    fetchAppliedGigs();
+  }, [currUser, db]);
+
+  // Rest of the component remains the same...
+  
+  useEffect(() => {
+    const fetchListedUser = async () => {
+      if (selectedGig?.listerId) {
+        try {
+          const userDoc = await getDoc(doc(usersRef(db), selectedGig.listerId));
+          
+          if (userDoc.exists()) {
+            const lister = userDoc.data() as User;
+            setSelectedLister(lister);
+          } else {
+            console.log("Lister not found.");
+            setSelectedLister(null);
+          }
+        } catch (error) {
+          console.error("Error fetching listed user:", error);
+          setSelectedLister(null);
+        }
+      }
+    };
+  
+    fetchListedUser();
+  }, [selectedGig, db]);
 
   const handleSeeMoreClick = (gig: Gig) => {
     setSelectedGig(gig);
@@ -179,14 +152,10 @@ function ScheduleView() {
 
   return (
     <div className="flex gap-8 p-10 text-white">
-      {/* Scheduled Gigs */}
       <div className="flex-1 rounded-lg bg-gray-800 p-6 shadow-lg">
         <h1 className="mb-3 text-xl font-bold">Scheduled Gigs</h1>
         <PostedGigListHome
-          gigs={scheduledGigs.map((gig) => ({
-            gig,
-            lister: users.find((user) => user.userId === gig.listerId)!,
-          }))}
+          gigs={inProgressGigs}
           showDateWithLine={true}
           showCompletedButton={true}
           showSeeMoreButton={true}
@@ -195,27 +164,22 @@ function ScheduleView() {
         />
       </div>
 
-      {/* Pending Gigs */}
       <div className="flex-1 rounded-lg bg-gray-800 p-6 shadow-lg">
         <h1 className="mb-3 text-xl font-bold">Pending Gigs</h1>
         <PostedGigListHome
-          gigs={pendingGigs.map((gig) => ({
-            gig,
-            lister: users.find((user) => user.userId === gig.listerId)!,
-          }))}
+          gigs={pendingGigs}
           showDateWithLine={true}
           showUndoButton={true}
           onSeeMoreClick={handleSeeMoreClick}
         />
       </div>
 
-      {/* Gig Details Modal */}
       {selectedGig && isGigDetailsOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
           <div className="w-[800px] rounded-lg bg-gray-900 p-6 shadow-lg">
             <GigDetails
               gig={selectedGig}
-              user={users.find((user) => user.userId === selectedGig.listerId)!}
+              user={selectedLister}
               onEditSave={(updatedGig) => {
                 console.log("Gig updated:", updatedGig);
                 setIsGigDetailsOpen(false);
