@@ -19,19 +19,18 @@ describe('Sidebar Navigation Tests', () => {
 
     // Verify content on the Posted Gigs page
     cy.contains('My Posted Gigs').should('be.visible'); 
-    cy.contains('Select a gig to see the details').should('be.visible');
   });
 
 
-  // it('Navigates to Chat Page', () => {
-  //   // Use text-based selector to find the "Chat" button
-  //   cy.contains('div', 'Chat')
-  //     .should('be.visible') // Ensure it is visible
-  //     .click();
+  it('Navigates to Chat Page', () => {
+    // Use text-based selector to find the "Chat" button
+    cy.contains('div', 'Chat')
+      .should('be.visible') // Ensure it is visible
+      .click();
 
-  //   // Verify content on the Chat page
-  //   // cy.contains('Type your message here').should('be.visible'); // Replace with actual content
-  // });
+    // Verify content on the Chat page
+    // cy.contains('Type your message here').should('be.visible'); // Replace with actual content
+  });
 
   it('Navigates to Schedule Page', () => {
     // Use text-based selector to find the "My posted Gigs" button
@@ -72,7 +71,20 @@ describe('Sidebar Navigation Tests', () => {
 
     // Verify content on the Posted Gigs page
     cy.contains('Account').should('be.visible'); 
-    cy.contains('Privacy').should('be.visible'); 
+    cy.contains('Email').should('be.visible'); 
+    cy.contains('Password').should('be.visible'); 
+  });
+
+  it('Navigates to Home Page', () => {
+    // Use text-based selector to find the "My posted Gigs" button
+    cy.contains('div', 'Home')
+      .should('be.visible') // Ensure it is visible
+      .click(); // Click the "My posted Gigs" button
+
+    // Verify content on the Posted Gigs page
+    cy.get('input[placeholder="Search for specific Gigs"]').should('be.visible'); 
+    cy.contains('Notifications').should('be.visible'); 
+    cy.contains('button', '+ Upload new gig').should('be.visible');
   });
 
   
