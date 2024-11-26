@@ -286,28 +286,17 @@ function ChatPage() {
                 )}
               </div>
 
-              {/* <MessageInput
-                chatId={selectedChat.chatId}
-                currentUserId={user?.uid || ""}
-                recipientId={
-                  selectedChat.listerId === user?.uid
-                    ? selectedChat.applicantId
-                    : selectedChat.listerId
-                }
-                db={db}
-              /> */}
-
-<MessageInput
-  chatId={selectedChat.chatId}
-  currentUserId={user?.uid || ""}
-  recipientId={
-    selectedChat.listerId === user?.uid
-      ? selectedChat.applicantId
-      : selectedChat.listerId
-  }
-  db={db}
-  onMessageSent={handleMessageSent} // Notify parent after message is sent
-/>
+            <MessageInput
+              chatId={selectedChat.chatId}
+              currentUserId={user?.uid || ""}
+              recipientId={
+                selectedChat.listerId === user?.uid
+                  ? selectedChat.applicantId
+                  : selectedChat.listerId
+              }
+              db={db}
+              onMessageSent={handleMessageSent} // Notify parent after message is sent
+            />
 
 
             </>
