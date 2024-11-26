@@ -203,19 +203,25 @@ function ChatPage() {
         <div className="w-4/5 flex-1 flex flex-col overflow-y-auto bg-slate-600">
           {selectedChat ? (
             <>
+ 
               <ChatHeader
-                user={{
-                  name: chatPartner?.displayName || "Unknown User",
-                  profilePicture: chatPartner?.profile?.picture || "",
-                }}
-                status={
-                  user?.uid === selectedChat?.listerId
-                    ? gig?.status || "Unknown"
-                    : application?.status || "Unknown"
-                }
-                isLister={user?.uid === selectedChat?.listerId} // Ensure isLister is passed
-                onSeeGigDetails={() => setIsGigDetailsOpen(true)}
-              />
+                  user={{
+                    name: chatPartner?.displayName || "Unknown User",
+                    profilePicture: chatPartner?.profile?.picture || "",
+                    bio: chatPartner?.profile?.bio,
+                    location: chatPartner?.profile?.location,
+                    completedGigs: chatPartner?.stats?.completedGigs,
+                    averageRating: chatPartner?.stats?.averageRating,
+                  }}
+                  status={
+                    user?.uid === selectedChat?.listerId
+                      ? gig?.status || "Unknown"
+                      : application?.status || "Unknown"
+                  }
+                  isLister={user?.uid === selectedChat?.listerId}
+                  onSeeGigDetails={() => setIsGigDetailsOpen(true)}
+                />
+
 
               <div className="w-4/5 flex-1 overflow-y-auto bg-gray-800 p-4 scrollbar">
                 <ChatWindow

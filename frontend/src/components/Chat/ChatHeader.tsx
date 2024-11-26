@@ -1,3 +1,5 @@
+
+
 import React from "react";
 import UserProfilePicture from "@/components/Avatar/UserProfilePicture";
 import Badge from "@/components/Buttons/CustomBadge";
@@ -6,6 +8,10 @@ interface ChatHeaderProps {
   user: {
     name: string;
     profilePicture: string;
+    bio?: string;
+    location?: string;
+    completedGigs?: number;
+    averageRating?: number;
   };
   status: string; // Gig or application status
   onSeeGigDetails: () => void; // Function to open the gig details modal
@@ -22,10 +28,9 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
     <div className="w-4/5 flex items-center justify-between p-4 bg-gray-800 text-white border-b border-gray-700">
       <div className="flex items-center gap-4">
         <UserProfilePicture
-          displayName={user.name}
-          picture={user.profilePicture}
+          user={user}
           size="medium"
-          rounded
+          hoverDetails={true} // Enable hover to see details
         />
         <div>
           <span className="text-lg font-semibold text-blue-400">

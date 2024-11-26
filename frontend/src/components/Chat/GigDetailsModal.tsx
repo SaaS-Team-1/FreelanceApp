@@ -1,8 +1,11 @@
+
+
 import React from "react";
 import { User, Gig } from "@/utils/database/schema";
 import { FaDollarSign, FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
 import Badge from "@/components/Buttons/CustomBadge";
 import CustomButton from "@/components/Buttons/CustomButton";
+import UserProfilePicture from "@/components/Avatar/UserProfilePicture";
 
 interface GigDetailsModalProps {
   gig: Gig;
@@ -46,26 +49,43 @@ const GigDetailsModal: React.FC<GigDetailsModalProps> = ({
           />
         </div>
 
-        {/* Gig Title and Image */}
+        {/* Gig Title and Profile Picture */}
         <div className="mb-4 flex items-start">
-          <div className="mr-4 h-16 w-16 overflow-hidden rounded-full bg-gray-700">
-            <img
-              src={
-                isCurrentUserLister
+          <div className="mr-4">
+            <UserProfilePicture
+              user={{
+                name: isCurrentUserLister
+                  ? currentUser?.displayName || "You"
+                  : lister?.displayName || "Unknown",
+                profilePicture: isCurrentUserLister
                   ? currentUser?.profile?.picture || "/default-profile.png"
-                  : lister?.profile?.picture || "/default-profile.png"
-              }
-              alt="Lister Profile"
-              className="h-full w-full object-cover"
+                  : lister?.profile?.picture || "/default-profile.png",
+                bio: isCurrentUserLister
+                  ? currentUser?.profile?.bio
+                  : lister?.profile?.bio,
+                location: isCurrentUserLister
+                  ? currentUser?.profile?.location
+                  : lister?.profile?.location,
+                completedGigs: isCurrentUserLister
+                  ? currentUser?.stats?.completedGigs
+                  : lister?.stats?.completedGigs,
+                averageRating: isCurrentUserLister
+                  ? currentUser?.stats?.averageRating
+                  : lister?.stats?.averageRating,
+              }}
+              size="large"
+              hoverDetails={true} // Enable hover details
+              rounded={true}
             />
           </div>
           <div>
             <h2 className="text-2xl font-semibold text-white">{gig.title}</h2>
             <p className="text-sm text-gray-300">
               <strong>Lister:</strong>{" "}
-              {isCurrentUserLister
+              {/* {isCurrentUserLister
                 ? currentUser?.displayName || "You"
-                : lister?.displayName || "Unknown"}
+                : lister?.displayName || "Unknown"} */}
+                {lister?.displayName || "Unknown"}
             </p>
           </div>
         </div>
