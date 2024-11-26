@@ -1,29 +1,53 @@
 
 
+
 import React, { useState } from "react";
+import { addDoc } from "firebase/firestore";
+import { chatMessagesRef } from "@/utils/database/collections";
+import { Timestamp } from "firebase/firestore";
+
 
 interface MessageInputProps {
-  onSend: (message: string) => void;
+  chatId: string;
+  currentUserId: string;
+  recipientId: string;
+  db: any;
+  onMessageSent: () => void; // New callback prop
 }
 
-const MessageInput: React.FC<MessageInputProps> = ({ onSend }) => {
+const MessageInput: React.FC<MessageInputProps> = ({
+  chatId,
+  currentUserId,
+  recipientId,
+  db,
+  onMessageSent,
+}) => {
   const [message, setMessage] = useState("");
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (message.trim()) {
-      onSend(message);
-      setMessage("");
+      try {
+        await addDoc(chatMessagesRef(db), {
+          chatId,
+          senderId: currentUserId,
+          sentToId: recipientId,
+          content: message,
+          timestamp: Timestamp.now(), // Use Timestamp from Firestore
+          isRead: false,
+        });
+        setMessage("");
+        onMessageSent(); // Notify parent component to update chats
+      } catch (error) {
+        console.error("Error sending message:", error);
+      }
     }
   };
+  
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter") {
-      if (e.shiftKey) {
-        // Allow newline with Shift+Enter
-      } else {
-        e.preventDefault(); // Prevent default Enter behavior
-        handleSend();
-      }
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
     }
   };
 
@@ -47,5 +71,3 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSend }) => {
 };
 
 export default MessageInput;
-
-
