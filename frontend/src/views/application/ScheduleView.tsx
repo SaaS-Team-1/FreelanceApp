@@ -2,10 +2,23 @@ import React, { useEffect, useState } from "react";
 import PostedGigList from "@/components/Gigs/MyPostedGigList";
 import GigDetails from "@/components/Gigs/GigDetails";
 import { Gig, User } from "@/utils/database/schema";
-import { query, Timestamp, where, getDocs, doc, updateDoc,getDoc,deleteDoc } from "firebase/firestore";
+import {
+  query,
+  Timestamp,
+  where,
+  getDocs,
+  doc,
+  updateDoc,
+  getDoc,
+  deleteDoc,
+} from "firebase/firestore";
 import CustomButton from "@/components/Buttons/CustomButton";
 import { useAuth, useFirestore } from "@/utils/reactfire";
-import { applicationsRef, gigsRef, usersRef } from "@/utils/database/collections";
+import {
+  applicationsRef,
+  gigsRef,
+  usersRef,
+} from "@/utils/database/collections";
 import { useCallback } from "react";
 
 function ScheduleView() {
@@ -17,97 +30,112 @@ function ScheduleView() {
   const [selectedLister, setSelectedLister] = useState<User | null>(null);
   const [isGigDetailsOpen, setIsGigDetailsOpen] = useState(false);
 
-  const [inProgressGigs, setInProgressGigs] = useState<{ gig: Gig; lister: User }[]>([]);
-  const [pendingGigs, setPendingGigs] = useState<{ gig: Gig; lister: User }[]>([]);
-  const [awaitingApprovalGigs, setAwaitingApprovalGigs] = useState<{ gig: Gig; lister: User }[]>([]);
-  const [completedGigs, setCompletedGigs] = useState<{ gig: Gig; lister: User }[]>([]);
+  const [inProgressGigs, setInProgressGigs] = useState<
+    { gig: Gig; lister: User }[]
+  >([]);
+  const [pendingGigs, setPendingGigs] = useState<{ gig: Gig; lister: User }[]>(
+    [],
+  );
+  const [awaitingApprovalGigs, setAwaitingApprovalGigs] = useState<
+    { gig: Gig; lister: User }[]
+  >([]);
+  const [completedGigs, setCompletedGigs] = useState<
+    { gig: Gig; lister: User }[]
+  >([]);
 
   const processGigData = (gigData: any, docId: string): Gig => ({
     ...gigData,
     gigId: docId,
-    dueDate: gigData.dueDate instanceof Timestamp
-      ? gigData.dueDate.toDate()
-      : new Date(gigData.dueDate),
-    createdAt: gigData.createdAt instanceof Timestamp
-      ? gigData.createdAt.toDate()
-      : new Date(gigData.createdAt),
+    dueDate:
+      gigData.dueDate instanceof Timestamp
+        ? gigData.dueDate.toDate()
+        : new Date(gigData.dueDate),
+    createdAt:
+      gigData.createdAt instanceof Timestamp
+        ? gigData.createdAt.toDate()
+        : new Date(gigData.createdAt),
   });
 
-    const fetchGigs = useCallback(async () => {
-      if (currUser) {
-        try {
-          const inProgressQuery = query(
-            gigsRef(db),
-            where("selectedApplicantId", "==", currUser.uid),
-            where("status", "==", "in-progress")
-          );
-          const inProgressSnapshot = await getDocs(inProgressQuery);
-          setInProgressGigs(
-            inProgressSnapshot.docs.map((doc) => ({
-              gig: processGigData(doc.data(), doc.id),
-              lister: currUser as unknown as User,
-            }))
-          );
+  const fetchGigs = useCallback(async () => {
+    if (currUser) {
+      try {
+        const inProgressQuery = query(
+          gigsRef(db),
+          where("selectedApplicantId", "==", currUser.uid),
+          where("status", "==", "in-progress"),
+        );
+        const inProgressSnapshot = await getDocs(inProgressQuery);
+        setInProgressGigs(
+          inProgressSnapshot.docs.map((doc) => ({
+            gig: processGigData(doc.data(), doc.id),
+            lister: currUser as unknown as User,
+          })),
+        );
 
-          const pendingQuery = query(
-            applicationsRef(db),
-            where("applicantId", "==", currUser.uid),
-            where("status", "==", "pending")
-          );
-          const pendingSnapshot = await getDocs(pendingQuery);
-          const pendingGigIds = pendingSnapshot.docs.map((doc) => doc.data().gigId);
+        const pendingQuery = query(
+          applicationsRef(db),
+          where("applicantId", "==", currUser.uid),
+          where("status", "==", "pending"),
+        );
+        const pendingSnapshot = await getDocs(pendingQuery);
+        const pendingGigIds = pendingSnapshot.docs.map(
+          (doc) => doc.data().gigId,
+        );
 
-          const pendingGigsData = await Promise.all(
-            pendingGigIds.map(async (gigId) => {
-              const gigDoc = await getDoc(doc(gigsRef(db), gigId));
-              if (gigDoc.exists()) {
-                const gigData = gigDoc.data();
-                const listerDoc = await getDoc(doc(usersRef(db), gigData.listerId));
-                const listerData = listerDoc.exists() ? (listerDoc.data() as User) : null;
-                return {
-                  gig: processGigData(gigData, gigId),
-                  lister: listerData || currUser as unknown as User,
-                };
-              }
-              return null;
-            })
-          );
-          setPendingGigs(pendingGigsData.filter(Boolean) as any);
+        const pendingGigsData = await Promise.all(
+          pendingGigIds.map(async (gigId) => {
+            const gigDoc = await getDoc(doc(gigsRef(db), gigId));
+            if (gigDoc.exists()) {
+              const gigData = gigDoc.data();
+              const listerDoc = await getDoc(
+                doc(usersRef(db), gigData.listerId),
+              );
+              const listerData = listerDoc.exists()
+                ? (listerDoc.data() as User)
+                : null;
+              return {
+                gig: processGigData(gigData, gigId),
+                lister: listerData || (currUser as unknown as User),
+              };
+            }
+            return null;
+          }),
+        );
+        setPendingGigs(pendingGigsData.filter(Boolean) as any);
 
-          const awaitingApprovalQuery = query(
-            gigsRef(db),
-            where("selectedApplicantId", "==", currUser.uid),
-            where("status", "==", "awaiting-confirmation")
-          );
-          const awaitingApprovalSnapshot = await getDocs(awaitingApprovalQuery);
-          setAwaitingApprovalGigs(
-            awaitingApprovalSnapshot.docs.map((doc) => ({
-              gig: processGigData(doc.data(), doc.id),
-              lister: currUser as unknown as User,
-            }))
-          );
+        const awaitingApprovalQuery = query(
+          gigsRef(db),
+          where("selectedApplicantId", "==", currUser.uid),
+          where("status", "==", "awaiting-confirmation"),
+        );
+        const awaitingApprovalSnapshot = await getDocs(awaitingApprovalQuery);
+        setAwaitingApprovalGigs(
+          awaitingApprovalSnapshot.docs.map((doc) => ({
+            gig: processGigData(doc.data(), doc.id),
+            lister: currUser as unknown as User,
+          })),
+        );
 
-          const completedQuery = query(
-            gigsRef(db),
-            where("selectedApplicantId", "==", currUser.uid),
-            where("status", "==", "completed")
-          );
-          const completedSnapshot = await getDocs(completedQuery);
-          setCompletedGigs(
-            completedSnapshot.docs.map((doc) => ({
-              gig: processGigData(doc.data(), doc.id),
-              lister: currUser as unknown as User,
-            }))
-          );
-        } catch (error) {
-          console.error("Error fetching gigs:", error);
-        }
+        const completedQuery = query(
+          gigsRef(db),
+          where("selectedApplicantId", "==", currUser.uid),
+          where("status", "==", "completed"),
+        );
+        const completedSnapshot = await getDocs(completedQuery);
+        setCompletedGigs(
+          completedSnapshot.docs.map((doc) => ({
+            gig: processGigData(doc.data(), doc.id),
+            lister: currUser as unknown as User,
+          })),
+        );
+      } catch (error) {
+        console.error("Error fetching gigs:", error);
       }
-    }, [currUser, db]);
-    useEffect(() => {
-      fetchGigs();
-    }, [currUser, db, fetchGigs]);
-  
+    }
+  }, [currUser, db]);
+  useEffect(() => {
+    fetchGigs();
+  }, [currUser, db, fetchGigs]);
 
   const handleSeeMoreClick = async (gig: Gig) => {
     setSelectedGig(gig);
@@ -128,13 +156,15 @@ function ScheduleView() {
       await updateDoc(gigDocRef, { status: "awaiting-confirmation" });
 
       // Refresh in-progress and awaiting-approval gigs
-      const updatedInProgress = inProgressGigs.filter(({ gig }) => gig.gigId !== gigId);
+      const updatedInProgress = inProgressGigs.filter(
+        ({ gig }) => gig.gigId !== gigId,
+      );
       const updatedGig = inProgressGigs.find(({ gig }) => gig.gigId === gigId);
       if (updatedGig) {
         setAwaitingApprovalGigs([...awaitingApprovalGigs, updatedGig]);
       }
       setInProgressGigs(updatedInProgress);
-      
+
       await fetchGigs();
     } catch (error) {
       console.error("Error updating gig status:", error);
@@ -151,26 +181,26 @@ function ScheduleView() {
       console.error("No current user found");
       return;
     }
-  
+
     try {
       const applicationQuery = query(
         applicationsRef(db),
         where("applicantId", "==", currUser.uid),
         where("gigId", "==", gigId),
-        where("status", "==", "pending")
+        where("status", "==", "pending"),
       );
-  
+
       const applicationSnapshot = await getDocs(applicationQuery);
-  
+
       if (!applicationSnapshot.empty) {
         const applicationDoc = applicationSnapshot.docs[0];
         await deleteDoc(doc(applicationsRef(db), applicationDoc.id));
-  
+
         // Refresh the pending gigs list locally
         setPendingGigs((prevPending) =>
-          prevPending.filter(({ gig }) => gig.gigId !== gigId)
+          prevPending.filter(({ gig }) => gig.gigId !== gigId),
         );
-  
+
         // Fetch updated data for all gigs
         await fetchGigs();
       }
@@ -178,18 +208,17 @@ function ScheduleView() {
       console.error("Error removing application:", error);
     }
   };
-  
 
   return (
-    <div className="relative p-4">
+    <div className="relative h-screen w-full p-4">
       {/* Horizontal Scrollable Container */}
       <div
-        className="flex overflow-x-auto scroll-smooth snap-x snap-mandatory gap-6"
+        className="flex h-[calc(100vh-8rem)] snap-x snap-mandatory gap-6 scroll-smooth"
         style={{ scrollSnapType: "x mandatory" }}
       >
         {/* Page 1: Scheduled Gigs and Pending Gigs */}
-        <div className="flex gap-6 w-full flex-shrink-0 snap-center">
-          <div className="w-[50%] rounded-lg bg-gray-800 dark:text-white p-4 shadow-lg">
+        <div className="flex size-full shrink-0 snap-center gap-6">
+          <div className="scrollbar h-full w-1/2 overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
             <h1 className="mb-3 text-xl font-bold">Scheduled Gigs</h1>
             <PostedGigList
               gigs={inProgressGigs}
@@ -201,7 +230,7 @@ function ScheduleView() {
               onSeeMoreClick={handleSeeMoreClick}
             />
           </div>
-          <div className="w-[50%] rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
+          <div className="scrollbar h-full w-1/2 overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
             <h1 className="mb-3 text-xl font-bold">Pending Gigs</h1>
             <PostedGigList
               gigs={pendingGigs}
@@ -214,8 +243,8 @@ function ScheduleView() {
         </div>
 
         {/* Page 2: Awaiting Approval and Completed Gigs */}
-        <div className="flex gap-6 w-full flex-shrink-0 snap-center">
-          <div className="w-[50%] rounded-lg bg-gray-800 dark:text-white p-4 shadow-lg">
+        <div className="flex w-full shrink-0 snap-center gap-6">
+          <div className="w-1/2 rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
             <h1 className="mb-3 text-xl font-bold">Awaiting Approval</h1>
             <PostedGigList
               gigs={awaitingApprovalGigs}
@@ -224,7 +253,7 @@ function ScheduleView() {
               onSeeMoreClick={handleSeeMoreClick}
             />
           </div>
-          <div className="w-[50%] rounded-lg bg-gray-800  dark:text-white p-4 shadow-lg">
+          <div className="w-1/2 rounded-lg bg-gray-800  p-4 shadow-lg dark:text-white">
             <h1 className="mb-3 text-xl font-bold">Completed Gigs</h1>
             <PostedGigList
               gigs={completedGigs}

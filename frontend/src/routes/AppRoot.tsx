@@ -33,12 +33,20 @@ function FirebaseInitializer({ children }: { children: React.ReactNode }) {
 
 export default function AppRoot() {
   const [isReady, setIsReady] = useState(false);
+  const [title, setTitle] = useState("");
   const location = useLocation();
 
-  let title = "";
-  if (location.pathname in pathNames.paths) {
-    title = pathNames.paths[location.pathname as keyof typeof pathNames.paths];
-  }
+  useEffect(() => {
+    // Wrap the state update in startTransition
+    if (location.pathname in pathNames.paths) {
+      setTitle(
+        pathNames.paths[location.pathname as keyof typeof pathNames.paths],
+      );
+    } else {
+      setTitle("");
+    }
+  }, [location]);
+
   useEffect(() => {
     // Wrap the state update in startTransition
     startTransition(() => {

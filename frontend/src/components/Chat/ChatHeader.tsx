@@ -23,7 +23,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   isLister,
 }) => {
   return (
-    <div className="w-4/5 flex items-center justify-between p-4 bg-gray-800 text-white border-b border-gray-700">
+    <div className="w-full flex items-center justify-between p-4 bg-gray-800 text-white border-b border-gray-700">
       <div className="flex items-center gap-4">
         <UserProfilePicture
           user={{
