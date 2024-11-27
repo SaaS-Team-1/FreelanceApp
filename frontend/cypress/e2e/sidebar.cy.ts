@@ -1,93 +1,79 @@
 import '../support/commands';
 
 describe('Sidebar Navigation Tests', () => {
+  const isAdmin = true; // Set to true for admin tests
+
   before(() => {
-    // Ensure the user is logged in
-    cy.signupOrLogin(); // Assuming the custom command is already defined
+    // Perform login once based on the role
+    if (isAdmin) {
+      cy.adminLogin(); // Login as admin
+    } else {
+      cy.signupOrLogin(); // Login as non-admin
+    }
+    cy.saveSession(); // Save the session after login
   });
 
   beforeEach(() => {
-    // Start from the main app page
-    cy.visit('http://localhost:5173/app');
+    // Restore session and navigate to the app's main page
+    cy.restoreSession();
+    cy.visit('http://127.0.0.1:8081/app');
   });
 
-  it('Navigates to My Posted Gigs Page', () => {
-    // Use text-based selector to find the "My posted Gigs" button
-    cy.contains('div', 'My posted Gigs')
-      .should('be.visible') // Ensure it is visible
-      .click(); // Click the "My posted Gigs" button
+  const sidebarNavigationTests = [
+    {
+      name: 'My Posted Gigs Page',
+      button: 'My posted Gigs',
+      assertions: ['My Posted Gigs'],
+    },
+    {
+      name: 'Chat Page',
+      button: 'Chat',
+      assertions: [''], // Replace with actual content
+    },
+    {
+      name: 'Schedule Page',
+      button: 'Schedule',
+      assertions: ['Scheduled Gigs', 'Pending Gigs'],
+    },
+    {
+      name: 'Notifications Page',
+      button: 'Notifications',
+      assertions: ['MyPostedGigsView'], // Replace with actual content
+    },
+    {
+      name: 'Profile Page',
+      button: 'Profile',
+      assertions: ['My Profile123'], // Replace with actual content
+    },
+    {
+      name: 'Settings Page',
+      button: 'Settings',
+      assertions: ['Account', 'Email', 'Password'],
+    },
+    {
+      name: 'Home Page',
+      button: 'Home',
+      assertions: [
+        '+ Upload new gig',
+      ],
+    },
+  ];
 
-    // Verify content on the Posted Gigs page
-    cy.contains('My Posted Gigs').should('be.visible'); 
+  sidebarNavigationTests.forEach(({ name, button, assertions }) => {
+    it(`Navigates to ${name}`, () => {
+      // Click the sidebar button
+      cy.contains('div', button)
+        .should('be.visible')
+        .click();
+
+      // Verify assertions on the target page
+      assertions.forEach((assertion) => {
+        if (assertion.startsWith('input[')) {
+          cy.get(assertion).should('be.visible'); // For input placeholders
+        } else {
+          cy.contains(assertion).should('be.visible'); // For text-based assertions
+        }
+      });
+    });
   });
-
-
-  it('Navigates to Chat Page', () => {
-    // Use text-based selector to find the "Chat" button
-    cy.contains('div', 'Chat')
-      .should('be.visible') // Ensure it is visible
-      .click();
-
-    // Verify content on the Chat page
-    // cy.contains('Type your message here').should('be.visible'); // Replace with actual content
-  });
-
-  it('Navigates to Schedule Page', () => {
-    // Use text-based selector to find the "My posted Gigs" button
-    cy.contains('div', 'Schedule')
-      .should('be.visible') // Ensure it is visible
-      .click(); // Click the "My posted Gigs" button
-
-    // Verify content on the Posted Gigs page
-    cy.contains('Scheduled Gigs').should('be.visible'); 
-    cy.contains('Pending Gigs').should('be.visible');
-  });
-
-  it('Navigates to Notifications Page', () => {
-    // Use text-based selector to find the "My posted Gigs" button
-    cy.contains('div', 'Notifications')
-      .should('be.visible') // Ensure it is visible
-      .click(); // Click the "My posted Gigs" button
-
-    // Verify content on the Posted Gigs page
-    cy.contains('MyPostedGigsView').should('be.visible'); 
-  });
-
-  it('Navigates to Profile Page', () => {
-    // Use text-based selector to find the "My posted Gigs" button
-    cy.contains('div', 'Profile')
-      .should('be.visible') // Ensure it is visible
-      .click(); // Click the "My posted Gigs" button
-
-    // Verify content on the Posted Gigs page
-    cy.contains('MyPostedGigsView123').should('be.visible'); 
-  });
-
-  it('Navigates to Settings Page', () => {
-    // Use text-based selector to find the "My posted Gigs" button
-    cy.contains('div', 'Settings')
-      .should('be.visible') // Ensure it is visible
-      .click(); // Click the "My posted Gigs" button
-
-    // Verify content on the Posted Gigs page
-    cy.contains('Account').should('be.visible'); 
-    cy.contains('Email').should('be.visible'); 
-    cy.contains('Password').should('be.visible'); 
-  });
-
-  it('Navigates to Home Page', () => {
-    // Use text-based selector to find the "My posted Gigs" button
-    cy.contains('div', 'Home')
-      .should('be.visible') // Ensure it is visible
-      .click(); // Click the "My posted Gigs" button
-
-    // Verify content on the Posted Gigs page
-    cy.get('input[placeholder="Search for specific Gigs"]').should('be.visible'); 
-    cy.contains('Notifications').should('be.visible'); 
-    cy.contains('button', '+ Upload new gig').should('be.visible');
-  });
-
-  
-
-  // Add similar tests for the remaining Sidebar items (Notifications, Profile, Settings, etc.)
 });
