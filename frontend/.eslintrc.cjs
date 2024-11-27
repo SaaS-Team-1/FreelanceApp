@@ -8,11 +8,7 @@ module.exports = {
     "plugin:tailwindcss/recommended",
     "prettier",
   ],
-  ignorePatterns: [
-    "dist",
-    ".eslintrc.cjs",
-    "/src/utils/database/**",
-  ],
+  ignorePatterns: ["dist", ".eslintrc.cjs", "/src/utils/database/**"],
   parser: "@typescript-eslint/parser",
   plugins: ["react-refresh"],
   settings: {

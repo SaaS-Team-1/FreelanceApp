@@ -78,8 +78,6 @@ const assignApplicantToGig = async (
   });
 };
 
-
-
 const cancelGig = async (db: Firestore, gigId: string) => {
   const gigRef = doc(gigsRef(db), gigId);
   await updateDoc(gigRef, { status: "canceled" });
@@ -94,12 +92,10 @@ const cancelApplication = async (
   await updateDoc(applicationRef, { status: newStatus });
 };
 
-
 const confirmGigCompletion = async (db: Firestore, gigId: string) => {
   const gigRef = doc(gigsRef(db), gigId);
   await updateDoc(gigRef, { status: "completed" });
 };
-
 
 const updateGigRatingStatus = async (
   db: Firestore,
@@ -120,7 +116,17 @@ const reopenGig = async (db: Firestore, gigId: string) => {
   await updateDoc(gigRef, { status: "open", selectedApplicantId: null });
 };
 
-
-export default { createGig, applyToGig, leaveRating, acceptApplication, 
-  updateGigStatus, assignApplicantToGig, cancelGig, cancelApplication, 
-  confirmGigCompletion, updateGigRatingStatus, reportGigProblem, reopenGig };
+export default {
+  createGig,
+  applyToGig,
+  leaveRating,
+  acceptApplication,
+  updateGigStatus,
+  assignApplicantToGig,
+  cancelGig,
+  cancelApplication,
+  confirmGigCompletion,
+  updateGigRatingStatus,
+  reportGigProblem,
+  reopenGig,
+};

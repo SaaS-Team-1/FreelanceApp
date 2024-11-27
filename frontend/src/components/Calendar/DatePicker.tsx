@@ -19,7 +19,10 @@ const DatePicker: React.FC<DatePickerProps> = ({ dueDate, onDateChange }) => {
           value={selectedDate.toISOString().split("T")[0]}
           onChange={(e) => {
             const newDate = new Date(e.target.value);
-            newDate.setHours(selectedDate.getHours(), selectedDate.getMinutes());
+            newDate.setHours(
+              selectedDate.getHours(),
+              selectedDate.getMinutes(),
+            );
             onDateChange(new Timestamp(newDate.getTime() / 1000, 0));
           }}
           className="w-full rounded border-gray-700 bg-gray-800 p-2 text-white"

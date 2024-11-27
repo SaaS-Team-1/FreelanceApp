@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Gig, User } from "@/utils/database/schema";
 import { FaDollarSign, FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
@@ -67,7 +66,7 @@ const GigDetailsModal: React.FC<GigDetailsModalProps> = ({
       onClick={onClose}
     >
       <div
-        className="relative max-w-lg w-full bg-gray-900 p-10 rounded-lg shadow-lg"
+        className="relative w-full max-w-lg rounded-lg bg-gray-900 p-10 shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
@@ -122,9 +121,9 @@ const GigDetailsModal: React.FC<GigDetailsModalProps> = ({
               <span>
                 {gig.dueDate
                   ? `${new Date(gig.dueDate.seconds * 1000).toLocaleDateString(
-                      "en-GB"
+                      "en-GB",
                     )} at ${new Date(
-                      gig.dueDate.seconds * 1000
+                      gig.dueDate.seconds * 1000,
                     ).toLocaleTimeString("en-GB", {
                       hour: "2-digit",
                       minute: "2-digit",
@@ -171,7 +170,7 @@ const GigDetailsModal: React.FC<GigDetailsModalProps> = ({
 
         {/* "Go to My Gigs" Button for Lister */}
         {isCurrentUserLister && (
-          <div className="flex justify-end mt-6">
+          <div className="mt-6 flex justify-end">
             <CustomButton
               label="Go to My Gigs"
               onClick={onGoToMyGigs}
@@ -184,7 +183,5 @@ const GigDetailsModal: React.FC<GigDetailsModalProps> = ({
     </div>
   );
 };
-
-
 
 export default GigDetailsModal;

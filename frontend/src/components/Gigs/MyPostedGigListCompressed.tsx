@@ -3,7 +3,13 @@ import { useNavigate } from "react-router-dom";
 import MyPostedGigItemCompressed from "./MyPostedGigItemCompressed";
 import { Gig, User } from "@/utils/database/schema";
 
-function MyPostedGigListCompressed({gigs, user}:{gigs: Gig[], user: User}) {
+function MyPostedGigListCompressed({
+  gigs,
+  user,
+}: {
+  gigs: Gig[];
+  user: User;
+}) {
   const navigate = useNavigate(); // Initialize navigate
 
   return (
@@ -30,4 +36,3 @@ function MyPostedGigListCompressed({gigs, user}:{gigs: Gig[], user: User}) {
 }
 
 export default MyPostedGigListCompressed;
-

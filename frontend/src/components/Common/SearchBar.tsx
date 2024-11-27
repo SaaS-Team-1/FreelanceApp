@@ -6,7 +6,7 @@ export function SearchBar() {
       <div className="relative w-full max-w-xl">
         {/* Search Icon */}
         <HiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-        
+
         {/* Search Input */}
         <input
           type="text"

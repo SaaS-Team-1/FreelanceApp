@@ -22,7 +22,7 @@ const DeleteAccount: React.FC = () => {
       {/* Trigger Button */}
       <button
         onClick={openModal}
-        className="flex items-center justify-center px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+        className="flex items-center justify-center rounded-md bg-red-500 px-4 py-2 text-white hover:bg-red-600"
       >
         Delete Account
       </button>
@@ -30,11 +30,11 @@ const DeleteAccount: React.FC = () => {
       {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-gray-800 rounded-lg shadow-lg p-6 max-w-sm w-full">
-            <h2 className="text-white text-lg font-bold mb-4">
+          <div className="w-full max-w-sm rounded-lg bg-gray-800 p-6 shadow-lg">
+            <h2 className="mb-4 text-lg font-bold text-white">
               Confirm Account Deletion
             </h2>
-            <p className="text-gray-300 text-sm mb-6">
+            <p className="mb-6 text-sm text-gray-300">
               Are you sure you want to delete your account? This action cannot
               be undone.
             </p>

@@ -6,7 +6,10 @@ interface FilterButtonProps {
   onCategorySelect: (selectedCategories: string[]) => void;
 }
 
-const FilterButton: React.FC<FilterButtonProps> = ({ categories, onCategorySelect }) => {
+const FilterButton: React.FC<FilterButtonProps> = ({
+  categories,
+  onCategorySelect,
+}) => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   const toggleCategory = (category: string) => {
@@ -49,7 +52,10 @@ const FilterButton: React.FC<FilterButtonProps> = ({ categories, onCategorySelec
         color="gray"
       >
         {/* "Clear All" Option */}
-        <Dropdown.Item onClick={clearAllCategories} className="text-red-500 font-semibold">
+        <Dropdown.Item
+          onClick={clearAllCategories}
+          className="font-semibold text-red-500"
+        >
           Clear All
         </Dropdown.Item>
 

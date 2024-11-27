@@ -1,12 +1,19 @@
-import * as React from 'react';
-import { user } from 'rxfire/auth'
-import { preloadObservable, ReactFireOptions, useAuth, useObservable, ObservableStatus, ReactFireError } from './';
-import { from, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
-import { useSuspenseEnabledFromConfigAndContext } from './firebaseApp';
+import * as React from "react";
+import { user } from "rxfire/auth";
+import {
+  preloadObservable,
+  ReactFireOptions,
+  useAuth,
+  useObservable,
+  ObservableStatus,
+  ReactFireError,
+} from "./";
+import { from, of } from "rxjs";
+import { map, switchMap } from "rxjs/operators";
+import { useSuspenseEnabledFromConfigAndContext } from "./firebaseApp";
 
-import type { Auth, User, IdTokenResult } from 'firebase/auth';
-type Claims = IdTokenResult['claims'];
+import type { Auth, User, IdTokenResult } from "firebase/auth";
+type Claims = IdTokenResult["claims"];
 
 export async function preloadUser(authResolver: () => Promise<Auth>) {
   const auth = await authResolver();
@@ -19,7 +26,9 @@ export async function preloadUser(authResolver: () => Promise<Auth>) {
  *
  * @param options
  */
-export function useUser<T = unknown>(options?: ReactFireOptions<T>): ObservableStatus<User | null> {
+export function useUser<T = unknown>(
+  options?: ReactFireOptions<T>,
+): ObservableStatus<User | null> {
   const auth = useAuth();
 
   const observableId = `auth:user:${auth.name}`;
@@ -28,9 +37,13 @@ export function useUser<T = unknown>(options?: ReactFireOptions<T>): ObservableS
   return useObservable(observableId, observable$, options);
 }
 
-export function useIdTokenResult(user: User, forceRefresh = false, options?: ReactFireOptions<IdTokenResult>): ObservableStatus<IdTokenResult> {
+export function useIdTokenResult(
+  user: User,
+  forceRefresh = false,
+  options?: ReactFireOptions<IdTokenResult>,
+): ObservableStatus<IdTokenResult> {
   if (!user) {
-    throw new Error('you must provide a user');
+    throw new Error("you must provide a user");
   }
 
   const observableId = `auth:idTokenResult:${user.uid}:forceRefresh=${forceRefresh}`;
@@ -70,11 +83,13 @@ export type SigninCheckResult =
       user: User;
     };
 
-export interface SignInCheckOptionsBasic extends ReactFireOptions<SigninCheckResult> {
+export interface SignInCheckOptionsBasic
+  extends ReactFireOptions<SigninCheckResult> {
   forceRefresh?: boolean;
 }
 
-export interface SignInCheckOptionsClaimsObject extends SignInCheckOptionsBasic {
+export interface SignInCheckOptionsClaimsObject
+  extends SignInCheckOptionsBasic {
   requiredClaims: Claims;
 }
 
@@ -85,7 +100,8 @@ export interface ClaimsValidator {
   };
 }
 
-export interface SignInCheckOptionsClaimsValidator extends SignInCheckOptionsBasic {
+export interface SignInCheckOptionsClaimsValidator
+  extends SignInCheckOptionsBasic {
   validateCustomClaims: ClaimsValidator;
 }
 
@@ -122,11 +138,19 @@ export interface SignInCheckOptionsClaimsValidator extends SignInCheckOptionsBas
  * ```
  */
 export function useSigninCheck(
-  options?: SignInCheckOptionsBasic | SignInCheckOptionsClaimsObject | SignInCheckOptionsClaimsValidator
+  options?:
+    | SignInCheckOptionsBasic
+    | SignInCheckOptionsClaimsObject
+    | SignInCheckOptionsClaimsValidator,
 ): ObservableStatus<SigninCheckResult> {
   // If both `requiredClaims` and `validateCustomClaims` are provided, we won't know which one to use
-  if (options?.hasOwnProperty('requiredClaims') && options?.hasOwnProperty('validateCustomClaims')) {
-    throw new Error('Cannot have both "requiredClaims" and "validateCustomClaims". Use one or the other.');
+  if (
+    options?.hasOwnProperty("requiredClaims") &&
+    options?.hasOwnProperty("validateCustomClaims")
+  ) {
+    throw new Error(
+      'Cannot have both "requiredClaims" and "validateCustomClaims". Use one or the other.',
+    );
   }
 
   const auth = useAuth();
@@ -136,9 +160,9 @@ export function useSigninCheck(
   if (options?.forceRefresh) {
     observableId = `${observableId}:forceRefresh:${options.forceRefresh}`;
   }
-  if (options?.hasOwnProperty('requiredClaims')) {
+  if (options?.hasOwnProperty("requiredClaims")) {
     observableId = `${observableId}:requiredClaims:${JSON.stringify((options as SignInCheckOptionsClaimsObject).requiredClaims)}`;
-  } else if (options?.hasOwnProperty('validateCustomClaims')) {
+  } else if (options?.hasOwnProperty("validateCustomClaims")) {
     // TODO(jamesdaniels): Check if stringifying this function breaks in IE11
     observableId = `${observableId}:validateCustomClaims:${JSON.stringify((options as SignInCheckOptionsClaimsValidator).validateCustomClaims)}`;
   }
@@ -146,31 +170,55 @@ export function useSigninCheck(
   const observable = user(auth).pipe(
     switchMap((user) => {
       if (!user) {
-        const result: SigninCheckResult = { signedIn: false, hasRequiredClaims: false, errors: {}, user: null };
+        const result: SigninCheckResult = {
+          signedIn: false,
+          hasRequiredClaims: false,
+          errors: {},
+          user: null,
+        };
         return of(result);
-      } else if (options && (options.hasOwnProperty('requiredClaims') || options.hasOwnProperty('validateCustomClaims'))) {
+      } else if (
+        options &&
+        (options.hasOwnProperty("requiredClaims") ||
+          options.hasOwnProperty("validateCustomClaims"))
+      ) {
         return from(user.getIdTokenResult(options?.forceRefresh ?? false)).pipe(
           map((idTokenResult) => {
             let validator: ClaimsValidator;
 
-            if (options.hasOwnProperty('requiredClaims')) {
-              validator = getClaimsObjectValidator((options as SignInCheckOptionsClaimsObject).requiredClaims);
+            if (options.hasOwnProperty("requiredClaims")) {
+              validator = getClaimsObjectValidator(
+                (options as SignInCheckOptionsClaimsObject).requiredClaims,
+              );
             } else {
-              validator = (options as SignInCheckOptionsClaimsValidator).validateCustomClaims;
+              validator = (options as SignInCheckOptionsClaimsValidator)
+                .validateCustomClaims;
             }
 
-            const { hasRequiredClaims, errors } = validator(idTokenResult.claims);
+            const { hasRequiredClaims, errors } = validator(
+              idTokenResult.claims,
+            );
 
-            const result: SigninCheckResult = { signedIn: true, hasRequiredClaims, errors, user: user };
+            const result: SigninCheckResult = {
+              signedIn: true,
+              hasRequiredClaims,
+              errors,
+              user: user,
+            };
             return result;
-          })
+          }),
         );
       } else {
         // If no claims are provided to be checked, `hasRequiredClaims` is true
-        const result: SigninCheckResult = { signedIn: true, hasRequiredClaims: true, errors: {}, user: user };
+        const result: SigninCheckResult = {
+          signedIn: true,
+          hasRequiredClaims: true,
+          errors: {},
+          user: user,
+        };
         return of(result);
       }
-    })
+    }),
   );
 
   return useObservable(observableId, observable, options);
@@ -182,7 +230,12 @@ function getClaimsObjectValidator(requiredClaims: Claims): ClaimsValidator {
 
     Object.keys(requiredClaims).forEach((claim) => {
       if (requiredClaims[claim] !== userClaims[claim]) {
-        errors[claim] = [new ReactFireError('auth/missing-claim', `Expected "${requiredClaims[claim]}", but user has "${userClaims[claim]}" instead`)];
+        errors[claim] = [
+          new ReactFireError(
+            "auth/missing-claim",
+            `Expected "${requiredClaims[claim]}", but user has "${userClaims[claim]}" instead`,
+          ),
+        ];
       }
     });
 
@@ -200,22 +253,29 @@ function getClaimsObjectValidator(requiredClaims: Claims): ClaimsValidator {
  *
  * Meant for Concurrent mode only (`<FirebaseAppProvider suspense=true />`). [More detail](https://github.com/FirebaseExtended/reactfire/issues/325#issuecomment-827654376).
  */
-export function ClaimsCheck({ user, fallback, children, requiredClaims }: ClaimsCheckProps) {
+export function ClaimsCheck({
+  user,
+  fallback,
+  children,
+  requiredClaims,
+}: ClaimsCheckProps) {
   const { data, status, error } = useIdTokenResult(user, false);
-  
-  if (status === 'loading') {
-    throw new Error('ClaimsCheck must be run in Suspense mode');
-  } else if (status === 'error') {
-    throw error
+
+  if (status === "loading") {
+    throw new Error("ClaimsCheck must be run in Suspense mode");
+  } else if (status === "error") {
+    throw error;
   }
 
   const { claims } = data;
-  const missingClaims: { [key: string]: { expected: string; actual: string | undefined } } = {};
+  const missingClaims: {
+    [key: string]: { expected: string; actual: string | undefined };
+  } = {};
 
   const suspenseMode = useSuspenseEnabledFromConfigAndContext();
   if (!suspenseMode) {
     console.warn(
-      'ClaimsCheck is deprecated and only works when ReactFire is in experimental Suspense Mode. Use useSigninCheck or set suspense={true} in FirebaseAppProvider if you want to use this component.'
+      "ClaimsCheck is deprecated and only works when ReactFire is in experimental Suspense Mode. Use useSigninCheck or set suspense={true} in FirebaseAppProvider if you want to use this component.",
     );
   }
 
@@ -244,19 +304,27 @@ export function ClaimsCheck({ user, fallback, children, requiredClaims }: Claims
  *
  * Meant for Concurrent mode only (`<FirebaseAppProvider suspense=true />`). [More detail](https://github.com/FirebaseExtended/reactfire/issues/325#issuecomment-827654376).
  */
-export function AuthCheck({ fallback, children, requiredClaims }: AuthCheckProps): JSX.Element {
+export function AuthCheck({
+  fallback,
+  children,
+  requiredClaims,
+}: AuthCheckProps): JSX.Element {
   const { data: user } = useUser<User>();
 
   const suspenseMode = useSuspenseEnabledFromConfigAndContext();
   if (!suspenseMode) {
     console.warn(
-      'AuthCheck is deprecated and only works when ReactFire is in experimental Suspense Mode. Use useSigninCheck or set suspense={true} in FirebaseAppProvider if you want to use this component.'
+      "AuthCheck is deprecated and only works when ReactFire is in experimental Suspense Mode. Use useSigninCheck or set suspense={true} in FirebaseAppProvider if you want to use this component.",
     );
   }
 
   if (user) {
     return requiredClaims ? (
-      <ClaimsCheck user={user} fallback={fallback} requiredClaims={requiredClaims}>
+      <ClaimsCheck
+        user={user}
+        fallback={fallback}
+        requiredClaims={requiredClaims}
+      >
         {children}
       </ClaimsCheck>
     ) : (

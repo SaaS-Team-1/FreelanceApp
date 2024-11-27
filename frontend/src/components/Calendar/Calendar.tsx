@@ -10,7 +10,7 @@ const Calendar: React.FC<CalendarProps> = ({ scheduledGigs, pendingGigs }) => {
   const getFirstScheduledDate = () => {
     if (scheduledGigs.length > 0) {
       return new Date(
-        Math.min(...scheduledGigs.map((gig) => gig.dueDate.seconds * 1000))
+        Math.min(...scheduledGigs.map((gig) => gig.dueDate.seconds * 1000)),
       );
     }
     return new Date();
@@ -29,14 +29,14 @@ const Calendar: React.FC<CalendarProps> = ({ scheduledGigs, pendingGigs }) => {
   const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
 
   const handlePrevMonth = () => {
-    setCurrentDate((prev) =>
-      new Date(prev.getFullYear(), prev.getMonth() - 1, 1)
+    setCurrentDate(
+      (prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1),
     );
   };
 
   const handleNextMonth = () => {
-    setCurrentDate((prev) =>
-      new Date(prev.getFullYear(), prev.getMonth() + 1, 1)
+    setCurrentDate(
+      (prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1),
     );
   };
 
@@ -103,10 +103,10 @@ const Calendar: React.FC<CalendarProps> = ({ scheduledGigs, pendingGigs }) => {
             const currentDate = new Date(currentYear, currentMonth, day);
 
             const isScheduled = scheduledDates.some((date) =>
-              isSameDay(date, currentDate)
+              isSameDay(date, currentDate),
             );
             const isPending = pendingDates.some((date) =>
-              isSameDay(date, currentDate)
+              isSameDay(date, currentDate),
             );
 
             return (
@@ -116,8 +116,8 @@ const Calendar: React.FC<CalendarProps> = ({ scheduledGigs, pendingGigs }) => {
                   isScheduled
                     ? "bg-orange-500 text-white"
                     : isPending
-                    ? "bg-blue-500 text-white"
-                    : "hover:bg-gray-600"
+                      ? "bg-blue-500 text-white"
+                      : "hover:bg-gray-600"
                 }`}
               >
                 {day}
@@ -127,9 +127,7 @@ const Calendar: React.FC<CalendarProps> = ({ scheduledGigs, pendingGigs }) => {
         </div>
       </div>
       {noGigsMessage && (
-        <div className="mt-4 text-center text-gray-400">
-          {noGigsMessage}
-        </div>
+        <div className="mt-4 text-center text-gray-400">{noGigsMessage}</div>
       )}
     </div>
   );

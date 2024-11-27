@@ -4,9 +4,7 @@ import GigItemBase, { GigItemBaseProps } from "./GigItemBase"; // Ensure the imp
 
 // New component that extends GigItemBase and adds the custom SeeMoreButton
 const PostedGigItemHome: React.FC<GigItemBaseProps> = (props) => {
-  return (
-      <GigItemBase {...props} />
-  );
+  return <GigItemBase {...props} />;
 };
 
 export default PostedGigItemHome;

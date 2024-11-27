@@ -4,16 +4,8 @@ import CustomButton from "@/components/Buttons/CustomButton";
 import { Gig, User } from "@/utils/database/schema";
 import { FaDollarSign, FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
 import Badge from "@/components/Buttons/CustomBadge";
-import {
-  Firestore,
-  Timestamp,
-  addDoc,
-  doc,
-  setDoc,
-  updateDoc,
-} from "firebase/firestore";
-import { collection, query, where, getDocs } from "firebase/firestore";
-import { faker } from "@faker-js/faker";
+import { Firestore, Timestamp, addDoc, updateDoc } from "firebase/firestore";
+import { query, where, getDocs } from "firebase/firestore";
 import UserProfilePicture from "@/components/Avatar/UserProfilePicture"; // Import the UserProfilePicture component
 import { applicationsRef, chatsRef } from "@/utils/database/collections";
 
@@ -132,14 +124,12 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
                   </p>
                 )}
               </div>
-              <h2 className="text-2xl font-bold text-white">
-                {gig.title}
-              </h2>
+              <h2 className="text-2xl font-bold text-white">{gig.title}</h2>
             </div>
 
             <p className="mb-4 text-gray-300">{gig.description}</p>
 
-            <div className="mb-6 flex flex-col justify-left gap-6 text-sm text-white sm:flex-row">
+            <div className="justify-left mb-6 flex flex-col gap-6 text-sm text-white sm:flex-row">
               <div className="flex flex-col items-center">
                 <div className="flex items-center">
                   <FaDollarSign className="mr-2" />

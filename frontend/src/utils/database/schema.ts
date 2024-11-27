@@ -71,7 +71,7 @@ export interface Application {
 export interface Chat {
   chatId: string;
   gigId: string;
-  listerId: string; 
+  listerId: string;
   applicantId: string;
   applicationId: string;
 }
@@ -79,7 +79,7 @@ export interface Chat {
 export interface ChatMessage {
   chatmessageId: string;
   senderId: string;
-  sentToId: string; // id of user message is sent to 
+  sentToId: string; // id of user message is sent to
   content: string;
   timestamp: Timestamp;
   chatId: string;
@@ -108,7 +108,7 @@ export interface Transaction {
 }
 
 export interface Notification {
-  notificationId: string
+  notificationId: string;
   userId: string;
   notificationMessage: string;
   createdAt: Timestamp;

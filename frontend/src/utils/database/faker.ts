@@ -198,9 +198,9 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
         id: applicationDoc.id,
         application: applicationData as Application,
       });
-      
+
       updateDoc(chatDoc, { applicationId: applicationData.applicationId });
-      
+
       // Create chat messages with the updated schema
       for (let j = 0; j < MESSAGES_PER_CHAT; j++) {
         const isFromLister = Math.random() > 0.5;

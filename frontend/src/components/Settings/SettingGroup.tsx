@@ -2,7 +2,7 @@ import React from "react";
 import SettingItem, { SettingItemProps } from "./SettingItem";
 import ChangePassword from "./ChangePassword";
 
-interface SettingGroupProps{
+interface SettingGroupProps {
   title: string;
   settings: SettingItemProps[];
 }
@@ -22,7 +22,7 @@ const SettingGroup = ({ title, settings }: SettingGroupProps) => {
               onToggle={setting.onToggle} // Pass the toggle handler
               isToggled={setting.isToggled} // Pass the toggle state
             >
-            <ChangePassword />
+              <ChangePassword />
             </SettingItem>
             {index < settings.length - 1 && (
               <hr className="my-4 border-gray-700" /> // Divider between items
@@ -35,4 +35,3 @@ const SettingGroup = ({ title, settings }: SettingGroupProps) => {
 };
 
 export default SettingGroup;
-

@@ -29,7 +29,7 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
   const averageRating = user?.stats?.averageRating;
 
   return (
-    <div className="relative group">
+    <div className="group relative">
       {/* Profile Picture */}
       <div
         className={`${sizeClasses[size]} ${rounded ? "rounded-full" : "rounded-md"} 
@@ -38,7 +38,7 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
         <img
           src={profilePicture}
           alt={displayName}
-          className={`h-full w-full object-cover ${
+          className={`size-full object-cover ${
             rounded ? "rounded-full" : "rounded-md"
           }`}
         />
@@ -47,15 +47,15 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
       {/* Hover Details */}
       {hoverDetails && (
         <div
-          className="absolute z-10 invisible w-64 p-4 text-sm text-gray-800 transition-opacity 
-          duration-200 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 
-          group-hover:opacity-100 group-hover:visible dark:text-gray-300 dark:bg-gray-800 dark:border-gray-600"
+          className="invisible absolute z-10 w-64 rounded-lg border border-gray-200 bg-white 
+          p-4 text-sm text-gray-800 opacity-0 shadow-lg transition-opacity duration-200 
+          group-hover:visible group-hover:opacity-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300"
         >
-          <div className="flex items-center mb-3">
+          <div className="mb-3 flex items-center">
             <img
               src={profilePicture}
               alt={displayName}
-              className="w-10 h-10 rounded-full object-cover border border-gray-200 dark:border-gray-700"
+              className="size-10 rounded-full border border-gray-200 object-cover dark:border-gray-700"
             />
             <div className="ml-3">
               <p className="text-base font-semibold text-gray-900 dark:text-white">
@@ -70,7 +70,7 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
           </div>
           <div className="mb-3">
             {bio && (
-              <p className="text-sm text-gray-600 dark:text-gray-400 italic">
+              <p className="text-sm italic text-gray-600 dark:text-gray-400">
                 {bio}
               </p>
             )}
@@ -78,7 +78,7 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
           <ul className="space-y-2 text-sm">
             {completedGigs !== undefined && (
               <li className="flex items-center">
-                <span className="text-blue-500 mr-2">🏆</span>
+                <span className="mr-2 text-blue-500">🏆</span>
                 <span>
                   <strong>Completed Gigs:</strong> {completedGigs}
                 </span>
@@ -86,7 +86,7 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
             )}
             {averageRating !== undefined && (
               <li className="flex items-center">
-                <span className="text-yellow-500 mr-2">⭐</span>
+                <span className="mr-2 text-yellow-500">⭐</span>
                 <span>
                   <strong>Average Rating:</strong> {averageRating.toFixed(1)}
                 </span>
