@@ -1,89 +1,93 @@
+import { HiSearch } from "react-icons/hi";
+import { useState, useEffect } from "react";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { useUser, useFirestore } from "@/utils/reactfire";
+import { Gig, User, Notification } from "@/utils/database/schema";
 import { SearchBar } from "@/components/Common/SearchBar";
 import NotificationList from "@/components/Notifications/NotificationsList";
-import MyPostedGigListCompressed from "@/components/Gigs/MyPostedGigListCompressed";
 import PostedGigListHome from "@/components/Gigs/PostedGigListHome";
-import { collection, query, where, getDocs } from "firebase/firestore";
-import { Timestamp } from "firebase/firestore";
-import { Gig, User, Notification } from "@/utils/database/schema";
-import { useUser, useFirestore } from "@/utils/reactfire";
-import { useEffect, useState } from "react";
+import FilterButton from "@/components/Buttons/FilterButton"; // Assuming this component is imported
 
 export default function OverviewView() {
   const { data: user } = useUser();
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [openGigs, setGigs] = useState<{ gig: Gig; lister: User }[]>([]);
-  const [selectedGig, setSelectedGig] = useState<Gig>();
   const db = useFirestore();
 
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      if (!user) return;
+  const [searchQuery, setSearchQuery] = useState(""); // State for the search bar content
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [openGigs, setOpenGigs] = useState<{ gig: Gig; lister: User }[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
 
-      try {
-        const notificationsRef = collection(db, "notifications");
-        const q = query(notificationsRef, where("userId", "==", user.uid));
-        const querySnapshot = await getDocs(q);
+  const fetchNotifications = async () => {
+    if (!user) return;
 
-        const notificationsList: Notification[] = querySnapshot.docs.map(
-          (doc) => {
-            const data = doc.data();
-            return {
-              notificationId: data.notificationId,
-              userId: data.userId,
-              notificationMessage: data.notificationMessage,
-              createdAt: data.createdAt.toDate(), // Assuming Firestore timestamp
-            } as Notification;
-          },
-        );
+    try {
+      const notificationsRef = collection(db, "notifications");
+      const q = query(notificationsRef, where("userId", "==", user.uid));
+      const querySnapshot = await getDocs(q);
 
-        setNotifications(notificationsList);
-      } catch (error) {
-        console.error("Error fetching notifications: ", error);
+      const notificationsList: Notification[] = querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          notificationId: data.notificationId,
+          userId: data.userId,
+          notificationMessage: data.notificationMessage,
+          createdAt: data.createdAt.toDate(), // Assuming Firestore timestamp
+        } as Notification;
+      });
+
+      setNotifications(notificationsList);
+    } catch (error) {
+      console.error("Error fetching notifications: ", error);
+    }
+  };
+
+  const fetchOpenGigs = async () => {
+    try {
+      const gigsRef = collection(db, "gigs");
+      const gigsSnapshot = await getDocs(gigsRef);
+
+      const usersRef = collection(db, "users");
+
+      const fetchedGigs: Array<{ gig: Gig; lister: User }> = [];
+
+      for (const gigDoc of gigsSnapshot.docs) {
+        const gigData = gigDoc.data();
+
+        // Check if the gig has the "open" status
+        if (gigData.status !== "open") continue;
+
+        // If a search query exists, filter by title
+        if (searchQuery && !gigData.title.toLowerCase().includes(searchQuery.toLowerCase())) {
+          continue;
+        }
+
+        // Fetch the lister details
+        const userQuery = query(usersRef, where("userId", "==", gigData.listerId));
+        const userSnapshot = await getDocs(userQuery);
+        const lister = userSnapshot.docs[0]?.data() as User;
+
+        fetchedGigs.push({
+          gig: { ...gigData, gigId: gigDoc.id } as Gig,
+          lister,
+        });
       }
-    };
 
+      setOpenGigs(fetchedGigs);
+    } catch (error) {
+      console.error("Error fetching gigs: ", error);
+    }
+  };
+
+  useEffect(() => {
     fetchNotifications();
   }, [user]);
 
   useEffect(() => {
-    const fetchAvailableGigs = async () => {
-      try {
-        const gigsRef = collection(db, "gigs");
-        const q = query(gigsRef, where("selectedApplicantId", "==", ""));
-        const querySnapshot = await getDocs(q);
+    fetchOpenGigs();
+  }, [searchQuery]); // Re-fetch gigs whenever the search query changes
 
-        const usersRef = collection(db, "users");
-
-        const openGigs: Array<{ gig: Gig; lister: User }> = [];
-
-        for (const doc of querySnapshot.docs) {
-          const gigData = doc.data();
-
-          const userQuery = query(
-            usersRef,
-            where("userId", "==", gigData.listerId),
-          );
-          const userSnapshot = await getDocs(userQuery);
-
-          const lister = userSnapshot.docs[0].data() as User;
-
-          openGigs.push({
-            gig: { ...gigData, gigId: doc.id } as Gig,
-            lister: lister,
-          });
-        }
-
-        setGigs(openGigs);
-      } catch (error) {
-        console.error("Error fetching gigs: ", error);
-      }
-    };
-
-    fetchAvailableGigs();
-  }, []);
-
-  const handleSelectGig = (gig: Gig) => {
-    setSelectedGig(gig);
+  const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
   };
 
   return (
@@ -94,7 +98,29 @@ export default function OverviewView() {
         <div className="flex w-2/3 flex-col space-y-6">
           {/* Search and Tags Container */}
           <div className="flex flex-col items-center">
-            <SearchBar />
+            {/* Search Bar and Filter Button */}
+            <div className="flex w-full items-center justify-center p-4">
+              <div className="relative w-full max-w-xl flex items-center">
+                <HiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search for specific Gigs"
+                  className="w-full rounded-md border border-gray-300 py-3 pl-12 pr-4 shadow-sm focus:outline-none"
+                  value={searchQuery}
+                  onChange={handleSearchInput}
+                  style={{
+                    height: "48px",
+                    backgroundColor: "white",
+                    fontFamily: "'Inter', sans-serif",
+                  }}
+                />
+                <div className="ml-4">
+                  <FilterButton />
+                </div>
+              </div>
+            </div>
+
+            {/* Tags */}
             <div className="mt-4 flex space-x-4">
               <button className="rounded-full bg-gray-800 px-4 py-2 text-sm font-semibold text-white">
                 Computer Science
@@ -106,11 +132,11 @@ export default function OverviewView() {
                 Machine Learning
               </button>
             </div>
+
+            {/* Gig List */}
             <div className="mt-4">
               <PostedGigListHome
                 gigs={openGigs}
-                onSelectGig={handleSelectGig}
-                selectedGig={selectedGig}
                 enableSelection={true}
                 showSeeMoreButton={true}
                 userId={user?.uid}
@@ -121,7 +147,7 @@ export default function OverviewView() {
         </div>
       </div>
 
-      {/* Fixed Right Column for Notifications and Posted Gigs */}
+      {/* Fixed Right Column for Notifications */}
       <div
         className="fixed right-0 flex h-screen w-1/4 flex-col space-y-6 p-6"
         style={{ bottom: "2px" }}
@@ -137,3 +163,4 @@ export default function OverviewView() {
     </div>
   );
 }
+
