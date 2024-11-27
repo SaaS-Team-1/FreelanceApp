@@ -2,7 +2,7 @@ import { query, where, orderBy, getDocs, Firestore } from "firebase/firestore";
 import {
   gigsRef,
   applicationsRef,
-  messagesRef,
+  chatMessagesRef,
   ratingsRef,
   transactionsRef,
 } from "./collections";
@@ -24,6 +24,11 @@ const getOpenGigs = async (db: Firestore, category?: string) => {
   return (await getDocs(q)).docs;
 };
 
+export const getUserListedGigs = async (db: Firestore, userId: string) => {
+  const q = query(gigsRef(db), where("userId", "==", "listerId"));
+  return (await getDocs(q)).docs;
+}
+
 const getGigApplications = async (db: Firestore, gigId: string) => {
   const q = query(applicationsRef(db), where("gigId", "==", gigId));
   return (await getDocs(q)).docs;
@@ -36,7 +41,7 @@ const getUserApplications = async (db: Firestore, userId: string) => {
 
 const getApplicationMessages = async (db: Firestore, applicationId: string) => {
   const q = query(
-    messagesRef(db),
+    chatMessagesRef(db),
     where("applicationId", "==", applicationId),
     orderBy("sentAt"),
   );
@@ -85,7 +90,7 @@ const getApplicationByGigAndApplicant = async (
 };
 
 const getChatByApplication = async (db: Firestore, applicationId: string) => {
-  const q = query(messagesRef(db), where("applicationID", "==", applicationId));
+  const q = query(chatMessagesRef(db), where("applicationID", "==", applicationId));
   return (await getDocs(q)).docs;
 };
 
@@ -102,5 +107,6 @@ export default {
   getGigTransactions,
   getGigById,
   getApplicationByGigAndApplicant,
-  getChatByApplication
+  getChatByApplication,
+  getUserListedGigs
 };

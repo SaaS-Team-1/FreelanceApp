@@ -1,0 +1,13 @@
+diff --git a/node_modules/@types/request/index.d.ts b/node_modules/@types/request/index.d.ts
+index af84295..6898523 100644
+--- a/node_modules/@types/request/index.d.ts
++++ b/node_modules/@types/request/index.d.ts
+@@ -10,6 +10,8 @@ import fs = require("fs");
+ import FormData = require("form-data");
+ import net = require("net");
+ import tough = require("tough-cookie");
++type CookieJar = tough.CookieJar;
++
+ import { Url } from "url";
+ 
+ declare namespace request {

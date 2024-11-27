@@ -27,10 +27,10 @@ import {
 
 // Configuration
 const NUM_USERS = 20;
-const GIGS_PER_USER = 3;
-const APPLICATIONS_PER_GIG = 2;
+const GIGS_PER_USER = 8;
+const APPLICATIONS_PER_GIG = 4;
 const MESSAGES_PER_CHAT = 3;
-const COMPLETION_RATE = 0.7;
+const COMPLETION_RATE = 0.2;
 const RATING_RATE = 0.8;
 
 const GIG_CATEGORIES = [
@@ -114,6 +114,15 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
     for (let i = 0; i < GIGS_PER_USER; i++) {
       const isCompleted = Math.random() < COMPLETION_RATE;
       const isInProgress = !isCompleted && Math.random() < 0.5;
+      const isAwaitingConfirmation = !isCompleted && !isInProgress && Math.random() < 0.4;
+
+      const gigStatus = isCompleted
+        ? "completed"
+        : isInProgress
+        ? "in-progress"
+        : isAwaitingConfirmation
+        ? "awaiting-confirmation"
+        : "open";
 
       const gigData: Gig = {
         gigId: faker.string.uuid(),
@@ -123,11 +132,7 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
         category: faker.helpers.arrayElement(GIG_CATEGORIES),
         price: faker.number.int({ min: 50, max: 500 }),
         dueDate: getFutureDate(),
-        status: isCompleted
-          ? "completed"
-          : isInProgress
-            ? "in-progress"
-            : "open",
+        status: gigStatus,
         listerId: userRef.id,
         selectedApplicantId: "",
         createdAt: getRecentDate(),
@@ -147,18 +152,21 @@ for (const gigRef of gigRefs) {
     (u) => u.id !== gigRef.gig.listerId // Exclude the lister
   );
 
-  for (let i = 0; i < APPLICATIONS_PER_GIG; i++) {
-    const applicant = faker.helpers.arrayElement(availableApplicants);
-    let applicationStatus: Application["status"] = "pending";
 
-    if (
-      gigRef.gig.status === "completed" ||
-      gigRef.gig.status === "in-progress"
-    ) {
-      applicationStatus = i === 0 ? "assigned" : "discarded";
-      if (i === 0) {
-        gigRef.gig.selectedApplicantId = applicant.id;
-        await setDoc(doc(db, "gigs", gigRef.id), gigRef.gig); 
+    for (let i = 0; i < APPLICATIONS_PER_GIG; i++) {
+      const applicant = faker.helpers.arrayElement(availableApplicants);
+      let applicationStatus: Application["status"] = "pending";
+
+      if (
+        gigRef.gig.status === "completed" ||
+        gigRef.gig.status === "in-progress" ||
+        gigRef.gig.status === "awaiting-confirmation"
+      ) {
+        applicationStatus = i === 0 ? "assigned" : "discarded";
+        if (i === 0) {
+          gigRef.gig.selectedApplicantId = applicant.id;
+          await setDoc(doc(db, "gigs", gigRef.id), gigRef.gig);
+        }
       }
     }
 
@@ -227,7 +235,7 @@ for (const gigRef of gigRefs) {
         byUserDisplayName:
           userRefs.find((u) => u.id === gigRef.gig.listerId)?.user
             .displayName || "",
-        toUserId: gigRef.gig.selectedApplicantId, // Now guaranteed to be string
+        toUserId: gigRef.gig.selectedApplicantId,
         rating: faker.number.int({ min: 3, max: 5 }),
         review: faker.lorem.paragraph(),
         createdAt: getRecentDate(),

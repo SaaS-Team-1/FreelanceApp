@@ -1,39 +1,66 @@
 import React from "react";
-import { FaComments } from "react-icons/fa"; // Import the chat icon
+import { FaComments } from "react-icons/fa";
 import PostedGigItemHome from "./PostedGigItemHome";
-import { Gig, User } from "@/utils/database/schema"; // Import the Gig and User interfaces
-import Badge from "@/components/Buttons/CustomBadge"; // Import Badge component
-import CustomButton from "@/components/Buttons/CustomButton"; // Import CustomButton component
-import { UndoButton } from "@/components/Buttons/UndoButton"; // Import the UndoButton component
+import { Gig, User } from "@/utils/database/schema";
+import Badge from "@/components/Buttons/CustomBadge";
+import CustomButton from "@/components/Buttons/CustomButton";
+import { UndoButton } from "@/components/Buttons/UndoButton";
 
 interface PostedGigListHomeProps {
-  gigs: { gig: Gig; lister: User }[]; // List of gigs with lister data
-  onSelectGig?: (gig: Gig) => void; // Optional prop for selecting a gig
-  onSeeMoreClick?: (gig: Gig) => void; // Prop for the "See More" button functionality
-  enableSelection?: boolean; // Prop to enable/disable selection
-  selectedGig?: Gig | null; // To determine the selected gig for background change
-  showSeeMoreButton?: boolean; // Prop to conditionally show "See More" button
-  showChatIcon?: boolean; // Optional prop to show the chat icon
-  showCompletedButton?: boolean; // Optional prop to show the "Completed Gig" button
-  showDateWithLine?: boolean; // Optional prop to show/hide the date with a white line
-  showUndoButton?: boolean; // New prop to optionally display the UndoButton
-  hoverEffect?: boolean; // Prop to conditionally apply hover effect
-
+  gigs: { gig: Gig; lister: User }[];
+  onSelectGig?: (gig: Gig) => void;
+  onSeeMoreClick?: (gig: Gig) => void;
+  onCompleteClick?: (gigId: string) => void;
+  onUndoClick ? :(gigId: string) => void;
+  enableSelection?: boolean;
+  selectedGig?: Gig | null;
+  showSeeMoreButton?: boolean;
+  showChatIcon?: boolean;
+  showCompletedButton?: boolean;
+  showDateWithLine?: boolean;
+  showUndoButton?: boolean;
+  hoverEffect?: boolean;
 }
 
 function PostedGigListHome({
   gigs,
   onSelectGig,
   onSeeMoreClick,
+  onCompleteClick,
+  onUndoClick ,
   enableSelection = true,
   selectedGig = null,
   showSeeMoreButton = true,
-  showChatIcon = false, // Default to show chat icon
-  showCompletedButton = false, // Default to show completed button
-  showDateWithLine = false, // Default to true for displaying the date with a line
-  showUndoButton = false, // Default to false to not show the UndoButton
-  hoverEffect = true, // Default to false to not apply hover effect unless specified
+  showChatIcon = false,
+  showCompletedButton = false,
+  showDateWithLine = false,
+  showUndoButton = false,
+  hoverEffect = true,
 }: PostedGigListHomeProps) {
+  // Helper function to safely format the date
+  const formatDate = (dueDate: any) => {
+    try {
+      // Handle different date formats
+      const date = dueDate?.seconds 
+        ? new Date(dueDate.seconds * 1000)  // Firestore timestamp
+        : dueDate instanceof Date 
+        ? dueDate                           // JavaScript Date object
+        : new Date(dueDate);                // String or number timestamp
+
+      return date.toLocaleDateString("en-GB", {
+        weekday: "long",
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "Date unavailable";
+    }
+  };
+
   return (
     <div className="space-y-4">
       {gigs.map(({ gig, lister }, index) => (
@@ -41,24 +68,23 @@ function PostedGigListHome({
           key={index}
           className={`relative rounded-lg p-4 shadow-lg transition-transform duration-200 ease-in-out ${
             selectedGig && selectedGig.title === gig.title
-              ? "bg-[rgba(5,54,78,0.59)] text-white" // Selected gig style
+              ? "bg-[rgba(5,54,78,0.59)] text-white"
               : "bg-gray-900 text-gray-300"
           } ${enableSelection ? "cursor-pointer" : ""} 
-            ${hoverEffect ? "hover:bg-gray-700" : ""}`} // Hover effect applied conditionally
-          onClick={() => enableSelection && onSelectGig && onSelectGig(gig)} // Conditional click handler
+            ${hoverEffect ? "hover:bg-gray-700" : ""}`}
+          onClick={() => enableSelection && onSelectGig && onSelectGig(gig)}
         >
-          {/* Conditionally render UndoButton at the top-right corner */}
           {showUndoButton && (
             <div className="absolute right-4 top-4">
-              <UndoButton onClick={() => alert(`Undo clicked for gig: ${gig.title}`)} />
+              <UndoButton onClick={() => onUndoClick && onUndoClick(gig.gigId)} />
             </div>
           )}
-          {/* Conditionally render the Completed Gig button */}
+          
           {showCompletedButton && (
-            <div className="absolute right-16 top-5">
+            <div className="absolute right-12 top-5">
               <CustomButton
                 label="Completed Gig"
-                onClick={() => alert(`Completed gig: ${gig.title}`)} // Replace with desired functionality
+                onClick={() => onCompleteClick && onCompleteClick(gig.gigId)}
                 color="green"
                 textColor="white"
                 size="small"
@@ -67,54 +93,37 @@ function PostedGigListHome({
             </div>
           )}
 
-          {/* Conditionally render the Chat Icon */}
           {showChatIcon && (
-            <div className="absolute right-4 top-6">
+            <div className="absolute right-2 top-6">
               <CustomButton
-                onClick={() => alert(`Start chat for ${gig.title}`)} // Replace with actual chat functionality
+                onClick={() => alert(`Start chat for ${gig.title}`)}
                 color="primary"
                 textColor="white"
                 size="small"
-                icon={FaComments} // Only icon without text
+                icon={FaComments}
                 iconPosition="middle"
                 rounded={true}
               />
             </div>
           )}
 
-          {/* Render profile picture and title/date in the same row */}
           <div className="mb-2 flex items-center">
-            <img
-              src={lister.profile.picture || "https://via.placeholder.com/40"}
-              alt={lister.displayName}
-              className="size-10 rounded-full"
-            />
             <div className="ml-3 flex flex-col">
-              <h3 className="text-lg font-semibold text-white">{gig.title}</h3>
-              {/* Optional date display next to avatar */}
+              <h3 className="whitespace-normal break-words text-lg font-semibold text-white pr-[120px]">{gig.title}</h3>
               {showDateWithLine && (
                 <p className="mt-1 text-xs text-orange-500">
-                  {new Date(gig.dueDate.seconds * 1000).toLocaleDateString("en-GB", {
-                    weekday: "long",
-                    day: "2-digit",
-                    month: "long",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
+                  {formatDate(gig.dueDate)}
                 </p>
               )}
             </div>
           </div>
 
-          {/* Render a white line if date is shown */}
           {showDateWithLine && <div className="mt-1 border-t border-white"></div>}
-          {/* Render gig description (first 100 characters) */}
-          <p className="mt-2 text-gray-300">
-            {gig.description.length > 100 ? gig.description.slice(0, 100) + "..." : gig.description}
+          
+          <p className="mt-2 whitespace-normal break-words text-gray-300">
+            {gig.description.length >70? gig.description.slice(0, 70) + "..." : gig.description}
           </p>
 
-          {/* Render gig details as badges */}
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <Badge
               label={gig.category}
@@ -134,7 +143,6 @@ function PostedGigListHome({
               rounded={true}
               size="small"
             />
-            {/* Display the location based on the gig */}
             <Badge
               label={gig.location}
               color="beige"
@@ -146,12 +154,11 @@ function PostedGigListHome({
             />
           </div>
 
-          {/* Conditionally render the "See More" button */}
           {showSeeMoreButton && (
             <div className="mt-1 flex justify-end">
               <CustomButton
                 label="See More"
-                onClick={() => onSeeMoreClick && onSeeMoreClick(gig)} // Replace with your navigation function or logic
+                onClick={() => onSeeMoreClick && onSeeMoreClick(gig)}
                 color="primary"
                 textColor="white"
                 size="small"

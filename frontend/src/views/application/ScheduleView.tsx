@@ -1,231 +1,253 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PostedGigListHome from "@/components/Gigs/PostedGigListHome";
 import GigDetails from "@/components/Gigs/GigDetails";
 import { Gig, User } from "@/utils/database/schema";
-import { Timestamp } from "firebase/firestore";
+import { query, Timestamp, where, getDocs, doc, updateDoc,getDoc,deleteDoc } from "firebase/firestore";
 import CustomButton from "@/components/Buttons/CustomButton";
+import { useAuth, useFirestore } from "@/utils/reactfire";
+import { applicationsRef, gigsRef, usersRef } from "@/utils/database/collections";
+import { useCallback } from "react";
 
 function ScheduleView() {
-  const currentUserId = "user1";
+  const db = useFirestore();
+  const auth = useAuth();
+  const currUser = auth.currentUser;
 
-  const [selectedGig, setSelectedGig] = useState<Gig | null>(null); // State to hold the selected gig
-  const [isGigDetailsOpen, setIsGigDetailsOpen] = useState(false); // State to control modal visibility
+  const [selectedGig, setSelectedGig] = useState<Gig | null>(null);
+  const [selectedLister, setSelectedLister] = useState<User | null>(null);
+  const [isGigDetailsOpen, setIsGigDetailsOpen] = useState(false);
 
-  const users: User[] = [
-    {
-      userId: "user1",
-      email: "amina.agile@example.com",
-      displayName: "Amina Agile",
-      profile: {
-        bio: "Computer Science Student in Leuven City.",
-        credits: 100,
-        picture: "https://via.placeholder.com/40",
-        location: "Leuven",
-      },
-      completedGigs: ["gig4"],
-      activeGigs: ["gig1", "gig5", "gig3"],
-      listedGigs: ["gig2"],
-      averageRating: 4.5,
-    },
-    {
-      userId: "user2",
-      email: "john.doe@example.com",
-      displayName: "John Doe",
-      profile: {
-        bio: "Freelance photographer based in Antwerp.",
-        credits: 150,
-        picture: "https://via.placeholder.com/40",
-        location: "Antwerp",
-      },
-      completedGigs: ["gig2"],
-      activeGigs: [],
-      listedGigs: ["gig3"],
-      averageRating: 4.7,
-    },
-    {
-      userId: "user3",
-      email: "applicant.one@example.com",
-      displayName: "Alice Applicant",
-      profile: {
-        bio: "Freelance graphic designer.",
-        credits: 80,
-        picture: "https://via.placeholder.com/40",
-        location: "Brussels",
-      },
-      completedGigs: [],
-      activeGigs: [],
-      listedGigs: [],
-      averageRating: 4.2,
-    },
-  ];
+  const [inProgressGigs, setInProgressGigs] = useState<{ gig: Gig; lister: User }[]>([]);
+  const [pendingGigs, setPendingGigs] = useState<{ gig: Gig; lister: User }[]>([]);
+  const [awaitingApprovalGigs, setAwaitingApprovalGigs] = useState<{ gig: Gig; lister: User }[]>([]);
+  const [completedGigs, setCompletedGigs] = useState<{ gig: Gig; lister: User }[]>([]);
 
-  const gigs: Gig[] = [
-    {
-      gigId: "gig1",
-      title: "Video Editor Needed",
-      description:
-        "Looking for a creative video editor to produce a short 10-20 second intro for a project.",
-      category: "Video Editing",
-      price: 80,
-      dueDate: Timestamp.fromDate(new Date(2025, 2, 10)),
-      status: "in-progress",
-      listerId: "user2",
-      selectedApplicantId: "user1",
-      createdAt: Timestamp.now(),
-      location: "Remote",
-      applicantIds: ["user1", "user3"],
-    },
-    {
-      gigId: "gig2",
-      title: "Looking for a Photographer",
-      description:
-        "Need a photographer to take a professional photo for my LinkedIn profile.",
-      category: "Photography",
-      price: 50,
-      dueDate: Timestamp.fromDate(new Date(2025, 2, 19)), // March 19, 2025
-      status: "completed",
-      listerId: "user1",
-      selectedApplicantId: "user3",
-      createdAt: Timestamp.now(),
-      location: "Antwerp",
-      applicantIds: ["user3"],
-    },
-    {
-      gigId: "gig3",
-      title: "Chemistry Tutor Needed",
-      description:
-        "Looking for a chemistry tutor for 1-on-1 sessions for exam preparation.",
-      category: "Tutoring",
-      price: 0,
-      dueDate: Timestamp.fromDate(new Date(2025, 4, 25)), // May 25, 2025
-      status: "in-progress",
-      listerId: "user2",
-      selectedApplicantId: "user1",
-      createdAt: Timestamp.now(),
-      location: "Leuven",
-      applicantIds: ["user1", "user3"],
-    },
-    {
-      gigId: "gig4",
-      title: "Logo Design for Startup",
-      description:
-        "Need a logo for a tech startup. Deliverables include vector files and branding guidelines.",
-      category: "Graphic Design",
-      price: 150,
-      dueDate: Timestamp.fromDate(new Date(2025, 2, 28)), // March 28, 2025
-      status: "completed",
-      listerId: "user3",
-      selectedApplicantId: "user1",
-      createdAt: Timestamp.now(),
-      location: "Brussels",
-      applicantIds: ["user1"],
-    },
-    {
-      gigId: "gig5",
-      title: "Website Development",
-      description:
-        "Build a responsive website for a local business, including design and deployment.",
-      category: "Web Development",
-      price: 500,
-      dueDate: Timestamp.fromDate(new Date(2025, 2, 25)), // March 25, 2025
-      status: "in-progress",
-      listerId: "user2",
-      selectedApplicantId: "user1",
-      createdAt: Timestamp.now(),
-      location: "Remote",
-      applicantIds: ["user1"],
-    },
-    {
-      gigId: "gig6",
-      title: "Website Dev",
-      description:
-        "Build a responsive website for a local business, including design and deployment.",
-      category: "Web Development",
-      price: 500,
-      dueDate: Timestamp.fromDate(new Date(2025, 2, 15)), // March 15, 2025
-      status: "open",
-      listerId: "user2",
-      selectedApplicantId: undefined,
-      createdAt: Timestamp.now(),
-      location: "Remote",
-      applicantIds: ["user1"],
-    },
-  ];
+  const processGigData = (gigData: any, docId: string): Gig => ({
+    ...gigData,
+    gigId: docId,
+    dueDate: gigData.dueDate instanceof Timestamp
+      ? gigData.dueDate.toDate()
+      : new Date(gigData.dueDate),
+    createdAt: gigData.createdAt instanceof Timestamp
+      ? gigData.createdAt.toDate()
+      : new Date(gigData.createdAt),
+  });
 
-  const currentUser = users.find((user) => user.userId === currentUserId);
+    const fetchGigs = useCallback(async () => {
+      if (currUser) {
+        try {
+          const inProgressQuery = query(
+            gigsRef(db),
+            where("selectedApplicantId", "==", currUser.uid),
+            where("status", "==", "in-progress")
+          );
+          const inProgressSnapshot = await getDocs(inProgressQuery);
+          setInProgressGigs(
+            inProgressSnapshot.docs.map((doc) => ({
+              gig: processGigData(doc.data(), doc.id),
+              lister: currUser as unknown as User,
+            }))
+          );
 
-  const scheduledGigs = gigs.filter(
-    (gig) =>
-      currentUser?.activeGigs.includes(gig.gigId) &&
-      gig.selectedApplicantId === currentUserId &&
-      gig.status === "in-progress"
-  );
+          const pendingQuery = query(
+            applicationsRef(db),
+            where("applicantId", "==", currUser.uid),
+            where("status", "==", "pending")
+          );
+          const pendingSnapshot = await getDocs(pendingQuery);
+          const pendingGigIds = pendingSnapshot.docs.map((doc) => doc.data().gigId);
 
-  const pendingGigs = gigs.filter(
-    (gig) =>
-      gig.applicantIds.includes(currentUserId) &&
-      (!gig.selectedApplicantId || gig.selectedApplicantId === undefined)
-  );
+          const pendingGigsData = await Promise.all(
+            pendingGigIds.map(async (gigId) => {
+              const gigDoc = await getDoc(doc(gigsRef(db), gigId));
+              if (gigDoc.exists()) {
+                const gigData = gigDoc.data();
+                const listerDoc = await getDoc(doc(usersRef(db), gigData.listerId));
+                const listerData = listerDoc.exists() ? (listerDoc.data() as User) : null;
+                return {
+                  gig: processGigData(gigData, gigId),
+                  lister: listerData || currUser as unknown as User,
+                };
+              }
+              return null;
+            })
+          );
+          setPendingGigs(pendingGigsData.filter(Boolean) as any);
 
-  const handleSeeMoreClick = (gig: Gig) => {
+          const awaitingApprovalQuery = query(
+            gigsRef(db),
+            where("selectedApplicantId", "==", currUser.uid),
+            where("status", "==", "awaiting-confirmation")
+          );
+          const awaitingApprovalSnapshot = await getDocs(awaitingApprovalQuery);
+          setAwaitingApprovalGigs(
+            awaitingApprovalSnapshot.docs.map((doc) => ({
+              gig: processGigData(doc.data(), doc.id),
+              lister: currUser as unknown as User,
+            }))
+          );
+
+          const completedQuery = query(
+            gigsRef(db),
+            where("selectedApplicantId", "==", currUser.uid),
+            where("status", "==", "completed")
+          );
+          const completedSnapshot = await getDocs(completedQuery);
+          setCompletedGigs(
+            completedSnapshot.docs.map((doc) => ({
+              gig: processGigData(doc.data(), doc.id),
+              lister: currUser as unknown as User,
+            }))
+          );
+        } catch (error) {
+          console.error("Error fetching gigs:", error);
+        }
+      }
+    }, [currUser, db]);
+    useEffect(() => {
+      fetchGigs();
+    }, [currUser, db, fetchGigs]);
+  
+
+  const handleSeeMoreClick = async (gig: Gig) => {
     setSelectedGig(gig);
     setIsGigDetailsOpen(true);
+
+    if (gig.listerId) {
+      const listerDoc = await getDoc(doc(usersRef(db), gig.listerId));
+      if (listerDoc.exists()) {
+        setSelectedLister(listerDoc.data() as User);
+      } else {
+        setSelectedLister(null);
+      }
+    }
+  };
+  const handleCompleteGig = async (gigId: string) => {
+    try {
+      const gigDocRef = doc(gigsRef(db), gigId);
+      await updateDoc(gigDocRef, { status: "awaiting-confirmation" });
+
+      // Refresh in-progress and awaiting-approval gigs
+      const updatedInProgress = inProgressGigs.filter(({ gig }) => gig.gigId !== gigId);
+      const updatedGig = inProgressGigs.find(({ gig }) => gig.gigId === gigId);
+      if (updatedGig) {
+        setAwaitingApprovalGigs([...awaitingApprovalGigs, updatedGig]);
+      }
+      setInProgressGigs(updatedInProgress);
+      
+      await fetchGigs();
+    } catch (error) {
+      console.error("Error updating gig status:", error);
+    }
   };
 
   const handleCloseGigDetails = () => {
     setSelectedGig(null);
     setIsGigDetailsOpen(false);
   };
+  const handleUndoClick = async (gigId: string) => {
+    if (!currUser) {
+      console.error("No current user found");
+      return;
+    }
+  
+    try {
+      const applicationQuery = query(
+        applicationsRef(db),
+        where("applicantId", "==", currUser.uid),
+        where("gigId", "==", gigId),
+        where("status", "==", "pending")
+      );
+  
+      const applicationSnapshot = await getDocs(applicationQuery);
+  
+      if (!applicationSnapshot.empty) {
+        const applicationDoc = applicationSnapshot.docs[0];
+        await deleteDoc(doc(applicationsRef(db), applicationDoc.id));
+  
+        // Refresh the pending gigs list locally
+        setPendingGigs((prevPending) =>
+          prevPending.filter(({ gig }) => gig.gigId !== gigId)
+        );
+  
+        // Fetch updated data for all gigs
+        await fetchGigs();
+      }
+    } catch (error) {
+      console.error("Error removing application:", error);
+    }
+  };
+  
 
   return (
-    <div className="flex gap-8 p-10 text-white">
-      {/* Scheduled Gigs */}
-      <div className="flex-1 rounded-lg bg-gray-800 p-6 shadow-lg">
-        <h1 className="mb-3 text-xl font-bold">Scheduled Gigs</h1>
-        <PostedGigListHome
-          gigs={scheduledGigs.map((gig) => ({
-            gig,
-            lister: users.find((user) => user.userId === gig.listerId)!,
-          }))}
-          showDateWithLine={true}
-          showCompletedButton={true}
-          showSeeMoreButton={true}
-          showChatIcon={true}
-          onSeeMoreClick={handleSeeMoreClick}
-        />
+    <div className="relative p-4">
+      {/* Horizontal Scrollable Container */}
+      <div
+        className="flex overflow-x-auto scroll-smooth snap-x snap-mandatory gap-6"
+        style={{ scrollSnapType: "x mandatory" }}
+      >
+        {/* Page 1: Scheduled Gigs and Pending Gigs */}
+        <div className="flex gap-6 w-full flex-shrink-0 snap-center">
+          <div className="w-[50%] rounded-lg bg-gray-800 dark:text-white p-4 shadow-lg">
+            <h1 className="mb-3 text-xl font-bold">Scheduled Gigs</h1>
+            <PostedGigListHome
+              gigs={inProgressGigs}
+              showDateWithLine={true}
+              showCompletedButton={true}
+              showSeeMoreButton={true}
+              showChatIcon={true}
+              onCompleteClick={handleCompleteGig}
+              onSeeMoreClick={handleSeeMoreClick}
+            />
+          </div>
+          <div className="w-[50%] rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
+            <h1 className="mb-3 text-xl font-bold">Pending Gigs</h1>
+            <PostedGigListHome
+              gigs={pendingGigs}
+              showDateWithLine={true}
+              showUndoButton={true}
+              onUndoClick={handleUndoClick}
+              onSeeMoreClick={handleSeeMoreClick}
+            />
+          </div>
+        </div>
+
+        {/* Page 2: Awaiting Approval and Completed Gigs */}
+        <div className="flex gap-6 w-full flex-shrink-0 snap-center">
+          <div className="w-[50%] rounded-lg bg-gray-800 dark:text-white p-4 shadow-lg">
+            <h1 className="mb-3 text-xl font-bold">Awaiting Approval</h1>
+            <PostedGigListHome
+              gigs={awaitingApprovalGigs}
+              showDateWithLine={true}
+              showChatIcon={true}
+              onSeeMoreClick={handleSeeMoreClick}
+            />
+          </div>
+          <div className="w-[50%] rounded-lg bg-gray-800  dark:text-white p-4 shadow-lg">
+            <h1 className="mb-3 text-xl font-bold">Completed Gigs</h1>
+            <PostedGigListHome
+              gigs={completedGigs}
+              showDateWithLine={true}
+              showChatIcon={false}
+              showSeeMoreButton={true}
+              onSeeMoreClick={handleSeeMoreClick}
+            />
+          </div>
+        </div>
       </div>
 
-      {/* Pending Gigs */}
-      <div className="flex-1 rounded-lg bg-gray-800 p-6 shadow-lg">
-        <h1 className="mb-3 text-xl font-bold">Pending Gigs</h1>
-        <PostedGigListHome
-          gigs={pendingGigs.map((gig) => ({
-            gig,
-            lister: users.find((user) => user.userId === gig.listerId)!,
-          }))}
-          showDateWithLine={true}
-          showUndoButton={true}
-          onSeeMoreClick={handleSeeMoreClick}
-        />
-      </div>
-
-      {/* Gig Details Modal */}
+      {/* Gig Details Popup */}
       {selectedGig && isGigDetailsOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
           <div className="w-[800px] rounded-lg bg-gray-900 p-6 shadow-lg">
             <GigDetails
               gig={selectedGig}
-              user={users.find((user) => user.userId === selectedGig.listerId)!}
-              onEditSave={(updatedGig) => {
-                console.log("Gig updated:", updatedGig);
-                setIsGigDetailsOpen(false);
-              }}
-              onDelete={() => {
-                console.log("Gig deleted:", selectedGig.gigId);
-                setIsGigDetailsOpen(false);
-              }}
-              showEdit={false}
-              showDelete={false}
+              user={selectedLister}
+              onEditSave={() => {}} // No edit functionality
+              onDelete={() => {}} // No delete functionality
+              showEdit={false} // Remove Edit button
+              showDelete={false} // Remove Delete button
+              showSeeMoreButton={true}
             />
             <div className="mt-4 flex justify-end">
               <CustomButton
