@@ -4,7 +4,14 @@ import CustomButton from "@/components/Buttons/CustomButton";
 import { Gig, User } from "@/utils/database/schema";
 import { FaDollarSign, FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
 import Badge from "@/components/Buttons/CustomBadge";
-import { Firestore, Timestamp, addDoc, doc, setDoc, updateDoc } from "firebase/firestore";
+import {
+  Firestore,
+  Timestamp,
+  addDoc,
+  doc,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { faker } from "@faker-js/faker";
 import UserProfilePicture from "@/components/Avatar/UserProfilePicture"; // Import the UserProfilePicture component
@@ -40,7 +47,8 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
       "Nullam ultricies ligula vel nulla feugiat pellentesque.",
       "Proin sed felis vel erat interdum tincidunt eget ac ligula.",
     ];
-    const randomCoverLetter = latinPhrases[Math.floor(Math.random() * latinPhrases.length)];
+    const randomCoverLetter =
+      latinPhrases[Math.floor(Math.random() * latinPhrases.length)];
 
     try {
       // Check if an application already exists for this gig and applicant
@@ -48,12 +56,13 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
       const existingApplicationQuery = query(
         applicationRef,
         where("gigId", "==", gig.gigId),
-        where("applicantId", "==", userId)
+        where("applicantId", "==", userId),
       );
       const existingApplications = await getDocs(existingApplicationQuery);
 
       if (!existingApplications.empty) {
         alert("You have already applied for this gig!");
+        onClose();
         return; // Exit the function if an application already exists
       }
 
@@ -78,9 +87,9 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
         applicationId: appDoc.id,
       });
 
-      await updateDoc(appDoc,{
+      await updateDoc(appDoc, {
         chatId: chatDoc.id,
-      })
+      });
 
       alert("Application and chat created successfully!");
       onClose(); // Close the modal after applying
@@ -106,19 +115,31 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
                 hoverDetails={true} // Show hover details
               />
               <div>
-                <h3 className="text-lg font-bold text-white">{lister.displayName}</h3>
+                <h3
+                  className="w-fit text-nowrap text-lg font-bold text-white"
+                  style={{
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    maxWidth: "200px", // Adjust this to your desired max width
+                  }}
+                >
+                  {lister.displayName}
+                </h3>
                 {lister.profile.location && (
-                  <p className="text-sm text-gray-400">{lister.profile.location}</p>
+                  <p className="text-sm text-gray-400">
+                    {lister.profile.location}
+                  </p>
                 )}
               </div>
+              <h2 className="text-2xl font-bold text-white">
+                {gig.title}
+              </h2>
             </div>
 
-            <h1 className="text-2xl font-bold text-white sm:text-4xl">
-              {gig.title}
-            </h1>
             <p className="mb-4 text-gray-300">{gig.description}</p>
 
-            <div className="mb-6 flex flex-col justify-center gap-6 text-sm text-white sm:flex-row">
+            <div className="mb-6 flex flex-col justify-left gap-6 text-sm text-white sm:flex-row">
               <div className="flex flex-col items-center">
                 <div className="flex items-center">
                   <FaDollarSign className="mr-2" />
@@ -132,7 +153,7 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
                   <span>
                     {gig.dueDate
                       ? `${new Date(
-                          gig.dueDate.seconds * 1000
+                          gig.dueDate.seconds * 1000,
                         ).toLocaleDateString("en-GB")}`
                       : "N/A"}
                   </span>
@@ -205,7 +226,7 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
         </div>
       </div>
     </>,
-    document.body
+    document.body,
   );
 };
 
