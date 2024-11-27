@@ -1,11 +1,26 @@
-import React, { useState } from 'react';
-import { Dropdown } from 'flowbite-react';
+import React, { useState } from "react";
+import { Dropdown } from "flowbite-react";
 
-const FilterButton = () => {
-  const [selectedFilter, setSelectedFilter] = useState("All");
+interface FilterButtonProps {
+  categories: string[];
+  onCategorySelect: (selectedCategories: string[]) => void;
+}
 
-  const handleSelect = (filter: React.SetStateAction<string>) => {
-    setSelectedFilter(filter);
+const FilterButton: React.FC<FilterButtonProps> = ({ categories, onCategorySelect }) => {
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
+  const toggleCategory = (category: string) => {
+    const updatedCategories = selectedCategories.includes(category)
+      ? selectedCategories.filter((cat) => cat !== category) // Remove category
+      : [...selectedCategories, category]; // Add category
+
+    setSelectedCategories(updatedCategories);
+    onCategorySelect(updatedCategories); // Notify parent of changes
+  };
+
+  const clearAllCategories = () => {
+    setSelectedCategories([]);
+    onCategorySelect([]); // Notify parent that all categories are cleared
   };
 
   return (
@@ -33,18 +48,27 @@ const FilterButton = () => {
         arrowIcon={false}
         color="gray"
       >
-        <Dropdown.Item onClick={() => handleSelect("All")}>
-          All
+        {/* "Clear All" Option */}
+        <Dropdown.Item onClick={clearAllCategories} className="text-red-500 font-semibold">
+          Clear All
         </Dropdown.Item>
-        <Dropdown.Item onClick={() => handleSelect("Popular")}>
-          Popular
-        </Dropdown.Item>
-        <Dropdown.Item onClick={() => handleSelect("Newest")}>
-          Newest
-        </Dropdown.Item>
-        <Dropdown.Item onClick={() => handleSelect("Top Rated")}>
-          Top Rated
-        </Dropdown.Item>
+
+        {/* Category Options */}
+        {categories.map((category) => (
+          <Dropdown.Item
+            key={category}
+            onClick={() => toggleCategory(category)}
+            className="flex items-center"
+          >
+            <input
+              type="checkbox"
+              checked={selectedCategories.includes(category)}
+              className="mr-2"
+              readOnly
+            />
+            <span className="truncate">{category}</span>
+          </Dropdown.Item>
+        ))}
       </Dropdown>
     </div>
   );

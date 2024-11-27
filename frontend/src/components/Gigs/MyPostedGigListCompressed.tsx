@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import MyPostedGigItemCompressed from "./MyPostedGigItemCompressed";
-import { Gig, Timestamp, User } from "@/utils/database/schema";
+import { Gig, User } from "@/utils/database/schema";
 
 function MyPostedGigListCompressed({gigs, user}:{gigs: Gig[], user: User}) {
   const navigate = useNavigate(); // Initialize navigate

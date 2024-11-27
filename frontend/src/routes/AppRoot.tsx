@@ -1,5 +1,3 @@
-
-
 import { Suspense, startTransition, useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import Loading from "@/components/Loading";
@@ -50,9 +48,9 @@ export default function AppRoot() {
     <FirebaseInitializer>
       <AuthWrapper signedIn fallback={<Navigate to={"/login"} />}>
         <Suspense fallback={<Loading />}>
-          <div className="flex w-screen">
+          <div className="flex max-h-screen w-screen overflow-x-hidden overflow-y-hidden">
             <Sidebar />
-            <div className="flex min-h-[105vh] w-full bg-slate-600">
+            <div className="flex w-full bg-slate-600 p-1">
               <Outlet />
             </div>
           </div>
@@ -61,4 +59,3 @@ export default function AppRoot() {
     </FirebaseInitializer>
   );
 }
-
