@@ -4,7 +4,7 @@ import { Gig, User } from "@/utils/database/schema";
 import Badge from "@/components/Buttons/CustomBadge";
 import CustomButton from "@/components/Buttons/CustomButton";
 import { UndoButton } from "@/components/Buttons/UndoButton";
-import GigDetailModal from "@/components/Gigs/GigDetailModal"; 
+import GigDetailModal from "@/components/Gigs/GigDetailModal";
 import { Firestore } from "firebase/firestore";
 
 interface PostedGigListHomeProps {
@@ -36,11 +36,13 @@ function PostedGigListHome({
   userId,
   db,
 }: PostedGigListHomeProps) {
-  const [selectedGigDetails, setSelectedGigDetails] = useState<Gig | null>(null); // State to manage the selected gig for modal
+  const [selectedGigDetails, setSelectedGigDetails] = useState<Gig | null>(null,); // State to manage the selected gig for modal
+  const [selectedListerDetails, setSelectedListerDetails] = useState<User | null>(null); // State to manage the selected lister for modal
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 
-  const handleSeeMoreClick = (gig: Gig) => {
+  const handleSeeMoreClick = (gig: Gig, lister: User) => {
     setSelectedGigDetails(gig); // Set the selected gig for the modal
+    setSelectedListerDetails(lister); // Set the selected lister for the modal
     setIsModalOpen(true); // Open the modal
   };
 
@@ -60,12 +62,14 @@ function PostedGigListHome({
               : "bg-gray-900 text-gray-300"
           } ${enableSelection ? "cursor-pointer" : ""} 
             ${hoverEffect ? "hover:bg-gray-700" : ""}`} // Hover effect applied conditionally
-          onClick={() => enableSelection && onSelectGig && onSelectGig(gig)} // Conditional click handler
+          onClick={() => enableSelection && handleSeeMoreClick(gig, lister)} // Conditional click handler
         >
           {/* Conditionally render UndoButton at the top-right corner */}
           {showUndoButton && (
             <div className="absolute right-4 top-4">
-              <UndoButton onClick={() => alert(`Undo clicked for gig: ${gig.title}`)} />
+              <UndoButton
+                onClick={() => alert(`Undo clicked for gig: ${gig.title}`)}
+              />
             </div>
           )}
           {/* Conditionally render the Completed Gig button */}
@@ -104,24 +108,31 @@ function PostedGigListHome({
               {/* Optional date display next to avatar */}
               {showDateWithLine && (
                 <p className="mt-1 text-xs text-orange-500">
-                  {new Date(gig.dueDate.seconds * 1000).toLocaleDateString("en-GB", {
-                    weekday: "long",
-                    day: "2-digit",
-                    month: "long",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
+                  {new Date(gig.dueDate.seconds * 1000).toLocaleDateString(
+                    "en-GB",
+                    {
+                      weekday: "long",
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    },
+                  )}
                 </p>
               )}
             </div>
           </div>
 
           {/* Render a white line if date is shown */}
-          {showDateWithLine && <div className="mt-1 border-t border-white"></div>}
+          {showDateWithLine && (
+            <div className="mt-1 border-t border-white"></div>
+          )}
           {/* Render gig description (first 100 characters) */}
           <p className="mt-2 text-gray-300">
-            {gig.description.length > 100 ? gig.description.slice(0, 100) + "..." : gig.description}
+            {gig.description.length > 100
+              ? gig.description.slice(0, 100) + "..."
+              : gig.description}
           </p>
 
           {/* Render gig details as badges */}
@@ -161,7 +172,7 @@ function PostedGigListHome({
             <div className="mt-1 flex justify-end">
               <CustomButton
                 label="See More"
-                onClick={() => handleSeeMoreClick(gig)} // Open the modal with the selected gig
+                onClick={() => handleSeeMoreClick(gig, lister)} // Open the modal with the selected gig
                 color="primary"
                 textColor="white"
                 size="small"
@@ -173,14 +184,15 @@ function PostedGigListHome({
       ))}
 
       {/* Gig Details Modal */}
-      {selectedGigDetails && (
+      {selectedGigDetails && selectedListerDetails && (
         <GigDetailModal
-        gig={selectedGigDetails}
-        isOpen={isModalOpen}
-        userId={userId} // Pass the logged-in user's ID
-        db={db} // Pass the Firestore database instance
-        onClose={handleCloseModal}
-      />
+          gig={selectedGigDetails}
+          lister={selectedListerDetails}
+          isOpen={isModalOpen}
+          userId={userId} // Pass the logged-in user's ID
+          db={db} // Pass the Firestore database instance
+          onClose={handleCloseModal}
+        />
       )}
     </div>
   );
