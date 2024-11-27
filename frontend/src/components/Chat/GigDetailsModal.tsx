@@ -1,5 +1,3 @@
-
-
 import React from "react";
 import { User, Gig } from "@/utils/database/schema";
 import { FaDollarSign, FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
@@ -27,6 +25,8 @@ const GigDetailsModal: React.FC<GigDetailsModalProps> = ({
   const isCurrentUserLister = gig.listerId === currentUserId; // Check if the current user is the lister
   const location = gig.location || lister?.profile?.location || "Remote";
 
+  const userToDisplay = isCurrentUserLister ? currentUser : lister;
+
   return (
     <div
       className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50"
@@ -52,40 +52,20 @@ const GigDetailsModal: React.FC<GigDetailsModalProps> = ({
         {/* Gig Title and Profile Picture */}
         <div className="mb-4 flex items-start">
           <div className="mr-4">
-            <UserProfilePicture
-              user={{
-                name: isCurrentUserLister
-                  ? currentUser?.displayName || "You"
-                  : lister?.displayName || "Unknown",
-                profilePicture: isCurrentUserLister
-                  ? currentUser?.profile?.picture || "/default-profile.png"
-                  : lister?.profile?.picture || "/default-profile.png",
-                bio: isCurrentUserLister
-                  ? currentUser?.profile?.bio
-                  : lister?.profile?.bio,
-                location: isCurrentUserLister
-                  ? currentUser?.profile?.location
-                  : lister?.profile?.location,
-                completedGigs: isCurrentUserLister
-                  ? currentUser?.stats?.completedGigs
-                  : lister?.stats?.completedGigs,
-                averageRating: isCurrentUserLister
-                  ? currentUser?.stats?.averageRating
-                  : lister?.stats?.averageRating,
-              }}
-              size="large"
-              hoverDetails={true} // Enable hover details
-              rounded={true}
-            />
+            {userToDisplay && (
+              <UserProfilePicture
+                user={userToDisplay}
+                size="large"
+                hoverDetails={true} // Enable hover details
+                rounded={true}
+              />
+            )}
           </div>
           <div>
             <h2 className="text-2xl font-semibold text-white">{gig.title}</h2>
             <p className="text-sm text-gray-300">
               <strong>Lister:</strong>{" "}
-              {/* {isCurrentUserLister
-                ? currentUser?.displayName || "You"
-                : lister?.displayName || "Unknown"} */}
-                {lister?.displayName || "Unknown"}
+              {userToDisplay?.displayName || "Unknown"}
             </p>
           </div>
         </div>

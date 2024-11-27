@@ -1,21 +1,5 @@
-
-
-
 import React from "react";
-
-interface UserProfilePictureProps {
-  user: {
-    name: string;
-    profilePicture: string;
-    bio?: string;
-    location?: string;
-    completedGigs?: number;
-    averageRating?: number;
-  };
-  size?: "small" | "medium" | "large";
-  hoverDetails?: boolean;
-  rounded?: boolean;
-}
+import { User } from "@/utils/database/schema";
 
 const sizeClasses = {
   small: "w-8 h-8 text-sm",
@@ -23,12 +7,27 @@ const sizeClasses = {
   large: "w-16 h-16 text-lg",
 };
 
+interface UserProfilePictureProps {
+  user: User;
+  size?: "small" | "medium" | "large";
+  hoverDetails?: boolean;
+  rounded?: boolean;
+}
+
 const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
   user,
   size = "medium",
   hoverDetails = false,
   rounded = true,
 }) => {
+  // Fallbacks for missing user data
+  const displayName = user?.displayName || "Anonymous";
+  const profilePicture = user?.profile?.picture || "/default-avatar.jpg"; // Default avatar
+  const location = user?.profile?.location;
+  const bio = user?.profile?.bio;
+  const completedGigs = user?.stats?.completedGigs;
+  const averageRating = user?.stats?.averageRating;
+
   return (
     <div className="relative group">
       {/* Profile Picture */}
@@ -36,23 +35,13 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
         className={`${sizeClasses[size]} ${rounded ? "rounded-full" : "rounded-md"} 
         flex items-center justify-center overflow-hidden bg-gray-300`}
       >
-        {user.profilePicture ? (
-          <img
-            src={user.profilePicture}
-            alt={user.name}
-            className={`h-full w-full object-cover ${
-              rounded ? "rounded-full" : "rounded-md"
-            }`}
-          />
-        ) : (
-          <span className="font-bold text-white">
-            {user.name
-              ?.split(" ")
-              .map((word) => word[0])
-              .join("")
-              .toUpperCase()}
-          </span>
-        )}
+        <img
+          src={profilePicture}
+          alt={displayName}
+          className={`h-full w-full object-cover ${
+            rounded ? "rounded-full" : "rounded-md"
+          }`}
+        />
       </div>
 
       {/* Hover Details */}
@@ -64,42 +53,42 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
         >
           <div className="flex items-center mb-3">
             <img
-              src={user.profilePicture || "/default-avatar.jpg"}
-              alt={user.name}
+              src={profilePicture}
+              alt={displayName}
               className="w-10 h-10 rounded-full object-cover border border-gray-200 dark:border-gray-700"
             />
             <div className="ml-3">
               <p className="text-base font-semibold text-gray-900 dark:text-white">
-                {user.name}
+                {displayName}
               </p>
-              {user.location && (
+              {location && (
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {user.location}
+                  {location}
                 </p>
               )}
             </div>
           </div>
           <div className="mb-3">
-            {user.bio && (
+            {bio && (
               <p className="text-sm text-gray-600 dark:text-gray-400 italic">
-                {user.bio}
+                {bio}
               </p>
             )}
           </div>
           <ul className="space-y-2 text-sm">
-            {user.completedGigs !== undefined && (
+            {completedGigs !== undefined && (
               <li className="flex items-center">
                 <span className="text-blue-500 mr-2">🏆</span>
                 <span>
-                  <strong>Completed Gigs:</strong> {user.completedGigs}
+                  <strong>Completed Gigs:</strong> {completedGigs}
                 </span>
               </li>
             )}
-            {user.averageRating !== undefined && (
+            {averageRating !== undefined && (
               <li className="flex items-center">
                 <span className="text-yellow-500 mr-2">⭐</span>
                 <span>
-                  <strong>Average Rating:</strong> {user.averageRating.toFixed(1)}
+                  <strong>Average Rating:</strong> {averageRating.toFixed(1)}
                 </span>
               </li>
             )}
@@ -109,4 +98,5 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
     </div>
   );
 };
+
 export default UserProfilePicture;
