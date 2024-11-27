@@ -14,7 +14,8 @@ interface GigDetailsProps {
   onEditSave: (updatedGig: Gig) => void;
   onDelete: (gigId: string) => void;
   showEdit?: boolean; // Optional prop to show/hide Edit button
-  showDelete?: boolean; // Optional prop to show/hide Delete button
+  showDelete?: boolean; // Optional prop to show or remove Delete button
+  showSeeMoreButton?: boolean; // Optional prop to show/hide See More button
 }
 
 const GigDetails: React.FC<GigDetailsProps> = ({
@@ -23,7 +24,8 @@ const GigDetails: React.FC<GigDetailsProps> = ({
   onEditSave,
   onDelete,
   showEdit = true, // Default to show the Edit button
-  showDelete = true, // Default to show the Delete button
+  showDelete = true, // Default to not show the Delete button
+  showSeeMoreButton = false,
 }) => {
   const db = useFirestore();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -49,7 +51,9 @@ const GigDetails: React.FC<GigDetailsProps> = ({
     }
   };
 
-  const renderDeleteButton = () => (
+  const renderDeleteButton = () => {
+    if (!showDelete) return null;
+    return(
     <CustomButton
       label="Delete"
       onClick={() => setIsDeleteModalOpen(true)}
@@ -66,7 +70,8 @@ const GigDetails: React.FC<GigDetailsProps> = ({
         width: "120px",
       }}
     />
-  );
+    );
+    };
 
   const renderGigDetails = (isModal: boolean = false) => (
     <div className={isModal ? "pr-4" : "max-h-[600px] overflow-auto pr-4"}>
@@ -192,7 +197,7 @@ const GigDetails: React.FC<GigDetailsProps> = ({
         </div>
       </div>
 
-      {!isModal && (
+      {!showSeeMoreButton && !isModal && (
         <div className="mt-4 flex justify-end">
           <CustomButton
             label="See More"
