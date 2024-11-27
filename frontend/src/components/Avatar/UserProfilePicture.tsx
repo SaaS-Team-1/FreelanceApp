@@ -1,8 +1,20 @@
+
+
+
+import React from "react";
+
 interface UserProfilePictureProps {
-  displayName: string;
-  picture: string;
-  size?: "small" | "medium" | "large"; // Controls size of the component
-  rounded?: boolean; // Controls if the picture should be rounded or not
+  user: {
+    name: string;
+    profilePicture: string;
+    bio?: string;
+    location?: string;
+    completedGigs?: number;
+    averageRating?: number;
+  };
+  size?: "small" | "medium" | "large";
+  hoverDetails?: boolean;
+  rounded?: boolean;
 }
 
 const sizeClasses = {
@@ -11,38 +23,90 @@ const sizeClasses = {
   large: "w-16 h-16 text-lg",
 };
 
-function UserProfilePicture({
-  displayName,
-  picture,
+const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
+  user,
   size = "medium",
+  hoverDetails = false,
   rounded = true,
-}: UserProfilePictureProps) {
-  // Calculate initials from user's name
-  const getInitials = (name: string) => {
-    const initials = name
-      ?.split(" ")
-      .map((word) => word[0])
-      .join("");
-    return initials?.toUpperCase();
-  };
-
+}) => {
   return (
-    <div
-      className={`${sizeClasses[size]} ${rounded ? "rounded-full" : "rounded-md"} flex items-center justify-center overflow-hidden bg-gray-300`}
-    >
-      {picture ? (
-        // Display profile picture if available
-        <img
-          src={picture}
-          alt={displayName}
-          className={`h-full w-full object-cover ${rounded ? "rounded-full" : "rounded-md"}`}
-        />
-      ) : (
-        // Display initials if no profile picture is available
-        <span className="font-bold text-white">{getInitials(displayName)}</span>
+    <div className="relative group">
+      {/* Profile Picture */}
+      <div
+        className={`${sizeClasses[size]} ${rounded ? "rounded-full" : "rounded-md"} 
+        flex items-center justify-center overflow-hidden bg-gray-300`}
+      >
+        {user.profilePicture ? (
+          <img
+            src={user.profilePicture}
+            alt={user.name}
+            className={`h-full w-full object-cover ${
+              rounded ? "rounded-full" : "rounded-md"
+            }`}
+          />
+        ) : (
+          <span className="font-bold text-white">
+            {user.name
+              ?.split(" ")
+              .map((word) => word[0])
+              .join("")
+              .toUpperCase()}
+          </span>
+        )}
+      </div>
+
+      {/* Hover Details */}
+      {hoverDetails && (
+        <div
+          className="absolute z-10 invisible w-64 p-4 text-sm text-gray-800 transition-opacity 
+          duration-200 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 
+          group-hover:opacity-100 group-hover:visible dark:text-gray-300 dark:bg-gray-800 dark:border-gray-600"
+        >
+          <div className="flex items-center mb-3">
+            <img
+              src={user.profilePicture || "/default-avatar.jpg"}
+              alt={user.name}
+              className="w-10 h-10 rounded-full object-cover border border-gray-200 dark:border-gray-700"
+            />
+            <div className="ml-3">
+              <p className="text-base font-semibold text-gray-900 dark:text-white">
+                {user.name}
+              </p>
+              {user.location && (
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {user.location}
+                </p>
+              )}
+            </div>
+          </div>
+          <div className="mb-3">
+            {user.bio && (
+              <p className="text-sm text-gray-600 dark:text-gray-400 italic">
+                {user.bio}
+              </p>
+            )}
+          </div>
+          <ul className="space-y-2 text-sm">
+            {user.completedGigs !== undefined && (
+              <li className="flex items-center">
+                <span className="text-blue-500 mr-2">🏆</span>
+                <span>
+                  <strong>Completed Gigs:</strong> {user.completedGigs}
+                </span>
+              </li>
+            )}
+            {user.averageRating !== undefined && (
+              <li className="flex items-center">
+                <span className="text-yellow-500 mr-2">⭐</span>
+                <span>
+                  <strong>Average Rating:</strong> {user.averageRating.toFixed(1)}
+                </span>
+              </li>
+            )}
+          </ul>
+        </div>
       )}
     </div>
   );
-}
-
+};
 export default UserProfilePicture;

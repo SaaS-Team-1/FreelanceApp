@@ -5,8 +5,8 @@ import { Gig } from "@/utils/database/schema";
 import { FaDollarSign, FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
 import Badge from "@/components/Buttons/CustomBadge";
 import { Firestore, doc, setDoc } from "firebase/firestore";
-import { v4 as uuidv4 } from "uuid";
 import { collection, query, where, getDocs } from "firebase/firestore";
+import { faker } from "@faker-js/faker";
 
 interface GigDetailModalProps {
   gig: Gig;
@@ -48,11 +48,11 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({ gig, isOpen, onClose, u
       }
   
       // Create a unique ID for the application
-      const applicationId = uuidv4();
+      const applicationId = faker.string.uuid();
   
       // Create a unique ID for the chat
-      const chatId = uuidv4();
-  
+      const chatId = faker.string.uuid();
+
       // Reference to the application document
       const applicationRef = doc(db, "applications", applicationId);
   
