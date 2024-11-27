@@ -1,35 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaComments } from "react-icons/fa";
-import PostedGigItemHome from "./PostedGigItemHome";
 import { Gig, User } from "@/utils/database/schema";
 import Badge from "@/components/Buttons/CustomBadge";
 import CustomButton from "@/components/Buttons/CustomButton";
 import { UndoButton } from "@/components/Buttons/UndoButton";
-import { useNavigate } from "react-router-dom";
-
+import GigDetailModal from "@/components/Gigs/GigDetailModal";
+import { Firestore } from "firebase/firestore";
 
 interface PostedGigListHomeProps {
-  gigs: { gig: Gig; lister: User }[];
-  onSelectGig?: (gig: Gig) => void;
-  onSeeMoreClick?: (gig: Gig) => void;
-  onCompleteClick?: (gigId: string) => void;
-  onUndoClick ? :(gigId: string) => void;
-  enableSelection?: boolean;
-  selectedGig?: Gig | null;
-  showSeeMoreButton?: boolean;
-  showChatIcon?: boolean;
-  showCompletedButton?: boolean;
-  showDateWithLine?: boolean;
-  showUndoButton?: boolean;
-  hoverEffect?: boolean;
+  gigs: { gig: Gig; lister: User }[]; // List of gigs with lister data
+  onSelectGig?: (gig: Gig) => void; // Optional prop for selecting a gig
+  enableSelection?: boolean; // Prop to enable/disable selection
+  selectedGig?: Gig | null; // To determine the selected gig for background change
+  showSeeMoreButton?: boolean; // Prop to conditionally show "See More" button
+  showChatIcon?: boolean; // Optional prop to show the chat icon
+  showCompletedButton?: boolean; // Optional prop to show the "Completed Gig" button
+  showDateWithLine?: boolean; // Optional prop to show/hide the date with a white line
+  showUndoButton?: boolean; // New prop to optionally display the UndoButton
+  hoverEffect?: boolean; // Prop to conditionally apply hover effect
+  userId?: string; // Optional logged-in user's ID
+  db?: Firestore; // Optional Firestore database instance
 }
 
 function PostedGigListHome({
   gigs,
   onSelectGig,
-  onSeeMoreClick,
-  onCompleteClick,
-  onUndoClick ,
   enableSelection = true,
   selectedGig = null,
   showSeeMoreButton = true,
@@ -38,34 +33,22 @@ function PostedGigListHome({
   showDateWithLine = false,
   showUndoButton = false,
   hoverEffect = true,
+  userId,
+  db,
 }: PostedGigListHomeProps) {
-  const navigate = useNavigate();
+  const [selectedGigDetails, setSelectedGigDetails] = useState<Gig | null>(null,); // State to manage the selected gig for modal
+  const [selectedListerDetails, setSelectedListerDetails] = useState<User | null>(null); // State to manage the selected lister for modal
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 
-  const formatDate = (dueDate: any) => {
-    try {
-      // Handle different date formats
-      const date = dueDate?.seconds 
-        ? new Date(dueDate.seconds * 1000)  // Firestore timestamp
-        : dueDate instanceof Date 
-        ? dueDate                           // JavaScript Date object
-        : new Date(dueDate);                // String or number timestamp
-
-      return date.toLocaleDateString("en-GB", {
-        weekday: "long",
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-    } catch (error) {
-      console.error("Error formatting date:", error);
-      return "Date unavailable";
-    }
+  const handleSeeMoreClick = (gig: Gig, lister: User) => {
+    setSelectedGigDetails(gig); // Set the selected gig for the modal
+    setSelectedListerDetails(lister); // Set the selected lister for the modal
+    setIsModalOpen(true); // Open the modal
   };
 
-  const handleMessageClick = (userId: string) => {
-    navigate(`/app/chat?user=${userId}`);
+  const handleCloseModal = () => {
+    setIsModalOpen(false); // Close the modal
+    setSelectedGigDetails(null); // Reset selected gig details
   };
 
   return (
@@ -78,12 +61,14 @@ function PostedGigListHome({
               ? "bg-[rgba(5,54,78,0.59)] text-white"
               : "bg-gray-900 text-gray-300"
           } ${enableSelection ? "cursor-pointer" : ""} 
-            ${hoverEffect ? "hover:bg-gray-700" : ""}`}
-          onClick={() => enableSelection && onSelectGig && onSelectGig(gig)}
+            ${hoverEffect ? "hover:bg-gray-700" : ""}`} // Hover effect applied conditionally
+          onClick={() => enableSelection && handleSeeMoreClick(gig, lister)} // Conditional click handler
         >
           {showUndoButton && (
             <div className="absolute right-4 top-4">
-              <UndoButton onClick={() => onUndoClick && onUndoClick(gig.gigId)} />
+              <UndoButton
+                onClick={() => alert(`Undo clicked for gig: ${gig.title}`)}
+              />
             </div>
           )}
           
@@ -119,16 +104,31 @@ function PostedGigListHome({
               <h3 className="whitespace-normal break-words text-lg font-semibold text-white pr-[120px]">{gig.title}</h3>
               {showDateWithLine && (
                 <p className="mt-1 text-xs text-orange-500">
-                  {formatDate(gig.dueDate)}
+                  {new Date(gig.dueDate.seconds * 1000).toLocaleDateString(
+                    "en-GB",
+                    {
+                      weekday: "long",
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    },
+                  )}
                 </p>
               )}
             </div>
           </div>
 
-          {showDateWithLine && <div className="mt-1 border-t border-white"></div>}
-          
-          <p className="mt-2 whitespace-normal break-words text-gray-300">
-            {gig.description.length >70? gig.description.slice(0, 70) + "..." : gig.description}
+          {/* Render a white line if date is shown */}
+          {showDateWithLine && (
+            <div className="mt-1 border-t border-white"></div>
+          )}
+          {/* Render gig description (first 100 characters) */}
+          <p className="mt-2 text-gray-300">
+            {gig.description.length > 100
+              ? gig.description.slice(0, 100) + "..."
+              : gig.description}
           </p>
 
           <div className="mt-2 flex flex-wrap items-center gap-2">
@@ -165,7 +165,7 @@ function PostedGigListHome({
             <div className="mt-1 flex justify-end">
               <CustomButton
                 label="See More"
-                onClick={() => onSeeMoreClick && onSeeMoreClick(gig)}
+                onClick={() => handleSeeMoreClick(gig, lister)} // Open the modal with the selected gig
                 color="primary"
                 textColor="white"
                 size="small"
@@ -175,6 +175,18 @@ function PostedGigListHome({
           )}
         </div>
       ))}
+
+      {/* Gig Details Modal */}
+      {selectedGigDetails && selectedListerDetails && (
+        <GigDetailModal
+          gig={selectedGigDetails}
+          lister={selectedListerDetails}
+          isOpen={isModalOpen}
+          userId={userId} // Pass the logged-in user's ID
+          db={db} // Pass the Firestore database instance
+          onClose={handleCloseModal}
+        />
+      )}
     </div>
   );
 }

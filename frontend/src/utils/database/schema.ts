@@ -108,12 +108,8 @@ export interface Transaction {
 }
 
 export interface Notification {
+  notificationId: string
   userId: string;
-  type: "application" | "message" | "gig_status" | "rating" | "transaction";
-  relatedEntityId: string;
   notificationMessage: string;
-  isRead: boolean;
   createdAt: Timestamp;
-  navigationPath: string;
-  isDeleted: boolean;
 }

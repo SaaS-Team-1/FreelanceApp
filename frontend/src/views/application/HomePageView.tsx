@@ -4,121 +4,86 @@ import MyPostedGigListCompressed from "@/components/Gigs/MyPostedGigListCompress
 import PostedGigListHome from "@/components/Gigs/PostedGigListHome";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { Timestamp } from "firebase/firestore";
-import { Gig, User } from "@/utils/database/schema";
+import { Gig, User, Notification } from "@/utils/database/schema";
 import { useUser, useFirestore } from "@/utils/reactfire";
-import { NotificationItemProps } from "@/components/Notifications/NotificationItem";
 import { useEffect, useState } from "react";
 
 export default function OverviewView() {
   const { data: user } = useUser();
-  const [notifications, setNotifications] = useState<NotificationItemProps[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [openGigs, setGigs] = useState<{ gig: Gig; lister: User }[]>([]);
+  const [selectedGig, setSelectedGig] = useState<Gig>();
   const db = useFirestore();
-
-  const gigs: Gig[] = [
-    {
-      title: "Dog Sitter Needed",
-      description: "Looking for a reliable dog sitter for my two dogs.",
-      category: "Dogsitting",
-      price: 50,
-      dueDate: Timestamp.now(),
-      status: "open",
-      listerId: "user1",
-      selectedApplicantId: undefined,
-      createdAt: Timestamp.now(),
-      applicantIds: ["applicant1", "applicant2"],
-    },
-    {
-      title: "Video Editing (7min Video)",
-      description: "Edit a 7-minute marketing video for my startup.",
-      category: "Video Editing",
-      price: 150,
-      dueDate: Timestamp.now(),
-      status: "in-progress",
-      listerId: "user2",
-      selectedApplicantId: "applicant3",
-      createdAt: Timestamp.now(),
-      applicantIds: ["applicant3", "applicant4"],
-    },
-    {
-      title: "Airport Pickup Charleroi",
-      description: "Need a ride to Charleroi Airport on 23 November.",
-      category: "Transport",
-      price: 75,
-      dueDate: Timestamp.now(),
-      status: "completed",
-      listerId: "user3",
-      selectedApplicantId: "applicant5",
-      createdAt: Timestamp.now(),
-      applicantIds: ["applicant5"],
-    },
-  ];
 
   useEffect(() => {
     const fetchNotifications = async () => {
       if (!user) return;
 
       try {
-        const messagesRef = collection(db, "messages");
-
-        // Query messages where the current user is the receiver
-        const q = query(messagesRef, where("receiverId", "==", user.uid));
+        const notificationsRef = collection(db, "notifications");
+        const q = query(notificationsRef, where("userId", "==", user.uid));
         const querySnapshot = await getDocs(q);
 
-        // Group messages by senderId and count the total
-        const messageCounts: Record<string, number> = {};
-        querySnapshot.forEach((doc) => {
-          const { senderId } = doc.data();
-          if (!messageCounts[senderId]) {
-            messageCounts[senderId] = 0;
-          }
-          messageCounts[senderId]++;
-        });
-
-        // Map grouped data into NotificationItemProps format
-        const notificationsData: NotificationItemProps[] = Object.entries(messageCounts).map(
-          ([senderId, count]) => ({
-            user: {
-              email: "unknown@example.com", // Replace with actual data if available
-              displayName: `User ${senderId}`, // Replace with fetched user name if available
-              profile: {
-                bio: "",
-                credits: 0,
-                picture: "",
-                location: "",
-              },
-              completedGigs: [],
-              activeGigs: [],
-              listedGigs: [],
-              averageRating: 0,
-            },
-            text: `You have ${count} new messages from ${senderId} to ${user.uid}.`,
-            time: new Date().toISOString(), // Replace with actual timestamp if available
-            count,
-          })
+        const notificationsList: Notification[] = querySnapshot.docs.map(
+          (doc) => {
+            const data = doc.data();
+            return {
+              notificationId: data.notificationId,
+              userId: data.userId,
+              notificationMessage: data.notificationMessage,
+              createdAt: data.createdAt.toDate(), // Assuming Firestore timestamp
+            } as Notification;
+          },
         );
 
-        setNotifications(notificationsData);
+        setNotifications(notificationsList);
       } catch (error) {
-        console.error("Error fetching messages: ", error);
+        console.error("Error fetching notifications: ", error);
       }
     };
 
     fetchNotifications();
   }, [user]);
 
-  const userInfo: User = {
-    email: "amina.agile@example.com",
-    displayName: "Amina Agile",
-    profile: {
-      bio: "Computer Science Student in Leuven City.",
-      credits: 100,
-      picture: "",
-      location: "Leuven",
-    },
-    completedGigs: ["gig1", "gig2"],
-    activeGigs: ["gig3"],
-    listedGigs: ["gig4", "gig5"],
-    averageRating: 4.5,
+  useEffect(() => {
+    const fetchAvailableGigs = async () => {
+      try {
+        const gigsRef = collection(db, "gigs");
+        const q = query(gigsRef, where("selectedApplicantId", "==", ""));
+        const querySnapshot = await getDocs(q);
+
+        const usersRef = collection(db, "users");
+
+        const openGigs: Array<{ gig: Gig; lister: User }> = [];
+
+        for (const doc of querySnapshot.docs) {
+          const gigData = doc.data();
+
+          const userQuery = query(
+            usersRef,
+            where("userId", "==", gigData.listerId),
+          );
+          const userSnapshot = await getDocs(userQuery);
+
+          const lister = userSnapshot.docs[0].data() as User;
+
+          openGigs.push({
+            gig: { ...gigData, gigId: doc.id } as Gig,
+            lister: lister,
+          });
+        }
+
+        setGigs(openGigs);
+      } catch (error) {
+        console.error("Error fetching gigs: ", error);
+      }
+    };
+
+    fetchAvailableGigs();
+  }, []);
+
+  const handleSelectGig = (gig: Gig) => {
+    setSelectedGig(gig);
   };
 
   return (
@@ -141,9 +106,18 @@ export default function OverviewView() {
                 Machine Learning
               </button>
             </div>
+            <div className="mt-4">
+              <PostedGigListHome
+                gigs={openGigs}
+                onSelectGig={handleSelectGig}
+                selectedGig={selectedGig}
+                enableSelection={true}
+                showSeeMoreButton={true}
+                userId={user?.uid}
+                db={db}
+              />
+            </div>
           </div>
-          {/* Main content section containing scrollable gigs */}
-          {/* <PostedGigListHome gigs={gigs} showSeeMoreButton={true} /> */}
         </div>
       </div>
 
@@ -154,10 +128,7 @@ export default function OverviewView() {
       >
         <NotificationList notifications={notifications} />
 
-        {/* My Posted Gigs List */}
-        <MyPostedGigListCompressed gigs={gigs} user={userInfo} />
-
-        <button className="flex w-full items-center justify-center rounded-full bg-orange-500 py-3 text-sm font-semibold text-white">
+        <button className="flex max-w-sm items-center justify-center rounded-full bg-orange-500 py-3 text-sm font-semibold text-white">
           + Upload new gig
         </button>
       </div>
