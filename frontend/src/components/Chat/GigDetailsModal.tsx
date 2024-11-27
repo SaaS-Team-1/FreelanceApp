@@ -1,7 +1,6 @@
 
-
 import React from "react";
-import { User, Gig } from "@/utils/database/schema";
+import { Gig, User } from "@/utils/database/schema";
 import { FaDollarSign, FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
 import Badge from "@/components/Buttons/CustomBadge";
 import CustomButton from "@/components/Buttons/CustomButton";
@@ -24,17 +23,52 @@ const GigDetailsModal: React.FC<GigDetailsModalProps> = ({
   onGoToMyGigs,
   currentUser,
 }) => {
-  const isCurrentUserLister = gig.listerId === currentUserId; // Check if the current user is the lister
-  const location = gig.location || lister?.profile?.location || "Remote";
+  // Determine who the lister is (currentUser or chatPartner)
+  const isCurrentUserLister = gig.listerId === currentUserId;
+
+  // Ensure userToDisplay has all fields with fallback values
+  const userToDisplay: User = isCurrentUserLister
+    ? {
+        userId: currentUser.userId,
+        email: currentUser.email,
+        displayName: currentUser.displayName || "Unknown User",
+        profile: {
+          bio: currentUser.profile?.bio || "No bio available",
+          credits: currentUser.profile?.credits || 0,
+          picture: currentUser.profile?.picture || "/default-avatar.jpg",
+          location: currentUser.profile?.location || "Unknown location",
+        },
+        stats: {
+          completedGigs: currentUser.stats?.completedGigs || 0,
+          averageRating: currentUser.stats?.averageRating || 0,
+        },
+      }
+    : {
+        userId: lister?.userId || "Unknown ID",
+        email: lister?.email || "Unknown email",
+        displayName: lister?.displayName || "Unknown User",
+        profile: {
+          bio: lister?.profile?.bio || "No bio available",
+          credits: lister?.profile?.credits || 0,
+          picture: lister?.profile?.picture || "/default-avatar.jpg",
+          location: lister?.profile?.location || "Unknown location",
+        },
+        stats: {
+          completedGigs: lister?.stats?.completedGigs || 0,
+          averageRating: lister?.stats?.averageRating || 0,
+        },
+      };
+
+  const location = gig.location || userToDisplay.profile.location || "Remote";
 
   return (
     <div
       className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50"
-      onClick={onClose} // Close modal when clicking outside
+      onClick={onClose}
     >
       <div
         className="relative max-w-lg w-full bg-gray-900 p-10 rounded-lg shadow-lg"
-        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
         <div className="mb-6 flex items-center justify-between">
@@ -51,41 +85,19 @@ const GigDetailsModal: React.FC<GigDetailsModalProps> = ({
 
         {/* Gig Title and Profile Picture */}
         <div className="mb-4 flex items-start">
-          <div className="mr-4">
+          {/* <div className="mr-4">
             <UserProfilePicture
-              user={{
-                name: isCurrentUserLister
-                  ? currentUser?.displayName || "You"
-                  : lister?.displayName || "Unknown",
-                profilePicture: isCurrentUserLister
-                  ? currentUser?.profile?.picture || "/default-profile.png"
-                  : lister?.profile?.picture || "/default-profile.png",
-                bio: isCurrentUserLister
-                  ? currentUser?.profile?.bio
-                  : lister?.profile?.bio,
-                location: isCurrentUserLister
-                  ? currentUser?.profile?.location
-                  : lister?.profile?.location,
-                completedGigs: isCurrentUserLister
-                  ? currentUser?.stats?.completedGigs
-                  : lister?.stats?.completedGigs,
-                averageRating: isCurrentUserLister
-                  ? currentUser?.stats?.averageRating
-                  : lister?.stats?.averageRating,
-              }}
+              user={userToDisplay}
               size="large"
-              hoverDetails={true} // Enable hover details
+              hoverDetails={false}
               rounded={true}
             />
-          </div>
+          </div> */}
           <div>
             <h2 className="text-2xl font-semibold text-white">{gig.title}</h2>
             <p className="text-sm text-gray-300">
               <strong>Lister:</strong>{" "}
-              {/* {isCurrentUserLister
-                ? currentUser?.displayName || "You"
-                : lister?.displayName || "Unknown"} */}
-                {lister?.displayName || "Unknown"}
+              {isCurrentUserLister ? "You" : userToDisplay.displayName}
             </p>
           </div>
         </div>
@@ -172,5 +184,7 @@ const GigDetailsModal: React.FC<GigDetailsModalProps> = ({
     </div>
   );
 };
+
+
 
 export default GigDetailsModal;

@@ -14,7 +14,7 @@ interface CustomButtonProps {
   rounded?: boolean; // Rounded corners
   disabled?: boolean; // Disable button
   textColor?: "black" | "white" | "primary"; // Text color
-  customStyle?: React.CSSProperties;  // Add this line to accept custom styles
+  customStyle?: React.CSSProperties;  
 
 }
 
