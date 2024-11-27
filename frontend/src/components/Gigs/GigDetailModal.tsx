@@ -4,10 +4,11 @@ import CustomButton from "@/components/Buttons/CustomButton";
 import { Gig, User } from "@/utils/database/schema";
 import { FaDollarSign, FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
 import Badge from "@/components/Buttons/CustomBadge";
-import { Firestore, doc, setDoc } from "firebase/firestore";
+import { Firestore, Timestamp, addDoc, doc, setDoc, updateDoc } from "firebase/firestore";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { faker } from "@faker-js/faker";
 import UserProfilePicture from "@/components/Avatar/UserProfilePicture"; // Import the UserProfilePicture component
+import { applicationsRef, chatsRef } from "@/utils/database/collections";
 
 interface GigDetailModalProps {
   gig: Gig;
@@ -43,9 +44,9 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
 
     try {
       // Check if an application already exists for this gig and applicant
-      const applicationsRef = collection(db, "applications");
+      const applicationRef = applicationsRef(db);
       const existingApplicationQuery = query(
-        applicationsRef,
+        applicationRef,
         where("gigId", "==", gig.gigId),
         where("applicantId", "==", userId)
       );
@@ -56,35 +57,30 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
         return; // Exit the function if an application already exists
       }
 
-      const applicationId = faker.string.uuid();
-      const chatId = faker.string.uuid();
-
-      // Reference to the application document
-      const applicationRef = doc(db, "applications", applicationId);
-
       // Create the application document
-      await setDoc(applicationRef, {
+      const appDoc = await addDoc(applicationRef, {
         applicantId: userId, // Current signed-in user's ID
-        applicationId: applicationId, // Unique application ID
-        appliedAt: new Date().toISOString(), // Current timestamp
+        appliedAt: Timestamp.now(), // Current timestamp
         gigId: gig.gigId, // The ID of the gig
         listerId: gig.listerId, // The ID of the user who posted the gig
         coverLetter: randomCoverLetter, // Random Latin cover letter
         status: "pending", // Status of the application
-        chatId: chatId, // Associated chat ID
       });
 
       // Reference to the chat document
-      const chatRef = doc(db, "chats", chatId);
+      const chatRef = chatsRef(db);
 
       // Create the chat document
-      await setDoc(chatRef, {
-        chatId: chatId, // Unique chat ID
+      const chatDoc = await addDoc(chatRef, {
         gigId: gig.gigId, // The ID of the gig
         applicantId: userId, // The ID of the applicant
         listerId: gig.listerId,
-        applicationId: applicationId,
+        applicationId: appDoc.id,
       });
+
+      await updateDoc(appDoc,{
+        chatId: chatDoc.id,
+      })
 
       alert("Application and chat created successfully!");
       onClose(); // Close the modal after applying

@@ -1,5 +1,3 @@
-
-
 import React, { useState } from "react";
 import {
   FaHome,
@@ -16,13 +14,33 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth, useUser } from "@/utils/reactfire";
 import UserProfilePicture from "@/components/Avatar/UserProfilePicture";
+import { User } from "@/utils/database/schema";
 
 function Sidebar() {
   const auth = useAuth();
-  const { data: user } = useUser();
+  const { data: firebaseUser } = useUser(); // Firebase user object
   const [isExpanded, setIsExpanded] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Transform Firebase user object to match User schema
+  const user: User | null = firebaseUser
+    ? {
+        userId: firebaseUser.uid, // Map UID from Firebase auth
+        email: firebaseUser.email || "No email",
+        displayName: firebaseUser.displayName || "Anonymous",
+        profile: {
+          bio: "",
+          credits: 0,
+          picture: firebaseUser.photoURL || "/default-avatar.jpg",
+          location: "",
+        },
+        stats: {
+          completedGigs: 0,
+          averageRating: 0,
+        },
+      }
+    : null;
 
   // Toggle the sidebar expanded/collapsed state
   const toggleSidebar = () => {
@@ -48,16 +66,13 @@ function Sidebar() {
       {isExpanded && user && (
         <div className="flex flex-col items-center">
           <UserProfilePicture
-            user={{
-              name: user.displayName || "Anonymous",
-              profilePicture: user.photoURL || "",
-            }}
+            user={user} 
             size="large"
             hoverDetails={false} // Disable hover details
             rounded
           />
           <h2 className="text-lg font-semibold text-blue-300">
-            {user.displayName || "Anonymous"}
+            {user.displayName}
           </h2>
           <p className="text-xs text-gray-500">{user.email}</p>
           <div className="my-3 w-full border-t border-gray-600" />
