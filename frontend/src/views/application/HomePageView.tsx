@@ -16,6 +16,7 @@ export default function OverviewView() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [openGigs, setOpenGigs] = useState<{ gig: Gig; lister: User }[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   const fetchNotifications = async () => {
     if (!user) return;
@@ -25,15 +26,17 @@ export default function OverviewView() {
       const q = query(notificationsRef, where("userId", "==", user.uid));
       const querySnapshot = await getDocs(q);
 
-      const notificationsList: Notification[] = querySnapshot.docs.map((doc) => {
-        const data = doc.data();
-        return {
-          notificationId: data.notificationId,
-          userId: data.userId,
-          notificationMessage: data.notificationMessage,
-          createdAt: data.createdAt.toDate(), // Assuming Firestore timestamp
-        } as Notification;
-      });
+      const notificationsList: Notification[] = querySnapshot.docs.map(
+        (doc) => {
+          const data = doc.data();
+          return {
+            notificationId: data.notificationId,
+            userId: data.userId,
+            notificationMessage: data.notificationMessage,
+            createdAt: data.createdAt.toDate(), // Assuming Firestore timestamp
+          } as Notification;
+        },
+      );
 
       setNotifications(notificationsList);
     } catch (error) {
@@ -41,7 +44,7 @@ export default function OverviewView() {
     }
   };
 
-  const fetchOpenGigs = async () => {
+  const fetchOpenGigsAndCategories = async () => {
     try {
       const gigsRef = collection(db, "gigs");
       const gigsSnapshot = await getDocs(gigsRef);
@@ -49,20 +52,40 @@ export default function OverviewView() {
       const usersRef = collection(db, "users");
 
       const fetchedGigs: Array<{ gig: Gig; lister: User }> = [];
+      const categoriesSet = new Set<string>();
 
       for (const gigDoc of gigsSnapshot.docs) {
         const gigData = gigDoc.data();
+
+        // Add category to the Set
+        if (gigData.category) {
+          categoriesSet.add(gigData.category);
+        }
 
         // Check if the gig has the "open" status
         if (gigData.status !== "open") continue;
 
         // If a search query exists, filter by title
-        if (searchQuery && !gigData.title.toLowerCase().includes(searchQuery.toLowerCase())) {
+        if (
+          searchQuery &&
+          !gigData.title.toLowerCase().includes(searchQuery.toLowerCase())
+        ) {
+          continue;
+        }
+
+        // If selected categories exist, filter by category
+        if (
+          selectedCategories.length > 0 &&
+          !selectedCategories.includes(gigData.category)
+        ) {
           continue;
         }
 
         // Fetch the lister details
-        const userQuery = query(usersRef, where("userId", "==", gigData.listerId));
+        const userQuery = query(
+          usersRef,
+          where("userId", "==", gigData.listerId),
+        );
         const userSnapshot = await getDocs(userQuery);
         const lister = userSnapshot.docs[0]?.data() as User;
 
@@ -73,8 +96,9 @@ export default function OverviewView() {
       }
 
       setOpenGigs(fetchedGigs);
+      setCategories(Array.from(categoriesSet));
     } catch (error) {
-      console.error("Error fetching gigs: ", error);
+      console.error("Error fetching gigs and categories: ", error);
     }
   };
 
@@ -83,11 +107,15 @@ export default function OverviewView() {
   }, [user]);
 
   useEffect(() => {
-    fetchOpenGigs();
-  }, [searchQuery]); // Re-fetch gigs whenever the search query changes
+    fetchOpenGigsAndCategories();
+  }, [searchQuery, selectedCategories]); // Re-fetch gigs whenever the search query changes
 
   const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
+  };
+
+  const handleCategorySelect = (categories: string[]) => {
+    setSelectedCategories(categories); // Update selected categories
   };
 
   return (
@@ -100,7 +128,7 @@ export default function OverviewView() {
           <div className="flex flex-col items-center">
             {/* Search Bar and Filter Button */}
             <div className="flex w-full items-center justify-center p-4">
-              <div className="relative w-full max-w-xl flex items-center">
+              <div className="relative flex w-full max-w-xl items-center">
                 <HiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
@@ -115,22 +143,24 @@ export default function OverviewView() {
                   }}
                 />
                 <div className="ml-4">
-                  <FilterButton />
+                  <FilterButton
+                    categories={categories}
+                    onCategorySelect={handleCategorySelect}
+                  />
                 </div>
               </div>
             </div>
 
-            {/* Tags */}
-            <div className="mt-4 flex space-x-4">
-              <button className="rounded-full bg-gray-800 px-4 py-2 text-sm font-semibold text-white">
-                Computer Science
-              </button>
-              <button className="rounded-full bg-gray-800 px-4 py-2 text-sm font-semibold text-white">
-                Data Engineering
-              </button>
-              <button className="rounded-full bg-gray-800 px-4 py-2 text-sm font-semibold text-white">
-                Machine Learning
-              </button>
+            {/* Selected Tags */}
+            <div className="mt-4 flex flex-wrap gap-2">
+              {selectedCategories.map((category) => (
+                <div
+                  key={category}
+                  className="rounded-full bg-gray-800 px-4 py-2 text-sm font-semibold text-white"
+                >
+                  {category}
+                </div>
+              ))}
             </div>
 
             {/* Gig List */}
@@ -163,4 +193,3 @@ export default function OverviewView() {
     </div>
   );
 }
-
