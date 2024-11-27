@@ -127,12 +127,12 @@ export default function OverviewView() {
   useEffect(() => {
     const fetchUserDetails = async () => {
       if (!user) return;
-  
+
       try {
         const usersRef = collection(db, "users");
         const userQuery = query(usersRef, where("userId", "==", user.uid));
         const userSnapshot = await getDocs(userQuery);
-  
+
         if (!userSnapshot.empty) {
           const userData = userSnapshot.docs[0].data() as User; // Cast Firestore data to User type
           setExtendedUser(userData);
@@ -141,7 +141,7 @@ export default function OverviewView() {
         console.error("Error fetching extended user details: ", error);
       }
     };
-  
+
     fetchUserDetails();
   }, [user]);
 
@@ -166,79 +166,68 @@ export default function OverviewView() {
   };
 
   return (
-    <div className="flex flex-1 flex-col space-y-6 p-6">
-      {/* Top Section with Search and Notifications */}
-      <div className="flex items-start justify-between space-x-6">
-        {/* Left Column with Sidebar, Search, and Posted Gigs */}
-        <div className="flex w-2/3 flex-col space-y-6">
-          {/* Search and Tags Container */}
-          <div className="flex flex-col items-center">
-            {/* Search Bar and Filter Button */}
-            <div className="flex w-full items-center justify-center p-4">
-              <div className="relative flex w-full max-w-xl items-center">
-                <HiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search for specific Gigs"
-                  className="w-full rounded-md border border-gray-300 py-3 pl-12 pr-4 shadow-sm focus:outline-none"
-                  value={searchQuery}
-                  onChange={handleSearchInput}
-                  style={{
-                    height: "48px",
-                    backgroundColor: "white",
-                    fontFamily: "'Inter', sans-serif",
-                  }}
-                />
-                <div className="ml-4">
-                  <FilterButton
-                    categories={categories}
-                    onCategorySelect={handleCategorySelect}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Selected Tags */}
-            <div className="mt-4 flex flex-wrap gap-2">
-              {selectedCategories.map((category) => (
-                <div
-                  key={category}
-                  className="rounded-full bg-gray-800 px-4 py-2 text-sm font-semibold text-white"
-                >
-                  {category}
-                </div>
-              ))}
-            </div>
-
-            {/* Gig List */}
-            <div className="mt-4">
-              <PostedGigListHome
-                gigs={openGigs}
-                enableSelection={true}
-                showSeeMoreButton={true}
-                userId={user?.uid}
-                db={db}
+    <div className="flex w-full flex-row p-5">
+      {/* Fixed Left Column for Gigs */}
+      <div className="mr-4 flex grow flex-col items-center space-y-4">
+        {/* Filters */}
+        <div className="flex w-full flex-col items-center">
+          <div className="flex items-center justify-center p-4 lg:w-7/12">
+            <HiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search for specific Gigs"
+              className="w-full rounded-md border border-gray-300 py-3 pl-12 pr-4 shadow-sm focus:outline-none"
+              value={searchQuery}
+              onChange={handleSearchInput}
+              style={{
+                height: "48px",
+                backgroundColor: "white",
+                fontFamily: "'Inter', sans-serif",
+              }}
+            />
+            <div className="ml-4">
+              <FilterButton
+                categories={categories}
+                onCategorySelect={handleCategorySelect}
               />
             </div>
           </div>
+
+          <div className="flex min-h-9 flex-wrap gap-2">
+            {selectedCategories.map((category) => (
+              <div
+                key={category}
+                className="rounded-full bg-gray-800 px-4 py-2 text-sm font-semibold text-white"
+              >
+                {category}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="scrollbar overflow-y-scroll">
+          <PostedGigListHome
+            gigs={openGigs}
+            enableSelection={true}
+            showSeeMoreButton={true}
+            userId={user?.uid}
+            db={db}
+          />
         </div>
       </div>
 
       {/* Fixed Right Column for Notifications */}
-      <div
-        className="fixed right-0 flex h-screen w-1/4 flex-col space-y-6 p-6"
-        style={{ bottom: "2px" }}
-      >
+      <div className="flex h-screen min-w-fit shrink flex-col space-y-4">
         <NotificationList notifications={notifications} />
 
-        {extendedUser && <MyPostedGigListCompressed gigs={myPostedGigs} user={extendedUser} />}
+        {extendedUser && (
+          <MyPostedGigListCompressed gigs={myPostedGigs} user={extendedUser} />
+        )}
 
         <button className="flex max-w-sm items-center justify-center rounded-full bg-orange-500 py-3 text-sm font-semibold text-white">
           + Upload new gig
         </button>
       </div>
-
-      <div className="pb-10"></div>
     </div>
   );
 }
