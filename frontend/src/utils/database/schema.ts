@@ -77,6 +77,7 @@ export interface Chat {
 }
 
 export interface ChatMessage {
+  chatmessageId: string;
   senderId: string;
   sentToId: string; // id of user message is sent to 
   content: string;
@@ -107,12 +108,8 @@ export interface Transaction {
 }
 
 export interface Notification {
+  notificationId: string
   userId: string;
-  type: "application" | "message" | "gig_status" | "rating" | "transaction";
-  relatedEntityId: string;
   notificationMessage: string;
-  isRead: boolean;
   createdAt: Timestamp;
-  navigationPath: string;
-  isDeleted: boolean;
 }

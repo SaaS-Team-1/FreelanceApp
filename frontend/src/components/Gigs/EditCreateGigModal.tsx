@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Gig } from "@/utils/database/schema";
-import { Timestamp } from "firebase/firestore";
+import { Timestamp, doc, updateDoc } from "firebase/firestore"; // Firestore imports
 import CustomButton from "@/components/Buttons/CustomButton";
 import { FaDollarSign, FaTag, FaMapMarkerAlt } from "react-icons/fa";
 import DatePicker from "@/components/Calendar/DatePicker";
+import { gigsRef } from "@/utils/database/collections"; // Your Firestore collection reference
+import { useFirestore } from "@/utils/reactfire"; // Hook for Firestore instance
 
 interface EditCreateGigModalProps {
   gig?: Gig;
@@ -22,6 +24,7 @@ const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
   onClose,
   mode,
 }) => {
+  const db = useFirestore(); // Firestore instance
   const [editedGig, setEditedGig] = useState<Gig>(
     gig || {
       gigId: "",
@@ -33,6 +36,7 @@ const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
       listerId: "",
       selectedApplicantId: undefined,
       createdAt: new Timestamp(new Date().getTime() / 1000, 0),
+      updatedAt: new Timestamp(new Date().getTime() / 1000, 0),
       applicantIds: [],
       location: "Remote",
       category: "",
@@ -45,16 +49,56 @@ const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
     }
   }, [gig, isOpen]);
 
-  const handleSave = () => {
-    const wordCount = editedGig.description.trim().split(/\s+/).length;
+  const validateGig = (gig: Gig) => {
+    const errors: string[] = [];
 
-    if (wordCount < 25) {
-      alert("Description must contain at least 25 words.");
+    if (!gig.title.trim()) errors.push("Title is required.");
+    if (!gig.description.trim()) errors.push("Description is required.");
+    if (gig.description.trim().split(/\s+/).length < 25)
+      errors.push("Description must contain at least 25 words.");
+    if (!gig.location.trim()) errors.push("Location is required.");
+    if (!gig.category.trim()) errors.push("Category is required.");
+    if (gig.price <= 0) errors.push("Price must be greater than 0.");
+    if (!gig.dueDate || !(gig.dueDate instanceof Timestamp))
+      errors.push("Due Date is required and must be a valid timestamp.");
+    if (!gig.status || !["open", "in-progress", "awaiting-confirmation", "completed", "deleted", "problem-reported"].includes(gig.status))
+      errors.push("Status must be one of the predefined values.");
+    if (!gig.listerId.trim()) errors.push("Lister ID is required.");
+
+    return errors;
+  };
+
+  const handleSave = async () => {
+    const errors = validateGig(editedGig);
+    if (errors.length > 0) {
+      alert(`Please fix the following errors:\n- ${errors.join("\n- ")}`);
       return;
     }
 
-    onSave(editedGig);
-    onClose();
+    try {
+      if (mode === "edit" && gig) {
+        const gigDocRef = doc(gigsRef(db), gig.gigId); // Reference to the gig document
+        await updateDoc(gigDocRef, {
+          title: editedGig.title.trim(),
+          description: editedGig.description.trim(),
+          price: editedGig.price,
+          dueDate: editedGig.dueDate,
+          status: editedGig.status,
+          location: editedGig.location.trim(),
+          category: editedGig.category.trim(),
+          updatedAt: Timestamp.now(),
+        });
+        alert("Gig successfully updated.");
+      } else if (mode === "create") {
+        alert("Create mode is not implemented in this example.");
+      }
+
+      onSave(editedGig); // Notify parent of the save
+      onClose();
+    } catch (error) {
+      console.error("Error updating gig:", error);
+      alert("There was an error saving the gig. Please try again.");
+    }
   };
 
   if (!isOpen) return null;

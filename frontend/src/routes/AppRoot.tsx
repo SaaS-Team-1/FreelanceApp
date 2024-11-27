@@ -50,15 +50,9 @@ export default function AppRoot() {
     <FirebaseInitializer>
       <AuthWrapper signedIn fallback={<Navigate to={"/login"} />}>
         <Suspense fallback={<Loading />}>
-          <div className="flex w-screen bg-slate-600">
-            {/* Sidebar with conditionally applied styles */}
-            <Sidebar
-
-            />
-            {/* Main Content Area */}
-            <div
-              className={`flex-1 flex flex-col`}
-            >
+          <div className="flex w-screen">
+            <Sidebar />
+            <div className="flex min-h-[105vh] w-full bg-slate-600">
               <Outlet />
             </div>
           </div>

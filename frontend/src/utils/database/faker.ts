@@ -9,6 +9,7 @@ import {
   chatMessagesRef,
   ratingsRef,
   transactionsRef,
+  notificationsRef,
 } from "./collections";
 import {
   User,
@@ -18,6 +19,7 @@ import {
   ChatMessage,
   Rating,
   Transaction,
+  Notification,
 } from "./schema";
 import {
   Auth,
@@ -27,11 +29,12 @@ import {
 
 // Configuration
 const NUM_USERS = 20;
-const GIGS_PER_USER = 3;
-const APPLICATIONS_PER_GIG = 2;
+const GIGS_PER_USER = 8;
+const APPLICATIONS_PER_GIG = 4;
 const MESSAGES_PER_CHAT = 3;
-const COMPLETION_RATE = 0.7;
+const COMPLETION_RATE = 0.2;
 const RATING_RATE = 0.8;
+const NOTIFICATIONS_PER_USER = 5;
 
 const GIG_CATEGORIES = [
   "Web Development",
@@ -78,12 +81,14 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
     const authUser = await createUserWithEmailAndPassword(
       auth,
       email,
-      "password123",
+      "password",
     );
+
     await updateProfile(authUser.user, {
       displayName: faker.person.fullName(),
       photoURL: faker.image.avatar(),
     });
+
     const userData: User = {
       userId: authUser.user.uid,
       email: email,
@@ -103,7 +108,6 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
         }),
       },
     };
-
     await setDoc(doc(db, "users", userData.userId), userData);
     userRefs.push({ id: userData.userId, user: userData });
   }
@@ -114,29 +118,32 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
     for (let i = 0; i < GIGS_PER_USER; i++) {
       const isCompleted = Math.random() < COMPLETION_RATE;
       const isInProgress = !isCompleted && Math.random() < 0.5;
+      const isAwaitingConfirmation = !isCompleted && !isInProgress && Math.random() < 0.4;
 
-      const gigData: Gig = {
-        gigId: faker.string.uuid(),
+      const gigStatus = isCompleted
+        ? "completed"
+        : isInProgress
+        ? "in-progress"
+        : isAwaitingConfirmation
+        ? "awaiting-confirmation"
+        : "open";
+
+      const gigData: Partial<Gig> = {
         title: faker.lorem.sentence(),
         description: faker.lorem.paragraphs(2),
         location: faker.helpers.arrayElement(LOCATIONS),
         category: faker.helpers.arrayElement(GIG_CATEGORIES),
         price: faker.number.int({ min: 50, max: 500 }),
         dueDate: getFutureDate(),
-        status: isCompleted
-          ? "completed"
-          : isInProgress
-            ? "in-progress"
-            : "open",
+        status: gigStatus,
         listerId: userRef.id,
         selectedApplicantId: "",
         createdAt: getRecentDate(),
         updatedAt: getRecentDate(),
       };
-
       const gigDoc = await addDoc(gigsRef(db), gigData);
       gigData.gigId = gigDoc.id;
-      gigRefs.push({ id: gigDoc.id, gig: gigData });
+      gigRefs.push({ id: gigDoc.id, gig: gigData as Gig });
     }
   }
 
@@ -162,8 +169,8 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
         }
       }
 
-      // Create chat
-      const chatData: Omit<Chat, "chatId"> = {
+      // Create chat first to get chatId
+      const chatData: Partial<Chat> = {
         gigId: gigRef.id,
         applicationId: "",
         listerId: gigRef.gig.listerId,
@@ -171,45 +178,35 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
       };
 
       const chatDoc = await addDoc(chatsRef(db), chatData);
-      const chatId = chatDoc.id;
+      chatData.chatId = chatDoc.id;
+      chatRefs.push({ id: chatDoc.id, chat: chatData as Chat });
 
-      await updateDoc(doc(db, "chats", chatId), { chatId });
-      const applicationData: Omit<Application, "applicationId"> = {
+      const applicationData: Partial<Application> = {
         gigId: gigRef.id,
         applicantId: applicant.id,
         listerId: gigRef.gig.listerId,
         status: applicationStatus,
         coverLetter: faker.lorem.paragraphs(2),
         appliedAt: getRecentDate(),
-        chatId,
+        chatId: chatDoc.id,
       };
 
       const applicationDoc = await addDoc(applicationsRef(db), applicationData);
-      const applicationId = applicationDoc.id;
-
-      await updateDoc(doc(db, "chats", chatId), { applicationId });
-      await updateDoc(doc(db, "applications", applicationId), {
-        applicationId,
-      });
-
-      chatRefs.push({
-        id: chatId,
-        chat: { ...chatData, chatId, applicationId },
-      });
+      applicationData.applicationId = applicationDoc.id;
       applicationRefs.push({
-        id: applicationId,
-        application: { ...applicationData, applicationId },
+        id: applicationDoc.id,
+        application: applicationData as Application,
       });
 
       // Create chat messages with the updated schema
       for (let j = 0; j < MESSAGES_PER_CHAT; j++) {
         const isFromLister = Math.random() > 0.5;
-        const messageData: ChatMessage = {
+        const messageData: Partial<ChatMessage> = {
           senderId: isFromLister ? gigRef.gig.listerId : applicant.id,
           sentToId: isFromLister ? applicant.id : gigRef.gig.listerId,
           content: faker.lorem.paragraph(),
           timestamp: getRecentDate(),
-          chatId,
+          chatId: chatDoc.id,
           isRead: Math.random() > 0.5,
         };
 
@@ -224,21 +221,19 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
     (g) => g.gig.status === "completed" && g.gig.selectedApplicantId,
   )) {
     if (Math.random() < RATING_RATE && gigRef.gig.selectedApplicantId) {
-      const ratingData: Rating = {
-        ratingId: faker.string.uuid(),
+      const ratingData: Omit<Rating, "ratingId"> = {
         gigId: gigRef.id,
         byUserId: gigRef.gig.listerId,
         byUserDisplayName:
           userRefs.find((u) => u.id === gigRef.gig.listerId)?.user
             .displayName || "",
-        toUserId: gigRef.gig.selectedApplicantId, // Now guaranteed to be string
+        toUserId: gigRef.gig.selectedApplicantId,
         rating: faker.number.int({ min: 3, max: 5 }),
         review: faker.lorem.paragraph(),
         createdAt: getRecentDate(),
       };
 
-      const ratingDoc = await addDoc(ratingsRef(db), ratingData);
-      ratingData.ratingId = ratingDoc.id;
+      await addDoc(ratingsRef(db), ratingData);
     }
   }
 
@@ -248,17 +243,38 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
     (g) => g.gig.status === "completed" && g.gig.selectedApplicantId,
   )) {
     if (gigRef.gig.selectedApplicantId) {
-      const transactionData: Transaction = {
-        transactionId: faker.string.uuid(),
+      const transactionData: Omit<Transaction, "transactionId"> = {
         senderId: gigRef.gig.listerId,
         receiverId: gigRef.gig.selectedApplicantId,
         gigId: gigRef.id,
         amount: gigRef.gig.price,
         createdAt: getRecentDate(),
+        kind: faker.helpers.arrayElement([
+          "deposit",
+          "withdraw",
+          "send",
+          "recieve",
+        ]),
       };
 
-      const transactionDoc = await addDoc(transactionsRef(db), transactionData);
-      transactionData.transactionId = transactionDoc.id;
+      await addDoc(transactionsRef(db), transactionData);
+    }
+  }
+
+  console.log("Creating notifications...");
+  for (const gigRef of gigRefs.filter(
+    (g) => g.gig.status === "completed" && g.gig.selectedApplicantId,
+  )) {
+    if (gigRef.gig.selectedApplicantId) {
+      const notifData: Notification = {
+        notificationId: faker.string.uuid(),
+        userId: gigRef.gig.listerId,
+        notificationMessage: "Your posted gig has been completed by " + gigRef.gig.selectedApplicantId,
+        createdAt: getRecentDate(),
+      };
+
+      const notifDoc = await addDoc(notificationsRef(db), notifData);
+      notifData.notificationId = notifDoc.id;
     }
   }
 
