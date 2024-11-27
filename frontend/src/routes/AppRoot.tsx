@@ -16,7 +16,7 @@ import { Firestore } from "firebase/firestore";
 import { Navigate, Outlet } from "react-router-dom";
 import { AuthWrapper } from "@/utils/firebase/auth";
 import Sidebar from "@/components/Common/Sidebar";
-import { useThemeMode } from "flowbite-react";
+import pathNames from "@/utils/pathNames";
 
 function FirebaseInitializer({ children }: { children: React.ReactNode }) {
   const { data: firestoreInstance } = useInitFirestore(getFirestoreInstance);
@@ -33,6 +33,12 @@ function FirebaseInitializer({ children }: { children: React.ReactNode }) {
 
 export default function AppRoot() {
   const [isReady, setIsReady] = useState(false);
+  const location = useLocation();
+
+  let title = "";
+  if (location.pathname in pathNames.paths) {
+    title = pathNames.paths[location.pathname as keyof typeof pathNames.paths];
+  }
   useEffect(() => {
     // Wrap the state update in startTransition
     startTransition(() => {
@@ -43,15 +49,25 @@ export default function AppRoot() {
   if (!isReady) {
     return <Loading />;
   }
-
   return (
     <FirebaseInitializer>
       <AuthWrapper signedIn fallback={<Navigate to={"/login"} />}>
         <Suspense fallback={<Loading />}>
-          <div className="flex max-h-screen w-screen overflow-x-hidden overflow-y-hidden">
+          <div className="flex max-h-screen w-screen overflow-hidden">
             <Sidebar />
-            <div className="flex w-full bg-slate-600 p-1">
-              <Outlet />
+            <div className="flex w-full flex-col items-center bg-slate-600 ">
+              {title ? (
+                <div className="w-full bg-slate-800">
+                  <h2 className="my-2 justify-self-center text-3xl font-extrabold text-white">
+                    {title}
+                  </h2>
+                </div>
+              ) : (
+                <></>
+              )}
+              <div className="flex w-full bg-slate-600 p-1">
+                <Outlet />
+              </div>
             </div>
           </div>
         </Suspense>
