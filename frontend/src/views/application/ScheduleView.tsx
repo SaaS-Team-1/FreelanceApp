@@ -145,6 +145,7 @@ function ScheduleView() {
     setSelectedGig(null);
     setIsGigDetailsOpen(false);
   };
+
   const handleUndoClick = async (gigId: string) => {
     if (!currUser) {
       console.error("No current user found");

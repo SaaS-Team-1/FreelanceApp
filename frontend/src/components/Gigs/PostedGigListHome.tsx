@@ -5,6 +5,8 @@ import { Gig, User } from "@/utils/database/schema";
 import Badge from "@/components/Buttons/CustomBadge";
 import CustomButton from "@/components/Buttons/CustomButton";
 import { UndoButton } from "@/components/Buttons/UndoButton";
+import { useNavigate } from "react-router-dom";
+
 
 interface PostedGigListHomeProps {
   gigs: { gig: Gig; lister: User }[];
@@ -37,7 +39,8 @@ function PostedGigListHome({
   showUndoButton = false,
   hoverEffect = true,
 }: PostedGigListHomeProps) {
-  // Helper function to safely format the date
+  const navigate = useNavigate();
+
   const formatDate = (dueDate: any) => {
     try {
       // Handle different date formats
@@ -59,6 +62,10 @@ function PostedGigListHome({
       console.error("Error formatting date:", error);
       return "Date unavailable";
     }
+  };
+
+  const handleMessageClick = (userId: string) => {
+    navigate(`/app/chat?user=${userId}`);
   };
 
   return (
@@ -96,7 +103,7 @@ function PostedGigListHome({
           {showChatIcon && (
             <div className="absolute right-2 top-6">
               <CustomButton
-                onClick={() => alert(`Start chat for ${gig.title}`)}
+                onClick={() => handleMessageClick(lister.userId)}
                 color="primary"
                 textColor="white"
                 size="small"
