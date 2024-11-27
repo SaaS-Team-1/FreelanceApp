@@ -11,6 +11,7 @@ interface PostedGigListHomeProps {
   onSelectGig?: (gig: Gig) => void;
   onSeeMoreClick?: (gig: Gig) => void;
   onCompleteClick?: (gigId: string) => void;
+  onUndoClick ? :(gigId: string) => void;
   enableSelection?: boolean;
   selectedGig?: Gig | null;
   showSeeMoreButton?: boolean;
@@ -26,6 +27,7 @@ function PostedGigListHome({
   onSelectGig,
   onSeeMoreClick,
   onCompleteClick,
+  onUndoClick ,
   enableSelection = true,
   selectedGig = null,
   showSeeMoreButton = true,
@@ -74,7 +76,7 @@ function PostedGigListHome({
         >
           {showUndoButton && (
             <div className="absolute right-4 top-4">
-              <UndoButton onClick={() => alert(`Undo clicked for gig: ${gig.title}`)} />
+              <UndoButton onClick={() => onUndoClick && onUndoClick(gig.gigId)} />
             </div>
           )}
           

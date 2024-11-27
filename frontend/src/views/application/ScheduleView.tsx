@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import PostedGigListHome from "@/components/Gigs/PostedGigListHome";
 import GigDetails from "@/components/Gigs/GigDetails";
 import { Gig, User } from "@/utils/database/schema";
-import { query, Timestamp, where, getDocs, doc, updateDoc,getDoc } from "firebase/firestore";
+import { query, Timestamp, where, getDocs, doc, updateDoc,getDoc,deleteDoc } from "firebase/firestore";
 import CustomButton from "@/components/Buttons/CustomButton";
 import { useAuth, useFirestore } from "@/utils/reactfire";
 import { applicationsRef, gigsRef, usersRef } from "@/utils/database/collections";
@@ -145,6 +145,39 @@ function ScheduleView() {
     setSelectedGig(null);
     setIsGigDetailsOpen(false);
   };
+  const handleUndoClick = async (gigId: string) => {
+    if (!currUser) {
+      console.error("No current user found");
+      return;
+    }
+  
+    try {
+      const applicationQuery = query(
+        applicationsRef(db),
+        where("applicantId", "==", currUser.uid),
+        where("gigId", "==", gigId),
+        where("status", "==", "pending")
+      );
+  
+      const applicationSnapshot = await getDocs(applicationQuery);
+  
+      if (!applicationSnapshot.empty) {
+        const applicationDoc = applicationSnapshot.docs[0];
+        await deleteDoc(doc(applicationsRef(db), applicationDoc.id));
+  
+        // Refresh the pending gigs list locally
+        setPendingGigs((prevPending) =>
+          prevPending.filter(({ gig }) => gig.gigId !== gigId)
+        );
+  
+        // Fetch updated data for all gigs
+        await fetchGigs();
+      }
+    } catch (error) {
+      console.error("Error removing application:", error);
+    }
+  };
+  
 
   return (
     <div className="relative p-4">
@@ -167,12 +200,13 @@ function ScheduleView() {
               onSeeMoreClick={handleSeeMoreClick}
             />
           </div>
-          <div className="w-[50%] rounded-lg bg-gray-800 dark:text-white p-4 shadow-lg">
+          <div className="w-[50%] rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
             <h1 className="mb-3 text-xl font-bold">Pending Gigs</h1>
             <PostedGigListHome
               gigs={pendingGigs}
               showDateWithLine={true}
               showUndoButton={true}
+              onUndoClick={handleUndoClick}
               onSeeMoreClick={handleSeeMoreClick}
             />
           </div>
