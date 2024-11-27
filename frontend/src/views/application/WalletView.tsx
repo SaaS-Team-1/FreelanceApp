@@ -57,10 +57,20 @@ function WalletView() {
       gig: { title: "Logo Design" },
       createdAt: { seconds: Date.now() / 1000 - 86400 * 2 },
     },
+    {
+      transactionId: "tx4",
+      kind: "recieve",
+      amount: 250,
+      senderId: "user789",
+      receiverId: currentUser.userId,
+      user: { displayName: "Mike Johnson" },
+      gig: { title: "Logo Design" },
+      createdAt: { seconds: Date.now() / 1000 - 86400 * 2 },
+    },
   ];
 
   return (
-    <div className="mx-auto max-w-4xl p-6">
+    <div className="mx-auto w-max p-6">
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-4xl font-bold text-white">Wallet</h2>
         <div className="rounded-lg bg-gray-800 p-4 shadow-md">
@@ -73,38 +83,55 @@ function WalletView() {
           </p>
         </div>
       </div>
+      <div className="flex w-max flex-col gap-10 lg:flex-row">
+        <Tabs aria-label="Deposit Tabs" className="" variant="underline">
+          <Tabs.Item active title="Deposit" icon={FaWallet}>
+            <CoinPurchaseForm />
+          </Tabs.Item>
 
-      <Tabs aria-label="Deposit Tabs" className="" variant="underline">
-        <Tabs.Item active title="Deposit" icon={FaWallet}>
-          <CoinPurchaseForm />
-        </Tabs.Item>
+          <Tabs.Item title="Withdraw" icon={FaWallet}>
+            <WithdrawForm currentUser={currentUser} />
+          </Tabs.Item>
+        </Tabs>
 
-        <Tabs.Item title="Withdraw" icon={FaWallet}>
-          <WithdrawForm currentUser={currentUser} />
-        </Tabs.Item>
-      </Tabs>
-
-      <div className="mt-8">
-        <h2 className="mb-4 text-xl font-bold text-white">
-          Transaction History
-        </h2>
-        <div className="rounded-lg bg-gray-800 p-4 shadow-md">
-          {dummyTransactions.length === 0 ? (
-            <div className="p-6 text-center text-gray-500">
-              No transactions yet
-            </div>
-          ) : (
-            dummyTransactions
-              .sort((a, b) => b.createdAt.seconds - a.createdAt.seconds)
-              .map((transaction) => (
-                <TransactionItem
-                  key={transaction.transactionId}
-                  transaction={transaction as Transaction}
-                  user={transaction.user}
-                  gig={transaction.gig}
-                />
-              ))
-          )}
+        <div className="mt-4 lg:mt-0">
+          <h2 className="mb-4 text-xl font-bold text-white">
+            Transaction History
+          </h2>
+          <div className="scrollbar overflow-scroll rounded-lg bg-gray-800 p-4 shadow-md lg:max-h-screen">
+            {dummyTransactions.length === 0 ? (
+              <div className="p-6 text-center text-gray-500">
+                No transactions yet
+              </div>
+            ) : (
+              dummyTransactions
+                .sort((a, b) => b.createdAt.seconds - a.createdAt.seconds)
+                .map((transaction) => (
+                  <TransactionItem
+                    key={transaction.transactionId}
+                    transaction={transaction as Transaction}
+                    user={transaction.user}
+                    gig={transaction.gig}
+                  />
+                ))
+            )}
+            {dummyTransactions.length === 0 ? (
+              <div className="p-6 text-center text-gray-500">
+                No transactions yet
+              </div>
+            ) : (
+              dummyTransactions
+                .sort((a, b) => b.createdAt.seconds - a.createdAt.seconds)
+                .map((transaction) => (
+                  <TransactionItem
+                    key={transaction.transactionId}
+                    transaction={transaction as Transaction}
+                    user={transaction.user}
+                    gig={transaction.gig}
+                  />
+                ))
+            )}
+          </div>
         </div>
       </div>
     </div>
