@@ -143,7 +143,7 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
   console.log("Creating applications and chats...");
   for (const gigRef of gigRefs) {
     const availableApplicants = userRefs.filter(
-      (u) => u.id !== gigRef.gig.listerId,
+      (u) => u.id !== gigRef.gig.listerId, // Exclude the lister
     );
 
     for (let i = 0; i < APPLICATIONS_PER_GIG; i++) {
@@ -164,7 +164,9 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
       // Create chat first to get chatId
       const chatData: Partial<Chat> = {
         gigId: gigRef.id,
-        userId: applicant.id,
+        applicationId: "",
+        listerId: gigRef.gig.listerId,
+        applicantId: applicant.id,
       };
 
       const chatDoc = await addDoc(chatsRef(db), chatData);
@@ -188,14 +190,16 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
         application: applicationData as Application,
       });
 
-      // Create chat messages
+      // Create chat messages with the updated schema
       for (let j = 0; j < MESSAGES_PER_CHAT; j++) {
         const isFromLister = Math.random() > 0.5;
         const messageData: Partial<ChatMessage> = {
           senderId: isFromLister ? gigRef.gig.listerId : applicant.id,
+          sentToId: isFromLister ? applicant.id : gigRef.gig.listerId,
           content: faker.lorem.paragraph(),
           timestamp: getRecentDate(),
           chatId: chatDoc.id,
+          isRead: Math.random() > 0.5,
         };
 
         await addDoc(chatMessagesRef(db), messageData);
@@ -257,4 +261,4 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
     applications: applicationRefs.length,
     chats: chatRefs.length,
   };
-}d
+}

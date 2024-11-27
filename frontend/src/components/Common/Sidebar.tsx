@@ -1,3 +1,5 @@
+
+
 import React, { useState } from "react";
 import {
   FaHome,
@@ -29,7 +31,9 @@ function Sidebar() {
 
   return (
     <aside
-      className={`sticky top-0 h-screen ${isExpanded ? "w-64" : "w-20"} fixed flex flex-col justify-between bg-slate-800 p-4 text-white transition-all duration-300`}
+      className={`sticky top-0 h-screen ${
+        isExpanded ? "w-64" : "w-20"
+      } fixed flex flex-col justify-between bg-slate-800 p-4 text-white transition-all duration-300`}
       style={{ fontFamily: "Inter, sans-serif" }}
     >
       {/* Toggle Button */}
@@ -44,9 +48,12 @@ function Sidebar() {
       {isExpanded && user && (
         <div className="flex flex-col items-center">
           <UserProfilePicture
-            displayName={user.displayName || "Anonymous"}
-            picture={user.photoURL || ""}
+            user={{
+              name: user.displayName || "Anonymous",
+              profilePicture: user.photoURL || "",
+            }}
             size="large"
+            hoverDetails={false} // Disable hover details
             rounded
           />
           <h2 className="text-lg font-semibold text-blue-300">
@@ -148,7 +155,9 @@ function SidebarItem({
   return (
     <div
       onClick={onClick}
-      className={`flex cursor-pointer items-center rounded-lg p-3 transition-colors duration-200 ${isActive ? "bg-gray-900 text-white" : "text-blue-300"} ${isExpanded ? "justify-start gap-3" : "justify-center"}
+      className={`flex cursor-pointer items-center rounded-lg p-3 transition-colors duration-200 ${
+        isActive ? "bg-gray-900 text-white" : "text-blue-300"
+      } ${isExpanded ? "justify-start gap-3" : "justify-center"}
       hover:bg-blue-500 hover:bg-opacity-20`}
     >
       <div className={`text-lg ${isActive ? "text-white" : "text-blue-300"}`}>

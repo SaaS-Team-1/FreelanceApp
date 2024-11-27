@@ -12,6 +12,8 @@ interface BadgeProps {
   outline?: boolean; // Whether the badge is outlined
   rounded?: boolean; // Rounded corners
   textColor?: "black" | "white" | "primary"; // Text color
+  className?: string; // Custom class name
+
 }
 
 const colorClasses: { [key in NonNullable<BadgeProps['color']>]: string } = {
@@ -60,6 +62,8 @@ const Badge: React.FC<BadgeProps> = ({
   outline = false,
   rounded = false,
   textColor = "white",
+  className = "", // Default empty string for custom class
+
 }) => {
   const colorClass = colorClasses[color];
   const sizeClass = sizeClasses[size];
@@ -69,7 +73,7 @@ const Badge: React.FC<BadgeProps> = ({
 
   return (
     <span
-      className={`inline-flex items-center justify-center ${sizeClass} ${borderClass} ${colorClass} ${textClass} ${roundedClass} font-normal`}
+      className={`inline-flex items-center justify-center ${sizeClass} ${borderClass} ${colorClass} ${textClass} ${roundedClass} font-normal ${className}`}
       style={{ fontFamily: "'Inter', sans-serif" }}
     >
       {Icon && iconPosition === "left" && <Icon className="mr-2" />}
