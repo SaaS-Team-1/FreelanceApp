@@ -1,136 +1,322 @@
-import React, { useState } from "react";
+
+
+
+import { useState, useEffect } from "react";
+import { useFirestore, useUser } from "@/utils/reactfire";
+import {
+  getDocs,
+  query,
+  where,
+  orderBy,
+  doc,
+  getDoc,
+  limit,
+  onSnapshot,
+  addDoc,
+  Timestamp,
+} from "firebase/firestore";
+import {
+  chatsRef,
+  chatMessagesRef,
+  gigsRef,
+  applicationsRef,
+  usersRef,
+} from "@/utils/database/collections";
 import ChatHeader from "@/components/Chat/ChatHeader";
 import ChatWindow from "@/components/Chat/ChatWindow";
 import MessageInput from "@/components/Chat/MessageInput";
 import ChatCard from "@/components/Chat/ChatCard";
-import ConversationList from "@/components/Chat/ConversationList";
+import GigDetailsModal from "@/components/Chat/GigDetailsModal";
 
-// Mock User
-const mockUser = {
-  userId: "user1",
-  email: "user1@example.com",
-  displayName: "John Doe",
-  profile: {
-    bio: "Experienced freelance developer with a passion for creating amazing projects.",
-    credits: 120,
-    picture: "https://via.placeholder.com/80",
-    location: "New York, USA",
-  },
-  stats: {
-    completedGigs: 15,
-    averageRating: 4.8,
-  },
-  listedGigs: ["gig1", "gig2"],
-  activeApplications: ["application1"],
-  chatIds: ["chat1", "chat2"],
-};
+interface ExtendedChat {
+  id: string;
+  chatId: string;
+  gigId: string;
+  listerId: string;
+  applicantId: string;
+  applicationId: string;
+  partnerName?: string;
+  gigTitle?: string;
+  lastMessageTimestamp?: Timestamp | null; 
+}
 
 
+function ChatPage() {
+  const { data: user } = useUser();
+  const db = useFirestore();
+  const [chats, setChats] = useState<ExtendedChat[]>([]);
+  const [selectedChat, setSelectedChat] = useState<ExtendedChat | null>(null);
+  const [messages, setMessages] = useState<any[]>([]);
+  const [gig, setGig] = useState<any | null>(null);
+  const [application, setApplication] = useState<any | null>(null);
+  const [chatPartner, setChatPartner] = useState<any | null>(null);
+  const [isGigDetailsOpen, setIsGigDetailsOpen] = useState(false);
 
+ 
 
-const mockConversations = [
-  {
-    chatId: "chat1",
-    gigId: "gig1",
-    participants: ["user1", "user2"], // Example IDs
-    isApplicationChat: true,
-    gigStatus: "open",
-    messages: [
-      { messageId: "1", senderId: "user2", content: "Hello! Is this gig still available?", timestamp: new Date(), isRead: true },
-    ],
-  },
-  {
-    chatId: "chat2",
-    gigId: "gig2",
-    participants: ["user1", "user3"],
-    isApplicationChat: false,
-    gigStatus: "completed",
-    messages: [
-      { messageId: "2", senderId: "user3", content: "Thanks for assigning the gig!", timestamp: new Date(), isRead: true },
-    ],
-  },
-];
+  useEffect(() => {
+    if (user) {
+      const fetchChats = async () => {
+        try {
+          const listerChatsQuery = query(chatsRef(db), where("listerId", "==", user.uid));
+          const applicantChatsQuery = query(chatsRef(db), where("applicantId", "==", user.uid));
 
-const ChatView: React.FC = () => {
-  const currentUserId = mockUser.userId; // Using the mock user's ID
-  const [selectedChat, setSelectedChat] = useState(mockConversations[0]); // Default to the first chat
+          const listerChatsSnapshot = await getDocs(listerChatsQuery);
+          const listerChats = listerChatsSnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
 
-  const handleSelectConversation = (chatId: string) => {
-    const chat = mockConversations.find((c) => c.chatId === chatId);
-    if (chat) setSelectedChat(chat);
+          const applicantChatsSnapshot = await getDocs(applicantChatsQuery);
+          const applicantChats = applicantChatsSnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+
+          const allChats = [...listerChats, ...applicantChats] as ExtendedChat[];
+          for (const chat of allChats) {
+            const partnerId =
+              user.uid === chat.listerId ? chat.applicantId : chat.listerId;
+            const partnerDoc = await getDoc(doc(usersRef(db), partnerId));
+            const partnerData = partnerDoc.data();
+          
+            const gigDoc = await getDoc(doc(gigsRef(db), chat.gigId));
+            const gigData = gigDoc.data();
+          
+            const messageQuery = query(
+              chatMessagesRef(db),
+              where("chatId", "==", chat.chatId),
+              orderBy("timestamp", "desc"),
+              limit(1)
+            );
+            const lastMessageSnapshot = await getDocs(messageQuery);
+            const lastMessage = lastMessageSnapshot.docs[0]?.data() || null;
+          
+            chat.partnerName = partnerData?.displayName || "Unknown User";
+            chat.gigTitle = truncateString(gigData?.title || "Untitled Gig", 30);
+            chat.lastMessageTimestamp = lastMessage?.timestamp || null; // Ensure fallback to `null`
+          }
+          
+
+          // Sort chats by the last message timestamp
+          const sortedChats = allChats.sort((a, b) => {
+            const aTime = a.lastMessageTimestamp?.seconds || 0;
+            const bTime = b.lastMessageTimestamp?.seconds || 0;
+            return bTime - aTime; // Descending order
+          });
+
+          setChats(sortedChats);
+
+          if (sortedChats.length > 0) {
+            setSelectedChat(sortedChats[0]);
+          }
+        } catch (error) {
+          console.error("Error fetching chats:", error);
+        }
+      };
+
+      fetchChats();
+    }
+  }, [user, db]);
+
+  useEffect(() => {
+    const fetchDetails = async () => {
+      if (selectedChat) {
+        try {
+          const gigDoc = await getDoc(doc(gigsRef(db), selectedChat.gigId));
+          setGig(gigDoc.data());
+
+          const applicationDoc = await getDoc(
+            doc(applicationsRef(db), selectedChat.applicationId)
+          );
+          setApplication(applicationDoc.data());
+
+          const partnerId =
+            user?.uid === selectedChat.listerId
+              ? selectedChat.applicantId
+              : selectedChat.listerId;
+          const partnerDoc = await getDoc(doc(usersRef(db), partnerId));
+          setChatPartner(partnerDoc.data());
+        } catch (error) {
+          console.error("Error fetching details:", error);
+        }
+      }
+    };
+
+    fetchDetails();
+  }, [selectedChat, user, db]);
+
+  useEffect(() => {
+    if (selectedChat) {
+      const q = query(
+        chatMessagesRef(db),
+        where("chatId", "==", selectedChat.chatId),
+        orderBy("timestamp", "asc")
+      );
+
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const messagesData = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            ...data,
+            timestamp: data.timestamp || null, // Ensure fallback for null timestamps
+          };
+        });
+        setMessages(messagesData);
+      });
+
+      return () => unsubscribe();
+    }
+  }, [selectedChat, db]);
+
+  const truncateString = (str: string, maxLength: number) => {
+    return str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
   };
 
-  const handleSendMessage = (message: string) => {
-    const updatedChat = { ...selectedChat };
-    updatedChat.messages.push({
-      messageId: Date.now().toString(),
-      senderId: currentUserId,
-      content: message,
-      timestamp: new Date(),
-      isRead: false,
+  const formatTimestamp = (timestamp: Timestamp | null | undefined) => {
+    if (!timestamp) return "N/A";
+    const date = new Date(timestamp.seconds * 1000);
+    const now = new Date();
+  
+    if (now.toDateString() === date.toDateString()) {
+      return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    } else if (now.getTime() - date.getTime() < 7 * 24 * 60 * 60 * 1000) {
+      return date.toLocaleDateString([], { weekday: "long" });
+    } else {
+      return date.toLocaleDateString([], { month: "short", day: "numeric" });
+    }
+  };
+  
+  
+
+
+  const handleMessageSent = () => {
+    if (!selectedChat) return;
+  
+    // Update the `lastMessageTimestamp` for the selected chat
+    const updatedChats = chats.map((chat) =>
+      chat.chatId === selectedChat.chatId
+        ? {
+            ...chat,
+            lastMessageTimestamp: Timestamp.now(), // Set the new message's timestamp
+          }
+        : chat
+    );
+  
+    // Sort the chats so the selected chat moves to the top
+    updatedChats.sort((a, b) => {
+      const aTime = a.lastMessageTimestamp?.seconds || 0;
+      const bTime = b.lastMessageTimestamp?.seconds || 0;
+      return bTime - aTime; // Descending order
     });
-    setSelectedChat(updatedChat);
+  
+    setChats(updatedChats);
   };
+  
+  
+
+  
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Sidebar with conversations */}
-      {/* <ConversationList
-        conversations={mockConversations.map((conv) => ({
-          id: conv.chatId,
-          name: `Chat with ${conv.participants.find((id) => id !== currentUserId)}`,
-          profilePicture: "https://via.placeholder.com/40",
-          lastMessage: conv.messages[conv.messages.length - 1]?.content || "",
-        }))}
-        onSelectConversation={handleSelectConversation}
-        selectedConversationId={selectedChat.chatId}
-      /> */}
+    <div className="h-screen bg-slate-600 rounded-lg p-4">
+      <div className="flex max-w-7xl h-full max-h-[95%] bg-gray-800 rounded-lg overflow-hidden">
+        <div className="w-3/8 bg-gray-800 overflow-y-auto border-r scrollbar">
+          <h2 className="text-lg font-bold p-4 text-white">Active Chats</h2>
+          {chats.map((chat) => (
+            <div
+              key={chat.chatId}
+              onClick={() => setSelectedChat(chat)}
+              className={`p-4 cursor-pointer flex justify-between ${
+                chat.chatId === selectedChat?.chatId
+                  ? "bg-blue-700 text-white"
+                  : "bg-gray-700 text-gray-100"
+              } hover:bg-blue-500`}
+            >
+              <div>
+                <p className="font-bold truncate">{chat.partnerName}</p>
+                <p className="text-sm text-gray-400 truncate">{chat.gigTitle}</p>
+              </div>
+              <p className="text-sm text-gray-300">
+                {formatTimestamp(chat.lastMessageTimestamp)}
+              </p>
+            </div>
+          ))}
+        </div>
 
-      {/* Chat panel */}
-      <div className="flex flex-col flex-1 bg-gray-100 dark:bg-gray-800">
-        <ChatHeader
-          user={{
-            name: `Chat with ${selectedChat.participants.find((id) => id !== currentUserId)}`,
-            profilePicture: "https://via.placeholder.com/40",
-          }}
-          status={selectedChat.gigStatus}
-        />
-        <ChatWindow
-          messages={selectedChat.messages.map((msg) => ({
-            text: msg.content,
-            timestamp: msg.timestamp.toLocaleTimeString(),
-            isSentByCurrentUser: msg.senderId === currentUserId,
-          }))}
-        />
-        <ChatCard
-          userId={currentUserId}
-          isLister={selectedChat.participants[0] === currentUserId}
-          gig={{
-            gigId: selectedChat.gigId,
-            title: "Mock Gig Title",
-            description: "Mock description",
-            category: "Mock Category",
-            price: 100,
-            dueDate: new Date(),
-            status: selectedChat.gigStatus,
-            listerId: selectedChat.participants[0],
-            selectedApplicantId: selectedChat.participants[1],
-            applications: [],
-            createdAt: new Date(),
-          }}
-          chat={selectedChat}
-          onAssignGig={(applicantId) => console.log("Assign gig to:", applicantId)}
-          onRejectApplication={(applicationId) => console.log("Reject application:", applicationId)}
-          onMarkComplete={() => console.log("Mark gig as complete")}
-          onRate={(rating, comment) => console.log("Rate user with:", rating, comment)}
-          onCancelGig={() => console.log("Cancel gig")}
-          onApplyToGig={() => console.log("Apply to gig")}
-          onCancelApplication={() => console.log("Cancel application")}
-        />
-        <MessageInput onSend={handleSendMessage} />
+        <div className="w-4/5 flex-1 flex flex-col overflow-y-auto bg-slate-600">
+          {selectedChat ? (
+            <>
+              <ChatHeader
+                user={{
+                  name: chatPartner?.displayName || "Unknown User",
+                  profilePicture: chatPartner?.profile?.picture || "",
+                  bio: chatPartner?.profile?.bio,
+                  location: chatPartner?.profile?.location,
+                  completedGigs: chatPartner?.stats?.completedGigs,
+                  averageRating: chatPartner?.stats?.averageRating,
+                }}
+                status={
+                  user?.uid === selectedChat?.listerId
+                    ? gig?.status || "Unknown"
+                    : application?.status || "Unknown"
+                }
+                isLister={user?.uid === selectedChat?.listerId}
+                onSeeGigDetails={() => setIsGigDetailsOpen(true)}
+              />
+
+              <div className="w-4/5 flex-1 overflow-y-auto bg-gray-800 p-4 scrollbar">
+                <ChatWindow
+                  messages={messages.map((message) => ({
+                    text: message.content,
+                    timestamp: message.timestamp
+                      ? new Date(message.timestamp.seconds * 1000).toLocaleString()
+                      : "N/A",
+                    isSentByCurrentUser: message.senderId === user?.uid,
+                  }))}
+                />
+                {gig && (
+                  <div className="mt-4 flex justify-center">
+                    <ChatCard
+                      gig={gig}
+                      application={application}
+                      userId={user?.uid || ""}
+                    />
+                  </div>
+                )}
+              </div>
+
+            <MessageInput
+              chatId={selectedChat.chatId}
+              currentUserId={user?.uid || ""}
+              recipientId={
+                selectedChat.listerId === user?.uid
+                  ? selectedChat.applicantId
+                  : selectedChat.listerId
+              }
+              db={db}
+              onMessageSent={handleMessageSent} // Notify parent after message is sent
+            />
+
+
+            </>
+          ) : (
+            <div className="flex items-center justify-center text-gray-500">
+              No chat selected
+            </div>
+          )}
+        </div>
       </div>
+
+      {isGigDetailsOpen && gig && (
+        <GigDetailsModal
+          gig={gig}
+          lister={chatPartner}
+          onClose={() => setIsGigDetailsOpen(false)}
+        />
+      )}
     </div>
   );
-};
+}
 
-export default ChatView;
+export default ChatPage;

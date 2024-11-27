@@ -1,40 +1,64 @@
 
+
+
 import React, { useState } from "react";
+import { addDoc } from "firebase/firestore";
+import { chatMessagesRef } from "@/utils/database/collections";
+import { Timestamp } from "firebase/firestore";
+
 
 interface MessageInputProps {
-  onSend: (message: string) => void;
+  chatId: string;
+  currentUserId: string;
+  recipientId: string;
+  db: any;
+  onMessageSent: () => void; // New callback prop
 }
 
-const MessageInput: React.FC<MessageInputProps> = ({ onSend }) => {
+const MessageInput: React.FC<MessageInputProps> = ({
+  chatId,
+  currentUserId,
+  recipientId,
+  db,
+  onMessageSent,
+}) => {
   const [message, setMessage] = useState("");
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (message.trim()) {
-      onSend(message);
-      setMessage("");
+      try {
+        await addDoc(chatMessagesRef(db), {
+          chatId,
+          senderId: currentUserId,
+          sentToId: recipientId,
+          content: message,
+          timestamp: Timestamp.now(), // Use Timestamp from Firestore
+          isRead: false,
+        });
+        setMessage("");
+        onMessageSent(); // Notify parent component to update chats
+      } catch (error) {
+        console.error("Error sending message:", error);
+      }
     }
   };
+  
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter") {
-      if (e.shiftKey) {
-        // setMessage((prevMessage) => prevMessage + "\n");
-      } else {
-        // enter = send the message
-        e.preventDefault();
-        handleSend();
-      }
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
     }
   };
 
   return (
-    <div className="p-4 bg-slate-700 flex items-center border-t border-gray-700">
+    <div className="w-4/5 p-4 bg-gray-800 flex items-center border-t border-gray-700">
       <textarea
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="Type your message here..."
-        className="flex-1 p-3 rounded-lg bg-gray-800 text-white outline-none placeholder-gray-500 resize-none h-12"
+        className="flex-1 p-3 rounded-lg bg-gray-800 text-white outline-none placeholder-gray-500 resize-none h-12 overflow-y-auto scrollbar"
       />
       <button
         onClick={handleSend}

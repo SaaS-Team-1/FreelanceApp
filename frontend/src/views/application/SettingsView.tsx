@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import SettingGroup from '@/components/Settings/SettingGroup';
-import DeleteAccount from '@/components/Settings/DeleteAccount'; // Import DeleteAccount
-import { SettingItemProps } from '@/components/Settings/SettingItem';
+import React, { useState } from "react";
+import SettingGroup from "@/components/Settings/SettingGroup";
+import DeleteAccount from "@/components/Settings/DeleteAccount"; // Import DeleteAccount
+import { SettingItemProps } from "@/components/Settings/SettingItem";
 
 export default function SettingsView() {
   // State for toggle switches
@@ -12,27 +12,22 @@ export default function SettingsView() {
 
   // Define the settings for each group
   const accountSettings: SettingItemProps[] = [
-    { name: 'Email', subtitle: 'aymericbaume@gmail.com', type: 'none' },
-    { name: 'Password', subtitle: 'Update your password', type: 'arrow' },
-    {
-      name: 'Delete Account',
-      subtitle: 'Permanently delete your account',
-      type: 'custom', // Custom type to render a custom component
-    },
+    { name: "Email", subtitle: "aymericbaume@gmail.com", type: "none" },
+    { name: "Password", subtitle: "Update your password", type: "custom" },
   ];
 
   const privacySettings = [
     {
-      name: 'Show Public Profile',
-      subtitle: 'Allow others to see your profile information',
-      type: 'toggle',
+      name: "Show Public Profile",
+      subtitle: "Allow others to see your profile information",
+      type: "toggle",
       isToggled: showPublicProfile,
       onToggle: () => setShowPublicProfile(!showPublicProfile),
     },
     {
-      name: 'Allow Search',
-      subtitle: 'Allow users to search for you',
-      type: 'toggle',
+      name: "Allow Search",
+      subtitle: "Allow users to search for you",
+      type: "toggle",
       isToggled: allowSearch,
       onToggle: () => setAllowSearch(!allowSearch),
     },
@@ -40,16 +35,16 @@ export default function SettingsView() {
 
   const appSettings = [
     {
-      name: 'Message Notifications',
-      subtitle: 'Get notifications when receiving messages from other users',
-      type: 'toggle',
+      name: "Message Notifications",
+      subtitle: "Get notifications when receiving messages from other users",
+      type: "toggle",
       isToggled: msgNotificationsEnabled,
       onToggle: () => setMsgNotificationsEnabled(!msgNotificationsEnabled),
     },
     {
-      name: 'Gig Notifications',
-      subtitle: 'Get notifications regarding gig updates',
-      type: 'toggle',
+      name: "Gig Notifications",
+      subtitle: "Get notifications regarding gig updates",
+      type: "toggle",
       isToggled: gigNotificationsEnabled,
       onToggle: () => setGigNotificationsEnabled(!gigNotificationsEnabled),
     },
@@ -60,17 +55,17 @@ export default function SettingsView() {
       <div className="w-full max-w-3xl p-6">
         {/* Header */}
         <div className="mb-4 text-center">
-          <h2 className="text-2xl font-semibold text-white">
-            Settings
-          </h2>
+          <h2 className="text-2xl font-semibold text-white">Settings</h2>
         </div>
 
         {/* Setting Groups */}
-        <div className="space-y-6 max-w-full">
+        <div className="max-w-full space-y-6">
           <SettingGroup title="Account" settings={accountSettings} />
           <SettingGroup title="Privacy" settings={privacySettings} />
           <SettingGroup title="App" settings={appSettings} />
-          <DeleteAccount />
+          <div className="flex justify-end">
+            <DeleteAccount />
+          </div>
         </div>
       </div>
     </div>

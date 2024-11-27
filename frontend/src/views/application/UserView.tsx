@@ -16,7 +16,7 @@ export default function UserView() {
         <div className="flex-1 p-6">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
-              MyPostedGigsView
+              My Profile
               {UID}
             </h2>
             <div className="flex space-x-4"></div>

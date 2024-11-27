@@ -1,4 +1,4 @@
-import { doc, setDoc, Timestamp } from "firebase/firestore";
+import { doc, setDoc, Timestamp, updateDoc } from "firebase/firestore";
 import { faker } from "@faker-js/faker";
 import { addDoc, Firestore } from "firebase/firestore";
 import {
@@ -19,7 +19,11 @@ import {
   Rating,
   Transaction,
 } from "./schema";
-import { Auth, createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  Auth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
 
 // Configuration
 const NUM_USERS = 20;
@@ -77,14 +81,19 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
       "password123",
     );
 
+    await updateProfile(authUser.user, {
+      displayName: faker.person.fullName(),
+      photoURL: faker.image.avatar(),
+    });
+
     const userData: User = {
       userId: authUser.user.uid,
       email: email,
-      displayName: faker.person.fullName(),
+      displayName: authUser.user.displayName || "",
       profile: {
         bio: faker.lorem.paragraph(),
         credits: faker.number.int({ min: 100, max: 1000 }),
-        picture: faker.image.avatar(),
+        picture: authUser.user.photoURL || "",
         location: faker.helpers.arrayElement(LOCATIONS),
       },
       stats: {
@@ -96,7 +105,6 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
         }),
       },
     };
-
     await setDoc(doc(db, "users", userData.userId), userData);
     userRefs.push({ id: userData.userId, user: userData });
   }
@@ -117,8 +125,7 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
         ? "awaiting-confirmation"
         : "open";
 
-      const gigData: Gig = {
-        gigId: faker.string.uuid(),
+      const gigData: Partial<Gig> = {
         title: faker.lorem.sentence(),
         description: faker.lorem.paragraphs(2),
         location: faker.helpers.arrayElement(LOCATIONS),
@@ -131,10 +138,9 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
         createdAt: getRecentDate(),
         updatedAt: getRecentDate(),
       };
-
       const gigDoc = await addDoc(gigsRef(db), gigData);
       gigData.gigId = gigDoc.id;
-      gigRefs.push({ id: gigDoc.id, gig: gigData });
+      gigRefs.push({ id: gigDoc.id, gig: gigData as Gig });
     }
   }
 
@@ -142,7 +148,7 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
   console.log("Creating applications and chats...");
   for (const gigRef of gigRefs) {
     const availableApplicants = userRefs.filter(
-      (u) => u.id !== gigRef.gig.listerId,
+      (u) => u.id !== gigRef.gig.listerId, // Exclude the lister
     );
 
     for (let i = 0; i < APPLICATIONS_PER_GIG; i++) {
@@ -162,18 +168,18 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
       }
 
       // Create chat first to get chatId
-      const chatData: Chat = {
-        chatId: faker.string.uuid(),
+      const chatData: Partial<Chat> = {
         gigId: gigRef.id,
-        userId: applicant.id,
+        applicationId: "",
+        listerId: gigRef.gig.listerId,
+        applicantId: applicant.id,
       };
 
       const chatDoc = await addDoc(chatsRef(db), chatData);
       chatData.chatId = chatDoc.id;
-      chatRefs.push({ id: chatDoc.id, chat: chatData });
+      chatRefs.push({ id: chatDoc.id, chat: chatData as Chat });
 
-      const applicationData: Application = {
-        applicationId: faker.string.uuid(),
+      const applicationData: Partial<Application> = {
         gigId: gigRef.id,
         applicantId: applicant.id,
         listerId: gigRef.gig.listerId,
@@ -187,17 +193,19 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
       applicationData.applicationId = applicationDoc.id;
       applicationRefs.push({
         id: applicationDoc.id,
-        application: applicationData,
+        application: applicationData as Application,
       });
 
-      // Create chat messages
+      // Create chat messages with the updated schema
       for (let j = 0; j < MESSAGES_PER_CHAT; j++) {
         const isFromLister = Math.random() > 0.5;
-        const messageData: ChatMessage = {
+        const messageData: Partial<ChatMessage> = {
           senderId: isFromLister ? gigRef.gig.listerId : applicant.id,
+          sentToId: isFromLister ? applicant.id : gigRef.gig.listerId,
           content: faker.lorem.paragraph(),
           timestamp: getRecentDate(),
           chatId: chatDoc.id,
+          isRead: Math.random() > 0.5,
         };
 
         await addDoc(chatMessagesRef(db), messageData);
@@ -211,8 +219,7 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
     (g) => g.gig.status === "completed" && g.gig.selectedApplicantId,
   )) {
     if (Math.random() < RATING_RATE && gigRef.gig.selectedApplicantId) {
-      const ratingData: Rating = {
-        ratingId: faker.string.uuid(),
+      const ratingData: Omit<Rating, "ratingId"> = {
         gigId: gigRef.id,
         byUserId: gigRef.gig.listerId,
         byUserDisplayName:
@@ -224,8 +231,7 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
         createdAt: getRecentDate(),
       };
 
-      const ratingDoc = await addDoc(ratingsRef(db), ratingData);
-      ratingData.ratingId = ratingDoc.id;
+      await addDoc(ratingsRef(db), ratingData);
     }
   }
 
@@ -235,17 +241,21 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
     (g) => g.gig.status === "completed" && g.gig.selectedApplicantId,
   )) {
     if (gigRef.gig.selectedApplicantId) {
-      const transactionData: Transaction = {
-        transactionId: faker.string.uuid(),
+      const transactionData: Omit<Transaction, "transactionId"> = {
         senderId: gigRef.gig.listerId,
         receiverId: gigRef.gig.selectedApplicantId,
         gigId: gigRef.id,
         amount: gigRef.gig.price,
         createdAt: getRecentDate(),
+        kind: faker.helpers.arrayElement([
+          "deposit",
+          "withdraw",
+          "send",
+          "recieve",
+        ]),
       };
 
-      const transactionDoc = await addDoc(transactionsRef(db), transactionData);
-      transactionData.transactionId = transactionDoc.id;
+      await addDoc(transactionsRef(db), transactionData);
     }
   }
 

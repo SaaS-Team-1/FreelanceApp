@@ -1,6 +1,6 @@
 import React from "react";
 import SettingItem, { SettingItemProps } from "./SettingItem";
-import DeleteAccount from "./DeleteAccount";
+import ChangePassword from "./ChangePassword";
 
 interface SettingGroupProps{
   title: string;
@@ -22,7 +22,7 @@ const SettingGroup = ({ title, settings }: SettingGroupProps) => {
               onToggle={setting.onToggle} // Pass the toggle handler
               isToggled={setting.isToggled} // Pass the toggle state
             >
-            <DeleteAccount />
+            <ChangePassword />
             </SettingItem>
             {index < settings.length - 1 && (
               <hr className="my-4 border-gray-700" /> // Divider between items
