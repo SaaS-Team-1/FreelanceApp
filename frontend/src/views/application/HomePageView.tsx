@@ -3,10 +3,10 @@ import { useState, useEffect } from "react";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { useUser, useFirestore } from "@/utils/reactfire";
 import { Gig, User, Notification } from "@/utils/database/schema";
-import { SearchBar } from "@/components/Common/SearchBar";
 import NotificationList from "@/components/Notifications/NotificationsList";
 import PostedGigListHome from "@/components/Gigs/PostedGigListHome";
 import FilterButton from "@/components/Buttons/FilterButton"; // Assuming this component is imported
+import MyPostedGigListCompressed from "@/components/Gigs/MyPostedGigListCompressed";
 
 export default function OverviewView() {
   const { data: user } = useUser();
@@ -17,6 +17,8 @@ export default function OverviewView() {
   const [openGigs, setOpenGigs] = useState<{ gig: Gig; lister: User }[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [myPostedGigs, setMyPostedGigs] = useState<Gig[]>([]);
+  const [extendedUser, setExtendedUser] = useState<User | null>(null);
 
   const fetchNotifications = async () => {
     if (!user) return;
@@ -102,6 +104,47 @@ export default function OverviewView() {
     }
   };
 
+  const fetchMyPostedGigs = async () => {
+    if (!user) return;
+
+    try {
+      const gigsRef = collection(db, "gigs");
+      const q = query(gigsRef, where("listerId", "==", user.uid)); // Filter for user.uid
+      const querySnapshot = await getDocs(q);
+
+      const myGigs = querySnapshot.docs.map((doc) => ({
+        ...doc.data(),
+        gigId: doc.id, // Ensure gigId is included
+      })) as Gig[]; // Cast the mapped objects as Gig[]
+
+      setMyPostedGigs(myGigs);
+    } catch (error) {
+      console.error("Error fetching my posted gigs: ", error);
+      return [];
+    }
+  };
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      if (!user) return;
+  
+      try {
+        const usersRef = collection(db, "users");
+        const userQuery = query(usersRef, where("userId", "==", user.uid));
+        const userSnapshot = await getDocs(userQuery);
+  
+        if (!userSnapshot.empty) {
+          const userData = userSnapshot.docs[0].data() as User; // Cast Firestore data to User type
+          setExtendedUser(userData);
+        }
+      } catch (error) {
+        console.error("Error fetching extended user details: ", error);
+      }
+    };
+  
+    fetchUserDetails();
+  }, [user]);
+
   useEffect(() => {
     fetchNotifications();
   }, [user]);
@@ -109,6 +152,10 @@ export default function OverviewView() {
   useEffect(() => {
     fetchOpenGigsAndCategories();
   }, [searchQuery, selectedCategories]); // Re-fetch gigs whenever the search query changes
+
+  useEffect(() => {
+    fetchMyPostedGigs();
+  }, [user]);
 
   const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -183,6 +230,8 @@ export default function OverviewView() {
         style={{ bottom: "2px" }}
       >
         <NotificationList notifications={notifications} />
+
+        {extendedUser && <MyPostedGigListCompressed gigs={myPostedGigs} user={extendedUser} />}
 
         <button className="flex max-w-sm items-center justify-center rounded-full bg-orange-500 py-3 text-sm font-semibold text-white">
           + Upload new gig
