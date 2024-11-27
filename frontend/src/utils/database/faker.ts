@@ -78,7 +78,7 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
     const authUser = await createUserWithEmailAndPassword(
       auth,
       email,
-      "password123",
+      "password",
     );
 
     await updateProfile(authUser.user, {
