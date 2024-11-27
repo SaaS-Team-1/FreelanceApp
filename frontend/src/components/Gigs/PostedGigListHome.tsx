@@ -77,7 +77,7 @@ function PostedGigListHome({
           )}
           
           {showCompletedButton && (
-            <div className="absolute right-16 top-5">
+            <div className="absolute right-12 top-5">
               <CustomButton
                 label="Completed Gig"
                 onClick={() => alert(`Completed gig: ${gig.title}`)}
@@ -90,7 +90,7 @@ function PostedGigListHome({
           )}
 
           {showChatIcon && (
-            <div className="absolute right-4 top-6">
+            <div className="absolute right-2 top-6">
               <CustomButton
                 onClick={() => alert(`Start chat for ${gig.title}`)}
                 color="primary"
@@ -105,7 +105,7 @@ function PostedGigListHome({
 
           <div className="mb-2 flex items-center">
             <div className="ml-3 flex flex-col">
-              <h3 className="text-lg font-semibold text-white">{gig.title}</h3>
+              <h3 className="whitespace-normal break-words text-lg font-semibold text-white pr-[120px]">{gig.title}</h3>
               {showDateWithLine && (
                 <p className="mt-1 text-xs text-orange-500">
                   {formatDate(gig.dueDate)}
@@ -116,8 +116,8 @@ function PostedGigListHome({
 
           {showDateWithLine && <div className="mt-1 border-t border-white"></div>}
           
-          <p className="mt-2 text-gray-300">
-            {gig.description.length > 100 ? gig.description.slice(0, 100) + "..." : gig.description}
+          <p className="mt-2 whitespace-normal break-words text-gray-300">
+            {gig.description.length >70? gig.description.slice(0, 70) + "..." : gig.description}
           </p>
 
           <div className="mt-2 flex flex-wrap items-center gap-2">
