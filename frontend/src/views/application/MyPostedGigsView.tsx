@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FaFilter } from "react-icons/fa";
-import PostedGigListHome from "@/components/Gigs/PostedGigListHome";
+import PostedGigList from "@/components/Gigs/MyPostedGigList";
 import GigDetails from "@/components/Gigs/GigDetails";
 import InterestedGigglers from "@/components/Gigs/InterestedGigglers";
 import { Gig, User, Application } from "@/utils/database/schema";
@@ -14,6 +14,7 @@ import {
   doc,
   serverTimestamp,
 } from "firebase/firestore";
+import { user } from "rxfire/auth";
 
 function MyPostedGigsView() {
   const db = useFirestore();
@@ -199,7 +200,7 @@ function MyPostedGigsView() {
             )}
           </div>
         </div>
-        <PostedGigListHome
+        <PostedGigList
           gigs={filteredGigs}
           onSelectGig={handleSelectGig}
           selectedGig={selectedGig}

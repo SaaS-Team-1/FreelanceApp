@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import PostedGigListHome from "@/components/Gigs/PostedGigListHome";
+import PostedGigList from "@/components/Gigs/MyPostedGigList";
 import GigDetails from "@/components/Gigs/GigDetails";
 import { Gig, User } from "@/utils/database/schema";
 import { query, Timestamp, where, getDocs, doc, updateDoc,getDoc,deleteDoc } from "firebase/firestore";
@@ -191,7 +191,7 @@ function ScheduleView() {
         <div className="flex gap-6 w-full flex-shrink-0 snap-center">
           <div className="w-[50%] rounded-lg bg-gray-800 dark:text-white p-4 shadow-lg">
             <h1 className="mb-3 text-xl font-bold">Scheduled Gigs</h1>
-            <PostedGigListHome
+            <PostedGigList
               gigs={inProgressGigs}
               showDateWithLine={true}
               showCompletedButton={true}
@@ -203,7 +203,7 @@ function ScheduleView() {
           </div>
           <div className="w-[50%] rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
             <h1 className="mb-3 text-xl font-bold">Pending Gigs</h1>
-            <PostedGigListHome
+            <PostedGigList
               gigs={pendingGigs}
               showDateWithLine={true}
               showUndoButton={true}
@@ -217,7 +217,7 @@ function ScheduleView() {
         <div className="flex gap-6 w-full flex-shrink-0 snap-center">
           <div className="w-[50%] rounded-lg bg-gray-800 dark:text-white p-4 shadow-lg">
             <h1 className="mb-3 text-xl font-bold">Awaiting Approval</h1>
-            <PostedGigListHome
+            <PostedGigList
               gigs={awaitingApprovalGigs}
               showDateWithLine={true}
               showChatIcon={true}
@@ -226,7 +226,7 @@ function ScheduleView() {
           </div>
           <div className="w-[50%] rounded-lg bg-gray-800  dark:text-white p-4 shadow-lg">
             <h1 className="mb-3 text-xl font-bold">Completed Gigs</h1>
-            <PostedGigListHome
+            <PostedGigList
               gigs={completedGigs}
               showDateWithLine={true}
               showChatIcon={false}
