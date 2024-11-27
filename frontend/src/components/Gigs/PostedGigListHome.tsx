@@ -58,13 +58,12 @@ function PostedGigListHome({
           key={index}
           className={`relative rounded-lg p-4 shadow-lg transition-transform duration-200 ease-in-out ${
             selectedGig && selectedGig.title === gig.title
-              ? "bg-[rgba(5,54,78,0.59)] text-white" // Selected gig style
+              ? "bg-[rgba(5,54,78,0.59)] text-white"
               : "bg-gray-900 text-gray-300"
           } ${enableSelection ? "cursor-pointer" : ""} 
             ${hoverEffect ? "hover:bg-gray-700" : ""}`} // Hover effect applied conditionally
           onClick={() => enableSelection && handleSeeMoreClick(gig, lister)} // Conditional click handler
         >
-          {/* Conditionally render UndoButton at the top-right corner */}
           {showUndoButton && (
             <div className="absolute right-4 top-4">
               <UndoButton
@@ -72,12 +71,12 @@ function PostedGigListHome({
               />
             </div>
           )}
-          {/* Conditionally render the Completed Gig button */}
+          
           {showCompletedButton && (
-            <div className="absolute right-16 top-5">
+            <div className="absolute right-12 top-5">
               <CustomButton
                 label="Completed Gig"
-                onClick={() => alert(`Completed gig: ${gig.title}`)} // Replace with desired functionality
+                onClick={() => onCompleteClick && onCompleteClick(gig.gigId)}
                 color="green"
                 textColor="white"
                 size="small"
@@ -86,26 +85,23 @@ function PostedGigListHome({
             </div>
           )}
 
-          {/* Conditionally render the Chat Icon */}
           {showChatIcon && (
-            <div className="absolute right-4 top-6">
+            <div className="absolute right-2 top-6">
               <CustomButton
-                onClick={() => alert(`Start chat for ${gig.title}`)} // Replace with actual chat functionality
+                onClick={() => handleMessageClick(lister.userId)}
                 color="primary"
                 textColor="white"
                 size="small"
-                icon={FaComments} // Only icon without text
+                icon={FaComments}
                 iconPosition="middle"
                 rounded={true}
               />
             </div>
           )}
 
-          {/* Render profile picture and title/date in the same row */}
           <div className="mb-2 flex items-center">
             <div className="ml-3 flex flex-col">
-              <h3 className="text-lg font-semibold text-white">{gig.title}</h3>
-              {/* Optional date display next to avatar */}
+              <h3 className="whitespace-normal break-words text-lg font-semibold text-white pr-[120px]">{gig.title}</h3>
               {showDateWithLine && (
                 <p className="mt-1 text-xs text-orange-500">
                   {new Date(gig.dueDate.seconds * 1000).toLocaleDateString(
@@ -135,7 +131,6 @@ function PostedGigListHome({
               : gig.description}
           </p>
 
-          {/* Render gig details as badges */}
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <Badge
               label={gig.category}
@@ -155,7 +150,6 @@ function PostedGigListHome({
               rounded={true}
               size="small"
             />
-            {/* Display the location based on the gig */}
             <Badge
               label={gig.location}
               color="beige"
@@ -167,7 +161,6 @@ function PostedGigListHome({
             />
           </div>
 
-          {/* Conditionally render the "See More" button */}
           {showSeeMoreButton && (
             <div className="mt-1 flex justify-end">
               <CustomButton

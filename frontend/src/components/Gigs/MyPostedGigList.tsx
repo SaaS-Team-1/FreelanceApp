@@ -1,62 +1,184 @@
-// src/components/Gigs/MyPostedGigList.tsx
 import React from "react";
-import MyPostedGigItem from "./MyPostedGigItem";
+import { FaComments } from "react-icons/fa";
+import PostedGigItemHome from "./PostedGigItemHome";
+import { Gig, User } from "@/utils/database/schema";
+import Badge from "@/components/Buttons/CustomBadge";
+import CustomButton from "@/components/Buttons/CustomButton";
+import { UndoButton } from "@/components/Buttons/UndoButton";
+import { useNavigate } from "react-router-dom";
 
-const MyPostedGigList: React.FC = () => {
-  // Sample data for the list of gigs
-  const gigs = [
-    {
-      title: "Video Editor Needed",
-      description:
-        "I'm looking for a creative video editor to produce a captivating 10-20 second intro for my project centered around peaceful...",
-      dateRange: "20 November - 23 November",
-      category: "Video Editing",
-      location: "Leuven",
-      price: "60€",
-      avatarUrl: "https://via.placeholder.com/40", // Replace with actual image URL
-    },
-    {
-      title: "Airport Pickup Charleroi",
-      description:
-        "I need someone to pick me up from Charleroi Airport and drop me off in Leuven.",
-      dateRange: "12 December",
-      category: "Transport",
-      location: "Charleroi",
-      price: "30€",
-      avatarUrl: "https://via.placeholder.com/40", // Replace with actual image URL
-    },
-    {
-      title: "Chemistry Tutoring",
-      description:
-        "Looking for a tutor to help with high school level chemistry topics, focusing on exam preparation.",
-      dateRange: "23 November",
-      category: "Tutoring",
-      location: "Leuven",
-      price: "TBD",
-      avatarUrl: "https://via.placeholder.com/40", // Replace with actual image URL
-    },
-  ];
+
+interface PostedGigListProps {
+  gigs: { gig: Gig; lister: User }[];
+  onSelectGig?: (gig: Gig) => void;
+  onSeeMoreClick?: (gig: Gig) => void;
+  onCompleteClick?: (gigId: string) => void;
+  onUndoClick ? :(gigId: string) => void;
+  enableSelection?: boolean;
+  selectedGig?: Gig | null;
+  showSeeMoreButton?: boolean;
+  showChatIcon?: boolean;
+  showCompletedButton?: boolean;
+  showDateWithLine?: boolean;
+  showUndoButton?: boolean;
+  hoverEffect?: boolean;
+}
+
+function PostedGigList({
+  gigs,
+  onSelectGig,
+  onSeeMoreClick,
+  onCompleteClick,
+  onUndoClick ,
+  enableSelection = true,
+  selectedGig = null,
+  showSeeMoreButton = true,
+  showChatIcon = false,
+  showCompletedButton = false,
+  showDateWithLine = false,
+  showUndoButton = false,
+  hoverEffect = true,
+}: PostedGigListProps) {
+  const navigate = useNavigate();
+
+  const formatDate = (dueDate: any) => {
+    try {
+      // Handle different date formats
+      const date = dueDate?.seconds 
+        ? new Date(dueDate.seconds * 1000)  // Firestore timestamp
+        : dueDate instanceof Date 
+        ? dueDate                           // JavaScript Date object
+        : new Date(dueDate);                // String or number timestamp
+
+      return date.toLocaleDateString("en-GB", {
+        weekday: "long",
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "Date unavailable";
+    }
+  };
+  
+
+  const handleMessageClick = (userId: string) => {
+    navigate(`/app/chat?user=${userId}`);
+  };
 
   return (
-    <div className="p-6 bg-gray-900 rounded-2xl shadow-xl border border-gray-700 space-y-4">
-      {gigs.map((gig, index) => (
-        <React.Fragment key={index}>
-          <MyPostedGigItem
-            title={gig.title}
-            description={gig.description}
-            dateRange={gig.dateRange}
-            category={gig.category}
-            location={gig.location}
-            price={gig.price}
-            avatarUrl={gig.avatarUrl}
-          />
-          {index < gigs.length - 1 && (
-            <hr className="my-4 border-gray-700" /> // Divider between items
+    <div className="space-y-4">
+      {gigs.map(({ gig, lister }, index) => (
+        <div
+          key={index}
+          className={`relative rounded-lg p-4 shadow-lg transition-transform duration-200 ease-in-out ${
+            selectedGig && selectedGig.title === gig.title
+              ? "bg-[rgba(5,54,78,0.59)] text-white"
+              : "bg-gray-900 text-gray-300"
+          } ${enableSelection ? "cursor-pointer" : ""} 
+            ${hoverEffect ? "hover:bg-gray-700" : ""}`}
+          onClick={() => enableSelection && onSelectGig && onSelectGig(gig)}
+        >
+          {showUndoButton && (
+            <div className="absolute right-4 top-4">
+              <UndoButton onClick={() => onUndoClick && onUndoClick(gig.gigId)} />
+            </div>
           )}
-        </React.Fragment>
+
+          {showCompletedButton && (
+            <div className="absolute right-12 top-5">
+              <CustomButton
+                label="Completed Gig"
+                onClick={() => onCompleteClick && onCompleteClick(gig.gigId)}
+                color="green"
+                textColor="white"
+                size="small"
+                rounded={true}
+              />
+            </div>
+          )}
+
+          {showChatIcon && (
+            <div className="absolute right-2 top-6">
+              <CustomButton
+                onClick={() => handleMessageClick(lister.userId)}
+                color="primary"
+                textColor="white"
+                size="small"
+                icon={FaComments}
+                iconPosition="middle"
+                rounded={true}
+              />
+            </div>
+          )}
+
+          <div className="mb-2 flex items-center">
+            <div className="ml-3 flex flex-col">
+              <h3 className="whitespace-normal break-words text-lg font-semibold text-white pr-[120px]">{gig.title}</h3>
+              {showDateWithLine && (
+                <p className="mt-1 text-xs text-orange-500">
+                  {formatDate(gig.dueDate)}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {showDateWithLine && <div className="mt-1 border-t border-white"></div>}
+          
+          <p className="mt-2 whitespace-normal break-words text-gray-300">
+            {gig.description.length >70? gig.description.slice(0, 70) + "..." : gig.description}
+          </p>
+
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <Badge
+              label={gig.category}
+              color="beige"
+              textColor="black"
+              outline={true}
+              outlineColor="beige"
+              rounded={true}
+              size="small"
+            />
+            <Badge
+              label={`€${gig.price.toFixed(2)}`}
+              color="beige"
+              textColor="black"
+              outline={true}
+              outlineColor="beige"
+              rounded={true}
+              size="small"
+            />
+            <Badge
+              label={gig.location}
+              color="beige"
+              textColor="black"
+              outline={true}
+              outlineColor="beige"
+              rounded={true}
+              size="small"
+            />
+          </div>
+
+          {showSeeMoreButton && (
+            <div className="mt-1 flex justify-end">
+              <CustomButton
+                label="See More"
+                onClick={() => onSeeMoreClick && onSeeMoreClick(gig)}
+                color="primary"
+                textColor="white"
+                size="small"
+                rounded={true}
+              />
+            </div>
+          )}
+        </div>
       ))}
+      
     </div>
   );
-};
+}
 
-export default MyPostedGigList;
+export default PostedGigList
