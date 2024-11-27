@@ -77,6 +77,7 @@ export interface Chat {
 }
 
 export interface ChatMessage {
+  chatmessageId: string;
   senderId: string;
   sentToId: string; // id of user message is sent to 
   content: string;
