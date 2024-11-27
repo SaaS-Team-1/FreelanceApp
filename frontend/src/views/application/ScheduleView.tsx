@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import PostedGigListHome from "@/components/Gigs/PostedGigListHome";
 import GigDetails from "@/components/Gigs/GigDetails";
 import { Gig, User } from "@/utils/database/schema";
-import { query, Timestamp, where, getDocs, doc, getDoc } from "firebase/firestore";
+import { query, Timestamp, where, getDocs, doc, updateDoc,getDoc } from "firebase/firestore";
 import CustomButton from "@/components/Buttons/CustomButton";
 import { useAuth, useFirestore } from "@/utils/reactfire";
 import { applicationsRef, gigsRef, usersRef } from "@/utils/database/collections";
+import { useCallback } from "react";
 
 function ScheduleView() {
   const db = useFirestore();
@@ -32,8 +33,7 @@ function ScheduleView() {
       : new Date(gigData.createdAt),
   });
 
-  useEffect(() => {
-    const fetchGigs = async () => {
+    const fetchGigs = useCallback(async () => {
       if (currUser) {
         try {
           const inProgressQuery = query(
@@ -103,10 +103,11 @@ function ScheduleView() {
           console.error("Error fetching gigs:", error);
         }
       }
-    };
-
-    fetchGigs();
-  }, [currUser, db]);
+    }, [currUser, db]);
+    useEffect(() => {
+      fetchGigs();
+    }, [currUser, db, fetchGigs]);
+  
 
   const handleSeeMoreClick = async (gig: Gig) => {
     setSelectedGig(gig);
@@ -119,6 +120,24 @@ function ScheduleView() {
       } else {
         setSelectedLister(null);
       }
+    }
+  };
+  const handleCompleteGig = async (gigId: string) => {
+    try {
+      const gigDocRef = doc(gigsRef(db), gigId);
+      await updateDoc(gigDocRef, { status: "awaiting-confirmation" });
+
+      // Refresh in-progress and awaiting-approval gigs
+      const updatedInProgress = inProgressGigs.filter(({ gig }) => gig.gigId !== gigId);
+      const updatedGig = inProgressGigs.find(({ gig }) => gig.gigId === gigId);
+      if (updatedGig) {
+        setAwaitingApprovalGigs([...awaitingApprovalGigs, updatedGig]);
+      }
+      setInProgressGigs(updatedInProgress);
+      
+      await fetchGigs();
+    } catch (error) {
+      console.error("Error updating gig status:", error);
     }
   };
 
@@ -136,7 +155,7 @@ function ScheduleView() {
       >
         {/* Page 1: Scheduled Gigs and Pending Gigs */}
         <div className="flex gap-6 w-full flex-shrink-0 snap-center">
-          <div className="w-[50%] rounded-lg bg-gray-800 p-4 shadow-lg">
+          <div className="w-[50%] rounded-lg bg-gray-800 dark:text-white p-4 shadow-lg">
             <h1 className="mb-3 text-xl font-bold">Scheduled Gigs</h1>
             <PostedGigListHome
               gigs={inProgressGigs}
@@ -144,10 +163,11 @@ function ScheduleView() {
               showCompletedButton={true}
               showSeeMoreButton={true}
               showChatIcon={true}
+              onCompleteClick={handleCompleteGig}
               onSeeMoreClick={handleSeeMoreClick}
             />
           </div>
-          <div className="w-[50%] rounded-lg bg-gray-800 p-4 shadow-lg">
+          <div className="w-[50%] rounded-lg bg-gray-800 dark:text-white p-4 shadow-lg">
             <h1 className="mb-3 text-xl font-bold">Pending Gigs</h1>
             <PostedGigListHome
               gigs={pendingGigs}
@@ -160,7 +180,7 @@ function ScheduleView() {
 
         {/* Page 2: Awaiting Approval and Completed Gigs */}
         <div className="flex gap-6 w-full flex-shrink-0 snap-center">
-          <div className="w-[50%] rounded-lg bg-gray-800 p-4 shadow-lg">
+          <div className="w-[50%] rounded-lg bg-gray-800 dark:text-white p-4 shadow-lg">
             <h1 className="mb-3 text-xl font-bold">Awaiting Approval</h1>
             <PostedGigListHome
               gigs={awaitingApprovalGigs}
@@ -169,7 +189,7 @@ function ScheduleView() {
               onSeeMoreClick={handleSeeMoreClick}
             />
           </div>
-          <div className="w-[50%] rounded-lg bg-gray-800 p-4 shadow-lg">
+          <div className="w-[50%] rounded-lg bg-gray-800  dark:text-white p-4 shadow-lg">
             <h1 className="mb-3 text-xl font-bold">Completed Gigs</h1>
             <PostedGigListHome
               gigs={completedGigs}

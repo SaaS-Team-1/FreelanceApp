@@ -10,6 +10,7 @@ interface PostedGigListHomeProps {
   gigs: { gig: Gig; lister: User }[];
   onSelectGig?: (gig: Gig) => void;
   onSeeMoreClick?: (gig: Gig) => void;
+  onCompleteClick?: (gigId: string) => void;
   enableSelection?: boolean;
   selectedGig?: Gig | null;
   showSeeMoreButton?: boolean;
@@ -24,6 +25,7 @@ function PostedGigListHome({
   gigs,
   onSelectGig,
   onSeeMoreClick,
+  onCompleteClick,
   enableSelection = true,
   selectedGig = null,
   showSeeMoreButton = true,
@@ -80,7 +82,7 @@ function PostedGigListHome({
             <div className="absolute right-12 top-5">
               <CustomButton
                 label="Completed Gig"
-                onClick={() => alert(`Completed gig: ${gig.title}`)}
+                onClick={() => onCompleteClick && onCompleteClick(gig.gigId)}
                 color="green"
                 textColor="white"
                 size="small"
