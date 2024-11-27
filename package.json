@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Freelance App",
   "scripts": {
-    "watch:firebase": "firebase --project=demo-saas-team-1 emulators:start --only=hosting,functions,database,auth,storage,firestore",
+    "firebase:export": "firebase --project=demo-saas-team-1 emulators:start --only=hosting,functions,database,auth,storage,firestore --export-on-exit=.firestore",
+    "watch:firebase": "firebase --project=demo-saas-team-1 emulators:start --only=hosting,functions,database,auth,storage,firestore --import=.firestore",
+    "firebase:empty": "firebase --project=demo-saas-team-1 emulators:start --only=hosting,functions,database,auth,storage,firestore",
     "watch:api": "cd ./functions && npm run build:watch",
     "watch:frontend": "cd ./frontend && npm run dev",
     "dev": "concurrently -kill-others  \"npm:watch:*\""

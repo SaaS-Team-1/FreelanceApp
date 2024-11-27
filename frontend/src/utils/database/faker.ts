@@ -81,12 +81,14 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
     const authUser = await createUserWithEmailAndPassword(
       auth,
       email,
-      "password123",
+      "password",
     );
+
     await updateProfile(authUser.user, {
       displayName: faker.person.fullName(),
       photoURL: faker.image.avatar(),
     });
+
     const userData: User = {
       userId: authUser.user.uid,
       email: email,
@@ -106,7 +108,6 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
         }),
       },
     };
-
     await setDoc(doc(db, "users", userData.userId), userData);
     userRefs.push({ id: userData.userId, user: userData });
   }
@@ -127,8 +128,7 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
         ? "awaiting-confirmation"
         : "open";
 
-      const gigData: Gig = {
-        gigId: faker.string.uuid(),
+      const gigData: Partial<Gig> = {
         title: faker.lorem.sentence(),
         description: faker.lorem.paragraphs(2),
         location: faker.helpers.arrayElement(LOCATIONS),
@@ -141,86 +141,79 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
         createdAt: getRecentDate(),
         updatedAt: getRecentDate(),
       };
-
       const gigDoc = await addDoc(gigsRef(db), gigData);
       gigData.gigId = gigDoc.id;
-      gigRefs.push({ id: gigDoc.id, gig: gigData });
+      gigRefs.push({ id: gigDoc.id, gig: gigData as Gig });
     }
   }
 
- // Create applications and chats
-console.log("Creating applications and chats...");
-for (const gigRef of gigRefs) {
-  const availableApplicants = userRefs.filter(
-    (u) => u.id !== gigRef.gig.listerId // Exclude the lister
-  );
+  // Create applications and chats
+  console.log("Creating applications and chats...");
+  for (const gigRef of gigRefs) {
+    const availableApplicants = userRefs.filter(
+      (u) => u.id !== gigRef.gig.listerId, // Exclude the lister
+    );
 
-  for (let i = 0; i < APPLICATIONS_PER_GIG; i++) {
-    const applicant = faker.helpers.arrayElement(availableApplicants);
-    let applicationStatus: Application["status"] = "pending";
+    for (let i = 0; i < APPLICATIONS_PER_GIG; i++) {
+      const applicant = faker.helpers.arrayElement(availableApplicants);
+      let applicationStatus: Application["status"] = "pending";
 
-    if (
-      gigRef.gig.status === "completed" ||
-      gigRef.gig.status === "in-progress"
-    ) {
-      applicationStatus = i === 0 ? "assigned" : "discarded";
-      if (i === 0) {
-        gigRef.gig.selectedApplicantId = applicant.id;
-        await setDoc(doc(db, "gigs", gigRef.id), gigRef.gig); 
+      if (
+        gigRef.gig.status === "completed" ||
+        gigRef.gig.status === "in-progress"
+      ) {
+        applicationStatus = i === 0 ? "assigned" : "discarded";
+        if (i === 0) {
+          gigRef.gig.selectedApplicantId = applicant.id;
+          await setDoc(doc(db, "gigs", gigRef.id), gigRef.gig);
+        }
       }
-    }
 
-    // Create chat 
-    const chatData: Omit<Chat, "chatId"> = {
-      gigId: gigRef.id,
-      applicationId: "", 
-      listerId: gigRef.gig.listerId,
-      applicantId: applicant.id,
-    };
-
-    const chatDoc = await addDoc(chatsRef(db), chatData);
-    const chatId = chatDoc.id; 
-
-    await updateDoc(doc(db, "chats", chatId), { chatId }); 
-    const applicationData: Omit<Application, "applicationId"> = {
-      gigId: gigRef.id,
-      applicantId: applicant.id,
-      listerId: gigRef.gig.listerId,
-      status: applicationStatus,
-      coverLetter: faker.lorem.paragraphs(2),
-      appliedAt: getRecentDate(),
-      chatId, 
-    };
-
-    const applicationDoc = await addDoc(applicationsRef(db), applicationData); 
-    const applicationId = applicationDoc.id; 
-
-    await updateDoc(doc(db, "chats", chatId), { applicationId }); 
-    await updateDoc(doc(db, "applications", applicationId), { applicationId }); 
-
-    chatRefs.push({ id: chatId, chat: { ...chatData, chatId, applicationId } });
-    applicationRefs.push({
-      id: applicationId,
-      application: { ...applicationData, applicationId },
-    });
-
-    // Create chat messages with the updated schema
-    for (let j = 0; j < MESSAGES_PER_CHAT; j++) {
-      const isFromLister = Math.random() > 0.5;
-      const messageData: ChatMessage = {
-        senderId: isFromLister ? gigRef.gig.listerId : applicant.id,
-        sentToId: isFromLister ? applicant.id : gigRef.gig.listerId,
-        content: faker.lorem.paragraph(),
-        timestamp: getRecentDate(),
-        chatId, 
-        isRead: Math.random() > 0.5, 
+      // Create chat first to get chatId
+      const chatData: Partial<Chat> = {
+        gigId: gigRef.id,
+        applicationId: "",
+        listerId: gigRef.gig.listerId,
+        applicantId: applicant.id,
       };
 
-      await addDoc(chatMessagesRef(db), messageData);
+      const chatDoc = await addDoc(chatsRef(db), chatData);
+      chatData.chatId = chatDoc.id;
+      chatRefs.push({ id: chatDoc.id, chat: chatData as Chat });
+
+      const applicationData: Partial<Application> = {
+        gigId: gigRef.id,
+        applicantId: applicant.id,
+        listerId: gigRef.gig.listerId,
+        status: applicationStatus,
+        coverLetter: faker.lorem.paragraphs(2),
+        appliedAt: getRecentDate(),
+        chatId: chatDoc.id,
+      };
+
+      const applicationDoc = await addDoc(applicationsRef(db), applicationData);
+      applicationData.applicationId = applicationDoc.id;
+      applicationRefs.push({
+        id: applicationDoc.id,
+        application: applicationData as Application,
+      });
+
+      // Create chat messages with the updated schema
+      for (let j = 0; j < MESSAGES_PER_CHAT; j++) {
+        const isFromLister = Math.random() > 0.5;
+        const messageData: Partial<ChatMessage> = {
+          senderId: isFromLister ? gigRef.gig.listerId : applicant.id,
+          sentToId: isFromLister ? applicant.id : gigRef.gig.listerId,
+          content: faker.lorem.paragraph(),
+          timestamp: getRecentDate(),
+          chatId: chatDoc.id,
+          isRead: Math.random() > 0.5,
+        };
+
+        await addDoc(chatMessagesRef(db), messageData);
+      }
     }
   }
-}
-
 
   // Create ratings for completed gigs
   console.log("Creating ratings...");
@@ -228,8 +221,7 @@ for (const gigRef of gigRefs) {
     (g) => g.gig.status === "completed" && g.gig.selectedApplicantId,
   )) {
     if (Math.random() < RATING_RATE && gigRef.gig.selectedApplicantId) {
-      const ratingData: Rating = {
-        ratingId: faker.string.uuid(),
+      const ratingData: Omit<Rating, "ratingId"> = {
         gigId: gigRef.id,
         byUserId: gigRef.gig.listerId,
         byUserDisplayName:
@@ -241,8 +233,7 @@ for (const gigRef of gigRefs) {
         createdAt: getRecentDate(),
       };
 
-      const ratingDoc = await addDoc(ratingsRef(db), ratingData);
-      ratingData.ratingId = ratingDoc.id;
+      await addDoc(ratingsRef(db), ratingData);
     }
   }
 
@@ -252,17 +243,21 @@ for (const gigRef of gigRefs) {
     (g) => g.gig.status === "completed" && g.gig.selectedApplicantId,
   )) {
     if (gigRef.gig.selectedApplicantId) {
-      const transactionData: Transaction = {
-        transactionId: faker.string.uuid(),
+      const transactionData: Omit<Transaction, "transactionId"> = {
         senderId: gigRef.gig.listerId,
         receiverId: gigRef.gig.selectedApplicantId,
         gigId: gigRef.id,
         amount: gigRef.gig.price,
         createdAt: getRecentDate(),
+        kind: faker.helpers.arrayElement([
+          "deposit",
+          "withdraw",
+          "send",
+          "recieve",
+        ]),
       };
 
-      const transactionDoc = await addDoc(transactionsRef(db), transactionData);
-      transactionData.transactionId = transactionDoc.id;
+      await addDoc(transactionsRef(db), transactionData);
     }
   }
 

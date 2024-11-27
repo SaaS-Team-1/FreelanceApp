@@ -128,7 +128,7 @@ export default function OverviewView() {
       >
         <NotificationList notifications={notifications} />
 
-        <button className="flex w-full items-center justify-center rounded-full bg-orange-500 py-3 text-sm font-semibold text-white">
+        <button className="flex max-w-sm items-center justify-center rounded-full bg-orange-500 py-3 text-sm font-semibold text-white">
           + Upload new gig
         </button>
       </div>
