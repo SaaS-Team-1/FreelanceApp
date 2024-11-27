@@ -1,6 +1,4 @@
 
-
-
 import { useState, useEffect } from "react";
 import { useFirestore, useUser } from "@/utils/reactfire";
 import {
@@ -27,6 +25,7 @@ import ChatWindow from "@/components/Chat/ChatWindow";
 import MessageInput from "@/components/Chat/MessageInput";
 import ChatCard from "@/components/Chat/ChatCard";
 import GigDetailsModal from "@/components/Chat/GigDetailsModal";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface ExtendedChat {
   id: string;
@@ -214,6 +213,12 @@ function ChatPage() {
     setChats(updatedChats);
   };
   
+  const navigate = useNavigate();
+
+
+  const handleGoToMyGigs = () => {
+    navigate("/app/posted-gigs"); 
+  };
   
 
   
@@ -278,10 +283,12 @@ function ChatPage() {
                 {gig && (
                   <div className="mt-4 flex justify-center">
                     <ChatCard
-                      gig={gig}
-                      application={application}
-                      userId={user?.uid || ""}
-                    />
+                        gig={gig}
+                        application={application}
+                        userId={user?.uid || ""}
+                        db={db} // Pass Firestore instance
+                      />
+
                   </div>
                 )}
               </div>
@@ -309,11 +316,21 @@ function ChatPage() {
       </div>
 
       {isGigDetailsOpen && gig && (
+        // <GigDetailsModal
+        //   gig={gig}
+        //   lister={chatPartner}
+        //   onClose={() => setIsGigDetailsOpen(false)}
+        // />
         <GigDetailsModal
-          gig={gig}
-          lister={chatPartner}
-          onClose={() => setIsGigDetailsOpen(false)}
-        />
+        gig={gig}
+        lister={chatPartner || null}
+        onClose={() => setIsGigDetailsOpen(false)}
+        currentUserId={user?.uid || ""}
+        onGoToMyGigs={handleGoToMyGigs}
+        currentUser={user as User} // Ensure `user` conforms to `User`
+      />
+      
+
       )}
     </div>
   );
