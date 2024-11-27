@@ -1,5 +1,5 @@
-// make sure lister cant delete gig until they cancel gig first, which requires applicant's confirmation
-// Applicant cannot cancel after gig assignment.
+// make sure lister can only delete gig if status is open
+// Applicant nor lister cannot cancel after gig assignment.
 
 import { Timestamp } from "firebase/firestore";
 
@@ -32,8 +32,7 @@ export interface Gig {
     | "in-progress"
     | "awaiting-confirmation"
     | "completed"
-    | "deleted"
-    | "problem-reported";
+    | "deleted";
   listerId: string;
   selectedApplicantId?: string;
   updatedAt: Timestamp;
@@ -45,7 +44,6 @@ export interface Gig {
 // in-progress = gig has been assigned to [selectedApplicant]
 // awaiting-confirmation = applicant has reported to have completed the gig, now you need to confirm to release the payement
 // completed = gig is completed and confirmed but you haven't rated applicant
-// problem-reported = you have reported a problem with the applicant's work
 
 export interface Application {
   applicationId: string;
@@ -73,15 +71,18 @@ export interface Application {
 export interface Chat {
   chatId: string;
   gigId: string;
-  userId: string; // (applicant and lister)
-  applicationId?: string;
+  listerId: string; 
+  applicantId: string;
+  applicationId: string;
 }
 
 export interface ChatMessage {
   senderId: string;
+  sentToId: string; // id of user message is sent to 
   content: string;
   timestamp: Timestamp;
   chatId: string;
+  isRead: boolean; // is it read by the user it is sent to
 }
 
 export interface Rating {
@@ -97,11 +98,12 @@ export interface Rating {
 
 export interface Transaction {
   transactionId: string; // transaction ID
-  senderId: string;
+  senderId?: string;
   receiverId: string;
-  gigId: string;
+  gigId?: string;
   amount: number;
   createdAt: Timestamp;
+  kind: "deposit" | "withdraw" | "send" | "recieve";
 }
 
 export interface Notification {

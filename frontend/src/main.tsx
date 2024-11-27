@@ -12,7 +12,6 @@ import { FirebaseAppProvider } from "./utils/reactfire/index.ts";
 import { config } from "./utils/firebase/firebaseConfig.ts";
 import { AuthWrapper } from "./utils/firebase/auth.ts";
 
-
 // Flowbite
 import { Flowbite } from "flowbite-react";
 import { flowbiteTheme } from "./theme.ts";
@@ -61,7 +60,6 @@ const router = createBrowserRouter([
         path: "/app",
         element: <AppRoot />,
         children: [
-         
           {
             index: true,
             element: <HomePageView />,
@@ -103,7 +101,6 @@ const router = createBrowserRouter([
             path: "admin",
             element: <AdminView />,
           },
-
         ],
       },
     ],
