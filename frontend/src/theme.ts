@@ -2,9 +2,9 @@ import { CustomFlowbiteTheme } from "flowbite-react";
 
 export const flowbiteTheme: CustomFlowbiteTheme = {
   tabs: {
-    base: "flex flex-col gap-2 rounded-lg bg-gray-800 p-4 shadow-md",
+    base: "flex flex-col gap-2 rounded-lg bg-gray-800 p-4 shadow-md h-full",
     tablist: {
-      base: "flex text-center ",
+      base: "flex text-center  h-fit",
       variant: {
         default: "flex-wrap border-b border-gray-200 dark:border-gray-700",
         underline:
