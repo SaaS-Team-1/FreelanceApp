@@ -28,7 +28,7 @@ import {
 } from "firebase/auth";
 
 // Configuration
-const NUM_USERS = 20;
+const NUM_USERS = 10;
 const GIGS_PER_USER = 8;
 const APPLICATIONS_PER_GIG = 4;
 const MESSAGES_PER_CHAT = 3;
@@ -118,15 +118,16 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
     for (let i = 0; i < GIGS_PER_USER; i++) {
       const isCompleted = Math.random() < COMPLETION_RATE;
       const isInProgress = !isCompleted && Math.random() < 0.5;
-      const isAwaitingConfirmation = !isCompleted && !isInProgress && Math.random() < 0.4;
+      const isAwaitingConfirmation =
+        !isCompleted && !isInProgress && Math.random() < 0.4;
 
       const gigStatus = isCompleted
         ? "completed"
         : isInProgress
-        ? "in-progress"
-        : isAwaitingConfirmation
-        ? "awaiting-confirmation"
-        : "open";
+          ? "in-progress"
+          : isAwaitingConfirmation
+            ? "awaiting-confirmation"
+            : "open";
 
       const gigData: Partial<Gig> = {
         title: faker.lorem.sentence(),
@@ -197,7 +198,9 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
         id: applicationDoc.id,
         application: applicationData as Application,
       });
-
+      
+      updateDoc(chatDoc, { applicationId: applicationData.applicationId });
+      
       // Create chat messages with the updated schema
       for (let j = 0; j < MESSAGES_PER_CHAT; j++) {
         const isFromLister = Math.random() > 0.5;
@@ -269,7 +272,9 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
       const notifData: Notification = {
         notificationId: faker.string.uuid(),
         userId: gigRef.gig.listerId,
-        notificationMessage: "Your posted gig has been completed by " + gigRef.gig.selectedApplicantId,
+        notificationMessage:
+          "Your posted gig has been completed by " +
+          gigRef.gig.selectedApplicantId,
         createdAt: getRecentDate(),
       };
 
