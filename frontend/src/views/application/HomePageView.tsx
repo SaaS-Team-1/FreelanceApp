@@ -8,6 +8,7 @@ import PostedGigListHome from "@/components/Gigs/PostedGigListHome";
 import FilterButton from "@/components/Buttons/FilterButton"; // Assuming this component is imported
 import MyPostedGigListCompressed from "@/components/Gigs/MyPostedGigListCompressed";
 import Loading from "@/components/Loading";
+import CreateGigButton from "@/components/Gigs/CreateGigButton";
 
 export default function OverviewView() {
   const { data: user } = useUser();
@@ -46,6 +47,10 @@ export default function OverviewView() {
     } catch (error) {
       console.error("Error fetching notifications: ", error);
     }
+  };
+
+  const handleCreateSave = (newGig: any) => {
+    console.log("New Gig Created:", newGig);
   };
 
   const fetchOpenGigsAndCategories = async () => {
@@ -239,6 +244,7 @@ export default function OverviewView() {
         <button className="flex max-w-sm items-center justify-center rounded-full bg-orange-500 py-3 text-sm font-semibold text-white">
           + Upload new gig
         </button>
+        <CreateGigButton onCreateSave={handleCreateSave} />
       </div>
     </div>
   );
