@@ -61,17 +61,6 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
         return; // Exit the function if an application already exists
       }
 
-      const chatData: Partial<Chat> = {
-        gigId: gig.gigId,
-        applicationId: "",
-        listerId: gig.listerId,
-        applicantId: userId,
-      };
-
-      const chatDoc = await addDoc(chatsRef(db), chatData);
-      chatData.chatId = chatDoc.id;
-      chatRefs.push({ id: chatDoc.id, chat: chatData as Chat });
-
       const applicationData: Partial<Application> = {
         gigId: gig.gigId,
         applicantId: userId,
@@ -79,7 +68,7 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
         status: "pending",
         coverLetter: randomCoverLetter,
         appliedAt: Timestamp.now(),
-        chatId: chatDoc.id,
+        chatId: "",
       };
 
       const applicationDoc = await addDoc(applicationsRef(db), applicationData);
@@ -89,7 +78,19 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
         application: applicationData as Application,
       });
 
+      const chatData: Partial<Chat> = {
+        gigId: gig.gigId,
+        applicationId: applicationDoc.id,
+        listerId: gig.listerId,
+        applicantId: userId,
+      };
+
+      const chatDoc = await addDoc(chatsRef(db), chatData);
+      chatData.chatId = chatDoc.id;
+      chatRefs.push({ id: chatDoc.id, chat: chatData as Chat });
+
       updateDoc(chatDoc, { applicationId: applicationData.applicationId });
+      updateDoc(applicationDoc, { chatId: chatData.chatId });
 
       alert("Application and chat created successfully!");
       onClose(); // Close the modal after applying
