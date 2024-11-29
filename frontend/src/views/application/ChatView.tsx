@@ -25,6 +25,7 @@ import ChatCard from "@/components/Chat/ChatCard";
 import GigDetailsModal from "@/components/Chat/GigDetailsModal";
 import { useNavigate } from "react-router-dom";
 import Loading from "@/components/Loading";
+import { Gig, User, Application } from "@/utils/database/schema";
 
 interface ExtendedChat {
   id: string;
@@ -230,6 +231,31 @@ function ChatPage() {
     navigate("/app/posted-gigs");
   };
 
+
+
+  useEffect(() => {
+    if (gig?.gigId) {
+      const gigRef = doc(gigsRef(db), gig.gigId);
+      const unsubscribeGig = onSnapshot(gigRef, (doc) => {
+        setGig(doc.data() as Gig);
+      });
+  
+      return () => unsubscribeGig();
+    }
+  }, [gig?.gigId, db]);
+  
+  useEffect(() => {
+    if (application?.applicationId) {
+      const appRef = doc(applicationsRef(db), application.applicationId);
+      const unsubscribeApp = onSnapshot(appRef, (doc) => {
+        setApplication(doc.data() as Application);
+      });
+  
+      return () => unsubscribeApp();
+    }
+  }, [application?.applicationId, db]);
+  
+
   return (
     <div className="flex w-full justify-center rounded-xl p-4 ">
       {!chatsLoading ? (
@@ -344,3 +370,12 @@ function ChatPage() {
 }
 
 export default ChatPage;
+
+
+
+
+
+
+
+
+
