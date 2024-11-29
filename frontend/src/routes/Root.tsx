@@ -1,33 +1,37 @@
+import Loading from "@/components/Loading";
 import {
   getAuthInstance,
   getFirestoreInstance,
 } from "@/utils/firebase/firebaseConfig";
 import {
-  useFirebaseApp,
   AuthProvider,
-  AnalyticsProvider,
   FirestoreProvider,
+  useInitFirestore,
+  useInitAuth,
 } from "@/utils/reactfire";
 import { getAnalytics } from "firebase/analytics";
-import { useCallback } from "react";
+import { Auth } from "firebase/auth";
+import { Firestore } from "firebase/firestore";
+import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
 
 export default function Root() {
-  const app = useFirebaseApp();
-  const auth = useCallback(() => getAuthInstance(app), [app]);
-  const firestore = useCallback(() => getFirestoreInstance(app), [app]);
+  const auth = useInitAuth((app) => getAuthInstance(app));
+  const firestore = useInitFirestore((app) => getFirestoreInstance(app));
 
-  const content = (
-    <AuthProvider sdk={auth()}>
-      <FirestoreProvider sdk={firestore()}>
-        <Outlet />
-      </FirestoreProvider>
-    </AuthProvider>
+  return (
+    <Suspense fallback={<Loading></Loading>}>
+      <AuthProvider sdk={auth.data as Auth}>
+        <FirestoreProvider sdk={firestore.data as Firestore}>
+          <Outlet />
+        </FirestoreProvider>
+      </AuthProvider>
+    </Suspense>
   );
 
-  return import.meta.env.DEV ? (
-    content
-  ) : (
-    <AnalyticsProvider sdk={getAnalytics(app)}>{content}</AnalyticsProvider>
-  );
+  // return import.meta.env.DEV ? (
+  // content
+  // ) : (
+  // <AnalyticsProvider sdk={getAnalytics(app)}>{content}</AnalyticsProvider>
+  // );
 }

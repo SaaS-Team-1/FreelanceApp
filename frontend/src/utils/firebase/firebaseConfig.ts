@@ -1,6 +1,10 @@
 import { FirebaseApp } from "firebase/app";
-import { connectAuthEmulator, getAuth } from "firebase/auth";
-import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
+import { connectAuthEmulator, getAuth, initializeAuth } from "firebase/auth";
+import {
+  connectFirestoreEmulator,
+  getFirestore,
+  initializeFirestore,
+} from "firebase/firestore";
 
 // Your web app's Firebase configuration
 export const config = {
@@ -20,32 +24,24 @@ export const config = {
     "1:430907029750:web:5e23d1b67645b7969594d",
 };
 
-export function getAuthInstance(app: FirebaseApp) {
+export async function getAuthInstance(app: FirebaseApp) {
   const auth = getAuth(app);
 
   if (import.meta.env.DEV) {
-    try {
-      connectAuthEmulator(auth, "http://127.0.0.1:9099", {
-        disableWarnings: true,
-      });
-    } catch {
-      /* empty */
-    }
+    connectAuthEmulator(auth, "http://127.0.0.1:9099", {
+      disableWarnings: true,
+    });
   }
 
   return auth;
 }
 
 // Instantiate services
-export function getFirestoreInstance(app: FirebaseApp) {
+export async function getFirestoreInstance(app: FirebaseApp) {
   const db = getFirestore(app);
 
-  try {
-    if (import.meta.env.DEV) {
-      connectFirestoreEmulator(db, "http://127.0.0.1", 8080);
-    }
-  } catch {
-    /* empty */
+  if (import.meta.env.DEV) {
+    connectFirestoreEmulator(db, "127.0.0.1", 8080);
   }
 
   return db;
