@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import CustomButton from "@/components/Buttons/CustomButton";
-import { Gig, User } from "@/utils/database/schema";
+import { Application, Chat, Gig, User } from "@/utils/database/schema";
 import { FaDollarSign, FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
 import Badge from "@/components/Buttons/CustomBadge";
 import { Firestore, Timestamp, addDoc, updateDoc } from "firebase/firestore";
@@ -31,6 +31,9 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
   const handleApply = async () => {
     if (!userId || !db) return;
 
+    const chatRefs: { id: string; chat: Chat }[] = [];
+    const applicationRefs: { id: string; application: Application }[] = [];
+
     // Generate a random Latin cover letter
     const latinPhrases = [
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
@@ -58,30 +61,35 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
         return; // Exit the function if an application already exists
       }
 
-      // Create the application document
-      const appDoc = await addDoc(applicationRef, {
-        applicantId: userId, // Current signed-in user's ID
-        appliedAt: Timestamp.now(), // Current timestamp
-        gigId: gig.gigId, // The ID of the gig
-        listerId: gig.listerId, // The ID of the user who posted the gig
-        coverLetter: randomCoverLetter, // Random Latin cover letter
-        status: "pending", // Status of the application
-      });
-
-      // Reference to the chat document
-      const chatRef = chatsRef(db);
-
-      // Create the chat document
-      const chatDoc = await addDoc(chatRef, {
-        gigId: gig.gigId, // The ID of the gig
-        applicantId: userId, // The ID of the applicant
+      const chatData: Partial<Chat> = {
+        gigId: gig.gigId,
+        applicationId: "",
         listerId: gig.listerId,
-        applicationId: appDoc.id,
+        applicantId: userId,
+      };
+
+      const chatDoc = await addDoc(chatsRef(db), chatData);
+      chatData.chatId = chatDoc.id;
+      chatRefs.push({ id: chatDoc.id, chat: chatData as Chat });
+
+      const applicationData: Partial<Application> = {
+        gigId: gig.gigId,
+        applicantId: userId,
+        listerId: gig.listerId,
+        status: "pending",
+        coverLetter: randomCoverLetter,
+        appliedAt: Timestamp.now(),
+        chatId: chatDoc.id,
+      };
+
+      const applicationDoc = await addDoc(applicationsRef(db), applicationData);
+      applicationData.applicationId = applicationDoc.id;
+      applicationRefs.push({
+        id: applicationDoc.id,
+        application: applicationData as Application,
       });
 
-      await updateDoc(appDoc, {
-        chatId: chatDoc.id,
-      });
+      updateDoc(chatDoc, { applicationId: applicationData.applicationId });
 
       alert("Application and chat created successfully!");
       onClose(); // Close the modal after applying

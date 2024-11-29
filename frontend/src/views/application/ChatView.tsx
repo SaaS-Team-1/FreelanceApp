@@ -235,7 +235,7 @@ function ChatPage() {
       {!chatsLoading ? (
         <>
           <div className="flex h-[calc(100vh-8rem)] w-full justify-center lg:max-w-[60vw]">
-            <div className="scrollbar overflow-y-auto border-r bg-gray-800">
+            <div className="w-3/5 scrollbar overflow-y-auto border-r bg-gray-800">
               <h2 className="p-4 text-lg font-bold text-white">Active Chats</h2>
               {chats.map((chat) => (
                 <div
@@ -260,7 +260,7 @@ function ChatPage() {
               ))}
             </div>
 
-            <div className="flex w-full flex-1 flex-col overflow-y-auto bg-slate-600">
+            <div className="w-full flex size-full flex-col overflow-y-auto bg-slate-600">
               {selectedChat ? (
                 <>
                   <ChatHeader
@@ -281,7 +281,7 @@ function ChatPage() {
                     onSeeGigDetails={() => setIsGigDetailsOpen(true)}
                   />
 
-                  <div className="scrollbar w-full flex-1 overflow-y-auto bg-gray-800 p-4">
+                  <div className="scrollbar flex size-full flex-col overflow-y-scroll bg-gray-800 p-4">
                     <ChatWindow
                       messages={messages.map((message) => ({
                         text: message.content,
@@ -294,7 +294,7 @@ function ChatPage() {
                       }))}
                     />
                     {gig && (
-                      <div className="mt-4 flex justify-center">
+                      <div className="sticky bottom-0 mt-4 flex justify-center">
                         <ChatCard
                           gig={gig}
                           application={application}
@@ -326,18 +326,13 @@ function ChatPage() {
           </div>
 
           {isGigDetailsOpen && gig && (
-            // <GigDetailsModal
-            //   gig={gig}
-            //   lister={chatPartner}
-            //   onClose={() => setIsGigDetailsOpen(false)}
-            // />
             <GigDetailsModal
               gig={gig}
               lister={chatPartner || null}
               onClose={() => setIsGigDetailsOpen(false)}
               currentUserId={user?.uid || ""}
               onGoToMyGigs={handleGoToMyGigs}
-              currentUser={user as User} // Ensure `user` conforms to `User`
+              currentUser={user as User}
             />
           )}
         </>
