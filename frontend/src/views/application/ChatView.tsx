@@ -9,7 +9,6 @@ import {
   getDoc,
   limit,
   onSnapshot,
-  addDoc,
   Timestamp,
 } from "firebase/firestore";
 import {
@@ -24,7 +23,7 @@ import ChatWindow from "@/components/Chat/ChatWindow";
 import MessageInput from "@/components/Chat/MessageInput";
 import ChatCard from "@/components/Chat/ChatCard";
 import GigDetailsModal from "@/components/Chat/GigDetailsModal";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Loading from "@/components/Loading";
 
 interface ExtendedChat {

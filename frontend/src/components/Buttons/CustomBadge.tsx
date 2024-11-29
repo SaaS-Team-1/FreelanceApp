@@ -4,8 +4,26 @@ import { IconType } from "react-icons";
 
 interface BadgeProps {
   label: string;
-  color?: "primary" | "secondary" | "warning" | "gray" | "black" | "green" | "red" | "white" | "beige"; // Background color
-  outlineColor?: "primary" | "secondary" | "warning" | "gray" | "black" | "green" | "red" | "white" | "beige"; // Border color
+  color?:
+    | "primary"
+    | "secondary"
+    | "warning"
+    | "gray"
+    | "black"
+    | "green"
+    | "red"
+    | "white"
+    | "beige"; // Background color
+  outlineColor?:
+    | "primary"
+    | "secondary"
+    | "warning"
+    | "gray"
+    | "black"
+    | "green"
+    | "red"
+    | "white"
+    | "beige"; // Border color
   size?: "small" | "medium" | "large"; // Size of the badge
   icon?: IconType; // Corrected to use IconType
   iconPosition?: "left" | "right"; // Position of the icon
@@ -13,10 +31,9 @@ interface BadgeProps {
   rounded?: boolean; // Rounded corners
   textColor?: "black" | "white" | "primary"; // Text color
   className?: string; // Custom class name
-
 }
 
-const colorClasses: { [key in NonNullable<BadgeProps['color']>]: string } = {
+const colorClasses: { [key in NonNullable<BadgeProps["color"]>]: string } = {
   primary: "bg-blue-500",
   secondary: "bg-orange-500",
   warning: "bg-red-500",
@@ -28,7 +45,9 @@ const colorClasses: { [key in NonNullable<BadgeProps['color']>]: string } = {
   beige: "bg-[rgba(225,217,217,1)]",
 };
 
-const borderColorClasses: { [key in NonNullable<BadgeProps['outlineColor']>]: string } = {
+const borderColorClasses: {
+  [key in NonNullable<BadgeProps["outlineColor"]>]: string;
+} = {
   primary: "border-blue-500",
   secondary: "border-orange-500",
   warning: "border-red-500",
@@ -46,7 +65,9 @@ const sizeClasses: { [key: string]: string } = {
   large: "px-6 py-3 text-lg",
 };
 
-const textColorClasses: { [key in NonNullable<BadgeProps['textColor']>]: string } = {
+const textColorClasses: {
+  [key in NonNullable<BadgeProps["textColor"]>]: string;
+} = {
   black: "text-black",
   white: "text-white",
   primary: "text-blue-500",
@@ -63,12 +84,13 @@ const Badge: React.FC<BadgeProps> = ({
   rounded = false,
   textColor = "white",
   className = "", // Default empty string for custom class
-
 }) => {
   const colorClass = colorClasses[color];
   const sizeClass = sizeClasses[size];
   const textClass = textColorClasses[textColor];
-  const borderClass = outline ? `border ${borderColorClasses[outlineColor || color]}` : "";
+  const borderClass = outline
+    ? `border ${borderColorClasses[outlineColor || color]}`
+    : "";
   const roundedClass = rounded ? "rounded-full" : "rounded-md";
 
   return (

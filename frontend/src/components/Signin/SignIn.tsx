@@ -10,9 +10,9 @@ export function ComponentSignin() {
   const emailInputRef = useRef<HTMLInputElement>(null);
 
   const buttonStyle = {
-    backgroundColor: 'rgba(0, 140, 210, 1)', // Darker shade of the original blue
-    color: 'white',
-    border: 'none',
+    backgroundColor: "rgba(0, 140, 210, 1)", // Darker shade of the original blue
+    color: "white",
+    border: "none",
   };
 
   return (
@@ -56,7 +56,8 @@ export function ComponentSignin() {
             </div>
             <div className="flex justify-between">
               <div className="flex items-center gap-2">
-                <Checkbox id="remember"
+                <Checkbox
+                  id="remember"
                   className="text-[rgba(0,140,210,1)] checked:bg-[rgba(0,140,210,1)] focus:ring-[rgba(0,140,210,1)]"
                 />
                 <Label htmlFor="remember">Remember me</Label>
@@ -201,7 +202,8 @@ export function ComponentSignin() {
               Forgot Password
             </h3>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Enter your email address and we'll send you a link to reset your password.
+              Enter your email address and we'll send you a link to reset your
+              password.
             </p>
             <div>
               <div className="mb-2 block">

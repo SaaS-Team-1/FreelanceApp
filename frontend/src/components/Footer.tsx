@@ -20,7 +20,7 @@ export default function DefaultFooter() {
             alt="BoxCutter Logo"
             theme={{ img: "mr-2 h-5" }}
           />
-          <span className="px-4 text-sm text-gray-500 sm:text-center dark:text-gray-400">
+          <span className="px-4 text-sm text-gray-500 dark:text-gray-400 sm:text-center">
             Built using {"\u00A0"}
             <a
               href="https://github.com/florianfesti/boxes"

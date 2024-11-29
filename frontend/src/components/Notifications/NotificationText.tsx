@@ -1,9 +1,9 @@
-import { Timestamp } from 'firebase/firestore';
-import React, { useState } from 'react';
+import { Timestamp } from "firebase/firestore";
+import React, { useState } from "react";
 
-interface NotificationTextProps{
-  text: string,
-  time: Timestamp,
+interface NotificationTextProps {
+  text: string;
+  time: Timestamp;
 }
 
 const NotificationText = ({ text, time }: NotificationTextProps) => {
@@ -26,27 +26,27 @@ const NotificationText = ({ text, time }: NotificationTextProps) => {
           <>
             {text && text.slice(0, MAX_LENGTH)}...
             <span
-              className="text-blue-400 cursor-pointer"
+              className="cursor-pointer text-blue-400"
               onClick={toggleExpanded}
             >
-              {" "}Read more
+              {" "}
+              Read more
             </span>
           </>
         )}
         {isExpanded && (
           <span
-            className="text-blue-400 cursor-pointer"
+            className="cursor-pointer text-blue-400"
             onClick={toggleExpanded}
           >
-            {" "}Show less
+            {" "}
+            Show less
           </span>
         )}
       </p>
       <span className="text-xs text-blue-500">{time.toString()}</span>
     </div>
   );
-  
 };
 
 export default NotificationText;
-

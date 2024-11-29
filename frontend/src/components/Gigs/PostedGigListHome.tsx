@@ -36,8 +36,11 @@ function PostedGigListHome({
   userId,
   db,
 }: PostedGigListHomeProps) {
-  const [selectedGigDetails, setSelectedGigDetails] = useState<Gig | null>(null,); // State to manage the selected gig for modal
-  const [selectedListerDetails, setSelectedListerDetails] = useState<User | null>(null); // State to manage the selected lister for modal
+  const [selectedGigDetails, setSelectedGigDetails] = useState<Gig | null>(
+    null,
+  ); // State to manage the selected gig for modal
+  const [selectedListerDetails, setSelectedListerDetails] =
+    useState<User | null>(null); // State to manage the selected lister for modal
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 
   const handleSeeMoreClick = (gig: Gig, lister: User) => {
@@ -71,7 +74,7 @@ function PostedGigListHome({
               />
             </div>
           )}
-          
+
           {showCompletedButton && (
             <div className="absolute right-12 top-5">
               <CustomButton
@@ -101,7 +104,9 @@ function PostedGigListHome({
 
           <div className="mb-2 flex items-center">
             <div className="ml-3 flex flex-col">
-              <h3 className="whitespace-normal break-words text-lg font-semibold text-white pr-[120px]">{gig.title}</h3>
+              <h3 className="whitespace-normal break-words pr-[120px] text-lg font-semibold text-white">
+                {gig.title}
+              </h3>
               {showDateWithLine && (
                 <p className="mt-1 text-xs text-orange-500">
                   {new Date(gig.dueDate.seconds * 1000).toLocaleDateString(

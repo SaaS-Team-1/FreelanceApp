@@ -38,13 +38,13 @@ export default function LoginView() {
 
   return (
     <div className="font-[sans-serif]">
-      <div className="min-h-screen flex fle-col items-center justify-center py-6 px-4">
-        <div className="grid md:grid-cols-2 items-center gap-10 max-w-6xl w-full bg-slate-200 rounded-3xl p-10">
+      <div className="fle-col flex min-h-screen items-center justify-center px-4 py-6">
+        <div className="grid w-full max-w-6xl items-center gap-10 rounded-3xl bg-slate-200 p-10 md:grid-cols-2">
           <div>
-            <h2 className="lg:text-5xl text-4xl font-extrabold lg:leading-[55px] text-gray-800">
+            <h2 className="text-4xl font-extrabold text-gray-800 lg:text-5xl lg:leading-[55px]">
               Seamless Login for Exclusive Access
             </h2>
-            <p className="text-sm mt-6 text-gray-800">
+            <p className="mt-6 text-sm text-gray-800">
               Immerse yourself in a hassle-free login journey with our
               intuitively designed login form. Effortlessly access your account.
             </p>

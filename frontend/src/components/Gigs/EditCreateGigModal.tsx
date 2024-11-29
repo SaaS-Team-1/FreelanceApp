@@ -40,7 +40,7 @@ const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
       applicantIds: [],
       location: "Remote",
       category: "",
-    }
+    },
   );
 
   useEffect(() => {
@@ -61,7 +61,17 @@ const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
     if (gig.price <= 0) errors.push("Price must be greater than 0.");
     if (!gig.dueDate || !(gig.dueDate instanceof Timestamp))
       errors.push("Due Date is required and must be a valid timestamp.");
-    if (!gig.status || !["open", "in-progress", "awaiting-confirmation", "completed", "deleted", "problem-reported"].includes(gig.status))
+    if (
+      !gig.status ||
+      ![
+        "open",
+        "in-progress",
+        "awaiting-confirmation",
+        "completed",
+        "deleted",
+        "problem-reported",
+      ].includes(gig.status)
+    )
       errors.push("Status must be one of the predefined values.");
     if (!gig.listerId.trim()) errors.push("Lister ID is required.");
 
@@ -114,7 +124,9 @@ const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
             <input
               type="text"
               value={editedGig.title}
-              onChange={(e) => setEditedGig({ ...editedGig, title: e.target.value })}
+              onChange={(e) =>
+                setEditedGig({ ...editedGig, title: e.target.value })
+              }
               className="w-full rounded border-gray-700 bg-gray-800 p-2 text-white"
             />
           </div>
@@ -123,7 +135,9 @@ const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
             <label className="mb-2 block text-sm font-bold">Description</label>
             <textarea
               value={editedGig.description}
-              onChange={(e) => setEditedGig({ ...editedGig, description: e.target.value })}
+              onChange={(e) =>
+                setEditedGig({ ...editedGig, description: e.target.value })
+              }
               className="h-40 w-full rounded border-gray-700 bg-gray-800 p-2 text-white"
             />
           </div>
@@ -134,7 +148,9 @@ const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
               <input
                 type="number"
                 value={editedGig.price}
-                onChange={(e) => setEditedGig({ ...editedGig, price: Number(e.target.value) })}
+                onChange={(e) =>
+                  setEditedGig({ ...editedGig, price: Number(e.target.value) })
+                }
                 className="w-full rounded border-gray-700 bg-gray-800 p-2 pr-10 text-white"
               />
               <FaDollarSign className="absolute bottom-3 right-3 text-gray-100" />
@@ -144,7 +160,9 @@ const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
               <input
                 type="text"
                 value={editedGig.location}
-                onChange={(e) => setEditedGig({ ...editedGig, location: e.target.value })}
+                onChange={(e) =>
+                  setEditedGig({ ...editedGig, location: e.target.value })
+                }
                 className="w-full rounded border-gray-700 bg-gray-800 p-2 pr-10 text-white"
               />
               <FaMapMarkerAlt className="absolute bottom-3 right-3 text-gray-100" />
@@ -156,7 +174,9 @@ const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
             <input
               type="text"
               value={editedGig.category}
-              onChange={(e) => setEditedGig({ ...editedGig, category: e.target.value })}
+              onChange={(e) =>
+                setEditedGig({ ...editedGig, category: e.target.value })
+              }
               className="w-full rounded border-gray-700 bg-gray-800 p-2 pr-10 text-white"
             />
             <FaTag className="absolute bottom-3 right-3 text-gray-100" />
@@ -164,7 +184,9 @@ const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
           {/* Date Picker */}
           <DatePicker
             dueDate={editedGig.dueDate}
-            onDateChange={(newTimestamp) => setEditedGig({ ...editedGig, dueDate: newTimestamp })}
+            onDateChange={(newTimestamp) =>
+              setEditedGig({ ...editedGig, dueDate: newTimestamp })
+            }
           />
         </div>
         {/* Buttons */}
