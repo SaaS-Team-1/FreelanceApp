@@ -1,10 +1,6 @@
 import { FirebaseApp } from "firebase/app";
-import { connectAuthEmulator, getAuth, initializeAuth } from "firebase/auth";
-import {
-  connectFirestoreEmulator,
-  getFirestore,
-  initializeFirestore,
-} from "firebase/firestore";
+import { connectAuthEmulator, getAuth } from "firebase/auth";
+import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 export const config = {
