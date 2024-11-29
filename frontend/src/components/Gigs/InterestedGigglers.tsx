@@ -5,6 +5,7 @@ import { doc, updateDoc, serverTimestamp, Timestamp } from "firebase/firestore";
 import CustomButton from "@/components/Buttons/CustomButton";
 import { useNavigate } from "react-router-dom";
 import { useFirestore } from "@/utils/reactfire";
+import {FaRegMessage, FaUserCheck } from "react-icons/fa6";
 
 interface InterestedGigglersProps {
   gig: Gig;
@@ -110,7 +111,8 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
                   </div>
                   <div className="flex items-center space-x-2">
                     <CustomButton
-                      label="Assign Gig"
+                      label="Assign"
+                      icon={FaUserCheck}
                       onClick={() => handleAssignGig(applicant.userId)}
                       color="green"
                       textColor="black"
@@ -119,6 +121,7 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
                     />
                     <CustomButton
                       label="Message"
+                      icon={FaRegMessage}
                       onClick={() => handleMessageClick(applicant.userId)}
                       color="primary"
                       textColor="black"
@@ -136,7 +139,7 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
               onClick={() => setShowModal(false)}
               color="red"
               textColor="black"
-              size="medium"
+              size="small"
               rounded={true}
             />
           </div>
@@ -187,6 +190,7 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
               )}
               <CustomButton
                 label="Message"
+                icon={FaRegMessage}
                 onClick={() => handleMessageClick(assignedGiggler.userId)}
                 color="primary"
                 textColor="black"
@@ -236,6 +240,7 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
                       <div className="flex items-center space-x-2">
                         <CustomButton
                           label="Assign Gig"
+                          icon={FaUserCheck}
                           onClick={() => handleAssignGig(applicant.userId)}
                           color="green"
                           textColor="black"
