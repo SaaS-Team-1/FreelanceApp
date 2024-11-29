@@ -260,7 +260,7 @@ function ChatPage() {
               ))}
             </div>
 
-            <div className="flex w-full flex-1 flex-col overflow-y-auto bg-slate-600">
+            <div className="flex size-full flex-col overflow-y-auto bg-slate-600">
               {selectedChat ? (
                 <>
                   <ChatHeader
@@ -281,7 +281,7 @@ function ChatPage() {
                     onSeeGigDetails={() => setIsGigDetailsOpen(true)}
                   />
 
-                  <div className="scrollbar w-full flex-1 overflow-y-auto bg-gray-800 p-4">
+                  <div className="scrollbar flex size-full flex-col overflow-y-scroll bg-gray-800 p-4">
                     <ChatWindow
                       messages={messages.map((message) => ({
                         text: message.content,
@@ -294,7 +294,7 @@ function ChatPage() {
                       }))}
                     />
                     {gig && (
-                      <div className="mt-4 flex justify-center">
+                      <div className="sticky bottom-0 mt-4 flex justify-center">
                         <ChatCard
                           gig={gig}
                           application={application}
