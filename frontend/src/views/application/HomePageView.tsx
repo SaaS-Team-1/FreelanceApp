@@ -70,6 +70,8 @@ export default function OverviewView() {
         // Check if the gig has the "open" status
         if (gigData.status !== "open") continue;
 
+        if (gigData.listerId == user?.uid) continue;
+
         // If a search query exists, filter by title
         if (
           searchQuery &&
