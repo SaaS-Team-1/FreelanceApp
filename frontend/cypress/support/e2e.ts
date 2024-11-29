@@ -22,4 +22,13 @@ if (!firebase.apps.length) {
     firebase.app(); // Use the existing app
   }
 
+
+// Optionally, connect to emulators during testing
+
+firebase.auth().useEmulator('http://localhost:9099/');
+firebase.firestore().useEmulator('localhost', 8080);
+
+
+
   attachCustomCommands({ Cypress, cy, firebase });
+  

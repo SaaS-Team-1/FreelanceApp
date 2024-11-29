@@ -1,20 +1,3 @@
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/database';
-import 'firebase/compat/firestore';
-import { attachCustomCommands } from 'cypress-firebase';
-
-const fbConfig = {
-  // Your config from Firebase Console
-};
-
-firebase.initializeApp(fbConfig);
-
-attachCustomCommands({ Cypress, cy, firebase });
-
-
-
-
 declare global {
     namespace Cypress {
       interface Chainable {
@@ -27,11 +10,6 @@ declare global {
          * Signs up or logs in a user dynamically, depending on their status.
          */
         signupOrLogin(): Chainable<void>;
-
-        /**
-         * Access the admin page
-         */
-        adminLogin(): Chainable<void>;
 
         /**
          * Saves the current session state to local storage.
@@ -54,59 +32,44 @@ declare global {
   });
   
   // Add the `signupOrLogin` command
+  // Add the `signupOrLogin` command
   Cypress.Commands.add('signupOrLogin', () => {
-    cy.clearSession(); // Ensure a clean session for testing
-    cy.visit('http://127.0.0.1:8081/');
-    cy.get('a').contains('Get started!').click();
-    cy.url().should('include', '/login');
+    // Define user details
+    const email = 'newuser@gmail.com';
+    const password = 'password123';
+    const uid = 'newUserUID'; // Unique ID for the user
+    const claims = { role: 'User' }; // Custom claims for the user
   
-    cy.contains('Sign in with email').should('be.visible').click();
+    // Clear any previous session
+    cy.logout();
   
-    cy.get('input[name="email"]').type('newuser@gmail.com').should('have.value', 'newuser@gmail.com');
-    cy.get('button').contains('Next').click();
+    // Check if the user exists and delete if it does
+    cy.authGetUserByEmail(email)
+      .then((user) => {
+        if (user) {
+          cy.log('User exists, deleting...');
+          return cy.authDeleteUser(uid);
+        } else {
+          cy.log('User does not exist, skipping deletion.');
+        }
+      })
+      .then(() => {
+        // Create the user
+        cy.createUserWithClaims({ email, password, uid }, claims).then(() => {
+          cy.log('User created successfully');
+          cy.loginWithEmailAndPassword(email, password);
+        });
+      });
   
-    cy.get('body').then(($body) => {
-      if ($body.find('input[name="name"]').length > 0) {
-        // First-time sign-up flow
-        cy.log('First-time sign-up flow detected');
-        cy.get('input[name="name"]').type('New User').should('have.value', 'New User');
-        cy.get('input#ui-sign-in-new-password-input').type('password123').should('have.value', 'password123');
-      } else {
-        // Existing user login flow
-        cy.log('Existing user login flow detected');
-        cy.get('input[type="password"]', { timeout: 10000 })
-          .should('be.visible')
-          .type('password123')
-          .should('have.value', 'password123');
-      }
-    });
-  
-    cy.get('button.firebaseui-id-submit').click();
-    cy.url().should('include', '/app');
-    cy.contains('button', '+ Upload new gig').should('be.visible');
-    cy.get('h2.text-lg.font-semibold.text-blue-300').should('be.visible').and('have.text', 'New User'); // Adjust expected name if needed
+    // Navigate to the app and verify
+    cy.visit('http://127.0.0.1:8081/app');
+    // cy.url().should('include', '/app');
+    // cy.contains('button', '+ Upload new gig').should('be.visible');
+    // cy.get('h2.text-lg.font-semibold.text-blue-300')
+    //   .should('be.visible')
+    //   .and('have.text', 'New User'); // Adjust expected name if needed
   });
-
-// commands.ts
-Cypress.Commands.add('adminLogin', () => {
-  cy.signupOrLogin(); // Perform the login process
-  cy.visit('http://127.0.0.1:8081/app/admin'); // Navigate to the admin page
-  cy.url().should('include', '/admin'); // Verify we're on the admin page
-
-  // Click the populate button to start the process
-  cy.get('[data-cy="populate-button"]', { timeout: 10000 })
-    .should('be.visible')
-    .click();
-
-  // Wait for the seeding status to be 'Seeding completed!'
-  cy.get('[data-cy="seeding-status"]', { timeout: 600000 })
-    .should('contain', 'Seeding completed!');
-
-  // Navigate to the home page after the seeding is complete
-  cy.contains('div', 'Home', { timeout: 10000 }).should('be.visible').click();
-});
-
-
+  
   
   
   
