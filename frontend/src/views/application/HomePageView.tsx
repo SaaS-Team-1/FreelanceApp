@@ -240,10 +240,6 @@ export default function OverviewView() {
         {extendedUser && (
           <MyPostedGigListCompressed gigs={myPostedGigs} user={extendedUser} />
         )}
-
-        <button className="flex max-w-sm items-center justify-center rounded-full bg-orange-500 py-3 text-sm font-semibold text-white">
-          + Upload new gig
-        </button>
         <CreateGigButton onCreateSave={handleCreateSave} />
       </div>
     </div>

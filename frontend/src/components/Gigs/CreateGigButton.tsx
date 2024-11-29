@@ -17,21 +17,10 @@ const CreateGigButton: React.FC<CreateGigButtonProps> = ({
   return (
     <div>
       {/* Button to open the Create Modal */}
-      <CustomButton
-        label="Create Gig"
-        onClick={() => setIsCreateModalOpen(true)}
-        color="secondary"
-        textColor="black"
-        size="medium"
-        rounded={true}
-        icon={FaPlus}
-        iconPosition="left"
-        customStyle={{
-          backgroundColor: "#44B0E8",
-          padding: "6px 20px",
-          width: "140px",
-        }}
-      />
+
+      <button className="flex w-96 justify-center items-center rounded-full bg-orange-500 py-3 text-sm font-semibold text-white" onClick={() => setIsCreateModalOpen(true)}>
+          + Upload new gig
+      </button>
 
       {/* Create Modal */}
       {isCreateModalOpen && (
