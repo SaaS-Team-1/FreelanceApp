@@ -30,5 +30,5 @@ firebase.firestore().useEmulator('localhost', 8080);
 
 
 
-  attachCustomCommands({ Cypress, cy, firebase });
+attachCustomCommands({ Cypress, cy, firebase });
   
