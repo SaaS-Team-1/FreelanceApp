@@ -25,7 +25,7 @@ export function RatingStar() {
         className="ml-2 text-sm font-medium text-gray-500 dark:text-gray-400"
         style={{ fontFamily: "'Inter', sans-serif" }} // Apply Inter font
       >
-        {rating > 0 ? `${rating} / 5` : 'No rating selected'}
+        {rating > 0 ? `${rating} / 5` : "No rating selected"}
       </p>
     </div>
   );

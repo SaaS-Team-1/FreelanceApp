@@ -66,7 +66,7 @@ function Sidebar() {
       {isExpanded && user && (
         <div className="flex flex-col items-center">
           <UserProfilePicture
-            user={user} 
+            user={user}
             size="large"
             hoverDetails={false} // Disable hover details
             rounded
@@ -90,7 +90,7 @@ function Sidebar() {
         />
         <SidebarItem
           icon={<FaClipboardList />}
-          label="My posted Gigs"
+          label="My Posted Gigs"
           isExpanded={isExpanded}
           isActive={location.pathname === "/app/posted-gigs"}
           onClick={() => navigate("/app/posted-gigs")}
@@ -108,13 +108,6 @@ function Sidebar() {
           isExpanded={isExpanded}
           isActive={location.pathname === "/app/schedule"}
           onClick={() => navigate("/app/schedule")}
-        />
-        <SidebarItem
-          icon={<FaBell />}
-          label="Notifications"
-          isExpanded={isExpanded}
-          isActive={location.pathname === "/app/notifications"}
-          onClick={() => navigate("/app/notifications")}
         />
         <SidebarItem
           icon={<FaUser />}

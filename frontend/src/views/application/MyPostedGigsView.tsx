@@ -1,27 +1,28 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { FaFilter } from "react-icons/fa";
-import PostedGigListHome from "@/components/Gigs/PostedGigListHome";
+import PostedGigList from "@/components/Gigs/MyPostedGigList";
 import GigDetails from "@/components/Gigs/GigDetails";
 import InterestedGigglers from "@/components/Gigs/InterestedGigglers";
 import { Gig, User, Application } from "@/utils/database/schema";
 import { useAuth, useFirestore } from "@/utils/reactfire";
-import { applicationsRef, gigsRef, usersRef } from "@/utils/database/collections";
 import {
-  query,
-  where,
-  getDocs,
-  updateDoc,
-  doc,
-  serverTimestamp,
-} from "firebase/firestore";
+  applicationsRef,
+  gigsRef,
+  usersRef,
+} from "@/utils/database/collections";
+import { query, where, getDocs } from "firebase/firestore";
 
 function MyPostedGigsView() {
   const db = useFirestore();
   const auth = useAuth();
   const currUser = auth.currentUser;
 
-  const [gigsWithListers, setGigsWithListers] = useState<{ gig: Gig; lister: User }[]>([]);
-  const [filteredGigs, setFilteredGigs] = useState<{ gig: Gig; lister: User }[]>([]);
+  const [gigsWithListers, setGigsWithListers] = useState<
+    { gig: Gig; lister: User }[]
+  >([]);
+  const [filteredGigs, setFilteredGigs] = useState<
+    { gig: Gig; lister: User }[]
+  >([]);
   const [selectedGig, setSelectedGig] = useState<Gig | null>(null);
   const [applicants, setApplicants] = useState<User[]>([]);
   const [loadingGigs, setLoadingGigs] = useState(true);
@@ -50,7 +51,9 @@ function MyPostedGigsView() {
           }));
 
           const sortedGigs = gigsWithListersData.sort(
-            (a, b) => STATUS_ORDER.indexOf(a.gig.status) - STATUS_ORDER.indexOf(b.gig.status)
+            (a, b) =>
+              STATUS_ORDER.indexOf(a.gig.status) -
+              STATUS_ORDER.indexOf(b.gig.status),
           );
 
           setGigsWithListers(sortedGigs);
@@ -75,17 +78,24 @@ function MyPostedGigsView() {
       if (selectedGig) {
         try {
           setLoadingApplicants(true);
-          const q = query(applicationsRef(db), where("gigId", "==", selectedGig.gigId));
+          const q = query(
+            applicationsRef(db),
+            where("gigId", "==", selectedGig.gigId),
+          );
           const applicationSnapshot = await getDocs(q);
 
-          const userIds = applicationSnapshot.docs.map((doc) => (doc.data() as Application).applicantId);
+          const userIds = applicationSnapshot.docs.map(
+            (doc) => (doc.data() as Application).applicantId,
+          );
 
           const userSnapshots = await Promise.all(
-            userIds.map((userId) => getDocs(query(usersRef(db), where("userId", "==", userId))))
+            userIds.map((userId) =>
+              getDocs(query(usersRef(db), where("userId", "==", userId))),
+            ),
           );
 
           const users = userSnapshots.flatMap((userSnapshot) =>
-            userSnapshot.docs.map((userDoc) => userDoc.data() as User)
+            userSnapshot.docs.map((userDoc) => userDoc.data() as User),
           );
 
           setApplicants(users);
@@ -113,7 +123,9 @@ function MyPostedGigsView() {
     const filtered =
       status === "all"
         ? gigsWithListers
-        : gigsWithListers.filter((gigWithLister) => gigWithLister.gig.status === status);
+        : gigsWithListers.filter(
+            (gigWithLister) => gigWithLister.gig.status === status,
+          );
 
     setFilteredGigs(filtered);
 
@@ -126,47 +138,59 @@ function MyPostedGigsView() {
 
   const handleGigUpdate = (updatedGig: Gig) => {
     const updatedGigs = gigsWithListers.map((item) =>
-      item.gig.gigId === updatedGig.gigId ? { ...item, gig: updatedGig } : item
+      item.gig.gigId === updatedGig.gigId ? { ...item, gig: updatedGig } : item,
     );
 
     const sortedUpdatedGigs = updatedGigs.sort(
-      (a, b) => STATUS_ORDER.indexOf(a.gig.status) - STATUS_ORDER.indexOf(b.gig.status)
+      (a, b) =>
+        STATUS_ORDER.indexOf(a.gig.status) - STATUS_ORDER.indexOf(b.gig.status),
     );
 
     setGigsWithListers(sortedUpdatedGigs);
     setFilteredGigs(
       filterStatus === "all"
         ? sortedUpdatedGigs
-        : sortedUpdatedGigs.filter((gigWithLister) => gigWithLister.gig.status === filterStatus)
+        : sortedUpdatedGigs.filter(
+            (gigWithLister) => gigWithLister.gig.status === filterStatus,
+          ),
     );
 
     setSelectedGig(updatedGig);
   };
   const handleGigDelete = (gigId: string) => {
-    const remainingGigs = gigsWithListers.filter((item) => item.gig.gigId !== gigId);
+    const remainingGigs = gigsWithListers.filter(
+      (item) => item.gig.gigId !== gigId,
+    );
 
     const sortedRemainingGigs = remainingGigs.sort(
-      (a, b) => STATUS_ORDER.indexOf(a.gig.status) - STATUS_ORDER.indexOf(b.gig.status)
+      (a, b) =>
+        STATUS_ORDER.indexOf(a.gig.status) - STATUS_ORDER.indexOf(b.gig.status),
     );
 
     setGigsWithListers(sortedRemainingGigs);
     setFilteredGigs(
       filterStatus === "all"
         ? sortedRemainingGigs
-        : sortedRemainingGigs.filter((gigWithLister) => gigWithLister.gig.status === filterStatus)
+        : sortedRemainingGigs.filter(
+            (gigWithLister) => gigWithLister.gig.status === filterStatus,
+          ),
     );
 
-    setSelectedGig(sortedRemainingGigs.length > 0 ? sortedRemainingGigs[0].gig : null);
+    setSelectedGig(
+      sortedRemainingGigs.length > 0 ? sortedRemainingGigs[0].gig : null,
+    );
   };
   if (loadingGigs) {
     return <p>Loading your gigs...</p>;
   }
 
   return (
-    <div className="flex space-x-6 p-4">
-      <div className="h-full w-3/5">
+    <div className="flex h-[calc(100vh-4rem)] w-full space-x-6 p-4">
+      <div className="scrollbar h-full w-1/2 overflow-y-scroll">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">My Posted Gigs</h2>
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+            My Posted Gigs
+          </h2>
           <div className="relative">
             <button
               onClick={() => setIsDropdownVisible((prev) => !prev)}
@@ -199,7 +223,7 @@ function MyPostedGigsView() {
             )}
           </div>
         </div>
-        <PostedGigListHome
+        <PostedGigList
           gigs={filteredGigs}
           onSelectGig={handleSelectGig}
           selectedGig={selectedGig}
@@ -208,8 +232,8 @@ function MyPostedGigsView() {
         />
       </div>
 
-      <div className="h-full w-4/5">
-        <div className="rounded-lg bg-gray-700 p-6 shadow-lg">
+      <div className="scrollbar h-full w-1/2 overflow-y-scroll">
+        <div className="h-full min-h-fit rounded-lg bg-gray-700 p-6 shadow-lg">
           {selectedGig ? (
             <>
               <GigDetails
@@ -217,7 +241,6 @@ function MyPostedGigsView() {
                 user={currUser as unknown as User}
                 onEditSave={handleGigUpdate}
                 onDelete={handleGigDelete}
-
               />
               {loadingApplicants ? (
                 <p className="text-gray-500">Loading interested gigglers...</p>

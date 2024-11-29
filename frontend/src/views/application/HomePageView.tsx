@@ -7,6 +7,7 @@ import NotificationList from "@/components/Notifications/NotificationsList";
 import PostedGigListHome from "@/components/Gigs/PostedGigListHome";
 import FilterButton from "@/components/Buttons/FilterButton"; // Assuming this component is imported
 import MyPostedGigListCompressed from "@/components/Gigs/MyPostedGigListCompressed";
+import Loading from "@/components/Loading";
 
 export default function OverviewView() {
   const { data: user } = useUser();
@@ -15,6 +16,7 @@ export default function OverviewView() {
   const [searchQuery, setSearchQuery] = useState(""); // State for the search bar content
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [openGigs, setOpenGigs] = useState<{ gig: Gig; lister: User }[]>([]);
+  const [openGigsLoading, setOpenGigsLoading] = useState(true);
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [myPostedGigs, setMyPostedGigs] = useState<Gig[]>([]);
@@ -47,6 +49,7 @@ export default function OverviewView() {
   };
 
   const fetchOpenGigsAndCategories = async () => {
+    setOpenGigsLoading(true);
     try {
       const gigsRef = collection(db, "gigs");
       const gigsSnapshot = await getDocs(gigsRef);
@@ -102,6 +105,7 @@ export default function OverviewView() {
     } catch (error) {
       console.error("Error fetching gigs and categories: ", error);
     }
+    setOpenGigsLoading(false);
   };
 
   const fetchMyPostedGigs = async () => {
@@ -166,25 +170,27 @@ export default function OverviewView() {
   };
 
   return (
-    <div className="flex w-full flex-row p-5">
+    <div className="flex h-screen w-full flex-row p-10">
       {/* Fixed Left Column for Gigs */}
-      <div className="mr-4 flex grow flex-col items-center space-y-4">
+      <div className="mr-4 flex grow flex-col items-center space-y-4 pb-10">
         {/* Filters */}
         <div className="flex w-full flex-col items-center">
           <div className="flex items-center justify-center p-4 lg:w-7/12">
-            <HiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search for specific Gigs"
-              className="w-full rounded-md border border-gray-300 py-3 pl-12 pr-4 shadow-sm focus:outline-none"
-              value={searchQuery}
-              onChange={handleSearchInput}
-              style={{
-                height: "48px",
-                backgroundColor: "white",
-                fontFamily: "'Inter', sans-serif",
-              }}
-            />
+            <div className="w-full">
+              <HiSearch className="absolute ml-4 mt-3 text-2xl text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search for specific Gigs"
+                className="w-full rounded-md border border-gray-300 py-3 pl-12 pr-4 shadow-sm focus:outline-none"
+                value={searchQuery}
+                onChange={handleSearchInput}
+                style={{
+                  height: "48px",
+                  backgroundColor: "white",
+                  fontFamily: "'Inter', sans-serif",
+                }}
+              />
+            </div>
             <div className="ml-4">
               <FilterButton
                 categories={categories}
@@ -205,15 +211,19 @@ export default function OverviewView() {
           </div>
         </div>
 
-        <div className="scrollbar overflow-y-scroll">
-          <PostedGigListHome
-            gigs={openGigs}
-            enableSelection={true}
-            showSeeMoreButton={true}
-            userId={user?.uid}
-            db={db}
-          />
-        </div>
+        {!openGigsLoading ? (
+          <div className="scrollbar h-fit overflow-y-scroll">
+            <PostedGigListHome
+              gigs={openGigs}
+              enableSelection={true}
+              showSeeMoreButton={true}
+              userId={user?.uid}
+              db={db}
+            />
+          </div>
+        ) : (
+          <Loading />
+        )}
       </div>
 
       {/* Fixed Right Column for Notifications */}

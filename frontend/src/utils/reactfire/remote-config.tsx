@@ -1,9 +1,19 @@
-import { useRemoteConfig } from './';
-import { useObservable, ObservableStatus } from './useObservable';
-import { getValue, getString, getBoolean, getNumber, getAll, AllParameters } from 'rxfire/remote-config';
-import { Observable } from 'rxjs';
+import { useRemoteConfig } from "./";
+import { useObservable, ObservableStatus } from "./useObservable";
+import {
+  getValue,
+  getString,
+  getBoolean,
+  getNumber,
+  getAll,
+  AllParameters,
+} from "rxfire/remote-config";
+import { Observable } from "rxjs";
 
-import type { RemoteConfig, Value as RemoteConfigValue } from 'firebase/remote-config';
+import type {
+  RemoteConfig,
+  Value as RemoteConfigValue,
+} from "firebase/remote-config";
 
 type Getter$<T> = (remoteConfig: RemoteConfig, key: string) => Observable<T>;
 
@@ -15,7 +25,10 @@ type Getter$<T> = (remoteConfig: RemoteConfig, key: string) => Observable<T>;
  * @param getter
  * @param remoteConfig
  */
-function useRemoteConfigValue_INTERNAL<T>(key: string, getter: Getter$<T>): ObservableStatus<T> {
+function useRemoteConfigValue_INTERNAL<T>(
+  key: string,
+  getter: Getter$<T>,
+): ObservableStatus<T> {
   const remoteConfig = useRemoteConfig();
 
   const appName = remoteConfig.app.name;
@@ -31,7 +44,9 @@ function useRemoteConfigValue_INTERNAL<T>(key: string, getter: Getter$<T>): Obse
  *
  * @param key The parameter key in Remote Config
  */
-export function useRemoteConfigValue(key: string): ObservableStatus<RemoteConfigValue> {
+export function useRemoteConfigValue(
+  key: string,
+): ObservableStatus<RemoteConfigValue> {
   return useRemoteConfigValue_INTERNAL<RemoteConfigValue>(key, getValue);
 }
 
@@ -63,6 +78,8 @@ export function useRemoteConfigBoolean(key: string): ObservableStatus<boolean> {
  * Convience method similar to useRemoteConfigValue. Returns allRemote Config parameters.
  * @param key The parameter key in Remote Config
  */
-export function useRemoteConfigAll(key: string): ObservableStatus<AllParameters> {
+export function useRemoteConfigAll(
+  key: string,
+): ObservableStatus<AllParameters> {
   return useRemoteConfigValue_INTERNAL<AllParameters>(key, getAll);
 }

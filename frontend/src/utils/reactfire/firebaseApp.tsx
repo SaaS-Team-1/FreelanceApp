@@ -1,12 +1,14 @@
-import * as React from 'react';
-import { getApps, initializeApp, registerVersion } from 'firebase/app';
+import * as React from "react";
+import { getApps, initializeApp, registerVersion } from "firebase/app";
 
-import type { FirebaseApp, FirebaseOptions } from 'firebase/app';
+import type { FirebaseApp, FirebaseOptions } from "firebase/app";
 
 // INVESTIGATE I don't like magic strings, can we have export this in js-sdk?
-const DEFAULT_APP_NAME = '[DEFAULT]';
+const DEFAULT_APP_NAME = "[DEFAULT]";
 
-const FirebaseAppContext = React.createContext<FirebaseApp | undefined>(undefined);
+const FirebaseAppContext = React.createContext<FirebaseApp | undefined>(
+  undefined,
+);
 const SuspenseEnabledContext = React.createContext<boolean>(false);
 
 export interface FirebaseAppProviderProps {
@@ -16,9 +18,13 @@ export interface FirebaseAppProviderProps {
   suspense?: boolean;
 }
 
-const shallowEq = (a: { [key: string]: any }, b: { [key: string]: any }) => a === b || [...Object.keys(a), ...Object.keys(b)].every((key) => a[key] === b[key]);
+const shallowEq = (a: { [key: string]: any }, b: { [key: string]: any }) =>
+  a === b ||
+  [...Object.keys(a), ...Object.keys(b)].every((key) => a[key] === b[key]);
 
-export function FirebaseAppProvider(props: React.PropsWithChildren<FirebaseAppProviderProps>) {
+export function FirebaseAppProvider(
+  props: React.PropsWithChildren<FirebaseAppProviderProps>,
+) {
   const { firebaseConfig, appName, suspense } = props;
 
   const firebaseApp: FirebaseApp = React.useMemo(() => {
@@ -26,22 +32,24 @@ export function FirebaseAppProvider(props: React.PropsWithChildren<FirebaseAppPr
       return props.firebaseApp;
     }
 
-    const existingApp = getApps().find((app) => app.name === (appName || DEFAULT_APP_NAME));
+    const existingApp = getApps().find(
+      (app) => app.name === (appName || DEFAULT_APP_NAME),
+    );
     if (existingApp) {
       if (firebaseConfig && shallowEq(existingApp.options, firebaseConfig)) {
         return existingApp;
       } else {
         throw new Error(
-          `Does not match the options already provided to the ${appName || 'default'} firebase app instance, give this new instance a different appName.`
+          `Does not match the options already provided to the ${appName || "default"} firebase app instance, give this new instance a different appName.`,
         );
       }
     } else {
       if (!firebaseConfig) {
-        throw new Error('No firebaseConfig provided');
+        throw new Error("No firebaseConfig provided");
       }
 
-      const reactVersion = React.version || 'unknown';
-      registerVersion('react', reactVersion);
+      const reactVersion = React.version || "unknown";
+      registerVersion("react", reactVersion);
       return initializeApp(firebaseConfig, appName);
     }
   }, [props.firebaseApp, firebaseConfig, appName]);
@@ -60,7 +68,9 @@ export function useIsSuspenseEnabled(): boolean {
   return suspense ?? false;
 }
 
-export function useSuspenseEnabledFromConfigAndContext(suspenseFromConfig?: boolean): boolean {
+export function useSuspenseEnabledFromConfigAndContext(
+  suspenseFromConfig?: boolean,
+): boolean {
   const suspenseFromContext = React.useContext(SuspenseEnabledContext);
 
   // prioritize config over context
@@ -74,7 +84,9 @@ export function useSuspenseEnabledFromConfigAndContext(suspenseFromConfig?: bool
 export function useFirebaseApp() {
   const firebaseApp = React.useContext(FirebaseAppContext);
   if (!firebaseApp) {
-    throw new Error('Cannot call useFirebaseApp unless your component is within a FirebaseAppProvider');
+    throw new Error(
+      "Cannot call useFirebaseApp unless your component is within a FirebaseAppProvider",
+    );
   }
 
   return firebaseApp;

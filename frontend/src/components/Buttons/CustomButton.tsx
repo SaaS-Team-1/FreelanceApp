@@ -5,8 +5,24 @@ import { IconType } from "react-icons";
 interface CustomButtonProps {
   label?: string;
   onClick: () => void;
-  color?: "primary" | "secondary" | "warning" | "gray" | "black" | "green" | "red" | "white"; // Background color
-  outlineColor?: "primary" | "secondary" | "warning" | "gray" | "black" | "green" | "red" | "white"; // Border color
+  color?:
+    | "primary"
+    | "secondary"
+    | "warning"
+    | "gray"
+    | "black"
+    | "green"
+    | "red"
+    | "white"; // Background color
+  outlineColor?:
+    | "primary"
+    | "secondary"
+    | "warning"
+    | "gray"
+    | "black"
+    | "green"
+    | "red"
+    | "white"; // Border color
   size?: "small" | "medium" | "large"; // Size of the button
   icon?: IconType; // Icon component from react-icons
   iconPosition?: "left" | "right" | "middle"; // Position of the icon
@@ -14,8 +30,7 @@ interface CustomButtonProps {
   rounded?: boolean; // Rounded corners
   disabled?: boolean; // Disable button
   textColor?: "black" | "white" | "primary"; // Text color
-  customStyle?: React.CSSProperties;  
-
+  customStyle?: React.CSSProperties;
 }
 
 const sizeClasses: { [key: string]: string } = {
@@ -24,7 +39,9 @@ const sizeClasses: { [key: string]: string } = {
   large: "px-6 py-3 text-lg",
 };
 
-const colorClasses: { [key in NonNullable<CustomButtonProps['color']>]: string } = {
+const colorClasses: {
+  [key in NonNullable<CustomButtonProps["color"]>]: string;
+} = {
   primary: "bg-blue-500 hover:bg-blue-600",
   secondary: "bg-orange-500 hover:bg-orange-600",
   warning: "bg-red-500 hover:bg-red-600",
@@ -35,7 +52,9 @@ const colorClasses: { [key in NonNullable<CustomButtonProps['color']>]: string }
   white: "bg-white hover:bg-gray-200", // White background with hover effect
 };
 
-const borderColorClasses: { [key in NonNullable<CustomButtonProps['outlineColor']>]: string } = {
+const borderColorClasses: {
+  [key in NonNullable<CustomButtonProps["outlineColor"]>]: string;
+} = {
   primary: "border-blue-500",
   secondary: "border-orange-500",
   warning: "border-red-500",
@@ -46,7 +65,9 @@ const borderColorClasses: { [key in NonNullable<CustomButtonProps['outlineColor'
   white: "border-white",
 };
 
-const textColorClasses: { [key in NonNullable<CustomButtonProps['textColor']>]: string } = {
+const textColorClasses: {
+  [key in NonNullable<CustomButtonProps["textColor"]>]: string;
+} = {
   black: "text-black",
   white: "text-white",
   primary: "text-blue-500",
@@ -65,9 +86,10 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   disabled = false,
   textColor = "white", // Default text color
   customStyle, // Use customStyle here
-
 }) => {
-  const borderClass = outline ? `border ${borderColorClasses[outlineColor || color]}` : "";
+  const borderClass = outline
+    ? `border ${borderColorClasses[outlineColor || color]}`
+    : "";
   const backgroundClass = colorClasses[color]; // Always apply the background color
   const roundedClass = rounded ? "rounded-full" : "rounded-md";
   const textClass = textColorClasses[textColor];
@@ -80,13 +102,11 @@ const CustomButton: React.FC<CustomButtonProps> = ({
         disabled ? "cursor-not-allowed opacity-50" : "hover:opacity-90"
       }`}
       style={customStyle} // Apply customStyle here
-
     >
       {Icon && iconPosition === "left" && <Icon className="mr-2" />}
       <span>{label}</span>
       {Icon && iconPosition === "right" && <Icon className="ml-2" />}
       {Icon && iconPosition === "middle" && <Icon className="mx-0" />}
-
     </button>
   );
 };

@@ -1,6 +1,6 @@
-import { empty, Observable, Subject, Subscriber, Subscription } from 'rxjs';
-import { catchError, shareReplay, tap } from 'rxjs/operators';
-import { ObservableStatus } from './useObservable';
+import { empty, Observable, Subject, Subscriber, Subscription } from "rxjs";
+import { catchError, shareReplay, tap } from "rxjs/operators";
+import { ObservableStatus } from "./useObservable";
 
 export class SuspenseSubject<T> extends Subject<T> {
   private _value: T | undefined;
@@ -18,17 +18,23 @@ export class SuspenseSubject<T> extends Subject<T> {
   // @ts-expect-error: TODO: double check to see if this is an RXJS thing or if we should listen to TS
   private _resolveFirstEmission: () => void;
 
-  constructor(innerObservable: Observable<T>, private _timeoutWindow: number, private _suspenseEnabled: boolean) {
+  constructor(
+    innerObservable: Observable<T>,
+    private _timeoutWindow: number,
+    private _suspenseEnabled: boolean,
+  ) {
     super();
-    this._firstEmission = new Promise<void>((resolve) => (this._resolveFirstEmission = resolve));
+    this._firstEmission = new Promise<void>(
+      (resolve) => (this._resolveFirstEmission = resolve),
+    );
 
     this._immutableStatus = {
-      status: 'loading',
+      status: "loading",
       hasEmitted: false,
       isComplete: false,
       data: undefined,
       error: undefined,
-      firstValuePromise: this._firstEmission
+      firstValuePromise: this._firstEmission,
     };
 
     this._innerObservable = innerObservable.pipe(
@@ -46,10 +52,10 @@ export class SuspenseSubject<T> extends Subject<T> {
         complete: () => {
           this._isComplete = true;
           this._updateImmutableStatus();
-        }
+        },
       }),
       catchError(() => empty()),
-      shareReplay(1)
+      shareReplay(1),
     );
     // warm up the observable
     this._warmupSubscription = this._innerObservable.subscribe();
@@ -60,7 +66,10 @@ export class SuspenseSubject<T> extends Subject<T> {
       // Noop if suspense is enabled
       this._timeoutHandler = setTimeout(() => {}, this._timeoutWindow);
     } else {
-      this._timeoutHandler = setTimeout(this._reset.bind(this), this._timeoutWindow);
+      this._timeoutHandler = setTimeout(
+        this._reset.bind(this),
+        this._timeoutWindow,
+      );
     }
   }
 
@@ -78,7 +87,7 @@ export class SuspenseSubject<T> extends Subject<T> {
     if (this._error) {
       throw this._error;
     } else if (!this.hasValue) {
-      throw Error('Can only get value if SuspenseSubject has a value');
+      throw Error("Can only get value if SuspenseSubject has a value");
     }
     return this._value as T;
   }
@@ -94,12 +103,12 @@ export class SuspenseSubject<T> extends Subject<T> {
     // code for here, so the relationships between the ObservableStatus fields
     // are mostly checked in tests instead
     this._immutableStatus = {
-      status: this._error ? 'error' : (this._hasValue ? 'success' : 'loading'),
+      status: this._error ? "error" : this._hasValue ? "success" : "loading",
       hasEmitted: this._hasValue,
       isComplete: this._isComplete,
       data: this._value,
       error: this._error,
-      firstValuePromise: this._firstEmission
+      firstValuePromise: this._firstEmission,
     };
   }
 
@@ -118,7 +127,9 @@ export class SuspenseSubject<T> extends Subject<T> {
     this._hasValue = false;
     this._value = undefined;
     this._error = undefined;
-    this._firstEmission = new Promise<void>((resolve) => (this._resolveFirstEmission = resolve));
+    this._firstEmission = new Promise<void>(
+      (resolve) => (this._resolveFirstEmission = resolve),
+    );
     this._updateImmutableStatus();
   }
 

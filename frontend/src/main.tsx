@@ -32,7 +32,6 @@ import PortfolioView from "./views/application/PortfolioView.tsx";
 import ScheduleView from "./views/application/ScheduleView.tsx";
 import SettingsView from "./views/application/SettingsView.tsx";
 import WalletView from "./views/application/WalletView.tsx";
-import NotificationsView from "./views/application/NotificationsView.tsx";
 import UserView, { userLoader } from "./views/application/UserView.tsx";
 import AdminView from "./views/application/AdminView.tsx";
 
@@ -79,10 +78,6 @@ const router = createBrowserRouter([
           {
             path: "schedule",
             element: <ScheduleView />,
-          },
-          {
-            path: "notifications",
-            element: <NotificationsView />,
           },
           {
             path: "user/:UID",

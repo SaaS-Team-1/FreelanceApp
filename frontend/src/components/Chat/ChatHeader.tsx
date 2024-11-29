@@ -1,4 +1,3 @@
-
 import React from "react";
 import UserProfilePicture from "@/components/Avatar/UserProfilePicture";
 import Badge from "@/components/Buttons/CustomBadge";
@@ -23,7 +22,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   isLister,
 }) => {
   return (
-    <div className="w-4/5 flex items-center justify-between p-4 bg-gray-800 text-white border-b border-gray-700">
+    <div className="flex w-full items-center justify-between border-b border-gray-700 bg-gray-800 p-4 text-white">
       <div className="flex items-center gap-4">
         <UserProfilePicture
           user={{
@@ -45,7 +44,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             {user.name}
           </span>
           <span
-            className="block text-sm text-orange-500 underline cursor-pointer"
+            className="block cursor-pointer text-sm text-orange-500 underline"
             onClick={onSeeGigDetails}
           >
             See gig details
@@ -53,7 +52,9 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
         </div>
       </div>
       <Badge
-        label={isLister ? `Gig Status: ${status}` : `Application Status: ${status}`}
+        label={
+          isLister ? `Gig Status: ${status}` : `Application Status: ${status}`
+        }
         color={isLister ? "secondary" : "primary"}
         textColor="white"
         size="small"
@@ -61,6 +62,5 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
     </div>
   );
 };
-
 
 export default ChatHeader;

@@ -1,11 +1,9 @@
-
-
 import React, { useEffect, useState } from "react";
 import { Gig, Application, User } from "@/utils/database/schema";
 import { doc, getDoc } from "firebase/firestore";
 import { usersRef } from "@/utils/database/collections";
 import CustomButton from "@/components/Buttons/CustomButton";
-import { UndoButton } from "@/components/Buttons/UndoButton"; 
+import { UndoButton } from "@/components/Buttons/UndoButton";
 
 interface ChatCardProps {
   gig: Gig;
@@ -14,7 +12,12 @@ interface ChatCardProps {
   db: any; // Firestore instance
 }
 
-const ChatCard: React.FC<ChatCardProps> = ({ gig, application, userId, db }) => {
+const ChatCard: React.FC<ChatCardProps> = ({
+  gig,
+  application,
+  userId,
+  db,
+}) => {
   const isLister = gig.listerId === userId;
   const [applicantName, setApplicantName] = useState<string>("");
 
@@ -22,7 +25,9 @@ const ChatCard: React.FC<ChatCardProps> = ({ gig, application, userId, db }) => 
     const fetchApplicantName = async () => {
       if (application?.applicantId) {
         try {
-          const applicantDoc = await getDoc(doc(usersRef(db), application.applicantId));
+          const applicantDoc = await getDoc(
+            doc(usersRef(db), application.applicantId),
+          );
           const applicantData = applicantDoc.data() as User | undefined;
           setApplicantName(applicantData?.displayName || "Unknown Applicant");
         } catch (error) {
@@ -39,7 +44,9 @@ const ChatCard: React.FC<ChatCardProps> = ({ gig, application, userId, db }) => 
       case "open":
         return application?.status === "pending" ? (
           <>
-            <p>Application from <strong>{applicantName}</strong> is pending.</p>
+            <p>
+              Application from <strong>{applicantName}</strong> is pending.
+            </p>
             <CustomButton
               label={`Assign Gig to ${applicantName}`}
               onClick={() =>
@@ -57,8 +64,8 @@ const ChatCard: React.FC<ChatCardProps> = ({ gig, application, userId, db }) => 
         return (
           <>
             <p>
-              <strong>{applicantName}</strong> has reported completion of the gig.
-              Confirm to release payment.
+              <strong>{applicantName}</strong> has reported completion of the
+              gig. Confirm to release payment.
             </p>
             <CustomButton
               label="Confirm Completion"
@@ -75,7 +82,9 @@ const ChatCard: React.FC<ChatCardProps> = ({ gig, application, userId, db }) => 
       case "in-progress":
         return application?.status === "assigned" ? (
           <>
-            <p>You have assigned the gig to <strong>{applicantName}</strong>.</p>
+            <p>
+              You have assigned the gig to <strong>{applicantName}</strong>.
+            </p>
           </>
         ) : (
           <p>You have assigned the gig to another applicant.</p>
@@ -95,7 +104,9 @@ const ChatCard: React.FC<ChatCardProps> = ({ gig, application, userId, db }) => 
         return (
           <>
             <p>Application sent. Waiting for response. Cancel application?</p>
-            <UndoButton onClick={() => alert(`Undo clicked for gig: ${gig.title}`)} />
+            <UndoButton
+              onClick={() => alert(`Undo clicked for gig: ${gig.title}`)}
+            />
           </>
         );
 
@@ -127,7 +138,7 @@ const ChatCard: React.FC<ChatCardProps> = ({ gig, application, userId, db }) => 
   };
 
   return (
-    <div className="flex flex-col items-center bg-orange-300 p-4 rounded-md shadow-md">
+    <div className="flex flex-col items-center rounded-md bg-orange-300 p-4 shadow-md">
       {isLister ? renderListerView() : renderApplicantView()}
     </div>
   );
