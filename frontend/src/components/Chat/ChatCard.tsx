@@ -2,8 +2,9 @@
 
 
 import React, { useEffect, useState } from "react";
+import { Timestamp } from "firebase/firestore";
 import { Gig, Application, User } from "@/utils/database/schema";
-import { usersRef } from "@/utils/database/collections";
+import { usersRef, chatsRef } from "@/utils/database/collections";
 import CustomButton from "@/components/Buttons/CustomButton";
 import { UndoButton } from "@/components/Buttons/UndoButton";
 import { doc, getDoc, updateDoc, getDocs, query, where, writeBatch } from "firebase/firestore";
@@ -82,11 +83,23 @@ const ChatCard: React.FC<ChatCardProps> = ({
       await updateDoc(gigRef, {selectedApplicantId});
     };
 
+    const updateChatLastUpdate = async (chatId: string) => {
+      try {
+        const chatRef = doc(chatsRef(db), chatId);
+        await updateDoc(chatRef, {
+          lastUpdate: Timestamp.now(),
+        });
+      } catch (error) {
+        console.error("Error updating chat lastUpdate:", error);
+      }
+    };
+    
 
     const handleAssign = async (db: any, gigId: string, assignedApplicationId: string) => {
       try {
         // Update gig status to "in-progress"
         await updateGigStatus(db, gigId, "in-progress");
+        await updateChatLastUpdate(application?.chatId || "");
     
         // Fetch all applications for the gig
         const applicationsQuery = query(applicationsRef(db), where("gigId", "==", gigId));
@@ -114,6 +127,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
     
         // Update application status to "awaiting-lister-completion"
         await updateApplicationStatus(db, applicationId, "awaiting-lister-completion");
+        await updateChatLastUpdate(application?.chatId || "");
       } catch (error) {
         console.error("Error marking gig as complete:", error);
       }
@@ -123,6 +137,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
       try {
         // Update gig status to "completed"
         await updateGigStatus(db, gigId, "completed");
+        await updateChatLastUpdate(application?.chatId || "");
     
         // Update application status to "completed"
         await updateApplicationStatus(db, applicationId, "completed");
@@ -136,6 +151,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
       try {
         // Update application status to "discarded"
         await updateApplicationStatus(db, applicationId, "discarded");
+        await updateChatLastUpdate(application?.chatId || "");
       } catch (error) {
         console.error("Error cancelling application:", error);
       }
@@ -167,6 +183,8 @@ const ChatCard: React.FC<ChatCardProps> = ({
       return <p>No applications yet.</p>;
 
       case "awaiting-confirmation":
+
+        if (application?.status === "awaiting-lister-completion"){
         return (
           <>
             <p>
@@ -181,13 +199,24 @@ const ChatCard: React.FC<ChatCardProps> = ({
               color="green"
               size="small"
             />
-
-
           </>
         );
+      } 
+      if (application?.status === "discarded"){
+        return <p>Application no longer available.</p>;
+      }
+      
+      else {return <p> Error: Unknown combination {application?.status} {gig.status}</p>}
 
       case "completed":
-        return <p>Gig completed successfully.</p>;
+        if (application?.status === "completed"){
+          return <p>Gig completed successfully.</p>;
+        } 
+        if (application?.status === "discarded"){
+          return <p>Application no longer available.</p>;
+        }
+        else {return <p> Error: Unknown combination {application?.status} {gig.status}</p>;}
+
 
       case "in-progress":
         return application?.status === "assigned" ? (
@@ -204,7 +233,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
         return <p>Gig deleted.</p>;
 
       default:
-        return <p>Unknown status: {gig.status}</p>;
+        return <p>Error. Unknown status: {gig.status}</p>;
     }
   };
 
@@ -212,40 +241,65 @@ const ChatCard: React.FC<ChatCardProps> = ({
     switch (application?.status) {
 
       case "pending":
-        return (
+        if (gig.status === "open"){
+          return (
           <>
-            <p>Application sent. Waiting for response. Cancel application?</p>
-            <UndoButton
+            <p className= "font-bold">Application sent. Waiting for response. Cancel application?</p>
+            <div className= "p-3"> 
+              <UndoButton
               onClick={() => handleCancelApplication(db, application.applicationId)}
-            />
+              />
+            </div>
+            
           </>
         );
-
+      }else {return <p> Error: Unknown combination {application?.status} {gig.status}</p>;}
 
       case "assigned":
-        return (
-          <>
-            <p>Gig assigned to you. Execute gig and report completion.</p>
-            <CustomButton
-              label="Complete Gig"
-              onClick={() => handleCompleteGig(db, gig.gigId, application.applicationId)}
-              color="green"
-              size="small"
-            />
-          </>
-        );
+        if (gig.status === "in-progress"){
+          return (
+            <>
+              <p>Gig assigned to you. Execute gig and report completion.</p>
+              <CustomButton
+                label="Complete Gig"
+                onClick={() => handleCompleteGig(db, gig.gigId, application.applicationId)}
+                color="green"
+                size="small"
+              />
+            </>
+          );
+      }else {return <p> Error: Unknown combination {application?.status} {gig.status}</p>;}
+
+   
 
       case "completed":
-        return <p>Gig completed! Payment is being processed.</p>;
+        if (gig.status === "completed"){
+          return <p>Gig completed! Payment is being processed.</p>;
+      }else {return <p> Error: Unknown combination {application?.status} {gig.status}</p>;}
+        
 
       case "awaiting-lister-completion":
+        if (gig.status === "awaiting-confirmation"){
+        
         return <p>Gig marked as completed. Wait for lister to confirm.</p>;
+      }else {return <p> Error: Unknown combination {application?.status} {gig.status}</p>;}
+
 
       case "discarded":
-        return <p>Gig no longer available.</p>;
+        if (gig.status === "in-progress"){
+          return <p>Gig no longer available.</p>;
+      }
+      if (gig.status === "open"){
+        return <p>Application canceled.</p>;
+      }
+      if (gig.status === "deleted"){
+        return <p>Gig deleted.</p>;
+      }
+      else {return <p> Gig no longer available.</p>;}
+  
 
       default:
-        return <p>Status: {application?.status}</p>;
+        return <p>Error. Unknown Status: {application?.status}</p>;
     }
   };
 

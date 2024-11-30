@@ -81,6 +81,7 @@ export interface Chat {
   listerId: string;
   applicantId: string;
   applicationId: string;
+  lastUpdate: Timestamp;
 }
 
 export interface ChatMessage {
