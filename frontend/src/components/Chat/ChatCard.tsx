@@ -72,6 +72,16 @@ const ChatCard: React.FC<ChatCardProps> = ({
       await updateDoc(gigRef, { status });
     };
 
+    // update selected applicant of gig
+    const updateGigApplicant = async (
+      db: any,
+      gigId: any,
+      selectedApplicantId: string
+    ) => {
+      const gigRef = doc(gigsRef(db), gigId);
+      await updateDoc(gigRef, {selectedApplicantId});
+    };
+
 
     const handleAssign = async (db: any, gigId: string, assignedApplicationId: string) => {
       try {
@@ -87,6 +97,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
           const application = doc.data() as Application;
           if (application.applicationId === assignedApplicationId) {
             await updateApplicationStatus(db, application.applicationId, "assigned");
+            await updateGigApplicant(db, gigId, application.applicantId);
           } else {
             await updateApplicationStatus(db, application.applicationId, "discarded");
           }
@@ -96,9 +107,6 @@ const ChatCard: React.FC<ChatCardProps> = ({
       }
     };
     
-
-    
-
     const handleCompleteGig = async (db: any, gigId: string, applicationId: string) => {
       try {
         // Update gig status to "awaiting-confirmation"
@@ -111,7 +119,6 @@ const ChatCard: React.FC<ChatCardProps> = ({
       }
     };
     
-
     const handleConfirmCompletion = async (db: any, gigId: string, applicationId: string) => {
       try {
         // Update gig status to "completed"
@@ -134,13 +141,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
       }
     };
     
-    
-    
-    
-
-  
-
-  const renderListerView = () => {
+    const renderListerView = () => {
     switch (gig.status) {
       case "open":
       if (application?.status === "pending") {
@@ -151,7 +152,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
             </p>
             <CustomButton
               label={`Assign Gig to ${applicantName}`}
-              onClick={() => handleAssign(db, gig.gigId, application.applicantId)}
+              onClick={() => handleAssign(db, gig.gigId, application.applicationId)}
               color="primary"
               size="small"
             />
@@ -174,10 +175,13 @@ const ChatCard: React.FC<ChatCardProps> = ({
             </p>
             <CustomButton
               label="Confirm Completion"
-              onClick={() => handleConfirmCompletion(db, gig.gigId)}
+              onClick={() =>
+                handleConfirmCompletion(db, gig.gigId, application?.applicationId || "")
+              }
               color="green"
               size="small"
             />
+
 
           </>
         );

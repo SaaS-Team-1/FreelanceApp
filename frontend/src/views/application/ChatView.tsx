@@ -350,17 +350,18 @@ function ChatPage() {
               )}
             </div>
           </div>
-
-          {isGigDetailsOpen && gig && (
+          
+          {isGigDetailsOpen && gig && user && (
             <GigDetailsModal
               gig={gig}
               lister={chatPartner || null}
               onClose={() => setIsGigDetailsOpen(false)}
-              currentUserId={user?.uid || ""}
+              currentUserId={user.uid}
+              currentUser={user as User} 
               onGoToMyGigs={handleGoToMyGigs}
-              currentUser={user as User}
             />
           )}
+
         </>
       ) : (
         <Loading />
