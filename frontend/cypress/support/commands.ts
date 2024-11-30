@@ -28,6 +28,16 @@ declare global {
         photoURL?: string,
         claims?: Record<string, string>,
       ): Chainable<void>;
+
+      /**
+       * Logs in user with the given email and password.
+       */
+      loginUser(email: string, password: string): Chainable<void>;
+
+      /**
+       * Logs out the current user.
+       */
+      userLogout(): Chainable<void>;
     }
   }
 }
@@ -72,8 +82,22 @@ Cypress.Commands.add(
   },
 );
 
-// Cypress.Commands.add("loginUser", (email, password) => {
-// });
+Cypress.Commands.add("loginUser", (email, password) => {
+  cy.visit("/login");
+  cy.get(":nth-child(1) > .firebaseui-idp-button").should("be.visible").click();
+
+  cy.get('input[name="email"]').type(email).should("have.value", email);
+  cy.get(".firebaseui-id-submit").click();
+
+  cy.get('input[type="password"]', { timeout: 10000 })
+    .should("be.visible")
+    .type(password)
+    .should("have.value", password);
+
+  cy.get(".firebaseui-id-submit").click();
+  cy.visit("/app");
+  cy.contains(email);
+});
 
 Cypress.Commands.add(
   "createUserAndLogin",
@@ -89,22 +113,13 @@ Cypress.Commands.add(
   },
 );
 
-// Cypress.Commands.add(
-//   "createUserAndLoginSession",
-//   (
-//     email = "drew0@hotmail.com",
-//     password = "adsmkkdasmnjaskjadsjknkj1212",
-//     claims = { role: "User" },
-//   ) => {
-//     cy.session(
-//       [email, password],
-//       () => {
-//         cy.createUser(email, password, claims);
-//         cy.loginUser(email, password);
-//       },
-//       { cacheAcrossSpecs: true },
-//     );
-//   },
-// );
-
-export {};
+Cypress.Commands.add(
+  "userLogout",
+  () => {
+    cy.visit("/app");
+    cy.get(".mt-3 > .flex").click();
+    cy.location().should((loc) => expect(loc.pathname).to.eq("/login"));
+    cy.log("User logged out successfully");
+  },
+);
+export { };
