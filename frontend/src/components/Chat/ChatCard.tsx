@@ -1,17 +1,13 @@
 
 
-
 import React, { useEffect, useState } from "react";
 import { Timestamp } from "firebase/firestore";
 import { Gig, Application, User } from "@/utils/database/schema";
 import { usersRef, chatsRef } from "@/utils/database/collections";
 import CustomButton from "@/components/Buttons/CustomButton";
 import { UndoButton } from "@/components/Buttons/UndoButton";
-import { doc, getDoc, updateDoc, getDocs, query, where, writeBatch } from "firebase/firestore";
+import { doc, getDoc, updateDoc, getDocs, query, where } from "firebase/firestore";
 import { gigsRef, applicationsRef } from "@/utils/database/collections";
-
-
-
 
 
 

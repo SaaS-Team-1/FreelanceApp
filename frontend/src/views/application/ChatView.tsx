@@ -167,27 +167,33 @@ function ChatPage() {
 
   useEffect(() => {
     if (selectedChat) {
+      if (!selectedChat.chatId) {
+        console.error("Invalid chat data: Missing chatId");
+        return;
+      }
+  
       const q = query(
         chatMessagesRef(db),
         where("chatId", "==", selectedChat.chatId),
-        orderBy("timestamp", "asc"),
+        orderBy("timestamp", "asc")
       );
-
+  
       const unsubscribe = onSnapshot(q, (snapshot) => {
         const messagesData = snapshot.docs.map((doc) => {
           const data = doc.data();
           return {
             id: doc.id,
             ...data,
-            timestamp: data.timestamp || null, // Ensure fallback for null timestamps
+            timestamp: data.timestamp || null, 
           };
         });
         setMessages(messagesData);
       });
-
+  
       return () => unsubscribe();
     }
   }, [selectedChat, db]);
+  
 
   const truncateString = (str: string, maxLength: number) => {
     return str.length > maxLength ? str.slice(0, maxLength) + "..." : str;

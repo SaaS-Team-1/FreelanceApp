@@ -1,6 +1,7 @@
 import React from "react";
 import UserProfilePicture from "@/components/Avatar/UserProfilePicture";
 import Badge from "@/components/Buttons/CustomBadge";
+import { use } from "chai";
 
 interface ChatHeaderProps {
   user: {
@@ -30,6 +31,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             profile: {
               picture: user.profilePicture || "/default-avatar.jpg",
               bio: user.bio || "No bio available",
+              location: user.location || "Uknown location",
             },
             stats: {
               completedGigs: user.completedGigs || 0,

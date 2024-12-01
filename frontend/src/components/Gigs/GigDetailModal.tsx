@@ -30,75 +30,74 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
 
   const handleApply = async () => {
     if (!userId || !db) return;
-
-    const chatRefs: { id: string; chat: Chat }[] = [];
-    const applicationRefs: { id: string; application: Application }[] = [];
-
-    // Generate a random Latin cover letter
-    const latinPhrases = [
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      "Vestibulum venenatis augue a felis aliquam bibendum.",
-      "Curabitur auctor magna ut orci sodales, id vestibulum nunc mollis.",
-      "Nullam ultricies ligula vel nulla feugiat pellentesque.",
-      "Proin sed felis vel erat interdum tincidunt eget ac ligula.",
-    ];
-    const randomCoverLetter =
-      latinPhrases[Math.floor(Math.random() * latinPhrases.length)];
-
+  
     try {
-      // Check if an application already exists for this gig and applicant
+      // Check if fields are defined
+      if (!gig.gigId || !gig.listerId) {
+        throw new Error("Gig data is incomplete.");
+      }
+  
+      // Check for existing applications
       const applicationRef = applicationsRef(db);
       const existingApplicationQuery = query(
         applicationRef,
         where("gigId", "==", gig.gigId),
-        where("applicantId", "==", userId),
+        where("applicantId", "==", userId)
       );
       const existingApplications = await getDocs(existingApplicationQuery);
-
+  
       if (!existingApplications.empty) {
         alert("You have already applied for this gig!");
         onClose();
-        return; // Exit the function if an application already exists
+        return;
       }
-
+  
       const applicationData: Partial<Application> = {
         gigId: gig.gigId,
         applicantId: userId,
         listerId: gig.listerId,
         status: "pending",
-        coverLetter: randomCoverLetter,
+        coverLetter: "randomCoverLetter",
         appliedAt: Timestamp.now(),
         chatId: "",
+        applicationId: "",
       };
-
+  
       const applicationDoc = await addDoc(applicationsRef(db), applicationData);
-      applicationData.applicationId = applicationDoc.id;
-      applicationRefs.push({
-        id: applicationDoc.id,
-        application: applicationData as Application,
-      });
-
+  
+      if (!applicationDoc.id) {
+        throw new Error("Failed to create application.");
+      }
+  
       const chatData: Partial<Chat> = {
         gigId: gig.gigId,
         applicationId: applicationDoc.id,
         listerId: gig.listerId,
         applicantId: userId,
+        lastUpdate: Timestamp.now(),
+        chatId: "",
       };
-
+  
       const chatDoc = await addDoc(chatsRef(db), chatData);
-      chatData.chatId = chatDoc.id;
-      chatRefs.push({ id: chatDoc.id, chat: chatData as Chat });
-
-      updateDoc(chatDoc, { applicationId: applicationData.applicationId });
-      updateDoc(applicationDoc, { chatId: chatData.chatId });
-
+  
+      if (!chatDoc.id) {
+        throw new Error("Failed to create chat.");
+      }
+  
+      await Promise.all([
+        updateDoc(chatDoc, { chatId: chatDoc.id }),
+        updateDoc(applicationDoc, { chatId: chatDoc.id }),
+        updateDoc(applicationDoc, {applicationId: applicationDoc.id})
+      ]);
+  
       alert("Application and chat created successfully!");
-      onClose(); // Close the modal after applying
+      onClose();
     } catch (error) {
       console.error("Error applying to gig:", error);
       alert("Failed to apply for the gig. Please try again.");
     }
   };
+  
 
   const location = gig.location || "Remote";
 
