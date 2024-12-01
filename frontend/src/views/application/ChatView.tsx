@@ -129,7 +129,7 @@ function ChatPage() {
           // Select the top chat only if it hasn't been initialized
           if (!hasInitializedChat && updatedChats.length > 0) {
             setSelectedChat(updatedChats[0]);
-            setHasInitializedChat(true); // Prevent re-selection on subsequent updates
+            setHasInitializedChat(true); 
           }
 
           return updatedChats;
@@ -326,7 +326,7 @@ function ChatPage() {
                     onSeeGigDetails={() => setIsGigDetailsOpen(true)}
                   />
 
-                  <div className="scrollbar flex size-full flex-col overflow-y-scroll bg-gray-800 p-4">
+                  <div className="w-full scrollbar flex size-full flex-col overflow-y-scroll bg-gray-800 p-4">
                     <ChatWindow
                       messages={messages.map((message) => ({
                         text: message.content,

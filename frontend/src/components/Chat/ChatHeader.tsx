@@ -53,14 +53,16 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
           </span>
         </div>
       </div>
+      <div className="font-bold"> {isLister ? 'Gig Status:  ' : 'Application Status:  '} 
       <Badge
         label={
-          isLister ? `Gig Status: ${status}` : `Application Status: ${status}`
+           `${status}` 
         }
         color={isLister ? "secondary" : "primary"}
         textColor="white"
         size="small"
       />
+      </div>
     </div>
   );
 };
