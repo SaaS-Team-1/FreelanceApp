@@ -6,8 +6,9 @@ import { Gig, Application, User } from "@/utils/database/schema";
 import { usersRef, chatsRef } from "@/utils/database/collections";
 import CustomButton from "@/components/Buttons/CustomButton";
 import { UndoButton } from "@/components/Buttons/UndoButton";
-import { doc, getDoc, updateDoc, getDocs, query, where } from "firebase/firestore";
-import { gigsRef, applicationsRef } from "@/utils/database/collections";
+import { doc, getDoc, updateDoc, getDocs, query, where, addDoc } from "firebase/firestore";
+import { gigsRef, applicationsRef, notificationsRef } from "@/utils/database/collections";
+import { user } from "rxfire/auth";
 
 
 
@@ -78,7 +79,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
       const gigRef = doc(gigsRef(db), gigId);
       await updateDoc(gigRef, {selectedApplicantId});
     };
-
+// update chat timestamp
     const updateChatLastUpdate = async (chatId: string) => {
       try {
         const chatRef = doc(chatsRef(db), chatId);
@@ -90,13 +91,29 @@ const ChatCard: React.FC<ChatCardProps> = ({
       }
     };
     
+// create notification
+    const createNotification = async (user: string, message: string) => {
+      try {
+        const notificationData: Partial<Notification> = {
+          notificationId: "",
+          userId: user,
+          notificationMessage: message,
+          createdAt: Timestamp.now(),
+        };
+        const notificationDoc = await addDoc(notificationsRef(db), notificationData);
+        updateDoc(notificationDoc, {notificationId: notificationDoc.id})
+      } catch (error) {
+        console.error("Error creating notification:", error);
+      }
+    };
+    
 
     const handleAssign = async (db: any, gigId: string, assignedApplicationId: string) => {
       try {
         // Update gig status to "in-progress"
         await updateGigStatus(db, gigId, "in-progress");
+        // update chat timestamp
         await updateChatLastUpdate(application?.chatId || "");
-    
         // Fetch all applications for the gig
         const applicationsQuery = query(applicationsRef(db), where("gigId", "==", gigId));
         const applicationsSnapshot = await getDocs(applicationsQuery);
@@ -105,12 +122,23 @@ const ChatCard: React.FC<ChatCardProps> = ({
         for (const doc of applicationsSnapshot.docs) {
           const application = doc.data() as Application;
           if (application.applicationId === assignedApplicationId) {
-            await updateApplicationStatus(db, application.applicationId, "assigned");
-            await updateGigApplicant(db, gigId, application.applicantId);
+            // make application assigned
+            await updateApplicationStatus(db, application.applicationId, "assigned"); 
+            // update selected applicant of gig
+            await updateGigApplicant(db, gigId, application.applicantId); 
+            // create notification sent to applicant
+            await createNotification(application?.applicantId, `Gig "${gig.title}" has been assigned to you.`); 
           } else {
-            await updateApplicationStatus(db, application.applicationId, "discarded");
+            // make all other applications discarded
+            await updateApplicationStatus(db, application.applicationId, "discarded"); 
+            // send notification to all other applicants
+            await createNotification(application?.applicantId, `Your application for gig "${gig.title}" has been discarded.`); 
+            // update chat timestamp
+            await updateChatLastUpdate(application?.chatId || "");
           }
         }
+        
+
       } catch (error) {
         console.error("Error assigning gig:", error);
       }
@@ -120,9 +148,11 @@ const ChatCard: React.FC<ChatCardProps> = ({
       try {
         // Update gig status to "awaiting-confirmation"
         await updateGigStatus(db, gigId, "awaiting-confirmation");
-    
+        // send notification to gig lister 
+        await createNotification(gig.listerId, `Your gig "${gig.title}" has been marked completed.`);
         // Update application status to "awaiting-lister-completion"
         await updateApplicationStatus(db, applicationId, "awaiting-lister-completion");
+        // update chat timestamp
         await updateChatLastUpdate(application?.chatId || "");
       } catch (error) {
         console.error("Error marking gig as complete:", error);
@@ -133,21 +163,32 @@ const ChatCard: React.FC<ChatCardProps> = ({
       try {
         // Update gig status to "completed"
         await updateGigStatus(db, gigId, "completed");
+        // update chat timestamp 
         await updateChatLastUpdate(application?.chatId || "");
-    
+        // send notification to applicant
+        if (!gig.selectedApplicantId) {
+          console.error("Error: No selected applicant for this gig.");
+          return; // Exit the function if no selected applicant
+        }
+        await createNotification(gig.selectedApplicantId, `Gig "${gig.title}" has been completed.`);
         // Update application status to "completed"
         await updateApplicationStatus(db, applicationId, "completed");
       } catch (error) {
         console.error("Error confirming completion:", error);
       }
     };
+
+    
     
     
     const handleCancelApplication = async (db: any, applicationId: string) => {
       try {
         // Update application status to "discarded"
         await updateApplicationStatus(db, applicationId, "discarded");
+        // update chat timestamp
         await updateChatLastUpdate(application?.chatId || "");
+        // send notification to lister
+        await createNotification(gig.listerId, `"${application?.applicantId}"'s application has been canceled.`);
       } catch (error) {
         console.error("Error cancelling application:", error);
       }
