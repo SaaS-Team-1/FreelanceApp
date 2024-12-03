@@ -58,6 +58,18 @@ declare global {
        * Logs out the current user.
        */
       logoutUI(): Chainable<void>;
+
+      /**
+       * Posts a gig with the given data.
+       */
+      postGig(gigData: {
+        title: string;
+        description: string;
+        price: number;
+        location: string;
+        category: string;
+        dueDate: string;
+      }): Chainable<void>; 
     }
   }
 }
@@ -157,5 +169,28 @@ Cypress.Commands.add('logoutUI', () => {
   cy.get(".mt-3 > .flex").click();
   cy.location().should((loc) => expect(loc.pathname).to.eq("/login"));
 });
+
+Cypress.Commands.add('postGig', (gigData) => {
+  cy.get('.h-screen > :nth-child(2) > .flex').click();
+  cy.log("User clicked on upload a gig button");
+
+  // Fill in the gig details
+  cy.get('.space-y-4 > :nth-child(1) > .w-full').type(gigData.title);
+  cy.get('.h-40').type(gigData.description);
+  cy.get(':nth-child(3) > :nth-child(1) > .w-full').clear().type(gigData.price.toString()).type('{del}');
+  cy.get(':nth-child(3) > :nth-child(2) > .w-full').clear().type(gigData.location);
+  cy.get(':nth-child(4) > .w-full').type(gigData.category);
+  cy.get(':nth-child(5) > :nth-child(1) > .w-full').type(gigData.dueDate.split("T")[0]);
+  cy.get(':nth-child(5) > :nth-child(2) > .w-full').type(gigData.dueDate.split("T")[1].substring(0, 5));
+  cy.get('button.bg-blue-500').contains('Create Gig').click();
+
+  // Handle the alert confirmation
+  cy.on('window:alert', (text) => {
+      expect(text).to.equal('Gig successfully created.');
+  });
+
+  cy.wait(2000); // Optional: Wait for Firestore synchronization
+});
+
 
 export { };
