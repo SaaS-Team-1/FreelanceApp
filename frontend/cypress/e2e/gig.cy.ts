@@ -41,7 +41,7 @@ describe("Flow of Posting a Gig", () => {
         cy.on('window:alert', (text) => {
             expect(text).to.equal('Gig successfully created.');
         });
-        cy.callFirestore('add', 'test_hello_world', { some: 'value' });
+        // cy.callFirestore('add', 'test_hello_world', { some: 'value' });
         cy.wait(2000);
     });
 
@@ -59,8 +59,6 @@ describe("Flow of Posting a Gig", () => {
     });
     
         
-
-
     it("User 1 logs out", () => {
         cy.logout();
     });
@@ -70,6 +68,12 @@ describe("Flow of Posting a Gig", () => {
         cy.loginUser2(); 
         cy.log("User 2 logged in");
     });
+
+    it("The home page is loading the posted gigs", function () {
+        cy.get('.mb-6').contains('Loading').should('exist');
+        cy.wait(2000);
+    });
+
 
     it("User 2 logs out", () => {
         cy.logout();
