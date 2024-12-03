@@ -4,8 +4,14 @@ import { Tabs } from "flowbite-react";
 import CoinPurchaseForm from "@/components/Wallet/CoinPurchaseForm";
 import TransactionItem from "@/components/Wallet/TransactionItems";
 import WithdrawForm from "@/components/Wallet/WithdrawForm";
+import CommonModal from "@/components/Common/CommonModal";
+import { useState } from "react";
+import CheckoutForm from "@/components/Wallet/CheckoutForm";
 
-function WalletView() {
+export default function WalletView() {
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+  const [coins, setCoins] = useState(100); // State to control modal visibility
+
   const currentUser = {
     userId: "user123",
     email: "john@example.com",
@@ -57,16 +63,6 @@ function WalletView() {
       gig: { title: "Logo Design" },
       createdAt: { seconds: Date.now() / 1000 - 86400 * 2 },
     },
-    {
-      transactionId: "tx4",
-      kind: "recieve",
-      amount: 250,
-      senderId: "user789",
-      receiverId: currentUser.userId,
-      user: { displayName: "Mike Johnson" },
-      gig: { title: "Logo Design" },
-      createdAt: { seconds: Date.now() / 1000 - 86400 * 2 },
-    },
   ];
 
   return (
@@ -88,7 +84,12 @@ function WalletView() {
           <h2 className="mb-4 text-xl font-bold text-white">Deposit</h2>
           <Tabs aria-label="Deposit Tabs" variant="underline">
             <Tabs.Item active title="Deposit" icon={FaWallet}>
-              <CoinPurchaseForm />
+              <CoinPurchaseForm
+                onBuy={(number) => {
+                  setIsModalOpen(true);
+                  setCoins(number);
+                }}
+              />
             </Tabs.Item>
 
             <Tabs.Item title="Withdraw" icon={FaWallet}>
@@ -137,8 +138,13 @@ function WalletView() {
           </div>
         </div>
       </div>
+      {isModalOpen ? (
+        <CommonModal onClose={() => setIsModalOpen(false)} isOpen={isModalOpen}>
+          <CheckoutForm coins={coins}></CheckoutForm>
+        </CommonModal>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }
-
-export default WalletView;

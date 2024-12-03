@@ -67,3 +67,12 @@ export async function getDatabaseInstance(app: FirebaseApp) {
   }
   return database;
 }
+
+export async function getFunctionsInstance(app: FirebaseApp) {
+  const functions = getFunctions(app, "europe-west1");
+
+  if (import.meta.env.DEV) {
+    connectFunctionsEmulator(functions, "127.0.0.1", 5001);
+  }
+  return functions;
+}

@@ -4,12 +4,15 @@ import Loading from "@/components/Loading";
 import {
   getDatabaseInstance,
   getFirestoreInstance,
+  getFunctionsInstance,
 } from "@/utils/firebase/firebaseConfig";
 import {
   DatabaseProvider,
   FirestoreProvider,
+  FunctionsProvider,
   useInitDatabase,
   useInitFirestore,
+  useInitFunctions,
 } from "@/utils/reactfire";
 import { Database } from "firebase/database";
 import { Firestore } from "firebase/firestore";
@@ -17,15 +20,19 @@ import { Navigate, Outlet } from "react-router-dom";
 import { AuthWrapper } from "@/utils/firebase/auth";
 import Sidebar from "@/components/Common/Sidebar";
 import pathNames from "@/utils/pathNames";
+import { Functions } from "firebase/functions";
 
 function FirebaseInitializer({ children }: { children: React.ReactNode }) {
   const { data: firestoreInstance } = useInitFirestore(getFirestoreInstance);
   const { data: databaseInstance } = useInitDatabase(getDatabaseInstance);
+  const { data: functionsInstance } = useInitFunctions(getFunctionsInstance);
 
   return (
     <FirestoreProvider sdk={firestoreInstance as Firestore}>
       <DatabaseProvider sdk={databaseInstance as Database}>
-        {children}
+        <FunctionsProvider sdk={functionsInstance as Functions}>
+          {children}
+        </FunctionsProvider>
       </DatabaseProvider>
     </FirestoreProvider>
   );
