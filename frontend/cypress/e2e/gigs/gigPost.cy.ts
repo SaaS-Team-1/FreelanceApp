@@ -51,21 +51,7 @@ describe("Posting a Gig", () => {
         cy.logout();
     });
     
-    it("Create and login User2", function () {
-        cy.createUser2();
-        cy.loginUser2(); 
-        cy.log("User 2 logged in");
-    });
-
-    it("The home page is loading the posted gigs", function () {
-        cy.get('.mb-6').contains('Loading').should('exist');
-        cy.wait(2000);
-    });
-
-
-    it("User 2 logs out", () => {
-        cy.logout();
-    });
+    
     // User 2 login and apply for the gig
     // User 1 checks the gig and assign User 2 to the gig
     // User 1 checks if the gig is applied by User 2

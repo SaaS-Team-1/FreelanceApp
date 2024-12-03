@@ -2,11 +2,31 @@
   "user1": {
     "email": "user1@gmail.com",
     "password": "password",
-    "displayName": "user1"
+    "displayName": "user1",
+    "profile": {
+      "bio": "I am user1, a gig enthusiast!",
+      "credits": 100,
+      "picture": null,
+      "location": "New York, NY"
+    },
+    "stats": {
+      "completedGigs": 5,
+      "averageRating": 4.5
+    }
   },
   "user2": {
     "email": "user2@gmail.com",
     "password": "password",
-    "displayName": "user2"
+    "displayName": "user2",
+    "profile": {
+      "bio": "User2 loves exploring new opportunities.",
+      "credits": 200,
+      "picture": null,
+      "location": "Los Angeles, CA"
+    },
+    "stats": {
+      "completedGigs": 10,
+      "averageRating": 4.8
+    }
   }
 }
