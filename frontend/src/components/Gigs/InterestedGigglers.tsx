@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom"; // Import ReactDOM for portals
 import { User, Gig } from "@/utils/database/schema";
-import { doc, updateDoc, serverTimestamp, Timestamp } from "firebase/firestore";
+import { doc, updateDoc, serverTimestamp, Timestamp, query, where, getDocs } from "firebase/firestore";
 import CustomButton from "@/components/Buttons/CustomButton";
 import { useNavigate } from "react-router-dom";
 import { useFirestore } from "@/utils/reactfire";
 import {FaRegMessage, FaUserCheck } from "react-icons/fa6";
+import { applicationsRef } from "@/utils/database/collections";
 
 interface InterestedGigglersProps {
   gig: Gig;
@@ -38,6 +39,23 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
         status: "in-progress",
         updatedAt: serverTimestamp(),
       });
+
+      const applicationsQuery = query(
+        applicationsRef(db),
+        where("gigId", "==", gig.gigId),
+        where("status", "==", "pending"),
+        where("applicantId", "!=", applicantId)
+      );
+      
+      const pendingApps = await getDocs(applicationsQuery);
+      const updatePromises = pendingApps.docs.map(appDoc => 
+        updateDoc(doc(applicationsRef(db), appDoc.id), {
+          status: "discarded",
+          updatedAt: serverTimestamp()
+        })
+      );
+      
+      await Promise.all(updatePromises);
 
       const updatedGig: Gig = {
         ...gig,
@@ -111,21 +129,21 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
                   </div>
                   <div className="flex items-center space-x-2">
                     <CustomButton
-                      label="Assign"
+                      // label="Assign"
                       icon={FaUserCheck}
                       onClick={() => handleAssignGig(applicant.userId)}
                       color="green"
                       textColor="black"
-                      size="small"
+                      size="medium"
                       rounded={true}
                     />
                     <CustomButton
-                      label="Message"
+                      // label="Message"
                       icon={FaRegMessage}
                       onClick={() => handleMessageClick(applicant.userId)}
                       color="primary"
                       textColor="black"
-                      size="small"
+                      size="medium"
                       rounded={true}
                     />
                   </div>
@@ -180,21 +198,21 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
             <div className="flex items-center space-x-2">
               {gig.status === "awaiting-confirmation" && (
                 <CustomButton
-                  label="Complete"
+                  // label="Complete"
                   onClick={handleMarkComplete}
                   color="green"
                   textColor="black"
-                  size="small"
+                  size="medium"
                   rounded={true}
                 />
               )}
               <CustomButton
-                label="Message"
+                // label="Message"
                 icon={FaRegMessage}
                 onClick={() => handleMessageClick(assignedGiggler.userId)}
                 color="primary"
                 textColor="black"
-                size="small"
+                size="medium"
                 rounded={true}
               />
             </div>
@@ -249,6 +267,7 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
                         />
                         <CustomButton
                           label="Message"
+                          icon={FaRegMessage}
                           onClick={() => handleMessageClick(applicant.userId)}
                           color="primary"
                           textColor="black"

@@ -6,6 +6,7 @@ import Badge from "@/components/Buttons/CustomBadge";
 import CustomButton from "@/components/Buttons/CustomButton";
 import { UndoButton } from "@/components/Buttons/UndoButton";
 import { useNavigate } from "react-router-dom";
+import { FaCheck } from "react-icons/fa";
 
 
 interface PostedGigListProps {
@@ -91,7 +92,8 @@ function PostedGigList({
           {showCompletedButton && (
             <div className="absolute right-12 top-5">
               <CustomButton
-                label="Complete Gig"
+                // label="Complete Gig"
+                icon={FaCheck}
                 onClick={() => onCompleteClick && onCompleteClick(gig.gigId)}
                 color="green"
                 textColor="white"

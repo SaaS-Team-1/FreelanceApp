@@ -11,6 +11,7 @@ import {
   updateDoc,
   getDoc,
   deleteDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 import CustomButton from "@/components/Buttons/CustomButton";
 import { useAuth, useFirestore } from "@/utils/reactfire";
@@ -121,6 +122,7 @@ function ScheduleView() {
           where("selectedApplicantId", "==", currUser.uid),
           where("status", "==", "completed"),
         );
+        
         const completedSnapshot = await getDocs(completedQuery);
         setCompletedGigs(
           completedSnapshot.docs.map((doc) => ({
@@ -133,6 +135,7 @@ function ScheduleView() {
       }
     }
   }, [currUser, db]);
+
   useEffect(() => {
     fetchGigs();
   }, [currUser, db, fetchGigs]);
@@ -150,6 +153,7 @@ function ScheduleView() {
       }
     }
   };
+  
   const handleCompleteGig = async (gigId: string) => {
     try {
       const gigDocRef = doc(gigsRef(db), gigId);
@@ -181,31 +185,33 @@ function ScheduleView() {
       console.error("No current user found");
       return;
     }
-
+  
     try {
       const applicationQuery = query(
         applicationsRef(db),
         where("applicantId", "==", currUser.uid),
         where("gigId", "==", gigId),
-        where("status", "==", "pending"),
+        where("status", "==", "pending")
       );
-
+  
       const applicationSnapshot = await getDocs(applicationQuery);
-
+  
       if (!applicationSnapshot.empty) {
         const applicationDoc = applicationSnapshot.docs[0];
-        await deleteDoc(doc(applicationsRef(db), applicationDoc.id));
-
+        await updateDoc(doc(applicationsRef(db), applicationDoc.id), {
+          status: "discarded",
+          updatedAt: serverTimestamp()
+        });
+  
         // Refresh the pending gigs list locally
         setPendingGigs((prevPending) =>
-          prevPending.filter(({ gig }) => gig.gigId !== gigId),
+          prevPending.filter(({ gig }) => gig.gigId !== gigId)
         );
-
-        // Fetch updated data for all gigs
+  
         await fetchGigs();
       }
     } catch (error) {
-      console.error("Error removing application:", error);
+      console.error("Error updating gig status:", error);
     }
   };
 
