@@ -1,0 +1,17 @@
+{
+    "gig1": {
+      "gigId": "gig123",
+      "title": "Develop a React Component",
+      "description": "Looking for a skilled developer to create a reusable React component. Must include unit tests.",
+      "location": "Remote",
+      "category": "Software Development",
+      "price": 150,
+      "dueDate": "2024-12-10T17:00:00Z",
+      "status": "open",
+      "listerId": null,
+      "selectedApplicantId": null,
+      "updatedAt": "2024-12-01T10:00:00Z",
+      "createdAt": "2024-12-01T09:00:00Z"
+    }
+  }
+  

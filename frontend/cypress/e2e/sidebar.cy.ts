@@ -4,13 +4,7 @@ describe('Sidebar Navigation Tests', () => {
   const isAdmin = true; // Set to true for admin tests
 
   before(() => {
-    // Perform login once based on the role
-    if (isAdmin) {
-      cy.adminLogin(); // Login as admin
-    } else {
-      cy.signupOrLogin(); // Login as non-admin
-    }
-    cy.saveSession(); // Save the session after login
+    
   });
 
   beforeEach(() => {

@@ -19,6 +19,16 @@ declare global {
       ): Chainable<void>;
 
       /**
+       * Creates user1
+       */
+      createUser1(): Chainable<void>;
+
+      /**
+       * Creates user2
+       */
+      createUser2(): Chainable<void>
+
+      /**
        * Creates and logs in user with the given email, password, and custom claims.
        */
       createUserAndLogin(
@@ -35,12 +45,24 @@ declare global {
       loginUser(email: string, password: string): Chainable<void>;
 
       /**
+       * Logs in user1
+       */
+      loginUser1(): Chainable<void>;
+
+      /**
+       * Logs in user2
+       */
+      loginUser2(): Chainable<void>;
+
+      /**
        * Logs out the current user.
        */
-      userLogout(): Chainable<void>;
+      logoutUI(): Chainable<void>;
     }
   }
 }
+
+
 
 // Add the `clearSession` command
 Cypress.Commands.add("clearSession", () => {
@@ -82,6 +104,14 @@ Cypress.Commands.add(
   },
 );
 
+Cypress.Commands.add('createUser1', function () {
+  cy.createUser(this.users.user1.email, this.users.user1.password, this.users.user1.displayName);
+});
+
+Cypress.Commands.add('createUser2', function () {
+  cy.createUser(this.users.user2.email, this.users.user2.password, this.users.user2.displayName);
+});
+
 Cypress.Commands.add("loginUser", (email, password) => {
   cy.visit("/login");
   cy.get(":nth-child(1) > .firebaseui-idp-button").should("be.visible").click();
@@ -99,27 +129,33 @@ Cypress.Commands.add("loginUser", (email, password) => {
   cy.contains(email);
 });
 
-Cypress.Commands.add(
-  "createUserAndLogin",
-  (
-    email = "drew0@hotmail.com",
-    password = "password",
-    displayName = "Nicolas Gutierrez",
-    photoURL = "https://avatars.githubusercontent.com/u/69245724",
-    claims = {},
-  ) => {
-    cy.createUser(email, password, displayName, photoURL, claims);
-    cy.loginWithEmailAndPassword(email, password);
-  },
-);
 
-Cypress.Commands.add(
-  "userLogout",
-  () => {
-    cy.visit("/app");
-    cy.get(".mt-3 > .flex").click();
-    cy.location().should((loc) => expect(loc.pathname).to.eq("/login"));
-    cy.log("User logged out successfully");
-  },
-);
+Cypress.Commands.add('loginUser1', function () {
+  cy.loginUser(this.users.user1.email, this.users.user1.password);
+});
+
+Cypress.Commands.add('loginUser2', function () {
+  cy.loginUser(this.users.user2.email, this.users.user2.password);
+});
+
+// Cypress.Commands.add(
+//   "createUserAndLogin",
+//   (
+//     email = "drew0@hotmail.com",
+//     password = "password",
+//     displayName = "Nicolas Gutierrez",
+//     photoURL = "https://avatars.githubusercontent.com/u/69245724",
+//     claims = {},
+//   ) => {
+//     cy.createUser(email, password, displayName, photoURL, claims);
+//     cy.loginWithEmailAndPassword(email, password);
+//   },
+// );
+
+Cypress.Commands.add('logoutUI', () => {
+  cy.visit("/app");
+  cy.get(".mt-3 > .flex").click();
+  cy.location().should((loc) => expect(loc.pathname).to.eq("/login"));
+});
+
 export { };
