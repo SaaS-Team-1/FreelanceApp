@@ -16,7 +16,7 @@ describe("Posting a Gig", () => {
     // User 1 login and post a gig 
     it("User 1 login", function () {
         // cy.createUser1();
-        cy.loginUser1(); 
+        cy.loginUser1();
         cy.log("User 1 logged in");
     });
 
@@ -45,13 +45,13 @@ describe("Posting a Gig", () => {
         cy.contains(this.gigs.gig1.title).should("exist");
         cy.log("Gig is visible in My Posted Gigs");
     });
-    
-        
+
+
     it("User 1 logs out", () => {
         cy.logout();
     });
-    
-    
+
+
     // User 2 login and apply for the gig
     // User 1 checks the gig and assign User 2 to the gig
     // User 1 checks if the gig is applied by User 2
