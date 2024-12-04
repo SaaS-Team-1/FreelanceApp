@@ -93,14 +93,15 @@ const GigDetails: React.FC<GigDetailsProps> = ({
                 setIsEditModalOpen(true);
                 setIsDetailModalOpen(false); // Close Gig Details Modal
               }}
-              color="primary"
-              textColor="black"
+              disabled={gig.status !== "open"}
+              color={gig.status === "open" ? "primary" : "gray"}
+              textColor={gig.status === "open" ? "black" : "white"}
               size="medium"
               rounded={true}
               icon={FaPen}
               iconPosition="left"
               customStyle={{
-                backgroundColor: "#44B0E8",
+                backgroundColor: gig.status === "open" ? "#44B0E8" : "#b0b0b0",
                 padding: "6px 20px",
                 width: "120px",
               }}
@@ -204,19 +205,6 @@ const GigDetails: React.FC<GigDetailsProps> = ({
           />
         </div>
       </div>
-
-      {!showSeeMoreButton && !isModal && (
-        <div className="mt-4 flex justify-end">
-          <CustomButton
-            label="See More"
-            onClick={() => setIsDetailModalOpen(true)}
-            color="primary"
-            textColor="black"
-            size="medium"
-            rounded={true}
-          />
-        </div>
-      )}
     </div>
   );
 
