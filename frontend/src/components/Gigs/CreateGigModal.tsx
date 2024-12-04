@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Gig } from "@/utils/database/schema";
-import { Timestamp, addDoc } from "firebase/firestore"; // Firestore imports
+import { Timestamp, addDoc, updateDoc } from "firebase/firestore"; // Firestore imports
 import CustomButton from "@/components/Buttons/CustomButton";
 import { FaDollarSign, FaTag, FaMapMarkerAlt } from "react-icons/fa";
 import DatePicker from "@/components/Calendar/DatePicker";
@@ -9,7 +9,7 @@ import { useFirestore, useUser } from "@/utils/reactfire"; // Hook for Firestore
 
 interface CreateGigModalProps {
   onClose: () => void;
-  onCreate: (newGig: Gig) => void; // Callback for when the gig is created
+  onCreate: () => void;
 }
 
 const CreateGigModal: React.FC<CreateGigModalProps> = ({ onClose, onCreate }) => {
@@ -18,7 +18,6 @@ const CreateGigModal: React.FC<CreateGigModalProps> = ({ onClose, onCreate }) =>
   if(!user){
     return;
   }
-  const gigRefs: { id: string; gig: Gig }[] = [];
   const [newGig, setNewGig] = useState<Gig>({
     gigId: "", 
     title: "",
@@ -66,11 +65,12 @@ const CreateGigModal: React.FC<CreateGigModalProps> = ({ onClose, onCreate }) =>
 
       // Add gig to Firestore
       const gigDoc = await addDoc(gigsRef(db), newGigData);
-      newGigData.gigId = gigDoc.id;
-      gigRefs.push({ id: gigDoc.id, gig: newGigData as Gig });
+      await Promise.all([
+        updateDoc(gigDoc, {gigId: gigDoc.id})
+      ]);
 
-      // Pass the new gig data (with the generated ID) back to the parent component
-      onCreate({ ...newGigData, gigId: gigDoc.id });
+      onCreate;
+
       alert("Gig successfully created.");
       onClose();
     } catch (error) {

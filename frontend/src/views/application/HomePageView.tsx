@@ -49,8 +49,8 @@ export default function OverviewView() {
     }
   };
 
-  const handleCreateSave = (newGig: any) => {
-    console.log("New Gig Created:", newGig);
+  const handleCreateSave = () => {
+    console.log("New Gig Created!");
   };
 
   const fetchOpenGigsAndCategories = async () => {

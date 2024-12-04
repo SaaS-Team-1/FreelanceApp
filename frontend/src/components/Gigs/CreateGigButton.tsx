@@ -25,12 +25,8 @@ const CreateGigButton: React.FC<CreateGigButtonProps> = ({
       {/* Create Modal */}
       {isCreateModalOpen && (
         <CreateGigModal
-          onCreate={(newGig) => {
-            onCreateSave({
-              ...newGig,
-              createdAt: Timestamp.now(),
-              updatedAt: Timestamp.now(),
-            });
+          onCreate={() => {
+            onCreateSave;
             setIsCreateModalOpen(false); // Close the modal
           }}
           onClose={() => setIsCreateModalOpen(false)} // Close the modal
