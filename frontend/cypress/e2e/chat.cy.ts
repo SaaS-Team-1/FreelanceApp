@@ -89,7 +89,7 @@ describe("Chat test", () => {
         cy.get('.border-t > .ml-3').click();
         cy.log("User 1 clicked send button");
         cy.wait(1000);
-        cy.get('.max-w-xs > :nth-child(2)').contains('Great! Let me know if you have any questions.');
+        cy.get('.max-w-xs > :nth-child(1)').contains('Great! Let me know if you have any questions.');
         cy.log("The reply sent by User 1 shows up on the chat screen");
     });
 
