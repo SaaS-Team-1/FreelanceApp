@@ -88,6 +88,9 @@ function ScheduleView() {
             const gigDoc = await getDoc(doc(gigsRef(db), gigId));
             if (gigDoc.exists()) {
               const gigData = gigDoc.data();
+              if (gigData.status === "awaiting-confirmation") {
+                return null;
+              }
               const listerDoc = await getDoc(
                 doc(usersRef(db), gigData.listerId),
               );
