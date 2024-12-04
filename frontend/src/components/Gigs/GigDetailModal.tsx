@@ -226,7 +226,7 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
                 />
                 {userId && db && (
                   <CustomButton
-                    label="Apply"
+                    label={!applied ? "Apply" : "Applied Already"}
                     onClick={handleApply} // Trigger the apply function
                     color= {!applied ? "primary" : "gray"}
                     textColor={!applied ? "white" : "black"}
