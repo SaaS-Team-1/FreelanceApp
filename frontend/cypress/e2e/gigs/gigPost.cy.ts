@@ -14,8 +14,8 @@ describe("Posting a Gig", () => {
     });
 
     // User 1 login and post a gig 
-    it("Create and login User1", function () {
-        cy.createUser1();
+    it("User 1 login", function () {
+        // cy.createUser1();
         cy.loginUser1(); 
         cy.log("User 1 logged in");
     });

@@ -71,7 +71,7 @@ declare global {
         location: string;
         category: string;
         dueDate: string;
-      }): Chainable<void>; 
+      }): Chainable<void>;
     }
   }
 }
@@ -114,19 +114,28 @@ Cypress.Commands.add(
           { email, password, displayName, photoURL },
           claims,
         ).then(() => {
-          cy.log("User created successfully");
-          // Upload user profile info to Firestore
-          cy.callFirestore('add', 'users', {
-            email,
-            displayName,
-            photoURL,
-            profile,
-            stats,
-            claims
-          }).then(() => {
-            cy.log("User profile info uploaded to Firestore");
+          // Retrieve the UID of the newly created user
+          return cy.authGetUserByEmail(email); // Fetch the user again
+        })
+          .then((user) => {
+            if (!user || !user.uid) {
+              throw new Error("Failed to retrieve UID from created user.");
+            }
+
+            const uid = user.uid; // Retrieve UID from the user
+            cy.log(`Retrieved UID: ${uid}`);
+
+            // Upload user profile info to Firestore
+            cy.callFirestore('set', `users/${uid}`, {
+              email,
+              displayName,
+              photoURL,
+              profile,
+              stats,
+            }).then(() => {
+              cy.log("User profile info uploaded to Firestore");
+            });
           });
-        });
       });
   },
 );
@@ -172,11 +181,11 @@ Cypress.Commands.add("loginUser", (email, password) => {
 
 
 Cypress.Commands.add('loginUser1', function () {
-  cy.loginUser(this.users.user1.email, this.users.user1.password);
+  cy.loginWithEmailAndPassword(this.users.user1.email, this.users.user1.password);
 });
 
 Cypress.Commands.add('loginUser2', function () {
-  cy.loginUser(this.users.user2.email, this.users.user2.password);
+  cy.loginWithEmailAndPassword(this.users.user2.email, this.users.user2.password);
 });
 
 // Cypress.Commands.add(
@@ -215,7 +224,7 @@ Cypress.Commands.add('postGig', (gigData) => {
 
   // Handle the alert confirmation
   cy.on('window:alert', (text) => {
-      expect(text).to.equal('Gig successfully created.');
+    expect(text).to.equal('Gig successfully created.');
   });
 
   cy.wait(2000); // Optional: Wait for Firestore synchronization
