@@ -3,7 +3,7 @@ import { Gig, User } from "@/utils/database/schema";
 import { FaDollarSign, FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
 import Badge from "@/components/Buttons/CustomBadge";
 import CustomButton from "@/components/Buttons/CustomButton";
-import UserProfilePicture from "@/components/Avatar/UserProfilePicture";
+
 
 interface GigDetailsModalProps {
   gig: Gig;

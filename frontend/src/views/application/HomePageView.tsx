@@ -8,6 +8,7 @@ import PostedGigListHome from "@/components/Gigs/PostedGigListHome";
 import FilterButton from "@/components/Buttons/FilterButton"; // Assuming this component is imported
 import MyPostedGigListCompressed from "@/components/Gigs/MyPostedGigListCompressed";
 import Loading from "@/components/Loading";
+import CreateGigButton from "@/components/Gigs/CreateGigButton";
 
 export default function OverviewView() {
   const { data: user } = useUser();
@@ -48,6 +49,10 @@ export default function OverviewView() {
     }
   };
 
+  const handleCreateSave = (newGig: any) => {
+    console.log("New Gig Created:", newGig);
+  };
+
   const fetchOpenGigsAndCategories = async () => {
     setOpenGigsLoading(true);
     try {
@@ -69,6 +74,8 @@ export default function OverviewView() {
 
         // Check if the gig has the "open" status
         if (gigData.status !== "open") continue;
+
+        if (gigData.listerId == user?.uid) continue;
 
         // If a search query exists, filter by title
         if (
@@ -233,10 +240,7 @@ export default function OverviewView() {
         {extendedUser && (
           <MyPostedGigListCompressed gigs={myPostedGigs} user={extendedUser} />
         )}
-
-        <button className="flex max-w-sm items-center justify-center rounded-full bg-orange-500 py-3 text-sm font-semibold text-white">
-          + Upload new gig
-        </button>
+        <CreateGigButton onCreateSave={handleCreateSave} />
       </div>
     </div>
   );

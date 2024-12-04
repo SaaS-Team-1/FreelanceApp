@@ -1,5 +1,12 @@
 // make sure lister can only delete gig if status is open
 // Applicant nor lister cannot cancel after gig assignment.
+// no duplicate applications: you cannot create two applications with the same applicant and gig id
+// you should not be able to see your gigs in home page
+// you should not be able to apply to your own gig
+// once applied you cannot see it in home page --> applicant cannot apply twice to a gig
+// no duplicate chats: you cannot create two chats with same gig id, same lister id, same applicant id
+// when lister deletes set application status to discarded
+
 
 import { Timestamp } from "firebase/firestore";
 
@@ -74,6 +81,7 @@ export interface Chat {
   listerId: string;
   applicantId: string;
   applicationId: string;
+  lastUpdate: Timestamp;
 }
 
 export interface ChatMessage {
