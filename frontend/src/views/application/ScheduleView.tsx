@@ -21,6 +21,7 @@ import {
   usersRef,
 } from "@/utils/database/collections";
 import { useCallback } from "react";
+import { tr } from "@faker-js/faker";
 
 function ScheduleView() {
   const db = useFirestore();
@@ -88,6 +89,9 @@ function ScheduleView() {
             const gigDoc = await getDoc(doc(gigsRef(db), gigId));
             if (gigDoc.exists()) {
               const gigData = gigDoc.data();
+              if (gigData.status === "awaiting-confirmation" || gigData.status === "in-progress") {
+                return null;
+              }
               const listerDoc = await getDoc(
                 doc(usersRef(db), gigData.listerId),
               );
@@ -102,7 +106,16 @@ function ScheduleView() {
             return null;
           }),
         );
-        setPendingGigs(pendingGigsData.filter(Boolean) as any);
+        
+        setPendingGigs(
+          Array.from(
+            new Map(
+              pendingGigsData
+                .filter((item): item is { gig: Gig; lister: User } => item !== null)
+                .map(item => [item.gig.gigId, item])
+            ).values()
+          )
+         );
 
         const awaitingApprovalQuery = query(
           gigsRef(db),
@@ -200,7 +213,6 @@ function ScheduleView() {
         const applicationDoc = applicationSnapshot.docs[0];
         await updateDoc(doc(applicationsRef(db), applicationDoc.id), {
           status: "discarded",
-          updatedAt: serverTimestamp()
         });
   
         // Refresh the pending gigs list locally
@@ -230,9 +242,9 @@ function ScheduleView() {
               gigs={pendingGigs}
               showDateWithLine={true}
               showUndoButton={true}
-              showSeeMoreButton={false}
+              showSeeMoreButton={true}
               onUndoClick={handleUndoClick}
-              onSelectGig={handleSeeMoreClick}
+              onSeeMoreClick={handleSeeMoreClick}
             />
           </div>
           <div className="scrollbar h-full w-1/2 overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
@@ -241,10 +253,10 @@ function ScheduleView() {
               gigs={inProgressGigs}
               showDateWithLine={true}
               showCompletedButton={true}
-              showSeeMoreButton={false}
+              showSeeMoreButton={true}
               showChatIcon={true}
               onCompleteClick={handleCompleteGig}
-              onSelectGig={handleSeeMoreClick}
+              onSeeMoreClick={handleSeeMoreClick}
             />
           </div>
           
@@ -259,7 +271,8 @@ function ScheduleView() {
               gigs={awaitingApprovalGigs}
               showDateWithLine={true}
               showChatIcon={true}
-              onSelectGig={handleSeeMoreClick}
+              showSeeMoreButton={true}
+              onSeeMoreClick={handleSeeMoreClick}
             />
           </div>
           <div className="scrollbar h-full w-1/2 overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
@@ -268,7 +281,7 @@ function ScheduleView() {
               gigs={completedGigs}
               showDateWithLine={true}
               showChatIcon={false}
-              showSeeMoreButton={false}
+              showSeeMoreButton={true}
               onSelectGig={handleSeeMoreClick}
             />
           </div>

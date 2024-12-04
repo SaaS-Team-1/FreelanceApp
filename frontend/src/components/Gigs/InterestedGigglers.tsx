@@ -6,7 +6,7 @@ import CustomButton from "@/components/Buttons/CustomButton";
 import { useNavigate } from "react-router-dom";
 import { useFirestore } from "@/utils/reactfire";
 import {FaRegMessage, FaUserCheck } from "react-icons/fa6";
-import { applicationsRef,notificationsRef } from "@/utils/database/collections";
+import { applicationsRef,notificationsRef, chatsRef } from "@/utils/database/collections";
 
 interface InterestedGigglersProps {
   gig: Gig;
@@ -33,6 +33,7 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
 
   const handleAssignGig = async (applicantId: string) => {
     try {
+
       const gigDocRef = doc(db, "gigs", gig.gigId);
   
       // Step 1: Update the gig with the selected applicant and status
@@ -49,8 +50,23 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
         where("status", "==", "pending"),
         where("applicantId", "!=", applicantId) // Exclude the selected applicant
       );
-  
+
+      const chatQuery = query(
+        chatsRef(db),
+        where("gigId", "==", gig.gigId),
+        where("applicantId", "==", applicantId)
+       );
+       
+       const chatDocs = await getDocs(chatQuery);
+       const chatUpdates = chatDocs.docs.map(doc => 
+        updateDoc(doc.ref, {
+          lastUpdatedTime: serverTimestamp()
+        })
+       );
+       await Promise.all(chatUpdates);
+      
       const pendingApps = await getDocs(applicationsQuery);
+      
   
       // Mark other applicants' applications as discarded
       const updatePromises = pendingApps.docs.map(appDoc =>
@@ -127,8 +143,8 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
     }
   };
 
-  const handleMessageClick = (userId: string) => {
-    navigate(`/app/chat?user=${userId}`);
+  const handleMessageClick = (applicantId: string) => {
+    navigate(`/app/chat?user=${applicantId}`);
   };
 
   // Modal JSX
