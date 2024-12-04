@@ -30,7 +30,7 @@ import {
 // Configuration
 const NUM_USERS = 10;
 const GIGS_PER_USER = 8;
-const APPLICATIONS_PER_GIG = 8;
+const APPLICATIONS_PER_GIG = 4;
 const MESSAGES_PER_CHAT = 3;
 const COMPLETION_RATE = 0.2;
 const RATING_RATE = 0.8;
