@@ -18,6 +18,10 @@ export interface User {
     credits: number;
     picture?: string;
     location: string;
+    degree?: string;
+    skills?: string;
+    languages?: string;
+    faculty?: string;
   };
   stats: {
     completedGigs: number;
@@ -80,6 +84,7 @@ export interface Chat {
   listerId: string;
   applicantId: string;
   applicationId: string;
+  lastUpdate: Timestamp;
 }
 
 export interface ChatMessage {

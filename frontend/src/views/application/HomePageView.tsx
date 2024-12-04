@@ -1,6 +1,6 @@
 import { HiSearch } from "react-icons/hi";
 import { useState, useEffect } from "react";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
 import { useUser, useFirestore } from "@/utils/reactfire";
 import { Gig, User, Notification } from "@/utils/database/schema";
 import NotificationList from "@/components/Notifications/NotificationsList";
@@ -8,6 +8,7 @@ import PostedGigListHome from "@/components/Gigs/PostedGigListHome";
 import FilterButton from "@/components/Buttons/FilterButton"; // Assuming this component is imported
 import MyPostedGigListCompressed from "@/components/Gigs/MyPostedGigListCompressed";
 import Loading from "@/components/Loading";
+import CreateGigButton from "@/components/Gigs/CreateGigButton";
 
 export default function OverviewView() {
   const { data: user } = useUser();
@@ -27,7 +28,7 @@ export default function OverviewView() {
 
     try {
       const notificationsRef = collection(db, "notifications");
-      const q = query(notificationsRef, where("userId", "==", user.uid));
+      const q = query(notificationsRef, where("userId", "==", user.uid), orderBy("createdAt", "desc"));
       const querySnapshot = await getDocs(q);
 
       const notificationsList: Notification[] = querySnapshot.docs.map(
@@ -46,6 +47,10 @@ export default function OverviewView() {
     } catch (error) {
       console.error("Error fetching notifications: ", error);
     }
+  };
+
+  const handleCreateSave = () => {
+    console.log("New Gig Created!");
   };
 
   const fetchOpenGigsAndCategories = async () => {
@@ -69,6 +74,8 @@ export default function OverviewView() {
 
         // Check if the gig has the "open" status
         if (gigData.status !== "open") continue;
+
+        if (gigData.listerId == user?.uid) continue;
 
         // If a search query exists, filter by title
         if (
@@ -233,10 +240,7 @@ export default function OverviewView() {
         {extendedUser && (
           <MyPostedGigListCompressed gigs={myPostedGigs} user={extendedUser} />
         )}
-
-        <button className="flex max-w-sm items-center justify-center rounded-full bg-orange-500 py-3 text-sm font-semibold text-white">
-          + Upload new gig
-        </button>
+        <CreateGigButton onCreateSave={handleCreateSave} />
       </div>
     </div>
   );

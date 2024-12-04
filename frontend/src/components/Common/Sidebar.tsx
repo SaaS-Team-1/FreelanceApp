@@ -113,8 +113,8 @@ function Sidebar() {
           icon={<FaUser />}
           label="Profile"
           isExpanded={isExpanded}
-          isActive={location.pathname === "/app/user/123"}
-          onClick={() => navigate("/app/user/123")}
+          isActive={location.pathname === "/app/profile"}
+          onClick={() => navigate("/app/profile")}
         />
         <SidebarItem
           icon={<FaCog />}

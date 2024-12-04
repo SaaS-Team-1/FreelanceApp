@@ -46,6 +46,29 @@ const GigDetails: React.FC<GigDetailsProps> = ({
     setCurrentGig(gig);
   }, [gig]);
 
+  const formatDate = (dueDate: any) => {
+    try {
+      // Handle different date formats
+      const date = dueDate?.seconds 
+        ? new Date(dueDate.seconds * 1000)  // Firestore timestamp
+        : dueDate instanceof Date 
+        ? dueDate                           // JavaScript Date object
+        : new Date(dueDate);                // String or number timestamp
+
+      return date.toLocaleDateString("en-GB", {
+        weekday: "long",
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "Date unavailable";
+    }
+  };
+
   const handleDeleteConfirm = async () => {
     try {
       await deleteDoc(doc(db, "gigs", gig.gigId));
@@ -93,14 +116,15 @@ const GigDetails: React.FC<GigDetailsProps> = ({
                 setIsEditModalOpen(true);
                 setIsDetailModalOpen(false); // Close Gig Details Modal
               }}
-              color="primary"
-              textColor="black"
+              disabled={gig.status !== "open"}
+              color={gig.status === "open" ? "primary" : "gray"}
+              textColor={gig.status === "open" ? "black" : "white"}
               size="medium"
               rounded={true}
               icon={FaPen}
               iconPosition="left"
               customStyle={{
-                backgroundColor: "#44B0E8",
+                backgroundColor: gig.status === "open" ? "#44B0E8" : "#b0b0b0",
                 padding: "6px 20px",
                 width: "120px",
               }}
@@ -132,14 +156,17 @@ const GigDetails: React.FC<GigDetailsProps> = ({
       </div>
 
       <div className="mb-4 flex items-start">
+      
         <div className="mr-4 size-12 overflow-hidden rounded-full bg-gray-700">
           <img
             src={user?.profile?.picture || "/default-profile.png"}
             alt="Gig Profile"
             className="size-full object-cover"
           />
+          
         </div>
         <h2 className="text-2xl font-semibold text-white">{gig.title}</h2>
+        <strong className="text-white items-start">Lister: {user?.displayName} </strong>
       </div>
 
       <p className="mb-2 text-sm font-bold text-white">Description:</p>
@@ -157,9 +184,7 @@ const GigDetails: React.FC<GigDetailsProps> = ({
           <div className="flex  items-center">
             <FaCalendarAlt className="mr-2" />
             <span>
-              {gig.dueDate
-                ? `${new Date(gig.dueDate.seconds * 1000).toLocaleDateString("en-GB")}`
-                : "N/A"}
+              {formatDate(gig.dueDate)}
             </span>
           </div>
           <span className="ml-2 text-xs text-gray-400">Due Date</span>
@@ -204,19 +229,6 @@ const GigDetails: React.FC<GigDetailsProps> = ({
           />
         </div>
       </div>
-
-      {!showSeeMoreButton && !isModal && (
-        <div className="mt-4 flex justify-end">
-          <CustomButton
-            label="See More"
-            onClick={() => setIsDetailModalOpen(true)}
-            color="primary"
-            textColor="black"
-            size="medium"
-            rounded={true}
-          />
-        </div>
-      )}
     </div>
   );
 
