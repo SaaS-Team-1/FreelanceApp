@@ -133,14 +133,17 @@ const GigDetails: React.FC<GigDetailsProps> = ({
       </div>
 
       <div className="mb-4 flex items-start">
+      
         <div className="mr-4 size-12 overflow-hidden rounded-full bg-gray-700">
           <img
             src={user?.profile?.picture || "/default-profile.png"}
             alt="Gig Profile"
             className="size-full object-cover"
           />
+          
         </div>
         <h2 className="text-2xl font-semibold text-white">{gig.title}</h2>
+        <strong className="text-white items-start">Lister: {user?.displayName} </strong>
       </div>
 
       <p className="mb-2 text-sm font-bold text-white">Description:</p>
