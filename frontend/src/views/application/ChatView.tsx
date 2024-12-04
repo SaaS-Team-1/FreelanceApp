@@ -54,10 +54,13 @@ function ChatPage() {
   const [isGigDetailsOpen, setIsGigDetailsOpen] = useState(false);
 
 
+
+  const [hasInitializedChat, setHasInitializedChat] = useState(false);
+
   useEffect(() => {
     if (user) {
       setChatsLoading(true);
-  
+
       const listerChatsQuery = query(
         chatsRef(db),
         where("listerId", "==", user.uid)
@@ -66,40 +69,40 @@ function ChatPage() {
         chatsRef(db),
         where("applicantId", "==", user.uid)
       );
-  
+
       // Combine real-time listeners for both lister and applicant chats
       const unsubscribeLister = onSnapshot(listerChatsQuery, (snapshot) => {
         const listerChats = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         })) as ExtendedChat[];
-  
+
         updateChatsState(listerChats);
       });
-  
+
       const unsubscribeApplicant = onSnapshot(applicantChatsQuery, (snapshot) => {
         const applicantChats = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         })) as ExtendedChat[];
-  
+
         updateChatsState(applicantChats);
       });
-  
+
       const updateChatsState = async (newChats: ExtendedChat[]) => {
         const enrichedChats = await Promise.all(
           newChats.map(async (chat) => {
             const partnerId =
               user?.uid === chat.listerId ? chat.applicantId : chat.listerId;
-      
+
             const [partnerDoc, gigDoc] = await Promise.all([
               getDoc(doc(usersRef(db), partnerId)),
               getDoc(doc(gigsRef(db), chat.gigId)),
             ]);
-      
+
             const partnerData = partnerDoc.data();
             const gigData = gigDoc.data();
-      
+
             return {
               ...chat,
               partnerName: partnerData?.displayName || "Unknown User",
@@ -107,36 +110,41 @@ function ChatPage() {
             };
           })
         );
-      
+
         setChats((prevChats) => {
           const updatedChatsMap = new Map<string, ExtendedChat>(
             prevChats.map((chat) => [chat.chatId, chat])
           );
-      
+
           enrichedChats.forEach((chat) => {
             updatedChatsMap.set(chat.chatId, chat);
           });
-      
-          const updatedChats = Array.from(updatedChatsMap.values());
-      
-          return updatedChats.sort((a, b) => {
+
+          const updatedChats = Array.from(updatedChatsMap.values()).sort((a, b) => {
             const aTime = a.lastUpdate?.seconds || 0;
             const bTime = b.lastUpdate?.seconds || 0;
             return bTime - aTime;
           });
+
+          // Select the top chat only if it hasn't been initialized
+          if (!hasInitializedChat && updatedChats.length > 0) {
+            setSelectedChat(updatedChats[0]);
+            setHasInitializedChat(true); 
+          }
+
+          return updatedChats;
         });
-      
+
         setChatsLoading(false);
       };
-      
-  
+
       return () => {
         unsubscribeLister();
         unsubscribeApplicant();
       };
     }
-  }, [user, db]);
-  
+  }, [user, db, hasInitializedChat]);
+
   
   useEffect(() => {
     const fetchDetails = async () => {
@@ -318,7 +326,7 @@ function ChatPage() {
                     onSeeGigDetails={() => setIsGigDetailsOpen(true)}
                   />
 
-                  <div className="scrollbar flex size-full flex-col overflow-y-scroll bg-gray-800 p-4">
+                  <div className="w-full scrollbar flex size-full flex-col overflow-y-scroll bg-gray-800 p-4">
                     <ChatWindow
                       messages={messages.map((message) => ({
                         text: message.content,

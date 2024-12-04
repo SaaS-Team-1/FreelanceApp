@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { doc, addDoc, getDoc, updateDoc, getDocs, query, where, writeBatch } from "firebase/firestore";
+import { doc, addDoc, updateDoc} from "firebase/firestore";
 import { chatMessagesRef, chatsRef } from "@/utils/database/collections";
 import { Timestamp } from "firebase/firestore";
 
