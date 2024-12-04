@@ -213,7 +213,6 @@ function ScheduleView() {
         const applicationDoc = applicationSnapshot.docs[0];
         await updateDoc(doc(applicationsRef(db), applicationDoc.id), {
           status: "discarded",
-          updatedAt: serverTimestamp()
         });
   
         // Refresh the pending gigs list locally
