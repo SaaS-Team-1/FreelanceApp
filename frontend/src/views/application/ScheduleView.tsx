@@ -11,6 +11,7 @@ import {
   updateDoc,
   getDoc,
   deleteDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 import CustomButton from "@/components/Buttons/CustomButton";
 import { useAuth, useFirestore } from "@/utils/reactfire";
@@ -121,6 +122,7 @@ function ScheduleView() {
           where("selectedApplicantId", "==", currUser.uid),
           where("status", "==", "completed"),
         );
+        
         const completedSnapshot = await getDocs(completedQuery);
         setCompletedGigs(
           completedSnapshot.docs.map((doc) => ({
@@ -133,6 +135,7 @@ function ScheduleView() {
       }
     }
   }, [currUser, db]);
+
   useEffect(() => {
     fetchGigs();
   }, [currUser, db, fetchGigs]);
@@ -150,6 +153,7 @@ function ScheduleView() {
       }
     }
   };
+  
   const handleCompleteGig = async (gigId: string) => {
     try {
       const gigDocRef = doc(gigsRef(db), gigId);
@@ -181,31 +185,33 @@ function ScheduleView() {
       console.error("No current user found");
       return;
     }
-
+  
     try {
       const applicationQuery = query(
         applicationsRef(db),
         where("applicantId", "==", currUser.uid),
         where("gigId", "==", gigId),
-        where("status", "==", "pending"),
+        where("status", "==", "pending")
       );
-
+  
       const applicationSnapshot = await getDocs(applicationQuery);
-
+  
       if (!applicationSnapshot.empty) {
         const applicationDoc = applicationSnapshot.docs[0];
-        await deleteDoc(doc(applicationsRef(db), applicationDoc.id));
-
+        await updateDoc(doc(applicationsRef(db), applicationDoc.id), {
+          status: "discarded",
+          updatedAt: serverTimestamp()
+        });
+  
         // Refresh the pending gigs list locally
         setPendingGigs((prevPending) =>
-          prevPending.filter(({ gig }) => gig.gigId !== gigId),
+          prevPending.filter(({ gig }) => gig.gigId !== gigId)
         );
-
-        // Fetch updated data for all gigs
+  
         await fetchGigs();
       }
     } catch (error) {
-      console.error("Error removing application:", error);
+      console.error("Error updating gig status:", error);
     }
   };
 
@@ -213,54 +219,57 @@ function ScheduleView() {
     <div className="relative h-screen w-full p-4">
       {/* Horizontal Scrollable Container */}
       <div
-        className="flex h-[calc(100vh-8rem)] snap-x snap-mandatory gap-6 scroll-smooth"
+        className="flex h-[calc(100vh-8rem)] snap-x snap-mandatory gap-6 scroll-smooth mr-10"
         style={{ scrollSnapType: "x mandatory" }}
       >
         {/* Page 1: Scheduled Gigs and Pending Gigs */}
-        <div className="flex size-full shrink-0 snap-center gap-6">
+        <div className="flex size-full w-1/2 shrink-0 snap-center gap-6">
+        <div className="scrollbar h-full w-1/2 overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
+            <h1 className="mb-3 text-xl font-bold">Pending Gigs</h1>
+            <PostedGigList
+              gigs={pendingGigs}
+              showDateWithLine={true}
+              showUndoButton={true}
+              showSeeMoreButton={false}
+              onUndoClick={handleUndoClick}
+              onSelectGig={handleSeeMoreClick}
+            />
+          </div>
           <div className="scrollbar h-full w-1/2 overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
             <h1 className="mb-3 text-xl font-bold">Scheduled Gigs</h1>
             <PostedGigList
               gigs={inProgressGigs}
               showDateWithLine={true}
               showCompletedButton={true}
-              showSeeMoreButton={true}
+              showSeeMoreButton={false}
               showChatIcon={true}
               onCompleteClick={handleCompleteGig}
-              onSeeMoreClick={handleSeeMoreClick}
+              onSelectGig={handleSeeMoreClick}
             />
           </div>
-          <div className="scrollbar h-full w-1/2 overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
-            <h1 className="mb-3 text-xl font-bold">Pending Gigs</h1>
-            <PostedGigList
-              gigs={pendingGigs}
-              showDateWithLine={true}
-              showUndoButton={true}
-              onUndoClick={handleUndoClick}
-              onSeeMoreClick={handleSeeMoreClick}
-            />
-          </div>
+          
         </div>
+        
 
         {/* Page 2: Awaiting Approval and Completed Gigs */}
-        <div className="flex w-full shrink-0 snap-center gap-6">
-          <div className="w-1/2 rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
+        <div className="flex w-1/2 shrink-0 snap-center gap-6"> 
+          <div className="scrollbar h-full w-1/2 overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
             <h1 className="mb-3 text-xl font-bold">Awaiting Approval</h1>
             <PostedGigList
               gigs={awaitingApprovalGigs}
               showDateWithLine={true}
               showChatIcon={true}
-              onSeeMoreClick={handleSeeMoreClick}
+              onSelectGig={handleSeeMoreClick}
             />
           </div>
-          <div className="w-1/2 rounded-lg bg-gray-800  p-4 shadow-lg dark:text-white">
+          <div className="scrollbar h-full w-1/2 overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
             <h1 className="mb-3 text-xl font-bold">Completed Gigs</h1>
             <PostedGigList
               gigs={completedGigs}
               showDateWithLine={true}
               showChatIcon={false}
-              showSeeMoreButton={true}
-              onSeeMoreClick={handleSeeMoreClick}
+              showSeeMoreButton={false}
+              onSelectGig={handleSeeMoreClick}
             />
           </div>
         </div>

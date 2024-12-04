@@ -78,27 +78,37 @@ function MyPostedGigsView() {
       if (selectedGig) {
         try {
           setLoadingApplicants(true);
+  
+          // Fetch applications for the gig
           const q = query(
             applicationsRef(db),
-            where("gigId", "==", selectedGig.gigId),
+            where("gigId", "==", selectedGig.gigId)
           );
           const applicationSnapshot = await getDocs(q);
-
+  
+          // Extract and deduplicate applicant IDs
           const userIds = applicationSnapshot.docs.map(
-            (doc) => (doc.data() as Application).applicantId,
+            (doc) => (doc.data() as Application).applicantId
           );
-
+          const uniqueUserIds = [...new Set(userIds)];
+  
+          // Fetch user details for unique IDs
           const userSnapshots = await Promise.all(
-            userIds.map((userId) =>
-              getDocs(query(usersRef(db), where("userId", "==", userId))),
-            ),
+            uniqueUserIds.map((userId) =>
+              getDocs(query(usersRef(db), where("userId", "==", userId)))
+            )
           );
-
+  
+          // Map user documents to User objects and deduplicate
           const users = userSnapshots.flatMap((userSnapshot) =>
-            userSnapshot.docs.map((userDoc) => userDoc.data() as User),
+            userSnapshot.docs.map((userDoc) => userDoc.data() as User)
           );
-
-          setApplicants(users);
+          const uniqueUsers = Array.from(
+            new Map(users.map((user) => [user.userId, user])).values()
+          );
+  
+          // Update applicants state
+          setApplicants(uniqueUsers);
         } catch (error) {
           console.error("Error fetching applicants:", error);
         } finally {
@@ -108,9 +118,10 @@ function MyPostedGigsView() {
         setApplicants([]);
       }
     };
-
+  
     fetchApplicantsForGig();
   }, [selectedGig, db]);
+  
 
   const handleSelectGig = (gig: Gig) => {
     setSelectedGig(gig);
