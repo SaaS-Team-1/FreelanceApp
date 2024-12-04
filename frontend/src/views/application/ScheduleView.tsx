@@ -102,7 +102,16 @@ function ScheduleView() {
             return null;
           }),
         );
-        setPendingGigs(pendingGigsData.filter(Boolean) as any);
+        
+        setPendingGigs(
+          Array.from(
+            new Map(
+              pendingGigsData
+                .filter((item): item is { gig: Gig; lister: User } => item !== null)
+                .map(item => [item.gig.gigId, item])
+            ).values()
+          )
+         );
 
         const awaitingApprovalQuery = query(
           gigsRef(db),
