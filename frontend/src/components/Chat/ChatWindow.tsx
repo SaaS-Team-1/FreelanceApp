@@ -17,7 +17,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ messages }) => {
   }, [messages]);
 
   return (
-    <div className="grow bg-gray-800 p-4">
+    <div className="w-full grow bg-gray-800 p-4">
       {messages.map((message, index) => (
         <MessageBubble
           key={index}

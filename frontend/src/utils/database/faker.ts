@@ -176,6 +176,7 @@ export async function seedDatabase(db: Firestore, auth: Auth) {
         applicationId: "",
         listerId: gigRef.gig.listerId,
         applicantId: applicant.id,
+        lastUpdate: getRecentDate(),
       };
 
       const chatDoc = await addDoc(chatsRef(db), chatData);

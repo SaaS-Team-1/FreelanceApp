@@ -32,7 +32,7 @@ import PortfolioView from "./views/application/PortfolioView.tsx";
 import ScheduleView from "./views/application/ScheduleView.tsx";
 import SettingsView from "./views/application/SettingsView.tsx";
 import WalletView from "./views/application/WalletView.tsx";
-import UserView, { userLoader } from "./views/application/UserView.tsx";
+import ProfileView from "./views/application/ProfileView.tsx";
 import AdminView from "./views/application/AdminView.tsx";
 
 const router = createBrowserRouter([
@@ -80,9 +80,8 @@ const router = createBrowserRouter([
             element: <ScheduleView />,
           },
           {
-            path: "user/:UID",
-            loader: userLoader,
-            element: <UserView />,
+            path: "profile",
+            element: <ProfileView />,
           },
           {
             path: "settings",

@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom"; // Import ReactDOM for portals
 import { User, Gig } from "@/utils/database/schema";
-import { doc, updateDoc, serverTimestamp, Timestamp } from "firebase/firestore";
+import { doc, updateDoc, serverTimestamp, Timestamp, query, where, getDocs ,addDoc} from "firebase/firestore";
 import CustomButton from "@/components/Buttons/CustomButton";
 import { useNavigate } from "react-router-dom";
 import { useFirestore } from "@/utils/reactfire";
+import {FaRegMessage, FaUserCheck } from "react-icons/fa6";
+import { applicationsRef,notificationsRef } from "@/utils/database/collections";
 
 interface InterestedGigglersProps {
   gig: Gig;
@@ -32,25 +34,77 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
   const handleAssignGig = async (applicantId: string) => {
     try {
       const gigDocRef = doc(db, "gigs", gig.gigId);
+  
+      // Step 1: Update the gig with the selected applicant and status
       await updateDoc(gigDocRef, {
-        selectedApplicantId: applicantId,
-        status: "in-progress",
+        selectedApplicantId: applicantId, // Store the selected applicant's ID
+        status: "in-progress",             // Update status to in-progress
         updatedAt: serverTimestamp(),
       });
-
+  
+      // Step 2: Get all pending applications for this gig except the selected one
+      const applicationsQuery = query(
+        applicationsRef(db),
+        where("gigId", "==", gig.gigId),
+        where("status", "==", "pending"),
+        where("applicantId", "!=", applicantId) // Exclude the selected applicant
+      );
+  
+      const pendingApps = await getDocs(applicationsQuery);
+  
+      // Mark other applicants' applications as discarded
+      const updatePromises = pendingApps.docs.map(appDoc =>
+        updateDoc(doc(applicationsRef(db), appDoc.id), {
+          status: "discarded", // Discard other applicants
+          updatedAt: serverTimestamp(),
+        })
+      );
+      
+      await Promise.all(updatePromises);
+  
+      // Step 3: Create Notifications
+      const notificationPromises = [];
+  
+      // Notification for the selected applicant
+      notificationPromises.push(
+        addDoc(notificationsRef(db), {
+          userId: applicantId, // This is the selected applicant's ID
+          notificationMessage: `Congratulations! You have been selected for the gig.`,
+          createdAt: serverTimestamp(),
+        })
+      );
+  
+      // Notification for other applicants
+      pendingApps.docs.forEach((appDoc) => {
+        const otherApplicantId = appDoc.data().applicantId;
+        notificationPromises.push(
+          addDoc(notificationsRef(db), {
+            userId: otherApplicantId, // This is for each discarded applicant
+            notificationMessage: `Sorry, the gig you applied for has been assigned to someone else.`,
+            createdAt: serverTimestamp(),
+          })
+        );
+      });
+  
+      // Wait for all notifications to be created
+      await Promise.all(notificationPromises);
+  
+      // Step 4: Update the gig state in the UI
       const updatedGig: Gig = {
         ...gig,
-        selectedApplicantId: applicantId,
+        selectedApplicantId: applicantId,  // Make sure the gig state reflects the selected applicant
         status: "in-progress",
         updatedAt: serverTimestamp() as unknown as Timestamp,
       };
-
-      onGigUpdate(updatedGig);
+  
+      onGigUpdate(updatedGig); // Notify the UI about the gig update
     } catch (error) {
       console.error("Error assigning gig:", error);
       alert("Failed to assign gig. Please try again.");
     }
   };
+  
+  
 
   const handleMarkComplete = async () => {
     try {
@@ -83,7 +137,7 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
       <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"></div>
       <div className="fixed inset-0 z-50 flex items-center justify-center">
         <div className="w-full max-w-3xl rounded-lg bg-gray-800 p-6">
-          <h3 className="mb-4 text-xl font-semibold text-white">
+          <h3 className="mb-3 text-xl font-semibold text-white">
             All Interested Gigglers
           </h3>
           <div className="max-h-[400px] overflow-y-auto">
@@ -104,25 +158,27 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
                       alt={applicant.displayName}
                       className="mr-3 size-10 rounded-full"
                     />
-                    <span className="text-white">
+                    <span className="text-white ">
                       {applicant.displayName} has shown interest in this gig
                     </span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <CustomButton
-                      label="Assign Gig"
+                      // label="Assign"
+                      icon={FaUserCheck}
                       onClick={() => handleAssignGig(applicant.userId)}
                       color="green"
                       textColor="black"
-                      size="small"
+                      size="medium"
                       rounded={true}
                     />
                     <CustomButton
-                      label="Message"
+                      // label="Message"
+                      icon={FaRegMessage}
                       onClick={() => handleMessageClick(applicant.userId)}
                       color="primary"
                       textColor="black"
-                      size="small"
+                      size="medium"
                       rounded={true}
                     />
                   </div>
@@ -136,7 +192,7 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
               onClick={() => setShowModal(false)}
               color="red"
               textColor="black"
-              size="medium"
+              size="small"
               rounded={true}
             />
           </div>
@@ -146,7 +202,7 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
   );
 
   return (
-    <div className="relative mt-4 rounded-lg bg-gray-900 p-4">
+    <div className="relative mt-2 rounded-lg bg-gray-900 p-4">
       {/* Assigned Giggler Section */}
       {assignedGiggler && gig.status !== "open" && (
         <div className="mb-1">
@@ -181,12 +237,13 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
                   onClick={handleMarkComplete}
                   color="green"
                   textColor="black"
-                  size="small"
+                  size="medium"
                   rounded={true}
                 />
               )}
               <CustomButton
                 label="Message"
+                icon={FaRegMessage}
                 onClick={() => handleMessageClick(assignedGiggler.userId)}
                 color="primary"
                 textColor="black"
@@ -236,6 +293,7 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
                       <div className="flex items-center space-x-2">
                         <CustomButton
                           label="Assign Gig"
+                          icon={FaUserCheck}
                           onClick={() => handleAssignGig(applicant.userId)}
                           color="green"
                           textColor="black"
@@ -244,6 +302,7 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
                         />
                         <CustomButton
                           label="Message"
+                          icon={FaRegMessage}
                           onClick={() => handleMessageClick(applicant.userId)}
                           color="primary"
                           textColor="black"

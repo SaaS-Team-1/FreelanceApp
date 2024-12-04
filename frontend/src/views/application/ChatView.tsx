@@ -25,6 +25,7 @@ import ChatCard from "@/components/Chat/ChatCard";
 import GigDetailsModal from "@/components/Chat/GigDetailsModal";
 import { useNavigate } from "react-router-dom";
 import Loading from "@/components/Loading";
+import { Gig, User, Application } from "@/utils/database/schema";
 
 interface ExtendedChat {
   id: string;
@@ -35,7 +36,8 @@ interface ExtendedChat {
   applicationId: string;
   partnerName?: string;
   gigTitle?: string;
-  lastMessageTimestamp?: Timestamp | null;
+  // lastMessageTimestamp?: Timestamp | null;
+  lastUpdate: Timestamp | null;
 }
 
 function ChatPage() {
@@ -51,84 +53,99 @@ function ChatPage() {
   const [chatPartner, setChatPartner] = useState<any | null>(null);
   const [isGigDetailsOpen, setIsGigDetailsOpen] = useState(false);
 
+
+
+  const [hasInitializedChat, setHasInitializedChat] = useState(false);
+
   useEffect(() => {
-    setChatsLoading(true);
     if (user) {
-      const fetchChats = async () => {
-        try {
-          const listerChatsQuery = query(
-            chatsRef(db),
-            where("listerId", "==", user.uid),
-          );
-          const applicantChatsQuery = query(
-            chatsRef(db),
-            where("applicantId", "==", user.uid),
-          );
+      setChatsLoading(true);
 
-          const listerChatsSnapshot = await getDocs(listerChatsQuery);
-          const listerChats = listerChatsSnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }));
+      const listerChatsQuery = query(
+        chatsRef(db),
+        where("listerId", "==", user.uid)
+      );
+      const applicantChatsQuery = query(
+        chatsRef(db),
+        where("applicantId", "==", user.uid)
+      );
 
-          const applicantChatsSnapshot = await getDocs(applicantChatsQuery);
-          const applicantChats = applicantChatsSnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }));
+      // Combine real-time listeners for both lister and applicant chats
+      const unsubscribeLister = onSnapshot(listerChatsQuery, (snapshot) => {
+        const listerChats = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as ExtendedChat[];
 
-          const allChats = [
-            ...listerChats,
-            ...applicantChats,
-          ] as ExtendedChat[];
-          for (const chat of allChats) {
+        updateChatsState(listerChats);
+      });
+
+      const unsubscribeApplicant = onSnapshot(applicantChatsQuery, (snapshot) => {
+        const applicantChats = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as ExtendedChat[];
+
+        updateChatsState(applicantChats);
+      });
+
+      const updateChatsState = async (newChats: ExtendedChat[]) => {
+        const enrichedChats = await Promise.all(
+          newChats.map(async (chat) => {
             const partnerId =
-              user.uid === chat.listerId ? chat.applicantId : chat.listerId;
-            const partnerDoc = await getDoc(doc(usersRef(db), partnerId));
-            const partnerData = partnerDoc.data();
+              user?.uid === chat.listerId ? chat.applicantId : chat.listerId;
 
-            const gigDoc = await getDoc(doc(gigsRef(db), chat.gigId));
+            const [partnerDoc, gigDoc] = await Promise.all([
+              getDoc(doc(usersRef(db), partnerId)),
+              getDoc(doc(gigsRef(db), chat.gigId)),
+            ]);
+
+            const partnerData = partnerDoc.data();
             const gigData = gigDoc.data();
 
-            const messageQuery = query(
-              chatMessagesRef(db),
-              where("chatId", "==", chat.chatId),
-              orderBy("timestamp", "desc"),
-              limit(1),
-            );
-            const lastMessageSnapshot = await getDocs(messageQuery);
-            const lastMessage = lastMessageSnapshot.docs[0]?.data() || null;
+            return {
+              ...chat,
+              partnerName: partnerData?.displayName || "Unknown User",
+              gigTitle: truncateString(gigData?.title || "Untitled Gig", 30),
+            };
+          })
+        );
 
-            chat.partnerName = partnerData?.displayName || "Unknown User";
-            chat.gigTitle = truncateString(
-              gigData?.title || "Untitled Gig",
-              30,
-            );
-            chat.lastMessageTimestamp = lastMessage?.timestamp || null; // Ensure fallback to `null`
-          }
+        setChats((prevChats) => {
+          const updatedChatsMap = new Map<string, ExtendedChat>(
+            prevChats.map((chat) => [chat.chatId, chat])
+          );
 
-          // Sort chats by the last message timestamp
-          const sortedChats = allChats.sort((a, b) => {
-            const aTime = a.lastMessageTimestamp?.seconds || 0;
-            const bTime = b.lastMessageTimestamp?.seconds || 0;
-            return bTime - aTime; // Descending order
+          enrichedChats.forEach((chat) => {
+            updatedChatsMap.set(chat.chatId, chat);
           });
 
-          setChats(sortedChats);
+          const updatedChats = Array.from(updatedChatsMap.values()).sort((a, b) => {
+            const aTime = a.lastUpdate?.seconds || 0;
+            const bTime = b.lastUpdate?.seconds || 0;
+            return bTime - aTime;
+          });
 
-          if (sortedChats.length > 0) {
-            setSelectedChat(sortedChats[0]);
+          // Select the top chat only if it hasn't been initialized
+          if (!hasInitializedChat && updatedChats.length > 0) {
+            setSelectedChat(updatedChats[0]);
+            setHasInitializedChat(true); 
           }
-        } catch (error) {
-          console.error("Error fetching chats:", error);
-        }
+
+          return updatedChats;
+        });
+
         setChatsLoading(false);
       };
 
-      fetchChats();
+      return () => {
+        unsubscribeLister();
+        unsubscribeApplicant();
+      };
     }
-  }, [user, db]);
+  }, [user, db, hasInitializedChat]);
 
+  
   useEffect(() => {
     const fetchDetails = async () => {
       if (selectedChat) {
@@ -158,27 +175,33 @@ function ChatPage() {
 
   useEffect(() => {
     if (selectedChat) {
+      if (!selectedChat.chatId) {
+        console.error("Invalid chat data: Missing chatId");
+        return;
+      }
+  
       const q = query(
         chatMessagesRef(db),
         where("chatId", "==", selectedChat.chatId),
-        orderBy("timestamp", "asc"),
+        orderBy("timestamp", "asc")
       );
-
+  
       const unsubscribe = onSnapshot(q, (snapshot) => {
         const messagesData = snapshot.docs.map((doc) => {
           const data = doc.data();
           return {
             id: doc.id,
             ...data,
-            timestamp: data.timestamp || null, // Ensure fallback for null timestamps
+            timestamp: data.timestamp || null, 
           };
         });
         setMessages(messagesData);
       });
-
+  
       return () => unsubscribe();
     }
   }, [selectedChat, db]);
+  
 
   const truncateString = (str: string, maxLength: number) => {
     return str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
@@ -203,21 +226,18 @@ function ChatPage() {
 
   const handleMessageSent = () => {
     if (!selectedChat) return;
-
-    // Update the `lastMessageTimestamp` for the selected chat
     const updatedChats = chats.map((chat) =>
       chat.chatId === selectedChat.chatId
         ? {
             ...chat,
-            lastMessageTimestamp: Timestamp.now(), // Set the new message's timestamp
+            lastUpdate: Timestamp.now(), 
           }
         : chat,
     );
 
-    // Sort the chats so the selected chat moves to the top
     updatedChats.sort((a, b) => {
-      const aTime = a.lastMessageTimestamp?.seconds || 0;
-      const bTime = b.lastMessageTimestamp?.seconds || 0;
+      const aTime = a.lastUpdate?.seconds || 0;
+      const bTime = b.lastUpdate?.seconds || 0;
       return bTime - aTime; // Descending order
     });
 
@@ -229,6 +249,31 @@ function ChatPage() {
   const handleGoToMyGigs = () => {
     navigate("/app/posted-gigs");
   };
+
+
+
+  useEffect(() => {
+    if (gig?.gigId) {
+      const gigRef = doc(gigsRef(db), gig.gigId);
+      const unsubscribeGig = onSnapshot(gigRef, (doc) => {
+        setGig(doc.data() as Gig);
+      });
+  
+      return () => unsubscribeGig();
+    }
+  }, [gig?.gigId, db]);
+  
+  useEffect(() => {
+    if (application?.applicationId) {
+      const appRef = doc(applicationsRef(db), application.applicationId);
+      const unsubscribeApp = onSnapshot(appRef, (doc) => {
+        setApplication(doc.data() as Application);
+      });
+  
+      return () => unsubscribeApp();
+    }
+  }, [application?.applicationId, db]);
+  
 
   return (
     <div className="flex w-full justify-center rounded-xl p-4 ">
@@ -254,7 +299,7 @@ function ChatPage() {
                     </p>
                   </div>
                   <p className="text-sm text-gray-300">
-                    {formatTimestamp(chat.lastMessageTimestamp)}
+                    {formatTimestamp(chat.lastUpdate)}
                   </p>
                 </div>
               ))}
@@ -281,7 +326,7 @@ function ChatPage() {
                     onSeeGigDetails={() => setIsGigDetailsOpen(true)}
                   />
 
-                  <div className="scrollbar flex size-full flex-col overflow-y-scroll bg-gray-800 p-4">
+                  <div className="w-full scrollbar flex size-full flex-col overflow-y-scroll bg-gray-800 p-4">
                     <ChatWindow
                       messages={messages.map((message) => ({
                         text: message.content,
@@ -325,16 +370,17 @@ function ChatPage() {
             </div>
           </div>
 
-          {isGigDetailsOpen && gig && (
+          {isGigDetailsOpen && gig && user && (
             <GigDetailsModal
               gig={gig}
               lister={chatPartner || null}
               onClose={() => setIsGigDetailsOpen(false)}
-              currentUserId={user?.uid || ""}
+              currentUserId={user.uid}
+              currentUser={user as User} 
               onGoToMyGigs={handleGoToMyGigs}
-              currentUser={user as User}
             />
           )}
+
         </>
       ) : (
         <Loading />
@@ -344,3 +390,12 @@ function ChatPage() {
 }
 
 export default ChatPage;
+
+
+
+
+
+
+
+
+
