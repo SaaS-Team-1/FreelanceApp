@@ -147,7 +147,7 @@ const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
               <label className="mb-2 block text-sm font-bold">Price</label>
               <input
                 type="number"
-                disabled={true}
+                //disabled={true}
                 value={editedGig.price}
                 onChange={(e) =>
                   setEditedGig({ ...editedGig, price: Number(e.target.value) })
