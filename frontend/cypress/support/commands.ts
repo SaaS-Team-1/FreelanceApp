@@ -16,6 +16,8 @@ declare global {
         displayName: string,
         photoURL?: string,
         claims?: Record<string, string>,
+        profile?: Record<string, string>,
+        stats?: Record<string, string>,
       ): Chainable<void>;
 
       /**
@@ -93,6 +95,8 @@ Cypress.Commands.add(
     displayName,
     photoURL = "https://avatars.githubusercontent.com/u/69245724",
     claims = {},
+    profile = {},
+    stats = {},
   ) => {
     // Check if the user exists and delete if it does
     cy.authGetUserByEmail(email)
@@ -111,17 +115,42 @@ Cypress.Commands.add(
           claims,
         ).then(() => {
           cy.log("User created successfully");
+          // Upload user profile info to Firestore
+          cy.callFirestore('add', 'users', {
+            email,
+            displayName,
+            photoURL,
+            profile,
+            stats,
+            claims
+          }).then(() => {
+            cy.log("User profile info uploaded to Firestore");
+          });
         });
       });
   },
 );
 
 Cypress.Commands.add('createUser1', function () {
-  cy.createUser(this.users.user1.email, this.users.user1.password, this.users.user1.displayName);
+  cy.createUser(
+    this.users.user1.email,
+    this.users.user1.password,
+    this.users.user1.displayName,
+    undefined, // photoURL
+    this.users.user1.profile,
+    this.users.user1.stats
+  );
 });
 
 Cypress.Commands.add('createUser2', function () {
-  cy.createUser(this.users.user2.email, this.users.user2.password, this.users.user2.displayName);
+  cy.createUser(
+    this.users.user2.email,
+    this.users.user2.password,
+    this.users.user2.displayName,
+    undefined, // photoURL
+    this.users.user2.profile,
+    this.users.user2.stats
+  );
 });
 
 Cypress.Commands.add("loginUser", (email, password) => {
