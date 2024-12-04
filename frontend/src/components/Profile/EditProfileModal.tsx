@@ -30,8 +30,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
       errors.push("A valid email is required.");
     if (!user.profile.bio.trim())
       errors.push("Bio is required and cannot be empty.");
-    if (!user.profile.location.trim())
-      errors.push("Location is required.");
+    if (!user.profile.location.trim()) errors.push("Location is required.");
     if (!user.profile.picture?.trim())
       errors.push("Profile picture URL is required.");
 
@@ -66,10 +65,10 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
-      <div className="w-[800px] max-w-full rounded-lg bg-gray-900 p-6 text-white shadow-lg">
-        <h2 className="mb-4 text-3xl font-bold">Edit Profile</h2>
-        <div className="space-y-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm" onClick={onClose}>
+      <div className="scrollbar w-[800px] max-w-full rounded-lg bg-gray-900 text-white shadow-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+        <h2 className="m-4 text-3xl font-bold">Edit Profile</h2>
+        <div className="space-y-4 p-4">
           {/* Display Name Input */}
           <div>
             <label className="mb-2 block text-sm font-bold">Display Name</label>
@@ -158,9 +157,77 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
               className="w-full rounded border-gray-700 bg-gray-800 p-2 text-white"
             />
           </div>
+          <div>
+            <label className="mb-2 block text-sm font-bold">Degree</label>
+            <input
+              type="text"
+              value={updatedUser.profile.degree}
+              onChange={(e) =>
+                setUpdatedUser({
+                  ...updatedUser,
+                  profile: {
+                    ...updatedUser.profile,
+                    degree: String(e.target.value),
+                  },
+                })
+              }
+              className="w-full rounded border-gray-700 bg-gray-800 p-2 text-white"
+            />
+          </div>
+          <div>
+            <label className="mb-2 block text-sm font-bold">Skills</label>
+            <input
+              type="text"
+              value={updatedUser.profile.skills}
+              onChange={(e) =>
+                setUpdatedUser({
+                  ...updatedUser,
+                  profile: {
+                    ...updatedUser.profile,
+                    skills: String(e.target.value),
+                  },
+                })
+              }
+              className="w-full rounded border-gray-700 bg-gray-800 p-2 text-white"
+            />
+          </div>
+          <div>
+            <label className="mb-2 block text-sm font-bold">Languages</label>
+            <input
+              type="text"
+              value={updatedUser.profile.languages}
+              onChange={(e) =>
+                setUpdatedUser({
+                  ...updatedUser,
+                  profile: {
+                    ...updatedUser.profile,
+                    languages: String(e.target.value),
+                  },
+                })
+              }
+              className="w-full rounded border-gray-700 bg-gray-800 p-2 text-white"
+            />
+          </div>
+          <div>
+            <label className="mb-2 block text-sm font-bold">Faculty</label>
+            <input
+              type="text"
+              value={updatedUser.profile.faculty}
+              onChange={(e) =>
+                setUpdatedUser({
+                  ...updatedUser,
+                  profile: {
+                    ...updatedUser.profile,
+                    faculty: String(e.target.value),
+                  },
+                })
+              }
+              className="w-full rounded border-gray-700 bg-gray-800 p-2 text-white"
+            />
+          </div>
         </div>
         {/* Buttons */}
-        <div className="mt-6 flex justify-end gap-4">
+        <div className="py-2 flex w-full h-14 justify-end gap-4 sticky bottom-0 bg-gray-900">
           <CustomButton
             label="Cancel"
             onClick={onClose}

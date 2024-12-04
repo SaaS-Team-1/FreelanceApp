@@ -87,9 +87,7 @@ export default function ProfileView() {
               >
                 Edit Profile
               </button>
-              <span className="mt-2 text-sm text-gray-400">
-                KU Leuven Department of Computer Science
-              </span>
+              <span className="mt-2 text-sm text-gray-400">{user.profile.faculty}</span>
             </div>
           </div>
           <div className="p-6">
@@ -104,16 +102,9 @@ export default function ProfileView() {
             <h2 className="mb-2 text-xl font-semibold text-white">
               Degree and Skills
             </h2>
-            <p className="text-sm text-gray-300">
-              Bachelor of Computer Science - Third Year
-            </p>
-            <p className="mt-3 text-gray-400">
-              Python, Java, C++, HTML, CSS, JavaScript, SQL, software
-              development, object-oriented programming, web development,
-              databases, algorithms, data structures, problem-solving, teamwork,
-              computer networks, software engineering principles.
-            </p>
-            <p className="mt-3 text-gray-400">Dutch, English, French</p>
+            <p className="text-sm text-gray-300">{user.profile.degree}</p>
+            <p className="mt-3 text-gray-400">{user.profile.skills}</p>
+            <p className="mt-3 text-gray-400">{user.profile.languages}</p>
           </div>
         </div>
       </div>
