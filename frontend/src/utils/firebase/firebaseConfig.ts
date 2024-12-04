@@ -54,7 +54,11 @@ export async function getFirestoreInstance(app: FirebaseApp) {
   const db = getFirestore(app);
 
   if (import.meta.env.DEV) {
-    connectFirestoreEmulator(db, "127.0.0.1", 8080);
+    try {
+      connectFirestoreEmulator(db, "127.0.0.1", 8080);
+    } catch (error) {
+      console.log(error);
+    }
   }
   return db;
 }

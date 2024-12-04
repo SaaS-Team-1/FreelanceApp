@@ -46,11 +46,7 @@ export default function PurchaseReturn({
   }
 
   if (status === "loading") {
-    return (
-      <section>
-        <Loading />
-      </section>
-    );
+    return <Loading className="mt-5 justify-self-center" />;
   }
 
   return (

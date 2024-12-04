@@ -78,12 +78,12 @@ export default function TransactionItem({ transaction }: TransactionItemProps) {
           </span>
         </div>
       </div>
-      <div className="text-right ml-2">
+      <div className="ml-2 text-right">
         <span className={`font-medium ${details.color}`}>
           {transaction.kind === "withdraw" || transaction.kind === "send"
             ? "-"
             : "+"}
-          {Math.abs(transaction.amount).toFixed(0)}
+          {Math.abs(transaction.amount).toLocaleString()}
         </span>
       </div>
     </div>

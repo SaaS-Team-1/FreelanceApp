@@ -4,11 +4,13 @@ import ReactDOM from "react-dom";
 interface CommonModalProps {
   isOpen: boolean;
   onClose?: () => void;
+  scroll?: boolean;
 }
 
 export default function CommonModal({
   isOpen,
   onClose,
+  scroll,
   children,
 }: PropsWithChildren<CommonModalProps>) {
   const modalRef = useRef<HTMLDivElement>(null);
@@ -59,7 +61,7 @@ export default function CommonModal({
       >
         <div
           ref={modalRef}
-          className="scrollbar max-h-[80vh] max-w-[50vw] overflow-y-scroll rounded-lg bg-gray-800"
+          className={`${scroll && "scrollbar overflow-y-scroll"} max-h-[80vh] max-w-[50vw] rounded-lg bg-gray-800`}
           tabIndex={-1}
         >
           {children}

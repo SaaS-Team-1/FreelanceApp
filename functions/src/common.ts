@@ -1,6 +1,10 @@
-import { usersRef } from "./firebase";
-import * as functions from "firebase-functions/v1";
+import { onCall } from "firebase-functions/https";
+import { auth, usersRef } from "./firebase";
 
-exports.userProfile = functions.auth.user().onCreate((user) => {
-  usersRef.doc(user.uid).set(user, { merge: true });
+// Get session status
+exports.createUser = onCall(async (request) => {
+  // request.data pass the user separate from the profile
+  const user = await auth.createUser(request.data.user);
+  usersRef.doc(user.uid).create({});
+  return user;
 });
