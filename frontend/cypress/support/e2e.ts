@@ -42,10 +42,14 @@ const collections = [
   "notifications",
 ];
 
-after(() => {
+before(() => {
   collections.forEach((col) => cy.callFirestore("delete", col));
   cy.logout();
   cy.deleteAllAuthUsers();
+});
+
+afterEach(function () {
+  cy.wait(500);
 });
 
 attachCustomCommands({ Cypress, cy, firebase });
