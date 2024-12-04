@@ -46,6 +46,29 @@ const GigDetails: React.FC<GigDetailsProps> = ({
     setCurrentGig(gig);
   }, [gig]);
 
+  const formatDate = (dueDate: any) => {
+    try {
+      // Handle different date formats
+      const date = dueDate?.seconds 
+        ? new Date(dueDate.seconds * 1000)  // Firestore timestamp
+        : dueDate instanceof Date 
+        ? dueDate                           // JavaScript Date object
+        : new Date(dueDate);                // String or number timestamp
+
+      return date.toLocaleDateString("en-GB", {
+        weekday: "long",
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "Date unavailable";
+    }
+  };
+
   const handleDeleteConfirm = async () => {
     try {
       await deleteDoc(doc(db, "gigs", gig.gigId));
@@ -161,9 +184,7 @@ const GigDetails: React.FC<GigDetailsProps> = ({
           <div className="flex  items-center">
             <FaCalendarAlt className="mr-2" />
             <span>
-              {gig.dueDate
-                ? `${new Date(gig.dueDate.seconds * 1000).toLocaleDateString("en-GB")}`
-                : "N/A"}
+              {formatDate(gig.dueDate)}
             </span>
           </div>
           <span className="ml-2 text-xs text-gray-400">Due Date</span>

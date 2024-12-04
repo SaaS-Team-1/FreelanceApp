@@ -90,9 +90,9 @@ function PostedGigList({
           )}
 
           {showCompletedButton && (
-            <div className="absolute right-12 top-5">
+            <div className="absolute left-4 bottom-4">
               <CustomButton
-                // label="Complete Gig"
+                label="Complete Gig"
                 icon={FaCheck}
                 onClick={() => onCompleteClick && onCompleteClick(gig.gigId)}
                 color="green"
