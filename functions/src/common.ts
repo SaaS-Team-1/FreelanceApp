@@ -1,13 +1,6 @@
-import { setGlobalOptions } from "firebase-functions/v2";
-import { onDocumentCreated } from "firebase-functions/v2/firestore";
+import { usersRef } from "./firebase";
+import * as functions from "firebase-functions/v1";
 
-setGlobalOptions({ region: "europe-west1" });
-
-exports.universalID = onDocumentCreated(
-  "{collection}/{document}",
-  (event) => {
-    const fieldName = `${event.params.collection.toLowerCase().slice(0, -1)}Id`;
-
-    return event.data?.ref.update({ [fieldName]: event.params.document });
-  }
-);
+exports.userProfile = functions.auth.user().onCreate((user) => {
+  usersRef.doc(user.uid).set(user, { merge: true });
+});

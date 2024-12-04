@@ -1,5 +1,7 @@
 import { Stripe } from "stripe";
 import { onCall } from "firebase-functions/v2/https";
+import { transactionsRef, usersRef } from "./firebase";
+import { Timestamp } from "firebase-admin/firestore";
 
 // Initialize Stripe with your secret key
 const stripe = new Stripe(
@@ -17,6 +19,7 @@ exports.createCheckoutSession = onCall(
         ui_mode: "embedded",
         billing_address_collection: "auto",
         payment_method_types: ["card"],
+
         line_items: [
           {
             price: "price_1QRzoGJEuHTWAV4CzCEdfqcy",
@@ -25,7 +28,7 @@ exports.createCheckoutSession = onCall(
         ],
         customer_email: request.data.email,
         mode: "payment",
-        return_url: `${request.data.url}/return?session_id={CHECKOUT_SESSION_ID}`,
+        return_url: `${request.data.url}/?session_id={CHECKOUT_SESSION_ID}`,
       });
 
       return {
@@ -49,13 +52,30 @@ exports.getSessionStatus = onCall(
         request.data.sessionId
       );
 
+      if (
+        session.payment_status === "paid" &&
+        request.auth &&
+        session.payment_intent
+      ) {
+        await transactionsRef.doc(session.payment_intent.toString()).set({
+          transactionId: session.payment_intent.toString(),
+          ownerId: request.auth.uid,
+          amount: session.amount_total,
+          createdAt: Timestamp.now(),
+          onHold: false,
+          kind: "deposit",
+        });
+        // const user = await usersRef.doc(request.auth.uid).get();
+        // if(user)
+      }
       return {
-        status: session.status,
-        customer_email: session.customer_details?.email,
+        paymentStatus: session.payment_status,
       };
     } catch (error) {
       console.error("Error retrieving session:", error);
-      throw new Error("Failed to retrieve session status");
+      return {
+        paymentStatus: "error",
+      };
     }
   }
 );

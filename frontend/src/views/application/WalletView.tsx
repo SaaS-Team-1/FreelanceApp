@@ -5,65 +5,51 @@ import CoinPurchaseForm from "@/components/Wallet/CoinPurchaseForm";
 import TransactionItem from "@/components/Wallet/TransactionItems";
 import WithdrawForm from "@/components/Wallet/WithdrawForm";
 import CommonModal from "@/components/Common/CommonModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CheckoutForm from "@/components/Wallet/CheckoutForm";
+import { useSearchParams } from "react-router-dom";
+import PurchaseReturn from "@/components/Wallet/PurchaseReturn";
+import { useFirestore, useUser } from "@/utils/reactfire";
+import { transactionsRef } from "@/utils/database/collections";
+import { onSnapshot, orderBy, query, where } from "firebase/firestore";
+const currentUser = {
+  userId: "user123",
+  email: "john@example.com",
+  displayName: "John Doe",
+  profile: {
+    bio: "Software developer",
+    credits: 1250.75,
+    picture: "https://example.com/pic.jpg",
+    location: "New York",
+  },
+  stats: {
+    completedGigs: 15,
+    averageRating: 4.8,
+  },
+};
 
 export default function WalletView() {
-  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
-  const [coins, setCoins] = useState(100); // State to control modal visibility
-
-  const currentUser = {
-    userId: "user123",
-    email: "john@example.com",
-    displayName: "John Doe",
-    profile: {
-      bio: "Software developer",
-      credits: 1250.75,
-      picture: "https://example.com/pic.jpg",
-      location: "New York",
-    },
-    stats: {
-      completedGigs: 15,
-      averageRating: 4.8,
-    },
-  };
-
-  const dummyTransactions = [
-    {
-      transactionId: "tx1",
-      kind: "deposit",
-      amount: 500,
-      receiverId: currentUser.userId,
-      createdAt: { seconds: Date.now() / 1000 - 3600 },
-    },
-    {
-      transactionId: "tx2",
-      kind: "withdraw",
-      amount: 200,
-      receiverId: currentUser.userId,
-      createdAt: { seconds: Date.now() / 1000 - 7200 },
-    },
-    {
-      transactionId: "tx3",
-      kind: "send",
-      amount: 500,
-      senderId: currentUser.userId,
-      receiverId: "user456",
-      user: { displayName: "Jane Smith" },
-      gig: { title: "Website Development" },
-      createdAt: { seconds: Date.now() / 1000 - 86400 },
-    },
-    {
-      transactionId: "tx4",
-      kind: "recieve",
-      amount: 250,
-      senderId: "user789",
-      receiverId: currentUser.userId,
-      user: { displayName: "Mike Johnson" },
-      gig: { title: "Logo Design" },
-      createdAt: { seconds: Date.now() / 1000 - 86400 * 2 },
-    },
-  ];
+  const db = useFirestore();
+  const user = useUser();
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [transactions, setTransactions] = useState<Transaction[]>();
+  const [returnOpen, setReturnOpen] = useState(false);
+  const [coins, setCoins] = useState(100);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const sessionId = searchParams.get("session_id");
+  useEffect(() => setReturnOpen(!!sessionId), [sessionId]);
+  useEffect(() => {
+    if (!user.data?.uid) return;
+    return onSnapshot(
+      query(
+        transactionsRef(db),
+        where("ownerId", "==", user.data.uid),
+        orderBy("createdAt", "desc"),
+      ),
+      (data) =>
+        setTransactions(data.docs.map((d) => d.data()) as Transaction[]),
+    );
+  }, [db, user.data?.uid]);
 
   return (
     <div className="scrollbar mx-auto flex h-screen w-full flex-col items-center space-y-10 overflow-y-scroll py-10 lg:overflow-y-hidden">
@@ -86,7 +72,7 @@ export default function WalletView() {
             <Tabs.Item active title="Deposit" icon={FaWallet}>
               <CoinPurchaseForm
                 onBuy={(number) => {
-                  setIsModalOpen(true);
+                  setCheckoutOpen(true);
                   setCoins(number);
                 }}
               />
@@ -103,43 +89,41 @@ export default function WalletView() {
             Transaction History
           </h2>
           <div className="scrollbar mb-10 rounded-lg bg-gray-800 p-4 shadow-md lg:h-full lg:overflow-y-scroll">
-            {dummyTransactions.length === 0 ? (
+            {transactions && transactions.length !== 0 ? (
+              transactions.map((transaction) => (
+                <TransactionItem
+                  key={transaction.transactionId}
+                  transaction={transaction as Transaction}
+                />
+              ))
+            ) : (
               <div className="p-6 text-center text-gray-500">
                 No transactions yet
               </div>
-            ) : (
-              dummyTransactions
-                .sort((a, b) => b.createdAt.seconds - a.createdAt.seconds)
-                .map((transaction) => (
-                  <TransactionItem
-                    key={transaction.transactionId}
-                    transaction={transaction as Transaction}
-                    user={transaction.user}
-                    gig={transaction.gig}
-                  />
-                ))
-            )}
-            {dummyTransactions.length === 0 ? (
-              <div className="p-6 text-center text-gray-500">
-                No transactions yet
-              </div>
-            ) : (
-              dummyTransactions
-                .sort((a, b) => b.createdAt.seconds - a.createdAt.seconds)
-                .map((transaction) => (
-                  <TransactionItem
-                    key={transaction.transactionId}
-                    transaction={transaction as Transaction}
-                    user={transaction.user}
-                    gig={transaction.gig}
-                  />
-                ))
             )}
           </div>
         </div>
       </div>
-      {isModalOpen ? (
-        <CommonModal onClose={() => setIsModalOpen(false)} isOpen={isModalOpen}>
+      {returnOpen && sessionId ? (
+        <CommonModal
+          onClose={() => {
+            setReturnOpen(false);
+            setSearchParams({});
+          }}
+          isOpen={returnOpen}
+        >
+          <div className="max-w-xl p-5">
+            <PurchaseReturn email={currentUser.email} sessionId={sessionId} />
+          </div>
+        </CommonModal>
+      ) : (
+        <></>
+      )}
+      {checkoutOpen ? (
+        <CommonModal
+          onClose={() => setCheckoutOpen(false)}
+          isOpen={checkoutOpen}
+        >
           <CheckoutForm coins={coins}></CheckoutForm>
         </CommonModal>
       ) : (

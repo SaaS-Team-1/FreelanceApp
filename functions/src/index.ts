@@ -1,8 +1,8 @@
-import * as common from "./common";
+import { setGlobalOptions } from "firebase-functions/options";
 import * as stripe from "./stripe";
-import { initializeApp } from "firebase-admin/app";
+import * as common from "./common";
 
-initializeApp();
+setGlobalOptions({ region: "europe-west1" });
 
 exports.stripe = stripe;
 exports.common = common;

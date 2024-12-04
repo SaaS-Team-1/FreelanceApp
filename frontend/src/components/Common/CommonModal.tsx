@@ -1,6 +1,5 @@
 import { PropsWithChildren, useCallback, useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
-import CustomButton from "@/components/Buttons/CustomButton";
 
 interface CommonModalProps {
   isOpen: boolean;
@@ -45,7 +44,7 @@ export default function CommonModal({
   if (!isOpen) return null;
 
   return ReactDOM.createPortal(
-    <>
+    <div className="relative z-50">
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/50 backdrop-blur-sm"
@@ -66,7 +65,7 @@ export default function CommonModal({
           {children}
         </div>
       </div>
-    </>,
+    </div>,
     document.body,
   );
 }

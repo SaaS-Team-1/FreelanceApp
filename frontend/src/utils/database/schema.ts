@@ -7,7 +7,6 @@
 // no duplicate chats: you cannot create two chats with same gig id, same lister id, same applicant id
 // when lister deletes set application status to discarded
 
-
 import { Timestamp } from "firebase/firestore";
 
 export interface User {
@@ -106,11 +105,15 @@ export interface Rating {
 
 export interface Transaction {
   transactionId: string; // transaction ID
-  senderId?: string;
-  receiverId: string;
+  ownerId: string;
+  ownerName: string;
+  thirdPartyId?: string;
+  thirdPartyName?: string;
   gigId?: string;
+  gigName?: string;
   amount: number;
   createdAt: Timestamp;
+  onHold: boolean;
   kind: "deposit" | "withdraw" | "send" | "recieve";
 }
 
