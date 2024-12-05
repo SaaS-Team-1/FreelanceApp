@@ -54,20 +54,20 @@ export default function WalletView() {
   if (!userDoc) return <Loading />;
 
   return (
-    <div className="scrollbar mx-auto flex h-screen w-full flex-col items-center space-y-10 overflow-y-scroll py-10 lg:overflow-y-hidden">
-      <div className="flex items-center justify-center space-x-6 lg:w-full">
+    <div className="scrollbar mx-auto flex h-screen w-full flex-col items-center space-y-10 overflow-y-scroll py-10 2xl:overflow-y-hidden">
+      <div className="flex items-center justify-center space-x-6 2xl:w-full">
         <div className="justify-self-end rounded-lg bg-gray-800 p-4 shadow-md">
           <span className="text-sm font-bold text-gray-200">
             Current Balance
           </span>
           <p className="flex text-2xl font-bold text-gray-200">
-            {userDoc?.coins.toLocaleString() || 0}
+            {userDoc?.coins?.toLocaleString() || 0}
             <FaCoins className="m-1 ml-2 text-yellow-400" />
           </p>
         </div>
       </div>
 
-      <div className="flex h-fit w-max flex-col gap-10 space-y-10 lg:flex-row lg:space-y-0">
+      <div className="flex h-fit w-max flex-col gap-10 space-y-10 2xl:flex-row 2xl:space-y-0">
         <div className="max-h-[55vh]">
           <h2 className="mb-4 text-xl font-bold text-white">Deposit</h2>
           <Tabs aria-label="Deposit Tabs" variant="underline">
@@ -86,11 +86,11 @@ export default function WalletView() {
           </Tabs>
         </div>
 
-        <div className="max-h-fit lg:max-h-[55vh]">
+        <div className="max-h-fit 2xl:max-h-[55vh]">
           <h2 className="mb-4 text-xl font-bold text-white">
             Transaction History
           </h2>
-          <div className="scrollbar mb-10 rounded-lg bg-gray-800 p-4 shadow-md lg:h-full lg:overflow-y-scroll">
+          <div className="scrollbar mb-10 rounded-lg bg-gray-800 p-4 shadow-md 2xl:h-full 2xl:overflow-y-scroll">
             {transactions && transactions.length !== 0 ? (
               transactions.map((transaction) => (
                 <TransactionItem

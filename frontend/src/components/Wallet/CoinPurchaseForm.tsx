@@ -14,7 +14,7 @@ export default function CoinPurchaseForm({
   };
 
   return (
-    <div className="relative space-y-4 text-white lg:min-h-[35vh] lg:max-w-[25vw]">
+    <div className="relative space-y-4 text-white 2xl:min-h-[35vh] 2xl:max-w-[25vw]">
       <div className="absolute right-0 top-0 rounded bg-gray-800 px-2 py-1 text-sm text-gray-300">
         100 coins = 1€
       </div>

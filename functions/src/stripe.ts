@@ -47,21 +47,27 @@ exports.getSessionStatus = onCall(async (request) => {
     const user = (await userDoc.get()).data();
 
     if (session.payment_status === "paid" && user && session.payment_intent) {
-      await transactionsRef.doc(session.payment_intent.toString()).create({
-        transactionId: session.payment_intent.toString(),
-        ownerId: request.auth.uid,
-        amount: session.amount_total,
-        createdAt: Timestamp.now(),
-        onHold: false,
-        kind: "deposit",
-      });
+      try {
+        await transactionsRef.doc(session.payment_intent.toString()).create({
+          transactionId: session.payment_intent.toString(),
+          ownerId: request.auth.uid,
+          amount: session.amount_total,
+          createdAt: Timestamp.now(),
+          onHold: false,
+          kind: "deposit",
+        });
+      } catch (error) {
+        return {
+          paymentStatus: "paid",
+        };
+      }
 
       user.coins = (user.coins || 0) + session.amount_total;
       await userDoc.set(user, { merge: true });
+      return {
+        paymentStatus: session.payment_status,
+      };
     }
-    return {
-      paymentStatus: session.payment_status,
-    };
   } catch (error) {
     console.error("Error retrieving session:", error);
     return {
@@ -80,6 +86,7 @@ exports.withdrawFunds = onCall(async (request) => {
   if (user) {
     const transactions = await transactionsRef
       .where("ownerId", "==", request.auth.uid)
+      .where("onHold", "==", false)
       .get();
 
     const totalCoins = transactions.docs
@@ -89,14 +96,47 @@ exports.withdrawFunds = onCall(async (request) => {
     if (totalCoins != user.coins) {
       user.coins = totalCoins;
     }
-    user.coins = (user.coins || 0) - request.data.amount;
+    const finalCoins = (user.coins || 0) - request.data.amount;
+
+    if (finalCoins < 0) {
+      user.coins = totalCoins;
+
+      userDoc.set(user, { merge: true });
+
+      return { status: "error" };
+    }
+
+    user.coins = finalCoins;
+
     userDoc.set(user, { merge: true });
+
+    try {
+      const transactionId = `${request.auth.uid}_${request.data.amount}_${user.coins}_${totalCoins}`;
+      transactionsRef.doc(transactionId).create({
+        transactionId, // transaction ID
+
+        ownerId: request.auth.uid,
+        ownerName: user.displayName,
+
+        amount: -request.data.amount,
+
+        createdAt: Timestamp.now(),
+        onHold: false,
+        kind: "withdraw",
+      });
+    } catch (error) {
+      console.error("Error retrieving session:", error);
+      return {
+        status: "error",
+      };
+    }
+
     return {
       status: "success",
     };
-  } else {
-    return {
-      status: "error",
-    };
   }
+
+  return {
+    status: "error",
+  };
 });

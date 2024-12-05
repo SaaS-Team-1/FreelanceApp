@@ -13,7 +13,7 @@ export interface User {
   userId: string;
   email: string;
   displayName: string;
-  coins: number;
+  coins?: number;
   profile: {
     bio: string;
     credits: number;

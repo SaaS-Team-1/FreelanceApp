@@ -27,9 +27,9 @@ export default function WithdrawForm({ currentUser }: { currentUser?: User }) {
 
   if (!currentUser) return null;
 
-  if (currentUser.coins < 1000)
+  if ((currentUser.coins || 0) < 1000)
     return (
-      <div className="flex items-center justify-center space-y-4 text-white lg:h-[35vh] lg:w-[25vw]">
+      <div className="flex items-center justify-center space-y-4 text-white 2xl:h-[35vh] 2xl:w-[25vw]">
         <h2 className="mb-4 text-xl font-semibold text-red-400">
           Minimum amount to withdraw is 1,000 Coins!
         </h2>
@@ -40,7 +40,7 @@ export default function WithdrawForm({ currentUser }: { currentUser?: User }) {
 
   return (
     <form
-      className="flex flex-col justify-evenly space-y-4 text-white lg:min-h-[35vh] lg:max-w-[25vw]"
+      className="flex flex-col justify-evenly space-y-4 text-white 2xl:min-h-[35vh] 2xl:max-w-[25vw]"
       method=""
       onSubmit={(event) => {
         event.preventDefault();
@@ -74,7 +74,7 @@ export default function WithdrawForm({ currentUser }: { currentUser?: User }) {
                 type="number"
                 className="w-full rounded-lg border bg-slate-300 p-2 text-black"
                 min="1000"
-                max={currentUser.coins.toString()}
+                max={currentUser.coins?.toString()}
                 value={amount || ""}
                 onChange={(e) => setAmount(Number(e.target.value))}
                 required
