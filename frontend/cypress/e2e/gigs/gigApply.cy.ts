@@ -38,7 +38,7 @@ describe("Gig Apply", () => {
 
     it("The home page is loading the posted gigs", function () {
         cy.get('.mb-6').contains('Loading').should('exist');
-        cy.wait(2000);
+        cy.wait(2500);
     });
 
     // Check if post shows up in home page
@@ -50,6 +50,7 @@ describe("Gig Apply", () => {
     // User 2 applies for the gig
     it("User 2 applies for the gig", function () {
         cy.get('.space-y-4 > .relative').click();
+        cy.wait(1000);
         cy.get('.mt-4 > .bg-blue-500').click();
 
         // Listen for the alert and verify its content

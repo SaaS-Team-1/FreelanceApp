@@ -129,9 +129,26 @@ Cypress.Commands.add(
             cy.callFirestore('set', `users/${uid}`, {
               email,
               displayName,
-              photoURL,
               profile,
               stats,
+              userId: uid,
+
+
+              // export interface User {
+              //   userId: string;
+              //   email: string;
+              //   displayName: string;
+              //   profile: {
+              //     bio: string;
+              //     credits: number;
+              //     picture?: string;
+              //     location: string;
+              //   };
+              //   stats: {
+              //     completedGigs: number;
+              //     averageRating: number;
+              //   };
+              // }
             }).then(() => {
               cy.log("User profile info uploaded to Firestore");
             });
@@ -146,6 +163,7 @@ Cypress.Commands.add('createUser1', function () {
     this.users.user1.password,
     this.users.user1.displayName,
     undefined, // photoURL
+    undefined, // claims
     this.users.user1.profile,
     this.users.user1.stats
   );
@@ -157,6 +175,7 @@ Cypress.Commands.add('createUser2', function () {
     this.users.user2.password,
     this.users.user2.displayName,
     undefined, // photoURL
+    undefined, // claims
     this.users.user2.profile,
     this.users.user2.stats
   );

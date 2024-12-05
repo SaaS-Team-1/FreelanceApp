@@ -85,6 +85,7 @@ describe("Chat test", () => {
 
     // check if User 1 can reply to User 2
     it("User 1 replies to User 2", function () {
+        cy.visit("/app/chat");
         cy.get('.border-t > .scrollbar').type('Great! Let me know if you have any questions.');
         cy.get('.border-t > .ml-3').click();
         cy.log("User 1 clicked send button");
@@ -106,7 +107,7 @@ describe("Chat test", () => {
         cy.visit("/app/chat");
         cy.get('.w-3\\/5 > .flex > div > .font-bold').contains('user1').click();
         cy.log("Opened the chat with User 1");
-        cy.get('.max-w-xs > :nth-child(2)').contains('Great! Let me know if you have any questions.');
+        cy.get('.justify-start > .max-w-xs > :nth-child(1)').contains('Great! Let me know if you have any questions.');
         cy.log("The reply sent by User 1 shows up on the chat screen");
     });
 

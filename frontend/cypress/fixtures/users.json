@@ -1,5 +1,6 @@
 {
   "user1": {
+    "userId": null,
     "email": "user1@gmail.com",
     "password": "password",
     "displayName": "user1",
@@ -15,6 +16,7 @@
     }
   },
   "user2": {
+    "userId": null,
     "email": "user2@gmail.com",
     "password": "password",
     "displayName": "user2",
