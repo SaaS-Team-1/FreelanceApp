@@ -33,7 +33,7 @@ export default function TransactionItem({ transaction }: TransactionItemProps) {
       case "send":
         return {
           icon: <LuSend className="size-5 text-blue-500" />,
-          title: `Sent to ${transaction.thirdPartyId || "Unknown User"}`,
+          title: `${transaction.onHold && "On Hold - "}Sent to ${transaction.thirdPartyId || "Unknown User"}`,
           description: transaction.gigId
             ? `Payment for: ${transaction.thirdPartyName}`
             : "Transfer to user",
@@ -43,7 +43,7 @@ export default function TransactionItem({ transaction }: TransactionItemProps) {
       case "recieve":
         return {
           icon: <LuReceipt className="size-5 text-green-500" />,
-          title: `Received from ${transaction.thirdPartyName || "Unknown User"}`,
+          title: `${transaction.onHold && "On Hold - "} Received from ${transaction.thirdPartyName || "Unknown User"}`,
           description: transaction.gigId
             ? `Payment for: ${transaction.gigName}`
             : "Transfer received",

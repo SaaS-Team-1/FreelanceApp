@@ -74,6 +74,9 @@ exports.getSessionStatus = onCall(async (request) => {
       paymentStatus: "error",
     };
   }
+  return {
+    paymentStatus: "error",
+  };
 });
 
 // Get session status
