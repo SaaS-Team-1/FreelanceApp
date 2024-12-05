@@ -132,23 +132,6 @@ Cypress.Commands.add(
               profile,
               stats,
               userId: uid,
-
-
-              // export interface User {
-              //   userId: string;
-              //   email: string;
-              //   displayName: string;
-              //   profile: {
-              //     bio: string;
-              //     credits: number;
-              //     picture?: string;
-              //     location: string;
-              //   };
-              //   stats: {
-              //     completedGigs: number;
-              //     averageRating: number;
-              //   };
-              // }
             }).then(() => {
               cy.log("User profile info uploaded to Firestore");
             });
