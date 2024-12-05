@@ -10,6 +10,8 @@ import {
   FaCalendarAlt,
   FaMapMarkerAlt,
 } from "react-icons/fa";
+import UserProfilePicture from "@/components/Avatar/UserProfilePicture"; // Import the UserProfilePicture component
+
 import { useFirestore } from "@/utils/reactfire";
 import { doc, deleteDoc } from "firebase/firestore";
 import ReactDOM from "react-dom";
@@ -154,19 +156,15 @@ const GigDetails: React.FC<GigDetailsProps> = ({
           size="small"
         />
       </div>
-
-      <div className="mb-4 flex items-start">
       
-        <div className="mr-4 size-12 overflow-hidden rounded-full bg-gray-700">
-          <img
-            src={user?.profile?.picture || "/default-profile.png"}
-            alt="Gig Profile"
-            className="size-full object-cover"
-          />
-          
-        </div>
+      <div className="mb-4 flex items-start gap-4">
+        <UserProfilePicture
+          user={user || { profile: { bio: "", location: "", picture: "" }, stats: {} } as User}
+          size="large"
+          hoverDetails={true}
+          rounded={true}
+        />
         <h2 className="text-2xl font-semibold text-white">{gig.title}</h2>
-        <strong className="text-white items-start">Lister: {user?.displayName} </strong>
       </div>
 
       <p className="mb-2 text-sm font-bold text-white">Description:</p>
