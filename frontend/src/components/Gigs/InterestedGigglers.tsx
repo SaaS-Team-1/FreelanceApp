@@ -288,7 +288,18 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
                     position="above"
                     />
                           <span className="ml-3 font-semibold text-white">
-                          {applicant.displayName} has shown interest in this gig
+                            
+                          {applicant.displayName.length > 11 ? (
+                          <>
+                            {applicant.displayName} has shown interest in
+                            <br />
+                            <span className="text-white">this gig</span>
+                          </>
+                        ) : (
+                          <>
+                            {applicant.displayName} has shown interest in this gig
+                          </>
+                        )}
                         </span>
                       </div>
                       <div className="flex items-center space-x-2">
