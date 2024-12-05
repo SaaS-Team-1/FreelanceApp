@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useFirestore } from "@/utils/reactfire";
 import {FaRegMessage, FaUserCheck } from "react-icons/fa6";
 import { applicationsRef,notificationsRef, chatsRef } from "@/utils/database/collections";
+import UserProfilePicture from "@/components/Avatar/UserProfilePicture"; // Import UserProfilePicture for hover details
 
 interface InterestedGigglersProps {
   gig: Gig;
@@ -159,22 +160,18 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
           <div className="max-h-[400px] overflow-y-auto">
             {otherApplicants.map((applicant) => (
               <div key={applicant.userId} className="p-2">
-                <div className="flex items-center justify-between">
-                  <div
-                    className="flex cursor-pointer items-center"
-                    onClick={() =>
-                      alert(`View profile of ${applicant.displayName}`)
-                    }
-                  >
-                    <img
-                      src={
-                        applicant.profile.picture ||
-                        "https://via.placeholder.com/40"
-                      }
-                      alt={applicant.displayName}
-                      className="mr-3 size-10 rounded-full"
-                    />
-                    <span className="text-white ">
+                    <div className="flex items-center justify-between">
+                    
+                    <div className="flex items-center">
+                    <UserProfilePicture
+                      user={applicant}
+                      size="medium"
+                      hoverDetails={true}
+                      rounded={true}
+                      position="default"
+              />
+                      
+                    <span className="ml-3 text-white ">
                       {applicant.displayName} has shown interest in this gig
                     </span>
                   </div>
@@ -226,21 +223,15 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
             Assigned Giggler
           </h4>
           <div className="flex items-center justify-between p-2">
-            <div
-              className="flex cursor-pointer items-center"
-              onClick={() =>
-                alert(`View profile of ${assignedGiggler.displayName}`)
-              }
-            >
-              <img
-                src={
-                  assignedGiggler.profile.picture ||
-                  "https://via.placeholder.com/40"
-                }
-                alt={assignedGiggler.displayName}
-                className="mr-3 size-10 rounded-full"
+              <div className="flex items-center">
+              <UserProfilePicture
+                user={assignedGiggler}
+                size="medium"
+                hoverDetails={true}
+                rounded={true}
+                position="above"
               />
-              <span className="font-semibold text-white">
+              <span className="ml-3 font-semibold text-white">
                 {gig.status === "completed"
                   ? `${assignedGiggler.displayName} was assigned`
                   : `${assignedGiggler.displayName} is assigned`}
@@ -288,21 +279,15 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
                 {otherApplicants.slice(0, 2).map((applicant, index) => (
                   <div key={applicant.userId} className="p-2">
                     <div className="flex items-center justify-between">
-                      <div
-                        className="flex cursor-pointer items-center"
-                        onClick={() =>
-                          alert(`View profile of ${applicant.displayName}`)
-                        }
-                      >
-                        <img
-                          src={
-                            applicant.profile.picture ||
-                            "https://via.placeholder.com/40"
-                          }
-                          alt={applicant.displayName}
-                          className="mr-3 size-10 rounded-full"
-                        />
-                        <span className="text-white">
+                    <div className="flex items-center">
+                    <UserProfilePicture
+                    user={applicant}
+                    size="medium"
+                    hoverDetails={true}
+                    rounded={true}
+                    position="above"
+                    />
+                          <span className="ml-3 font-semibold text-white">
                           {applicant.displayName} has shown interest in this gig
                         </span>
                       </div>
