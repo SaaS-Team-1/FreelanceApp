@@ -49,6 +49,7 @@ before(() => {
 });
 
 afterEach(function () {
+  cy.get('.firebase-emulator-warning').should('not.exist');
   cy.wait(500);
 });
 

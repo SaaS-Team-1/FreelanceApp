@@ -1,6 +1,6 @@
 import "../../support/commands";
 
-describe("Gig Apply", () => {
+describe("Applying to a Gig", () => {
     beforeEach(function () {
         // Load the fixture data
         cy.fixture('users').then((users) => {
