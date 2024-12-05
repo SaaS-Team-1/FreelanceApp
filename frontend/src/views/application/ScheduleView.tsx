@@ -228,15 +228,20 @@ function ScheduleView() {
   };
 
   return (
-    <div className="relative h-screen w-full p-4">
+    <div className="relative h-screen w-full p-4"
+    style={{ overflow: "hidden" }}
+    >
       {/* Horizontal Scrollable Container */}
       <div
-        className="flex h-[calc(100vh-8rem)] snap-x snap-mandatory gap-6 scroll-smooth mr-10"
-        style={{ scrollSnapType: "x mandatory" }}
+        className="mr-10 flex h-[calc(100vh-8rem)] snap-x snap-mandatory gap-6 scroll-smooth hide-scrollbar"
+        style={{ scrollSnapType: "x mandatory",
+                overflowX: "auto", 
+                position: "relative",
+         }}
       >
         {/* Page 1: Scheduled Gigs and Pending Gigs */}
-        <div className="flex size-full w-1/2 shrink-0 snap-center gap-6">
-        <div className="scrollbar h-full w-1/2 overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
+        <div className="flex size-full w-[95%] shrink-0 snap-center gap-6">
+        <div className="scrollbar size-full overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
             <h1 className="mb-3 text-xl font-bold">Pending Gigs</h1>
             <PostedGigList
               gigs={pendingGigs}
@@ -247,7 +252,7 @@ function ScheduleView() {
               onSeeMoreClick={handleSeeMoreClick}
             />
           </div>
-          <div className="scrollbar h-full w-1/2 overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
+          <div className="scrollbar size-full overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
             <h1 className="mb-3 text-xl font-bold">Scheduled Gigs</h1>
             <PostedGigList
               gigs={inProgressGigs}
@@ -264,8 +269,8 @@ function ScheduleView() {
         
 
         {/* Page 2: Awaiting Approval and Completed Gigs */}
-        <div className="flex w-1/2 shrink-0 snap-center gap-6"> 
-          <div className="scrollbar h-full w-1/2 overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
+        <div className="flex  w-[95%] shrink-0 snap-center gap-6"> 
+          <div className="scrollbar size-full overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
             <h1 className="mb-3 text-xl font-bold">Awaiting Approval</h1>
             <PostedGigList
               gigs={awaitingApprovalGigs}
@@ -275,7 +280,7 @@ function ScheduleView() {
               onSeeMoreClick={handleSeeMoreClick}
             />
           </div>
-          <div className="scrollbar h-full w-1/2 overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
+          <div className="scrollbar size-full overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
             <h1 className="mb-3 text-xl font-bold">Completed Gigs</h1>
             <PostedGigList
               gigs={completedGigs}
@@ -314,6 +319,23 @@ function ScheduleView() {
           </div>
         </div>
       )}
+         <style
+        dangerouslySetInnerHTML={{
+          __html: `
+          .hide-scrollbar {
+            overflow-x: auto;
+            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none; /* Firefox */
+          }
+          .hide-scrollbar::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, and Opera */
+          }
+          .scroll-smooth {
+            scroll-behavior: smooth;
+          }
+        `,
+        }}
+      />  
     </div>
   );
 }
