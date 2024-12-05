@@ -1,25 +1,55 @@
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/database';
-import 'firebase/compat/firestore';
-import { attachCustomCommands } from 'cypress-firebase';
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import "firebase/compat/database";
+import "firebase/compat/firestore";
+import { attachCustomCommands } from "cypress-firebase";
 
-const fbConfig = {
-    apiKey: "AIzaSyD5CYwwqBfgkrJDWUsol-hRLvg0OMK8dng",
-    authDomain: "saas-team-1.firebaseapp.com",
-    databaseURL: "https://saas-team-1-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "saas-team-1",
-    storageBucket: "saas-team-1.appspot.com",
-    messagingSenderId: "414383982341",
-    appId: "1:414383982341:web:f6a58ad71632ae26ef996c",
-    measurementId: "G-5FX5YJ8YMM"
-  };
+const config = {
+  apiKey: "fake-key",
+  authDomain: "demo-saas-team-1.firebaseapp.com",
+  projectId: "demo-saas-team-1",
+  storageBucket: "demo-saas-team-1.firebasestorage.app",
+  messagingSenderId: "430907029750",
+  appId: "1:430907029750:web:5e23d1b67645b7969594d",
+};
 
-// Check if Firebase app is already initialized
-if (!firebase.apps.length) {
-    firebase.initializeApp(fbConfig);
-  } else {
-    firebase.app(); // Use the existing app
-  }
+firebase.initializeApp(config);
 
-  attachCustomCommands({ Cypress, cy, firebase });
+// Emulate Firestore if Env variable is passed
+const firestoreEmulatorHost = Cypress.env("FIRESTORE_EMULATOR_HOST");
+if (firestoreEmulatorHost) {
+  firebase.firestore().settings({
+    host: firestoreEmulatorHost,
+    ssl: false,
+  });
+  console.log(`Using Firestore emulator: http://${firestoreEmulatorHost}/`);
+}
+
+const authEmulatorHost = Cypress.env("FIREBASE_AUTH_EMULATOR_HOST");
+if (authEmulatorHost) {
+  firebase.auth().useEmulator(`http://${authEmulatorHost}/`);
+  console.log(`Using Auth emulator: http://${authEmulatorHost}/`);
+}
+
+const collections = [
+  "users",
+  "gigs",
+  "applications",
+  "chats",
+  "chatMessages",
+  "ratings",
+  "transactions",
+  "notifications",
+];
+
+before(() => {
+  collections.forEach((col) => cy.callFirestore("delete", col));
+  cy.logout();
+  cy.deleteAllAuthUsers();
+});
+
+afterEach(function () {
+  cy.wait(500);
+});
+
+attachCustomCommands({ Cypress, cy, firebase });
