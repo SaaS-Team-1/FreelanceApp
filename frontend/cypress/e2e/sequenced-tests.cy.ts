@@ -1,6 +1,6 @@
 // Run tests in the intended order
 
-import './auth.cy.ts';
-import './gigs/gigPost.cy.ts';
-import './gigs/gigApply.cy.ts';
-import './chat.cy.ts';
+import './auth.ts';
+import './gigs/gigPost.ts';
+import './gigs/gigApply.ts';
+import './chat.ts';
