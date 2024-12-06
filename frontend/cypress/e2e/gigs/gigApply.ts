@@ -151,6 +151,8 @@ describe("Schedule test - Pending Gigs", () => {
         });
     });
 
+    
+
     it("User 2 logs out", () => {
         cy.logout();
     });
