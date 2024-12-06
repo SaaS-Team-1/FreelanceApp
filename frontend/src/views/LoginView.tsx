@@ -175,7 +175,7 @@ export default function LoginView() {
                   Create Your Account
                 </h2>
                 <p className="mt-4 text-sm text-gray-600">
-                  Join our platform by filling out the registration form
+                  Join our platform by filling out the registration form. Fields with a "*" are required
                 </p>
               </div>
               <div className="space-y-4">
