@@ -4,6 +4,8 @@ import "firebaseui/dist/firebaseui.css";
 import { httpsCallable } from "firebase/functions";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import { Alert } from "flowbite-react";
+import { HiInformationCircle } from "react-icons/hi";
 
 type RgParams = {
   email: string;
@@ -19,6 +21,8 @@ export default function LoginView() {
   const auth = useAuth();
   const functions = useFunctions();
 
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const [showRegistration, setShowRegistration] = useState(false);
   const [registrationForm, setRegistrationData] = useState<
     RgParams | Partial<RgParams>
@@ -30,10 +34,6 @@ export default function LoginView() {
     password: "",
   });
 
-  if (!loginForm) {
-    return;
-  }
-
   const navigate = useNavigate();
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -43,9 +43,24 @@ export default function LoginView() {
         functions,
         "common-createUser",
       )(registrationForm as RgParams);
-      setShowRegistration(false)
-    } catch (error) {
-      console.error("Registration error:", error);
+      if (result.data.status == "error"){
+        setErrorMessage(result.data.message);
+        return;
+      }
+      if (registrationForm.email && registrationForm.password) {
+        const loginResult = await signInWithEmailAndPassword(
+          auth,
+          registrationForm.email,
+          registrationForm.password,
+        );
+      }
+    } catch (error: any) {
+      const message =
+        error.message ||
+        (error.code
+          ? `Registration failed: ${error.code}`
+          : "An unexpected error occurred during registration");
+      setErrorMessage(message);
     }
   };
 
@@ -53,20 +68,25 @@ export default function LoginView() {
     e.preventDefault();
     try {
       if (loginForm?.email && loginForm?.password) {
-        await signInWithEmailAndPassword(
+        const result = await signInWithEmailAndPassword(
           auth,
           loginForm.email,
           loginForm.password,
         );
         navigate("/app");
       }
-    } catch (error) {
-      console.error("Registration error:", error);
+    } catch (error: any) {
+      const message =
+        error.message ||
+        (error.code
+          ? `Login failed: ${error.code}`
+          : "An unexpected error occurred during registration");
+      setErrorMessage(message);
     }
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault();
       if (!showRegistration) {
         handleLogin(e);
@@ -155,7 +175,7 @@ export default function LoginView() {
                   Create Your Account
                 </h2>
                 <p className="mt-4 text-sm text-gray-600">
-                  Join our platform by filling out the registration form
+                  Join our platform by filling out the registration form. Fields with a "*" are required
                 </p>
               </div>
               <div className="space-y-4">
@@ -165,7 +185,7 @@ export default function LoginView() {
                       htmlFor="email"
                       className="mb-2 block text-sm font-medium text-gray-900"
                     >
-                      Email
+                      Email *
                     </label>
                     <input
                       type="email"
@@ -184,7 +204,7 @@ export default function LoginView() {
                       htmlFor="displayName"
                       className="mb-2 block text-sm font-medium text-gray-900"
                     >
-                      Display Name
+                      Display Name *
                     </label>
                     <input
                       type="text"
@@ -205,7 +225,7 @@ export default function LoginView() {
                       htmlFor="password"
                       className="mb-2 block text-sm font-medium text-gray-900"
                     >
-                      Password
+                      Password *
                     </label>
                     <input
                       type="password"
@@ -272,6 +292,19 @@ export default function LoginView() {
                 </div>
               </div>
             </div>
+          )}
+          {errorMessage && (
+            <Alert color="failure" icon={HiInformationCircle}>
+              <span>
+                <span className="font-medium">Error:</span> {errorMessage}
+              </span>
+              <button
+                className="ml-4 inline-flex items-center text-sm text-red-700 underline hover:no-underline"
+                onClick={() => setErrorMessage(null)}
+              >
+                Close
+              </button>
+            </Alert>
           )}
         </div>
       </div>

@@ -15,6 +15,10 @@ exports.createUser = onCall(
         return {status: "error", message: "Email, password, and display name are required"};
       }
 
+      if (!email.toLowerCase().endsWith('kuleuven.be')){
+        return {status: "error", message: "Ku Leuven email is required"};
+      }
+
       // Create Firebase Authentication user
       const userRecord = await auth.createUser({
         email: email,
