@@ -38,7 +38,7 @@ function PostedGigListSmall({
   showCompletedButton = false,
   showDateWithLine = false,
   showUndoButton = false,
-  hoverEffect = true,
+  hoverEffect = false,
 }: PostedGigListSmallProps) {
   const navigate = useNavigate();
 

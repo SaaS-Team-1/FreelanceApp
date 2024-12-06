@@ -289,8 +289,8 @@ function ScheduleView() {
         className="mr-10 flex h-[calc(100vh-8rem)] snap-x snap-mandatory gap-6 scroll-smooth hide-scrollbar">
         {/* Page 1: Scheduled Gigs and Pending Gigs */}
         <div className="flex size-full w-1/2 shrink-0 snap-center gap-6">
-        <div className="scrollbar size-full overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
-            <h1 className="mb-3 text-xl font-bold">Pending Gigs</h1>
+        <div className="scrollbar size-full overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg text-white">
+            <h1 className="mb-3 text-xl font-bold dark:text-white">Pending Gigs</h1>
             <PostedGigListSmall
               gigs={pendingGigs}
               showDateWithLine={true}
@@ -301,7 +301,7 @@ function ScheduleView() {
             />
           </div>
           <div className="scrollbar size-full overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
-            <h1 className="mb-3 text-xl font-bold">Scheduled Gigs</h1>
+            <h1 className="mb-3 text-xl font-bold text-white">Scheduled Gigs</h1>
             <PostedGigListSmall
               gigs={inProgressGigs}
               showDateWithLine={true}
@@ -319,23 +319,23 @@ function ScheduleView() {
         {/* Page 2: Awaiting Approval and Completed Gigs */}
         <div className="flex  w-1/2 shrink-0 snap-center gap-6"> 
           <div className="scrollbar h-full w-1/2 overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
-            <h1 className="mb-3 text-xl font-bold">Awaiting Approval</h1>
+            <h1 className="mb-3 text-xl font-bold text-white">Awaiting Approval</h1>
             <PostedGigListSmall
               gigs={awaitingApprovalGigs}
               showDateWithLine={true}
               showChatIcon={true}
               showSeeMoreButton={true}
-              onSeeMoreClick={handleSeeMoreClick}
+              onSeeMoreClick={handleSeeMoreClick} 
             />
           </div>
           <div className="scrollbar size-full w-1/2 overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
-            <h1 className="mb-3 text-xl font-bold">Completed Gigs</h1>
+            <h1 className="mb-3 text-xl font-bold text-white">Completed Gigs</h1>
             <PostedGigListSmall
               gigs={completedGigs}
               showDateWithLine={true}
               showChatIcon={false}
               showSeeMoreButton={true}
-              onSelectGig={handleSeeMoreClick}
+              onSeeMoreClick={handleSeeMoreClick}
             />
           </div>
         </div>
