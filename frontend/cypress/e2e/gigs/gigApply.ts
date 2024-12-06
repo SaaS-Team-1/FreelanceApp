@@ -102,6 +102,17 @@ describe("Applying to a Gig", () => {
         });
     });
 
+    // User 2 applies for the gig
+    it("User 2 cannot reapply to the same Gig", function () {
+        cy.get('.space-y-4 > .relative').click();
+        cy.wait(1000);
+        cy.get('.bg-gray-500 > span').contains("Applied Already");
+
+        // Listen for the alert and verify its content
+        cy.log("Apply button is disabled");
+        cy.wait(2000); // Optional: Wait for Firestore synchronization
+    });
+
 
     it("User 2 logs out", () => {
         cy.logout();
