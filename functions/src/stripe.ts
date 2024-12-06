@@ -5,6 +5,7 @@ import { Timestamp } from "firebase-admin/firestore";
 
 // Initialize Stripe with your secret key
 const stripe = new Stripe(
+  // eslint-disable-next-line max-len
   "sk_test_51QO02pJEuHTWAV4CiWXUcQQAoC3CTP2huEnukgG9YOphFtq2e18nupKGVPmtdZcgkormLBor6zMrrJYSwZu1t4X000lq5qRDac"
 );
 
@@ -150,7 +151,11 @@ export const assignTransaction = onCall(async (request) => {
   const userDoc = usersRef.doc(request.auth.uid);
   const user = (await userDoc.get()).data();
 
-  if (user) {
+  const thirdParty = (
+    await usersRef.doc(request.data.thirdPartyId).get()
+  ).data();
+
+  if (user && thirdParty) {
     const transactions = await transactionsRef
       .where("ownerId", "==", request.auth.uid)
       .where("onHold", "==", false)
@@ -188,7 +193,7 @@ export const assignTransaction = onCall(async (request) => {
         ownerName: user.displayName,
 
         thirdPartyId: request.data.thirdPartyId,
-        thirdPartyName: request.data.thirdPartyName,
+        thirdPartyName: thirdParty.displayName,
 
         gigId: request.data.gigId,
         gigName: request.data.gigName,
@@ -208,7 +213,7 @@ export const assignTransaction = onCall(async (request) => {
         thirdPartyName: user.displayName,
 
         ownerId: request.data.thirdPartyId,
-        ownerName: request.data.thirdPartyName,
+        ownerName: thirdParty.displayName,
 
         gigId: request.data.gigId,
         gigName: request.data.gigName,
@@ -239,4 +244,46 @@ export const assignTransaction = onCall(async (request) => {
   };
 });
 
-// export const finalizeTransaction = onCall(async (request) => {});
+export const finalizeTransaction = onCall(async (request) => {
+  if (!request.auth) return { status: "error" };
+
+  const userDoc = usersRef.doc(request.auth.uid);
+  const user = (await userDoc.get()).data();
+  const ownerTransaction = (
+    await transactionsRef
+      .where("ownerId", "==", request.auth.uid)
+      .where("onHold", "==", true)
+      .where("gigId", "==", request.data.gigId)
+      .limit(1)
+      .get()
+  ).docs.at(0);
+
+  const thirdPartyTransaction = (
+    await transactionsRef
+      .where("ownerId", "==", request.data.thirdPartyId)
+      .where("onHold", "==", true)
+      .where("gigId", "==", request.data.gigId)
+      .limit(1)
+      .get()
+  ).docs.at(0);
+
+  if (user && thirdPartyTransaction && ownerTransaction) {
+    try {
+      transactionsRef.doc(thirdPartyTransaction.id).update({ onHold: false });
+      transactionsRef.doc(ownerTransaction.id).update({ onHold: false });
+    } catch (error) {
+      console.error("Error changing transaction:", error);
+      return {
+        status: "error",
+      };
+    }
+
+    return {
+      status: "success",
+    };
+  }
+
+  return {
+    status: "error",
+  };
+});
