@@ -29,12 +29,34 @@ export default function ProfileView() {
     }
   };
 
+  const calculateUserLevel = (completedGigs: number): number => {
+    if (completedGigs >= 15) return 5;
+    if (completedGigs >= 10) return 4;
+    if (completedGigs >= 6) return 3;
+    if (completedGigs >= 3) return 2;
+    return 1;
+  };
+
+  const getLevelBorderColor = (level: number): string => {
+    switch (level) {
+      case 5:
+        return "border-purple-500"; // Expert Level
+      case 4:
+        return "border-blue-500"; // Pro Level
+      case 3:
+        return "border-green-500"; // Intermediate Level
+      case 2:
+        return "border-yellow-500"; // Novice Level
+      default:
+        return "border-red-500"; // Beginner Level
+    }
+  };
+
   useEffect(() => {
     fetchUser();
   }, [userU?.uid]);
 
   const handleUpdateProfile = (updatedUser: any) => {
-    // Update the local state with the updated user data
     setUser(updatedUser);
   };
 
@@ -45,6 +67,9 @@ export default function ProfileView() {
   if (!user) {
     return <div>Loading...</div>;
   }
+
+  const userLevel = calculateUserLevel(user.stats.completedGigs);
+  const levelBorderColor = getLevelBorderColor(userLevel);
 
   return (
     <div className="scrollbar mx-auto flex h-screen w-3/5 flex-col items-center space-y-10 overflow-y-scroll py-10 lg:overflow-y-hidden">
@@ -64,7 +89,7 @@ export default function ProfileView() {
                     whiteSpace: "nowrap",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
-                    maxWidth: "200px", // Adjust this to your desired max width
+                    maxWidth: "200px",
                   }}
                 >
                   {user.displayName}
@@ -78,6 +103,13 @@ export default function ProfileView() {
                   ⭐ {user.stats.averageRating.toFixed(1)} (
                   {user.stats.completedGigs} reviews)
                 </p>
+              </div>
+              <div className="flex items-center justify-center">
+                <div
+                  className={`flex h-12 w-12 items-center justify-center rounded-full border-4 text-white font-bold ${levelBorderColor}`}
+                >
+                  {userLevel}
+                </div>
               </div>
             </div>
             <div className="flex flex-col items-end">
