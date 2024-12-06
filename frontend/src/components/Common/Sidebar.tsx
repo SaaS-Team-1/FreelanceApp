@@ -16,6 +16,7 @@ import { useAuth, useFirestore, useUser } from "@/utils/reactfire";
 import UserProfilePicture from "@/components/Avatar/UserProfilePicture";
 import { User } from "@/utils/database/schema";
 import { collection, getDocs, query, where } from "firebase/firestore";
+import UserLevelDisplay from "./UserLevelDisplay";
 
 function Sidebar() {
   const db = useFirestore();
@@ -36,7 +37,10 @@ function Sidebar() {
       if (firebaseUser) {
         const usersRef = collection(db, "users");
 
-        const userQuery = query(usersRef, where("userId", "==", firebaseUser.uid));
+        const userQuery = query(
+          usersRef,
+          where("userId", "==", firebaseUser.uid),
+        );
 
         const userSnapshot = await getDocs(userQuery);
 
@@ -52,36 +56,10 @@ function Sidebar() {
   useEffect(() => {
     fetchUser();
   }, [firebaseUser?.uid]);
-  
-  const calculateUserLevel = (completedGigs: number): number => {
-    if (completedGigs >= 15) return 5;
-    if (completedGigs >= 10) return 4;
-    if (completedGigs >= 6) return 3;
-    if (completedGigs >= 3) return 2;
-    return 1;
-  };
 
-  const getLevelBorderColor = (level: number): string => {
-    switch (level) {
-      case 5:
-        return "border-purple-500"; // Expert Level
-      case 4:
-        return "border-blue-500"; // Pro Level
-      case 3:
-        return "border-green-500"; // Intermediate Level
-      case 2:
-        return "border-yellow-500"; // Novice Level
-      default:
-        return "border-red-500"; // Beginner Level
-    }
-  };
-
-  if(!userDb){
+  if (!userDb) {
     return <div>Loading...</div>;
   }
-
-  const userLevel = calculateUserLevel(userDb.stats.completedGigs);
-  const levelBorderColor = getLevelBorderColor(userLevel);
 
   return (
     <aside
@@ -100,24 +78,23 @@ function Sidebar() {
 
       {/* Profile Section */}
       {isExpanded && userDb && (
-        <div className="flex flex-col items-center" onClick={() => navigate("/app/profile")}>
+        <div
+          className="flex flex-col items-center"
+          onClick={() => navigate("/app/profile")}
+        >
           <UserProfilePicture
             user={userDb}
             size="large"
-            hoverDetails={true} // Disable hover details
+            hoverDetails={true}
             rounded
           />
-          <h2 className="text-lg font-semibold text-blue-300">
-            {userDb.displayName}
-          </h2>
+          <div className="flex flex-row gap-4">
+            <UserLevelDisplay user={userDb} size="small" />
+            <h2 className="mt-2 text-lg font-semibold text-blue-300">
+              {userDb.displayName}
+            </h2>
+          </div>
           <p className="text-xs text-gray-500">{userDb.email}</p>
-          <div className="flex items-center justify-center">
-                <div
-                  className={`flex h-12 w-12 items-center justify-center rounded-full border-4 text-white font-bold ${levelBorderColor}`}
-                >
-                  {userLevel}
-                </div>
-              </div>
           <div className="my-3 w-full border-t border-gray-600" />
         </div>
       )}

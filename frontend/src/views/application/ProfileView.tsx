@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import UserProfilePicture from "@/components/Avatar/UserProfilePicture";
 import EditProfileModal from "@/components/Profile/EditProfileModal";
+import UserLevelDisplay from "@/components/Common/UserLevelDisplay";
 
 export default function ProfileView() {
   const { data: userU } = useUser();
@@ -29,29 +30,6 @@ export default function ProfileView() {
     }
   };
 
-  const calculateUserLevel = (completedGigs: number): number => {
-    if (completedGigs >= 15) return 5;
-    if (completedGigs >= 10) return 4;
-    if (completedGigs >= 6) return 3;
-    if (completedGigs >= 3) return 2;
-    return 1;
-  };
-
-  const getLevelBorderColor = (level: number): string => {
-    switch (level) {
-      case 5:
-        return "border-purple-500"; // Expert Level
-      case 4:
-        return "border-blue-500"; // Pro Level
-      case 3:
-        return "border-green-500"; // Intermediate Level
-      case 2:
-        return "border-yellow-500"; // Novice Level
-      default:
-        return "border-red-500"; // Beginner Level
-    }
-  };
-
   useEffect(() => {
     fetchUser();
   }, [userU?.uid]);
@@ -68,13 +46,10 @@ export default function ProfileView() {
     return <div>Loading...</div>;
   }
 
-  const userLevel = calculateUserLevel(user.stats.completedGigs);
-  const levelBorderColor = getLevelBorderColor(userLevel);
-
   return (
     <div className="scrollbar mx-auto flex h-screen w-3/5 flex-col items-center space-y-10 overflow-y-scroll py-10 lg:overflow-y-hidden">
       <div className="flex items-center justify-center space-x-6 lg:w-full">
-        <div className="justify-self-end rounded-lg bg-gray-800 p-4 shadow-md min-w-full">
+        <div className="min-w-full justify-self-end rounded-lg bg-gray-800 p-4 shadow-md">
           <div className="mb-4 flex items-center justify-between gap-6">
             <div className="flex flex-row items-center gap-6">
               <UserProfilePicture
@@ -105,11 +80,7 @@ export default function ProfileView() {
                 </p>
               </div>
               <div className="flex items-center justify-center">
-                <div
-                  className={`flex h-12 w-12 items-center justify-center rounded-full border-4 text-white font-bold ${levelBorderColor}`}
-                >
-                  {userLevel}
-                </div>
+                <UserLevelDisplay user={user} size="large" />
               </div>
             </div>
             <div className="flex flex-col items-end">
@@ -119,7 +90,9 @@ export default function ProfileView() {
               >
                 Edit Profile
               </button>
-              <span className="mt-2 text-sm text-gray-400">{user.profile.faculty}</span>
+              <span className="mt-2 text-sm text-gray-400">
+                {user.profile.faculty}
+              </span>
             </div>
           </div>
           <div className="p-6">
