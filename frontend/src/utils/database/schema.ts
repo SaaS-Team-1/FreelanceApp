@@ -24,10 +24,8 @@ export interface User {
     languages?: string;
     faculty?: string;
   };
-  stats: {
-    completedGigs: number;
-    averageRating: number;
-  };
+  completedGigs: number;
+  averageRating: number;
 }
 
 export interface Gig {

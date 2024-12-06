@@ -29,8 +29,8 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
   const profilePicture = user?.profile?.picture || "/default-avatar.jpg"; // Default avatar
   const location = user?.profile?.location;
   const bio = user?.profile?.bio;
-  const completedGigs = user?.stats?.completedGigs;
-  const averageRating = user?.stats?.averageRating;
+  const completedGigs = user?.completedGigs;
+  const averageRating = user?.averageRating;
   const hoverClass =
   position === "above"
     ? "bottom-full mb-3  "
@@ -93,10 +93,10 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
             )}
             {averageRating !== undefined && (
               <li className="flex items-center">
-                <span className="mr-2 text-yellow-500">⭐</span>
-                <span>
-                  <strong>Average Rating:</strong> {averageRating.toFixed(1)}
-                </span>
+                {/* <span className="mr-2 text-yellow-500">⭐</span> */}
+                {/* <span>
+                  <strong>Average Rating:</strong> {averageRating?.toFixed(1)}
+                </span> */}
               </li>
             )}
           </ul>
