@@ -9,7 +9,7 @@ const stripe = new Stripe(
 );
 
 // Create checkout session
-exports.createCheckoutSession = onCall(async (request) => {
+export const createCheckoutSession = onCall(async (request) => {
   try {
     const session = await stripe.checkout.sessions.create({
       ui_mode: "embedded",
@@ -37,7 +37,7 @@ exports.createCheckoutSession = onCall(async (request) => {
 });
 
 // Get session status
-exports.getSessionStatus = onCall(async (request) => {
+export const getSessionStatus = onCall(async (request) => {
   if (!request.auth) return { paymentStatus: "error" };
   try {
     const session = await stripe.checkout.sessions.retrieve(
@@ -80,7 +80,7 @@ exports.getSessionStatus = onCall(async (request) => {
 });
 
 // Get session status
-exports.withdrawFunds = onCall(async (request) => {
+export const withdrawFunds = onCall(async (request) => {
   if (!request.auth) return { status: "error" };
 
   const userDoc = usersRef.doc(request.auth.uid);
@@ -114,9 +114,9 @@ exports.withdrawFunds = onCall(async (request) => {
     userDoc.set(user, { merge: true });
 
     try {
-      const transactionId = `${request.auth.uid}_${request.data.amount}_${user.coins}_${totalCoins}`;
-      transactionsRef.doc(transactionId).create({
-        transactionId, // transaction ID
+      const uuid = crypto.randomUUID();
+      await transactionsRef.doc(uuid).create({
+        uuid, // transaction ID
 
         ownerId: request.auth.uid,
         ownerName: user.displayName,
@@ -143,3 +143,100 @@ exports.withdrawFunds = onCall(async (request) => {
     status: "error",
   };
 });
+
+export const assignTransaction = onCall(async (request) => {
+  if (!request.auth) return { status: "error" };
+
+  const userDoc = usersRef.doc(request.auth.uid);
+  const user = (await userDoc.get()).data();
+
+  if (user) {
+    const transactions = await transactionsRef
+      .where("ownerId", "==", request.auth.uid)
+      .where("onHold", "==", false)
+      .get();
+
+    const totalCoins = transactions.docs
+      .map<number>((doc) => doc.data().amount)
+      .reduce((sum, num) => sum + num);
+
+    if (totalCoins != user.coins) {
+      user.coins = totalCoins;
+    }
+    const finalCoins = (user.coins || 0) - request.data.amount;
+
+    if (finalCoins < 0) {
+      user.coins = totalCoins;
+
+      userDoc.set(user, { merge: true });
+
+      return { status: "error" };
+    }
+
+    user.coins = finalCoins;
+
+    userDoc.set(user, { merge: true });
+
+    const ownerUUID = crypto.randomUUID();
+    const thirdPartyUUID = crypto.randomUUID();
+
+    try {
+      await transactionsRef.doc(ownerUUID).create({
+        ownerUUID, // transaction ID
+
+        ownerId: request.auth.uid,
+        ownerName: user.displayName,
+
+        thirdPartyId: request.data.thirdPartyId,
+        thirdPartyName: request.data.thirdPartyName,
+
+        gigId: request.data.gigId,
+        gigName: request.data.gigName,
+
+        amount: -request.data.amount,
+
+        createdAt: Timestamp.now(),
+
+        onHold: true,
+        kind: "send",
+      });
+
+      await transactionsRef.doc(thirdPartyUUID).create({
+        thirdPartyUUID, // transaction ID
+
+        thirdPartyId: request.auth.uid,
+        thirdPartyName: user.displayName,
+
+        ownerId: request.data.thirdPartyId,
+        ownerName: request.data.thirdPartyName,
+
+        gigId: request.data.gigId,
+        gigName: request.data.gigName,
+
+        amount: request.data.amount,
+
+        createdAt: Timestamp.now(),
+
+        onHold: true,
+        kind: "receive",
+      });
+    } catch (error) {
+      await transactionsRef.doc(ownerUUID).delete();
+      await transactionsRef.doc(thirdPartyUUID).delete();
+      console.error("Error retrieving session:", error);
+      return {
+        status: "error",
+      };
+    }
+
+    return {
+      status: "success",
+    };
+  }
+
+  return {
+    status: "error",
+  };
+});
+
+// export const finalizeTransaction = onCall(async (request) => {});
