@@ -38,7 +38,7 @@ async function updateCoins(
 
     userDoc.set(user, { merge: true });
 
-    return { status: "error" };
+    throw new Error("Cannot add negative coins");
   }
 
   user.coins = finalCoins;
