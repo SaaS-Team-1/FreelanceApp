@@ -10,7 +10,7 @@ import {
   gigsRef,
   usersRef,
 } from "@/utils/database/collections";
-import { query, where, getDocs } from "firebase/firestore";
+import { query, where, getDocs ,doc,getDoc} from "firebase/firestore";
 
 function MyPostedGigsView() {
   const db = useFirestore();
@@ -29,6 +29,7 @@ function MyPostedGigsView() {
   const [loadingApplicants, setLoadingApplicants] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string | "all">("all");
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const [fullUser, setFullUser] = useState<User | null>(null);
 
   const STATUS_ORDER: Gig["status"][] = [
     "open",
@@ -36,12 +37,33 @@ function MyPostedGigsView() {
     "awaiting-confirmation",
     "completed",
   ];
+   // Fetch full user data from the database
+   const fetchUserData = async (userId: string, db: any): Promise<User | null> => {
+    try {
+      const userDocRef = doc(usersRef(db), userId);
+      const userSnapshot = await getDoc(userDocRef);
+
+      if (userSnapshot.exists()) {
+        return userSnapshot.data() as User;
+      } else {
+        console.error("User data not found in database for userId:", userId);
+        return null;
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      return null;
+    }
+  };
 
   useEffect(() => {
     const fetchUserGigs = async () => {
       if (currUser) {
         try {
           setLoadingGigs(true);
+           // Fetch full user data to display profile of current user
+           const userData = await fetchUserData(currUser.uid, db);
+           setFullUser(userData);
+           // 
           const q = query(gigsRef(db), where("listerId", "==", currUser.uid));
           const querySnapshot = await getDocs(q);
 
@@ -58,6 +80,7 @@ function MyPostedGigsView() {
 
           setGigsWithListers(sortedGigs);
           setFilteredGigs(sortedGigs);
+          console.log(sortedGigs)
 
           if (sortedGigs.length > 0) {
             setSelectedGig(sortedGigs[0].gig);
@@ -249,7 +272,7 @@ function MyPostedGigsView() {
             <>
               <GigDetails
                 gig={selectedGig}
-                user={currUser as unknown as User}
+                user={fullUser} //current user with profile pic 
                 onEditSave={handleGigUpdate}
                 onDelete={handleGigDelete}
               />
