@@ -20,7 +20,7 @@ describe("Assigning a Gig", () => {
     });
 
     // User 1 assigns User 2 as a gig 
-    it("User 1 sees User 2 as an interested giggler", function () {
+    it("User 1 assigns User 2 from interested giggler section", function () {
         cy.visit("/app/posted-gigs");
         cy.get('.relative.mt-2 > .mb-2').contains("Interested Giggler");
         cy.get('.justify-between > .cursor-pointer > .text-white').contains(new RegExp(`.*${this.users.user2.displayName}.*`, 'i'));
@@ -68,7 +68,7 @@ describe("Assigning a Gig", () => {
 });
 
 
-describe("Schedule test - Assigned Gigs", () => {
+describe("Schedule test - Scheduled Gigs", () => {
     beforeEach(function () {
         // Load the fixture data
         cy.fixture('users').then((users) => {
