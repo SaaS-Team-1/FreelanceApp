@@ -80,6 +80,7 @@ function MyPostedGigsView() {
 
           setGigsWithListers(sortedGigs);
           setFilteredGigs(sortedGigs);
+          console.log(sortedGigs)
 
           if (sortedGigs.length > 0) {
             setSelectedGig(sortedGigs[0].gig);

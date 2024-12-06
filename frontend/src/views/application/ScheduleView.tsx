@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import PostedGigList from "@/components/Gigs/MyPostedGigList";
 import GigDetails from "@/components/Gigs/GigDetails";
 import { Gig, User } from "@/utils/database/schema";
@@ -19,6 +19,7 @@ import {
   applicationsRef,
   gigsRef,
   usersRef,
+  chatsRef,
 } from "@/utils/database/collections";
 import { useCallback } from "react";
 import { tr } from "@faker-js/faker";
@@ -83,7 +84,6 @@ function ScheduleView() {
         const pendingGigIds = pendingSnapshot.docs.map(
           (doc) => doc.data().gigId,
         );
-
         const pendingGigsData = await Promise.all(
           pendingGigIds.map(async (gigId) => {
             const gigDoc = await getDoc(doc(gigsRef(db), gigId));
@@ -92,6 +92,7 @@ function ScheduleView() {
               if (gigData.status === "awaiting-confirmation" || gigData.status === "in-progress") {
                 return null;
               }
+              console.log(gigData)
               const listerDoc = await getDoc(
                 doc(usersRef(db), gigData.listerId),
               );
@@ -172,6 +173,20 @@ function ScheduleView() {
       const gigDocRef = doc(gigsRef(db), gigId);
       await updateDoc(gigDocRef, { status: "awaiting-confirmation" });
 
+      const chatQuery = query(
+        chatsRef(db),
+        where("gigId", "==", gigId),
+        where("applicantId", "==", currUser?.uid)
+       );
+       
+       const chatDocs = await getDocs(chatQuery);
+       const chatUpdates = chatDocs.docs.map(doc => 
+        updateDoc(doc.ref, {
+          lastUpdatedTime: serverTimestamp()
+        })
+       );
+       await Promise.all(chatUpdates);
+
       // Refresh in-progress and awaiting-approval gigs
       const updatedInProgress = inProgressGigs.filter(
         ({ gig }) => gig.gigId !== gigId,
@@ -200,6 +215,21 @@ function ScheduleView() {
     }
   
     try {
+
+      const chatQuery = query(
+        chatsRef(db),
+        where("gigId", "==", gigId),
+        where("applicantId", "==", currUser.uid)
+       );
+       
+       const chatDocs = await getDocs(chatQuery);
+       const chatUpdates = chatDocs.docs.map(doc => 
+        updateDoc(doc.ref, {
+          lastUpdatedTime: serverTimestamp()
+        })
+       );
+       await Promise.all(chatUpdates);
+       
       const applicationQuery = query(
         applicationsRef(db),
         where("applicantId", "==", currUser.uid),
@@ -227,17 +257,44 @@ function ScheduleView() {
     }
   };
 
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [isHoveringRight, setIsHoveringRight] = useState(false);
+  const [isHoveringLeft, setIsHoveringLeft] = useState(false);
+
+  useEffect(() => {
+    let scrollInterval: NodeJS.Timeout;
+    
+    if (isHoveringRight) {
+      scrollInterval = setInterval(() => {
+        if (scrollContainerRef.current) {
+          scrollContainerRef.current.scrollLeft += 10;
+        }
+      }, 16);
+    } else if (isHoveringLeft) {
+      scrollInterval = setInterval(() => {
+        if (scrollContainerRef.current) {
+          scrollContainerRef.current.scrollLeft -= 10;
+        }
+      }, 16);
+    }
+    
+    return () => clearInterval(scrollInterval);
+  }, [isHoveringRight, isHoveringLeft]);
+
   return (
     <div className="relative h-screen w-full p-4"
+    
     style={{ overflow: "hidden" }}
     >
       {/* Horizontal Scrollable Container */}
       <div
+        ref={scrollContainerRef}
         className="mr-10 flex h-[calc(100vh-8rem)] snap-x snap-mandatory gap-6 scroll-smooth hide-scrollbar"
-        style={{ scrollSnapType: "x mandatory",
-                overflowX: "auto", 
-                position: "relative",
-         }}
+        style={{ 
+          scrollSnapType: "x mandatory",
+          overflowX: "auto", 
+          position: "relative",
+        }}
       >
         {/* Page 1: Scheduled Gigs and Pending Gigs */}
         <div className="flex size-full w-[95%] shrink-0 snap-center gap-6">
@@ -336,7 +393,20 @@ function ScheduleView() {
         `,
         }}
       />  
+
+      {/* <div
+        className="absolute right-0 top-0 h-full w-20 bg-gradient-to-l from-gray-900/20 to-transparent"
+        onMouseEnter={() => setIsHoveringRight(true)}
+        onMouseLeave={() => setIsHoveringRight(false)}
+      />
+      <div
+        className="absolute left-0 top-0 h-full w-20 bg-gradient-to-r from-gray-900/20 to-transparent"
+        onMouseEnter={() => setIsHoveringLeft(true)}
+        onMouseLeave={() => setIsHoveringLeft(false)}
+      /> */}
     </div>
+
+    
   );
 }
 

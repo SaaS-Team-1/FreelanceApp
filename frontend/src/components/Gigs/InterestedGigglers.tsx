@@ -35,17 +35,13 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
 
   const handleAssignGig = async (applicantId: string) => {
     try {
-
-      const gigDocRef = doc(db, "gigs", gig.gigId);
   
-      // Step 1: Update the gig with the selected applicant and status
-      await updateDoc(gigDocRef, {
-        selectedApplicantId: applicantId, // Store the selected applicant's ID
-        status: "in-progress",             // Update status to in-progress
+      await updateDoc(doc(db, "gigs", gig.gigId), {
+        selectedApplicantId: applicantId,
+        status: "in-progress",
         updatedAt: serverTimestamp(),
       });
 
-      // Step 2: Get all pending applications for this gig except the selected one
       const applicationsQuery = query(
         applicationsRef(db),
         where("gigId", "==", gig.gigId),
@@ -58,7 +54,6 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
           updatedAt: serverTimestamp(),
         })
       );
-      
       await Promise.all(updatePromises);
 
 
@@ -79,13 +74,7 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
        await Promise.all(chatUpdates);
       
       
-      
-  
-      
-  
-      // Step 3: Create Notifications
       const notificationPromises = [];
-  
       // Notification for the selected applicant
       notificationPromises.push(
         addDoc(notificationsRef(db), {
