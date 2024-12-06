@@ -25,6 +25,8 @@ export const createUser = onCall(async (request) => {
       email: email,
       displayName: displayName,
       coins: 0,
+      completedGigs: 0,
+      averageRating: 0,
       profile: {
         bio: profile.bio || "",
         credits: 0,
@@ -35,10 +37,6 @@ export const createUser = onCall(async (request) => {
         skills: profile.skills || "",
         languages: profile.languages || "",
         faculty: profile.faculty || "",
-      },
-      stats: {
-        completedGigs: 0,
-        averageRating: 0,
       },
     };
 
