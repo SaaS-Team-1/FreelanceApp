@@ -90,7 +90,7 @@ function PostedGigList({
           )}
 
           {showCompletedButton && (
-            <div className="absolute left-4 bottom-4">
+            <div className="absolute right-12 top-5">
               <CustomButton
                 label="Complete Gig"
                 icon={FaCheck}

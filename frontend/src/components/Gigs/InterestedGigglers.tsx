@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 import { useFirestore } from "@/utils/reactfire";
 import {FaRegMessage, FaUserCheck } from "react-icons/fa6";
 import { applicationsRef,notificationsRef, chatsRef } from "@/utils/database/collections";
+import UserProfilePicture from "@/components/Avatar/UserProfilePicture"; // Import UserProfilePicture for hover details
+import { ReCaptchaEnterpriseProvider } from "firebase/app-check";
 
 interface InterestedGigglersProps {
   gig: Gig;
@@ -33,23 +35,27 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
 
   const handleAssignGig = async (applicantId: string) => {
     try {
-
-      const gigDocRef = doc(db, "gigs", gig.gigId);
   
-      // Step 1: Update the gig with the selected applicant and status
-      await updateDoc(gigDocRef, {
-        selectedApplicantId: applicantId, // Store the selected applicant's ID
-        status: "in-progress",             // Update status to in-progress
+      await updateDoc(doc(db, "gigs", gig.gigId), {
+        selectedApplicantId: applicantId,
+        status: "in-progress",
         updatedAt: serverTimestamp(),
       });
-  
-      // Step 2: Get all pending applications for this gig except the selected one
+
       const applicationsQuery = query(
         applicationsRef(db),
         where("gigId", "==", gig.gigId),
-        where("status", "==", "pending"),
-        where("applicantId", "!=", applicantId) // Exclude the selected applicant
       );
+      const pendingApps = await getDocs(applicationsQuery);
+
+      const updatePromises = pendingApps.docs.map(appDoc =>
+        updateDoc(doc(applicationsRef(db), appDoc.id), {
+          status: appDoc.data().applicantId === applicantId ? "assigned" : "discarded",
+          updatedAt: serverTimestamp(),
+        })
+      );
+      await Promise.all(updatePromises);
+
 
       const chatQuery = query(
         chatsRef(db),
@@ -58,29 +64,17 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
        );
        
        const chatDocs = await getDocs(chatQuery);
+       console.log(chatDocs)
        const chatUpdates = chatDocs.docs.map(doc => 
         updateDoc(doc.ref, {
           lastUpdatedTime: serverTimestamp()
         })
        );
+       console.log(chatUpdates)
        await Promise.all(chatUpdates);
       
-      const pendingApps = await getDocs(applicationsQuery);
       
-  
-      // Mark other applicants' applications as discarded
-      const updatePromises = pendingApps.docs.map(appDoc =>
-        updateDoc(doc(applicationsRef(db), appDoc.id), {
-          status: "discarded", // Discard other applicants
-          updatedAt: serverTimestamp(),
-        })
-      );
-      
-      await Promise.all(updatePromises);
-  
-      // Step 3: Create Notifications
       const notificationPromises = [];
-  
       // Notification for the selected applicant
       notificationPromises.push(
         addDoc(notificationsRef(db), {
@@ -159,22 +153,18 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
           <div className="max-h-[400px] overflow-y-auto">
             {otherApplicants.map((applicant) => (
               <div key={applicant.userId} className="p-2">
-                <div className="flex items-center justify-between">
-                  <div
-                    className="flex cursor-pointer items-center"
-                    onClick={() =>
-                      alert(`View profile of ${applicant.displayName}`)
-                    }
-                  >
-                    <img
-                      src={
-                        applicant.profile.picture ||
-                        "https://via.placeholder.com/40"
-                      }
-                      alt={applicant.displayName}
-                      className="mr-3 size-10 rounded-full"
+                    <div className="flex items-center justify-between">
+                    
+                    <div className="flex items-center">
+                    <UserProfilePicture
+                      user={applicant}
+                      size="medium"
+                      hoverDetails={true}
+                      rounded={true}
+                      position="default"
                     />
-                    <span className="text-white ">
+                      
+                    <span className="ml-3 text-white ">
                       {applicant.displayName} has shown interest in this gig
                     </span>
                   </div>
@@ -226,21 +216,15 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
             Assigned Giggler
           </h4>
           <div className="flex items-center justify-between p-2">
-            <div
-              className="flex cursor-pointer items-center"
-              onClick={() =>
-                alert(`View profile of ${assignedGiggler.displayName}`)
-              }
-            >
-              <img
-                src={
-                  assignedGiggler.profile.picture ||
-                  "https://via.placeholder.com/40"
-                }
-                alt={assignedGiggler.displayName}
-                className="mr-3 size-10 rounded-full"
+              <div className="flex items-center">
+              <UserProfilePicture
+                user={assignedGiggler}
+                size="medium"
+                hoverDetails={true}
+                rounded={true}
+                position="above"
               />
-              <span className="font-semibold text-white">
+              <span className="ml-3 font-semibold text-white">
                 {gig.status === "completed"
                   ? `${assignedGiggler.displayName} was assigned`
                   : `${assignedGiggler.displayName} is assigned`}
@@ -288,22 +272,27 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
                 {otherApplicants.slice(0, 2).map((applicant, index) => (
                   <div key={applicant.userId} className="p-2">
                     <div className="flex items-center justify-between">
-                      <div
-                        className="flex cursor-pointer items-center"
-                        onClick={() =>
-                          alert(`View profile of ${applicant.displayName}`)
-                        }
-                      >
-                        <img
-                          src={
-                            applicant.profile.picture ||
-                            "https://via.placeholder.com/40"
-                          }
-                          alt={applicant.displayName}
-                          className="mr-3 size-10 rounded-full"
-                        />
-                        <span className="text-white">
-                          {applicant.displayName} has shown interest in this gig
+                    <div className="flex items-center">
+                    <UserProfilePicture
+                    user={applicant}
+                    size="medium"
+                    hoverDetails={true}
+                    rounded={true}
+                    position="above"
+                    />
+                          <span className="ml-3 font-semibold text-white">
+                            
+                          {applicant.displayName.length > 11 ? (
+                          <>
+                            {applicant.displayName} has shown interest in
+                            <br />
+                            <span className="text-white">this gig</span>
+                          </>
+                        ) : (
+                          <>
+                            {applicant.displayName} has shown interest in this gig
+                          </>
+                        )}
                         </span>
                       </div>
                       <div className="flex items-center space-x-2">

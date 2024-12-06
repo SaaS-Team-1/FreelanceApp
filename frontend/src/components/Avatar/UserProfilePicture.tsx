@@ -12,6 +12,8 @@ interface UserProfilePictureProps {
   size?: "small" | "medium" | "large";
   hoverDetails?: boolean;
   rounded?: boolean;
+  position?: "above" | "default"; // Add position prop
+
 }
 
 const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
@@ -19,6 +21,8 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
   size = "medium",
   hoverDetails = false,
   rounded = true,
+  position = "default", // Default position
+
 }) => {
   // Fallbacks for missing user data
   const displayName = user?.displayName || "Anonymous";
@@ -27,7 +31,10 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
   const bio = user?.profile?.bio;
   const completedGigs = user?.stats?.completedGigs;
   const averageRating = user?.stats?.averageRating;
-
+  const hoverClass =
+  position === "above"
+    ? "bottom-full mb-3  "
+    : "top-full mt-3 l ";
   return (
     <div className="group relative">
       {/* Profile Picture */}
@@ -47,9 +54,9 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
       {/* Hover Details */}
       {hoverDetails && (
         <div
-          className="invisible absolute z-10 w-64 rounded-lg border border-gray-200 bg-white 
+          className={`invisible absolute z-10 w-64 rounded-lg border border-gray-200 bg-white 
           p-4 text-sm text-gray-800 opacity-0 shadow-lg transition-opacity duration-200 
-          group-hover:visible group-hover:opacity-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300"
+          group-hover:visible group-hover:opacity-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 ${hoverClass}`}
         >
           <div className="mb-3 flex items-center">
             <img
