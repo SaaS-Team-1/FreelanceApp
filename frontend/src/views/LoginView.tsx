@@ -1,11 +1,38 @@
-import { useAuth } from "@/utils/reactfire";
+import { useAuth, useFunctions } from "@/utils/reactfire";
 import * as firebaseui from "firebaseui";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import firebase from "firebase/compat/app";
 import "firebaseui/dist/firebaseui.css";
+import { httpsCallable } from "firebase/functions";
+
+type FnParams = {
+  email: string;
+  password: string;
+  displayName: string;
+  profile: { location: string; bio: string };
+};
+type FnReturn = { status: string; message: string };
 
 export default function LoginView() {
   const auth = useAuth();
+  const functions = useFunctions();
+
+  const [formData, setFormData] = useState<FnParams | Partial<FnParams>>({
+    profile: { location: "", bio: "" },
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const result = await httpsCallable<FnParams, FnReturn>(
+        functions,
+        "common-createUser",
+      )(formData as FnParams);
+    } catch (error) {
+      console.error("Registration error:", error);
+    }
+  };
+
   useEffect(() => {
     const ui =
       firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(auth);
@@ -50,58 +77,116 @@ export default function LoginView() {
             </p>
           </div>
           <div id="firebaseui-auth-container"></div>
+          <div className="grid w-full max-w-6xl items-center gap-10 rounded-3xl bg-slate-200 p-10 md:grid-cols-2">
+            <div>
+              <h2 className="text-4xl font-extrabold text-gray-800 lg:text-5xl lg:leading-[55px]">
+                Create Your Account
+              </h2>
+              <p className="mt-6 text-sm text-gray-800">
+                Join our platform by filling out the registration form
+              </p>
+            </div>
+            <div>
+              <label
+                htmlFor="email"
+                className="mb-2 block text-sm font-medium text-gray-900"
+              >
+                Email
+              </label>
+              <input
+                type="email"
+                name="email"
+                onChange={(e) => {
+                  formData.email = e.target.value;
+                  setFormData(formData);
+                }}
+                value={formData.email}
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+                required
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="password"
+                className="mb-2 block text-sm font-medium text-gray-900"
+              >
+                Password
+              </label>
+              <input
+                type="password"
+                name="password"
+                onChange={(e) => {
+                  formData.password = e.target.value;
+                  setFormData(formData);
+                }}
+                value={formData.password}
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+                required
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="displayName"
+                className="mb-2 block text-sm font-medium text-gray-900"
+              >
+                Display Name
+              </label>
+              <input
+                type="text"
+                name="displayName"
+                onChange={(e) => {
+                  formData.displayName = e.target.value;
+                  setFormData(formData);
+                }}
+                value={formData.displayName}
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+                required
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="location"
+                className="mb-2 block text-sm font-medium text-gray-900"
+              >
+                Location
+              </label>
+              <input
+                type="text"
+                name="location"
+                onChange={(e) => {
+                  formData.profile!.location = e.target.value;
+                  setFormData(formData);
+                }}
+                value={formData.profile?.location}
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="bio"
+                className="mb-2 block text-sm font-medium text-gray-900"
+              >
+                Bio
+              </label>
+              <textarea
+                name="bio"
+                onChange={(e) => {
+                  formData.profile!.bio = e.target.value;
+                  setFormData(formData);
+                }}
+                value={formData.profile?.bio}
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+              />
+            </div>
+            <button
+              onClick={handleSubmit}
+              className="w-full rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300"
+            >
+              Create Account
+            </button>
+          </div>
         </div>
       </div>
     </div>
   );
 }
-
-// import { Auth, GoogleAuthProvider, signInWithPopup, User } from "firebase/auth";
-// import {
-//   SuspenseWithPerf,
-//   useAuth,
-//   useSigninCheck,
-//   useUser,
-// } from "@/utils/reactfire";
-// import { Button } from "flowbite-react";
-// import Loading from "@/components/Loading";
-
-// const signOut = (auth: Auth) =>
-//   auth.signOut().then(() => console.log("signed out"));
-// const signIn = async (auth: Auth) => {
-//   const provider = new GoogleAuthProvider();
-
-//   await signInWithPopup(auth, provider);
-// };
-// const UserDetails = () => {
-//   const auth = useAuth();
-//   const { data: user } = useUser();
-
-//   return (
-//     <>
-//       <CardSection title="Displayname">
-//         {(user as User).displayName}
-//       </CardSection>
-//       <CardSection title="Providers">
-//         <ul>
-//           {(user as User).providerData?.map((profile) => (
-//             <li key={profile?.providerId}>{profile?.providerId}</li>
-//           ))}
-//         </ul>
-//       </CardSection>
-//       <CardSection title="Sign Out">
-//         <Button label="Sign Out" onClick={() => signOut(auth)} />
-//       </CardSection>
-//     </>
-//   );
-// };
-
-// const SignInForm = () => {
-//   const auth = useAuth();
-
-//   return (
-//     <CardSection title="Sign-in form">
-//       <Button label="Sign in with Google" onClick={() => signIn(auth)} />
-//     </CardSection>
-//   );
-// };
