@@ -86,7 +86,7 @@ function PostedGigListSmall({
 
           {/* Header with title and date */}
           <div className="mb-2">
-            <h3 className="whitespace-normal break-words text-sm font-semibold text-white">
+            <h3 className="h-4 overflow-hidden text-ellipsis whitespace-normal  break-words text-sm font-semibold text-white">
               {gig.title}
             </h3>
             {showDateWithLine && (
