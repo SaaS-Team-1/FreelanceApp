@@ -33,10 +33,10 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
               bio: user.bio || "No bio available",
               location: user.location || "Uknown location",
             },
-            stats: {
-              completedGigs: user.completedGigs || 0,
-              averageRating: user.averageRating || 0,
-            },
+
+            completedGigs: user.completedGigs || 0,
+            averageRating: user.averageRating || 0,
+     
           }}
           size="medium"
           hoverDetails={true}

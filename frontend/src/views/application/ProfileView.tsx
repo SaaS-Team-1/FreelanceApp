@@ -74,10 +74,10 @@ export default function ProfileView() {
                     {user.profile.location}
                   </p>
                 )}
-                <p className="text-lg text-yellow-400">
-                  ⭐ {user.stats.averageRating.toFixed(1)} (
-                  {user.stats.completedGigs} reviews)
-                </p>
+                {/* <p className="text-lg text-yellow-400">
+                  ⭐ {user.averageRating.toFixed(1)} (
+                  {user.completedGigs} reviews)
+                </p> */}
               </div>
               <div className="flex items-center justify-center">
                 <UserLevelDisplay user={user} size="large" />
