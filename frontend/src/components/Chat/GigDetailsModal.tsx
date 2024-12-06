@@ -37,10 +37,9 @@ const GigDetailsModal: React.FC<GigDetailsModalProps> = ({
           picture: currentUser.profile?.picture || "/default-avatar.jpg",
           location: currentUser.profile?.location || "Unknown location",
         },
-        stats: {
-          completedGigs: currentUser.stats?.completedGigs || 0,
-          averageRating: currentUser.stats?.averageRating || 0,
-        },
+        completedGigs: currentUser.completedGigs || 0,
+        averageRating: currentUser.averageRating || 0,
+        
       }
     : {
         userId: lister?.userId || "Unknown ID",
@@ -52,10 +51,10 @@ const GigDetailsModal: React.FC<GigDetailsModalProps> = ({
           picture: lister?.profile?.picture || "/default-avatar.jpg",
           location: lister?.profile?.location || "Unknown location",
         },
-        stats: {
-          completedGigs: lister?.stats?.completedGigs || 0,
-          averageRating: lister?.stats?.averageRating || 0,
-        },
+    
+        completedGigs: lister?.completedGigs || 0,
+        averageRating: lister?.averageRating || 0,
+       
       };
 
   const location = gig.location || userToDisplay.profile.location || "Remote";
