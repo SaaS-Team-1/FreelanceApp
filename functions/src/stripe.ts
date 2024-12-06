@@ -1,13 +1,50 @@
 import { Stripe } from "stripe";
 import { onCall } from "firebase-functions/v2/https";
 import { transactionsRef, usersRef } from "./firebase";
-import { Timestamp } from "firebase-admin/firestore";
+import {
+  DocumentData,
+  DocumentReference,
+  Timestamp,
+} from "firebase-admin/firestore";
 
 // Initialize Stripe with your secret key
 const stripe = new Stripe(
   // eslint-disable-next-line max-len
   "sk_test_51QO02pJEuHTWAV4CiWXUcQQAoC3CTP2huEnukgG9YOphFtq2e18nupKGVPmtdZcgkormLBor6zMrrJYSwZu1t4X000lq5qRDac"
 );
+
+async function updateCoins(
+  userId: string,
+  amount: number,
+  userDoc: DocumentReference,
+  user: DocumentData
+) {
+  const transactions = await transactionsRef
+    .where("ownerId", "==", userId)
+    .where("onHold", "==", false)
+    .get();
+
+  const totalCoins = transactions.docs
+    .map<number>((doc) => doc.data().amount)
+    .reduce((sum, num) => sum + num);
+
+  if (totalCoins != user.coins) {
+    user.coins = totalCoins;
+  }
+  const finalCoins = (user.coins || 0) + amount;
+
+  if (finalCoins < 0) {
+    user.coins = totalCoins;
+
+    userDoc.set(user, { merge: true });
+
+    return { status: "error" };
+  }
+
+  user.coins = finalCoins;
+
+  userDoc.set(user, { merge: true });
+}
 
 // Create checkout session
 export const createCheckoutSession = onCall(async (request) => {
@@ -63,8 +100,7 @@ export const getSessionStatus = onCall(async (request) => {
         };
       }
 
-      user.coins = (user.coins || 0) + session.amount_total;
-      await userDoc.set(user, { merge: true });
+      updateCoins(request.auth.uid, session.amount_total || 0, userDoc, user);
       return {
         paymentStatus: session.payment_status,
       };
@@ -88,33 +124,9 @@ export const withdrawFunds = onCall(async (request) => {
   const user = (await userDoc.get()).data();
 
   if (user) {
-    const transactions = await transactionsRef
-      .where("ownerId", "==", request.auth.uid)
-      .where("onHold", "==", false)
-      .get();
-
-    const totalCoins = transactions.docs
-      .map<number>((doc) => doc.data().amount)
-      .reduce((sum, num) => sum + num);
-
-    if (totalCoins != user.coins) {
-      user.coins = totalCoins;
-    }
-    const finalCoins = (user.coins || 0) - request.data.amount;
-
-    if (finalCoins < 0) {
-      user.coins = totalCoins;
-
-      userDoc.set(user, { merge: true });
-
-      return { status: "error" };
-    }
-
-    user.coins = finalCoins;
-
-    userDoc.set(user, { merge: true });
-
     try {
+      updateCoins(request.auth.uid, -request.data.amount || 0, userDoc, user);
+
       const uuid = crypto.randomUUID();
       await transactionsRef.doc(uuid).create({
         uuid, // transaction ID
@@ -155,36 +167,12 @@ export const assignTransaction = onCall(async (request) => {
     await usersRef.doc(request.data.thirdPartyId).get()
   ).data();
 
+  const ownerUUID = crypto.randomUUID();
+  const thirdPartyUUID = crypto.randomUUID();
+
   if (user && thirdParty) {
     try {
-      const transactions = await transactionsRef
-        .where("ownerId", "==", request.auth.uid)
-        .where("onHold", "==", false)
-        .get();
-
-      const totalCoins = transactions.docs
-        .map<number>((doc) => doc.data().amount)
-        .reduce((sum, num) => sum + num);
-
-      if (totalCoins != user.coins) {
-        user.coins = totalCoins;
-      }
-      const finalCoins = (user.coins || 0) - request.data.amount;
-
-      if (finalCoins < 0) {
-        user.coins = totalCoins;
-
-        userDoc.set(user, { merge: true });
-
-        return { status: "error" };
-      }
-
-      user.coins = finalCoins;
-
-      userDoc.set(user, { merge: true });
-
-      const ownerUUID = crypto.randomUUID();
-      const thirdPartyUUID = crypto.randomUUID();
+      updateCoins(request.auth.uid, -request.data.amount || 0, userDoc, user);
 
       await transactionsRef.doc(ownerUUID).create({
         ownerUUID, // transaction ID
@@ -246,43 +234,48 @@ export const assignTransaction = onCall(async (request) => {
 
 export const finalizeTransaction = onCall(async (request) => {
   if (!request.auth) return { status: "error" };
+  try {
+    const ownerTransaction = (
+      await transactionsRef
+        .where("ownerId", "==", request.auth.uid)
+        .where("onHold", "==", true)
+        .where("gigId", "==", request.data.gigId)
+        .limit(1)
+        .get()
+    ).docs.at(0);
 
-  const userDoc = usersRef.doc(request.auth.uid);
-  const user = (await userDoc.get()).data();
-  const ownerTransaction = (
-    await transactionsRef
-      .where("ownerId", "==", request.auth.uid)
-      .where("onHold", "==", true)
-      .where("gigId", "==", request.data.gigId)
-      .limit(1)
-      .get()
-  ).docs.at(0);
+    const thirdPartyTransaction = (
+      await transactionsRef
+        .where("ownerId", "==", request.data.thirdPartyId)
+        .where("onHold", "==", true)
+        .where("gigId", "==", request.data.gigId)
+        .limit(1)
+        .get()
+    ).docs.at(0);
 
-  const thirdPartyTransaction = (
-    await transactionsRef
-      .where("ownerId", "==", request.data.thirdPartyId)
-      .where("onHold", "==", true)
-      .where("gigId", "==", request.data.gigId)
-      .limit(1)
-      .get()
-  ).docs.at(0);
+    const userDoc = usersRef.doc(request.data.thirdPartyId);
+    const user = (await userDoc.get()).data();
 
-  if (user && thirdPartyTransaction && ownerTransaction) {
-    try {
+    if (user && thirdPartyTransaction && ownerTransaction) {
       transactionsRef.doc(thirdPartyTransaction.id).update({ onHold: false });
       transactionsRef.doc(ownerTransaction.id).update({ onHold: false });
-    } catch (error) {
-      console.error("Error changing transaction:", error);
-      return {
-        status: "error",
-      };
+      updateCoins(
+        request.data.thirdPartyId,
+        thirdPartyTransaction.get("amount"),
+        userDoc,
+        user
+      );
     }
 
     return {
       status: "success",
     };
+  } catch (error) {
+    console.error("Error changing transaction:", error);
+    return {
+      status: "error",
+    };
   }
-
   return {
     status: "error",
   };
