@@ -19,10 +19,10 @@ export default function LoginView() {
   const auth = useAuth();
   const functions = useFunctions();
 
+  const [status, setStatus] = useState("");
+
   const [showRegistration, setShowRegistration] = useState(false);
-  const [registrationForm, setRegistrationData] = useState<
-    RgParams | Partial<RgParams>
-  >({
+  const [registrationForm, setRegistrationData] = useState<RgParams | Partial<RgParams>>({
     profile: { location: "", bio: "" },
   });
   const [loginForm, setLoginData] = useState<Partial<LoginType>>({
@@ -43,7 +43,13 @@ export default function LoginView() {
         functions,
         "common-createUser",
       )(registrationForm as RgParams);
-      setShowRegistration(false)
+      if(registrationForm?.email && registrationForm.password){
+        const loginResult = await signInWithEmailAndPassword(
+          auth,
+          registrationForm.email,
+          registrationForm.password,
+        );
+      }
     } catch (error) {
       console.error("Registration error:", error);
     }
@@ -53,7 +59,7 @@ export default function LoginView() {
     e.preventDefault();
     try {
       if (loginForm?.email && loginForm?.password) {
-        await signInWithEmailAndPassword(
+        const result = await signInWithEmailAndPassword(
           auth,
           loginForm.email,
           loginForm.password,
