@@ -8,6 +8,7 @@ import { useFirestore } from "@/utils/reactfire";
 import {FaRegMessage, FaUserCheck } from "react-icons/fa6";
 import { applicationsRef,notificationsRef, chatsRef } from "@/utils/database/collections";
 import UserProfilePicture from "@/components/Avatar/UserProfilePicture"; // Import UserProfilePicture for hover details
+import { ReCaptchaEnterpriseProvider } from "firebase/app-check";
 
 interface InterestedGigglersProps {
   gig: Gig;
@@ -43,14 +44,23 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
         status: "in-progress",             // Update status to in-progress
         updatedAt: serverTimestamp(),
       });
-  
+
       // Step 2: Get all pending applications for this gig except the selected one
       const applicationsQuery = query(
         applicationsRef(db),
         where("gigId", "==", gig.gigId),
-        where("status", "==", "pending"),
-        where("applicantId", "!=", applicantId) // Exclude the selected applicant
       );
+      const pendingApps = await getDocs(applicationsQuery);
+
+      const updatePromises = pendingApps.docs.map(appDoc =>
+        updateDoc(doc(applicationsRef(db), appDoc.id), {
+          status: appDoc.data().applicantId === applicantId ? "assigned" : "discarded",
+          updatedAt: serverTimestamp(),
+        })
+      );
+      
+      await Promise.all(updatePromises);
+
 
       const chatQuery = query(
         chatsRef(db),
@@ -59,25 +69,19 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
        );
        
        const chatDocs = await getDocs(chatQuery);
+       console.log(chatDocs)
        const chatUpdates = chatDocs.docs.map(doc => 
         updateDoc(doc.ref, {
           lastUpdatedTime: serverTimestamp()
         })
        );
+       console.log(chatUpdates)
        await Promise.all(chatUpdates);
       
-      const pendingApps = await getDocs(applicationsQuery);
+      
       
   
-      // Mark other applicants' applications as discarded
-      const updatePromises = pendingApps.docs.map(appDoc =>
-        updateDoc(doc(applicationsRef(db), appDoc.id), {
-          status: "discarded", // Discard other applicants
-          updatedAt: serverTimestamp(),
-        })
-      );
       
-      await Promise.all(updatePromises);
   
       // Step 3: Create Notifications
       const notificationPromises = [];
@@ -169,7 +173,7 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
                       hoverDetails={true}
                       rounded={true}
                       position="default"
-              />
+                    />
                       
                     <span className="ml-3 text-white ">
                       {applicant.displayName} has shown interest in this gig
