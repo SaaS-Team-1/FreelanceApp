@@ -140,9 +140,15 @@ describe("Schedule test - Pending Gigs", () => {
     // Pending appears in schedule
     it("User 2 sees the Pending Gig in the schedule", function () {
         cy.visit("/app/schedule");
-        cy.get('.size-full > :nth-child(1)').contains("Pending");
-        cy.get('.ml-3 > .whitespace-normal').contains(this.gigs.gig1.title);
-        cy.log("Gig is in the schedule");
+        cy.get('.size-full > :nth-child(1)').within(() => {
+            cy.get('.mb-3').contains("Pending").then(($pendingGigs) => {
+                if ($pendingGigs.length > 0) {
+                    cy.get('.space-y-4 > .relative').contains(this.gigs.gig1.title);
+                    cy.log("User 2 clicked on the complete gig button");
+                    cy.wait(1000);
+                }
+            });
+        });
     });
 
     it("User 2 logs out", () => {

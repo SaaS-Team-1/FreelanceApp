@@ -49,7 +49,7 @@ before(() => {
 });
 
 beforeEach(() => {
-  cy.wait(400);
+  cy.wait(500);
 });
 
 attachCustomCommands({ Cypress, cy, firebase });

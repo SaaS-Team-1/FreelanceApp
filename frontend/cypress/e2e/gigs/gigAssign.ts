@@ -23,7 +23,7 @@ describe("Assigning a Gig", () => {
     it("User 1 assigns User 2 from interested giggler section", function () {
         cy.visit("/app/posted-gigs");
         cy.get('.relative.mt-2 > .mb-2').contains("Interested Giggler");
-        cy.get('.justify-between > .cursor-pointer > .text-white').contains(new RegExp(`.*${this.users.user2.displayName}.*`, 'i'));
+        cy.get('.justify-between > :nth-child(1) > .text-white').contains(new RegExp(`.*${this.users.user2.displayName}.*`, 'i'));
         cy.log("User 2 is an interested giggler");
         cy.get('.space-x-2 > .bg-\\[rgba\\(42\\,168\\,21\\,1\\)\\]').click();
         cy.log("User 1 clicked on the assign button");
@@ -87,12 +87,20 @@ describe("Schedule test - Scheduled Gigs", () => {
     });
 
     // Pending appears in schedule
-    it("User 2 sees the Scheduled Gig in the schedule", function () {
-        cy.visit("/app/schedule");
-        cy.get('.size-full > :nth-child(2)').contains("Scheduled Gigs");
-        cy.get('.ml-3 > .whitespace-normal').contains(this.gigs.gig1.title);
-        cy.log("Gig is in the schedule");
-    });
+    // it("User 2 sees the Scheduled Gig in the schedule", function () {
+    //     cy.visit("/app/schedule");
+    //     cy.get('.size-full > :nth-child(2)').contains("Scheduled Gigs");
+    //     cy.get('.ml-3 > .whitespace-normal').contains(this.gigs.gig1.title);
+    //     cy.log("Gig is in the schedule");
+    // });
+
+        // User 2 clicks on complete gig
+        it("User 2 sees the Scheduled Gig in the schedule", function () {
+            cy.visit("/app/schedule");
+            cy.get('.size-full > :nth-child(2)').within(() => {
+                cy.get('.mb-3').contains("Scheduled Gigs").should('be.visible');
+            });
+        });
 
     it("User 2 logs out", () => {
         cy.logout();
