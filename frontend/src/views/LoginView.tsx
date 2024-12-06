@@ -43,7 +43,7 @@ export default function LoginView() {
         functions,
         "common-createUser",
       )(registrationForm as RgParams);
-      if (result.data.status == "error"){
+      if (result.data.status == "error") {
         setErrorMessage(result.data.message);
         return;
       }
@@ -161,6 +161,7 @@ export default function LoginView() {
                   <button
                     onClick={() => setShowRegistration(true)}
                     className="text-sm text-blue-600 hover:underline"
+                    type="submit"
                   >
                     Create New Account
                   </button>
@@ -175,7 +176,8 @@ export default function LoginView() {
                   Create Your Account
                 </h2>
                 <p className="mt-4 text-sm text-gray-600">
-                  Join our platform by filling out the registration form. Fields with a "*" are required
+                  Join our platform by filling out the registration form. Fields
+                  with a "*" are required
                 </p>
               </div>
               <div className="space-y-4">
@@ -286,6 +288,7 @@ export default function LoginView() {
                   <button
                     onClick={() => setShowRegistration(false)}
                     className="text-sm text-blue-600 hover:underline"
+                    type="submit"
                   >
                     Already have an account? Login
                   </button>
