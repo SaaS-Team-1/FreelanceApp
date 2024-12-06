@@ -39,7 +39,7 @@ const UserLevelDisplay: React.FC<UserLevelDisplayProps> = ({ user, size = "mediu
     large: "h-12 w-12 text-lg border-4", // Larger size
   };
 
-  const userLevel = calculateUserLevel(user.stats.completedGigs);
+  const userLevel = calculateUserLevel(user.completedGigs);
   const levelBorderColor = getLevelBorderColor(userLevel);
 
   return (
