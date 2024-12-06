@@ -156,36 +156,36 @@ export const assignTransaction = onCall(async (request) => {
   ).data();
 
   if (user && thirdParty) {
-    const transactions = await transactionsRef
-      .where("ownerId", "==", request.auth.uid)
-      .where("onHold", "==", false)
-      .get();
+    try {
+      const transactions = await transactionsRef
+        .where("ownerId", "==", request.auth.uid)
+        .where("onHold", "==", false)
+        .get();
 
-    const totalCoins = transactions.docs
-      .map<number>((doc) => doc.data().amount)
-      .reduce((sum, num) => sum + num);
+      const totalCoins = transactions.docs
+        .map<number>((doc) => doc.data().amount)
+        .reduce((sum, num) => sum + num);
 
-    if (totalCoins != user.coins) {
-      user.coins = totalCoins;
-    }
-    const finalCoins = (user.coins || 0) - request.data.amount;
+      if (totalCoins != user.coins) {
+        user.coins = totalCoins;
+      }
+      const finalCoins = (user.coins || 0) - request.data.amount;
 
-    if (finalCoins < 0) {
-      user.coins = totalCoins;
+      if (finalCoins < 0) {
+        user.coins = totalCoins;
+
+        userDoc.set(user, { merge: true });
+
+        return { status: "error" };
+      }
+
+      user.coins = finalCoins;
 
       userDoc.set(user, { merge: true });
 
-      return { status: "error" };
-    }
+      const ownerUUID = crypto.randomUUID();
+      const thirdPartyUUID = crypto.randomUUID();
 
-    user.coins = finalCoins;
-
-    userDoc.set(user, { merge: true });
-
-    const ownerUUID = crypto.randomUUID();
-    const thirdPartyUUID = crypto.randomUUID();
-
-    try {
       await transactionsRef.doc(ownerUUID).create({
         ownerUUID, // transaction ID
 

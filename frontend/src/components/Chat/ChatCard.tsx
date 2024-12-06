@@ -20,6 +20,7 @@ import {
 } from "@/utils/database/collections";
 import { httpsCallable } from "firebase/functions";
 import { useFunctions } from "@/utils/reactfire";
+import ErrorModal from "../Common/ErrorModal";
 
 interface ChatCardProps {
   gig: Gig;
@@ -37,6 +38,8 @@ const ChatCard: React.FC<ChatCardProps> = ({
   const isLister = gig.listerId === userId;
   const [applicantName, setApplicantName] = useState<string>("");
   const functions = useFunctions();
+  const [openError, setOpenError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const fetchApplicantName = async () => {
@@ -48,7 +51,8 @@ const ChatCard: React.FC<ChatCardProps> = ({
           const applicantData = applicantDoc.data() as User | undefined;
           setApplicantName(applicantData?.displayName || "Unknown Applicant");
         } catch (error) {
-          console.error("Error fetching applicant name:", error);
+          setOpenError(true);
+          setErrorMessage("Error fetching applicant name: " + String(error));
         }
       }
     };
@@ -89,7 +93,8 @@ const ChatCard: React.FC<ChatCardProps> = ({
         lastUpdate: Timestamp.now(),
       });
     } catch (error) {
-      console.error("Error updating chat lastUpdate:", error);
+      setOpenError(true);
+      setErrorMessage("Error updating chat lastUpdate: " + String(error));
     }
   };
 
@@ -106,9 +111,11 @@ const ChatCard: React.FC<ChatCardProps> = ({
         notificationsRef(db),
         notificationData,
       );
+
       updateDoc(notificationDoc, { notificationId: notificationDoc.id });
     } catch (error) {
-      console.error("Error creating notification:", error);
+      setOpenError(true);
+      setErrorMessage("Error creating notification: " + String(error));
     }
   };
 
@@ -180,7 +187,8 @@ const ChatCard: React.FC<ChatCardProps> = ({
         }
       }
     } catch (error) {
-      console.error("Error assigning gig:", error);
+      setOpenError(true);
+      setErrorMessage("Error assigning gig: " + String(error));
     }
   };
 
@@ -206,7 +214,8 @@ const ChatCard: React.FC<ChatCardProps> = ({
       // update chat timestamp
       await updateChatLastUpdate(application?.chatId || "");
     } catch (error) {
-      console.error("Error marking gig as complete:", error);
+      setOpenError(true);
+      setErrorMessage("Error marking gig as complete: " + String(error));
     }
   };
 
@@ -222,7 +231,8 @@ const ChatCard: React.FC<ChatCardProps> = ({
       await updateChatLastUpdate(application?.chatId || "");
       // send notification to applicant
       if (!gig.selectedApplicantId) {
-        console.error("Error: No selected applicant for this gig.");
+        setOpenError(true);
+        setErrorMessage("Error: No selected applicant for this gig.");
         return; // Exit the function if no selected applicant
       }
       await createNotification(
@@ -244,7 +254,8 @@ const ChatCard: React.FC<ChatCardProps> = ({
         completedGigs: increment(1),
       });
     } catch (error) {
-      console.error("Error confirming completion:", error);
+      setOpenError(true);
+      setErrorMessage("Error confirming completion: " + String(error));
     }
   };
 
@@ -260,7 +271,8 @@ const ChatCard: React.FC<ChatCardProps> = ({
         `"${application?.applicantId}"'s application has been canceled.`,
       );
     } catch (error) {
-      console.error("Error cancelling application:", error);
+      setOpenError(true);
+      setErrorMessage("Error cancelling application: " + String(error));
     }
   };
 
@@ -455,6 +467,9 @@ const ChatCard: React.FC<ChatCardProps> = ({
   return (
     <div className="flex flex-col items-center rounded-md bg-orange-300 p-4 shadow-md">
       {isLister ? renderListerView() : renderApplicantView()}
+      <ErrorModal openModal={openError} setOpenModal={setOpenError}>
+        {errorMessage}
+      </ErrorModal>
     </div>
   );
 };
