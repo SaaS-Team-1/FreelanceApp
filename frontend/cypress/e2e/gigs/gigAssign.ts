@@ -55,9 +55,46 @@ describe("Assigning a Gig", () => {
                 });
             });
         });
+
+
     });
+
+    
+
     // User 1 assigns User 2 to the gig
     it("User 1 logs out", () => {
         cy.logout();
     });
 });
+
+
+describe("Schedule test - Assigned Gigs", () => {
+    beforeEach(function () {
+        // Load the fixture data
+        cy.fixture('users').then((users) => {
+            this.users = users;
+        });
+        cy.fixture('gigs').then((gigs) => {
+            this.gigs = gigs;
+        });
+        cy.visit("/app");
+    });
+
+    // User 1 login
+    it("User 2 login", function () {
+        cy.loginUser2();
+        cy.log("User 2 logged in");
+    });
+
+    // Pending appears in schedule
+    it("User 2 sees the Scheduled Gig in the schedule", function () {
+        cy.visit("/app/schedule");
+        cy.get('.size-full > :nth-child(2)').contains("Scheduled Gigs");
+        cy.get('.ml-3 > .whitespace-normal').contains(this.gigs.gig1.title);
+        cy.log("Gig is in the schedule");
+    });
+
+    it("User 2 logs out", () => {
+        cy.logout();
+    });
+})
