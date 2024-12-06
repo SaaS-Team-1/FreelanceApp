@@ -10,6 +10,7 @@ import {
   FaSignOutAlt,
   FaBars,
   FaWallet,
+  FaTable,
 } from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth, useUser } from "@/utils/reactfire";
@@ -129,6 +130,13 @@ function Sidebar() {
           isExpanded={isExpanded}
           isActive={location.pathname === "/app/wallet"}
           onClick={() => navigate("/app/wallet")}
+        />
+        <SidebarItem
+          icon={<FaTable />}
+          label="LeaderBoard"
+          isExpanded={isExpanded}
+          isActive={location.pathname === "/app/leaderBoard"}
+          onClick={() => navigate("/app/leaderBoard")}
         />
       </nav>
 
