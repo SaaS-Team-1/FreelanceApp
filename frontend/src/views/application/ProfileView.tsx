@@ -49,7 +49,7 @@ export default function ProfileView() {
   return (
     <div className="scrollbar mx-auto flex h-screen w-3/5 flex-col items-center space-y-10 overflow-y-scroll py-10 lg:overflow-y-hidden">
       <div className="flex items-center justify-center space-x-6 lg:w-full">
-        <div className="justify-self-end rounded-lg bg-gray-800 p-4 shadow-md">
+        <div className="justify-self-end rounded-lg bg-gray-800 p-4 shadow-md min-w-full">
           <div className="mb-4 flex items-center justify-between gap-6">
             <div className="flex flex-row items-center gap-6">
               <UserProfilePicture
