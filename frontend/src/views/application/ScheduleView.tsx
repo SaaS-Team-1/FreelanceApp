@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import PostedGigList from "@/components/Gigs/MyPostedGigList";
+import PostedGigListSmall from "@/components/Gigs/MyPostedGigListSmall";
 import GigDetails from "@/components/Gigs/GigDetails";
 import { Gig, User } from "@/utils/database/schema";
 import {
@@ -282,25 +282,16 @@ function ScheduleView() {
   }, [isHoveringRight, isHoveringLeft]);
 
   return (
-    <div className="relative h-screen w-full p-4"
-    
-    style={{ overflow: "hidden" }}
-    >
+    <div className="relative h-screen w-full p-4" >
       {/* Horizontal Scrollable Container */}
       <div
         ref={scrollContainerRef}
-        className="mr-10 flex h-[calc(100vh-8rem)] snap-x snap-mandatory gap-6 scroll-smooth hide-scrollbar"
-        style={{ 
-          scrollSnapType: "x mandatory",
-          overflowX: "auto", 
-          position: "relative",
-        }}
-      >
+        className="mr-10 flex h-[calc(100vh-8rem)] snap-x snap-mandatory gap-6 scroll-smooth hide-scrollbar">
         {/* Page 1: Scheduled Gigs and Pending Gigs */}
-        <div className="flex size-full w-[95%] shrink-0 snap-center gap-6">
+        <div className="flex size-full w-1/2 shrink-0 snap-center gap-6">
         <div className="scrollbar size-full overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
             <h1 className="mb-3 text-xl font-bold">Pending Gigs</h1>
-            <PostedGigList
+            <PostedGigListSmall
               gigs={pendingGigs}
               showDateWithLine={true}
               showUndoButton={true}
@@ -311,7 +302,7 @@ function ScheduleView() {
           </div>
           <div className="scrollbar size-full overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
             <h1 className="mb-3 text-xl font-bold">Scheduled Gigs</h1>
-            <PostedGigList
+            <PostedGigListSmall
               gigs={inProgressGigs}
               showDateWithLine={true}
               showCompletedButton={true}
@@ -326,10 +317,10 @@ function ScheduleView() {
         
 
         {/* Page 2: Awaiting Approval and Completed Gigs */}
-        <div className="flex  w-[95%] shrink-0 snap-center gap-6"> 
-          <div className="scrollbar size-full overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
+        <div className="flex  w-1/2 shrink-0 snap-center gap-6"> 
+          <div className="scrollbar h-full w-1/2 overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
             <h1 className="mb-3 text-xl font-bold">Awaiting Approval</h1>
-            <PostedGigList
+            <PostedGigListSmall
               gigs={awaitingApprovalGigs}
               showDateWithLine={true}
               showChatIcon={true}
@@ -337,9 +328,9 @@ function ScheduleView() {
               onSeeMoreClick={handleSeeMoreClick}
             />
           </div>
-          <div className="scrollbar size-full overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
+          <div className="scrollbar size-full w-1/2 overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
             <h1 className="mb-3 text-xl font-bold">Completed Gigs</h1>
-            <PostedGigList
+            <PostedGigListSmall
               gigs={completedGigs}
               showDateWithLine={true}
               showChatIcon={false}
@@ -376,37 +367,7 @@ function ScheduleView() {
           </div>
         </div>
       )}
-         <style
-        dangerouslySetInnerHTML={{
-          __html: `
-          .hide-scrollbar {
-            overflow-x: auto;
-            -ms-overflow-style: none; /* IE and Edge */
-            scrollbar-width: none; /* Firefox */
-          }
-          .hide-scrollbar::-webkit-scrollbar {
-            display: none; /* Chrome, Safari, and Opera */
-          }
-          .scroll-smooth {
-            scroll-behavior: smooth;
-          }
-        `,
-        }}
-      />  
-
-      {/* <div
-        className="absolute right-0 top-0 h-full w-20 bg-gradient-to-l from-gray-900/20 to-transparent"
-        onMouseEnter={() => setIsHoveringRight(true)}
-        onMouseLeave={() => setIsHoveringRight(false)}
-      />
-      <div
-        className="absolute left-0 top-0 h-full w-20 bg-gradient-to-r from-gray-900/20 to-transparent"
-        onMouseEnter={() => setIsHoveringLeft(true)}
-        onMouseLeave={() => setIsHoveringLeft(false)}
-      /> */}
     </div>
-
-    
   );
 }
 
