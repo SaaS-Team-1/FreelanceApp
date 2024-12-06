@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import UserProfilePicture from "@/components/Avatar/UserProfilePicture";
 import EditProfileModal from "@/components/Profile/EditProfileModal";
+import UserLevelDisplay from "@/components/Common/UserLevelDisplay";
 
 export default function ProfileView() {
   const { data: userU } = useUser();
@@ -34,7 +35,6 @@ export default function ProfileView() {
   }, [userU?.uid]);
 
   const handleUpdateProfile = (updatedUser: any) => {
-    // Update the local state with the updated user data
     setUser(updatedUser);
   };
 
@@ -49,7 +49,7 @@ export default function ProfileView() {
   return (
     <div className="scrollbar mx-auto flex h-screen w-3/5 flex-col items-center space-y-10 overflow-y-scroll py-10 lg:overflow-y-hidden">
       <div className="flex items-center justify-center space-x-6 lg:w-full">
-        <div className="justify-self-end rounded-lg bg-gray-800 p-4 shadow-md min-w-full">
+        <div className="min-w-full justify-self-end rounded-lg bg-gray-800 p-4 shadow-md">
           <div className="mb-4 flex items-center justify-between gap-6">
             <div className="flex flex-row items-center gap-6">
               <UserProfilePicture
@@ -64,7 +64,7 @@ export default function ProfileView() {
                     whiteSpace: "nowrap",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
-                    maxWidth: "200px", // Adjust this to your desired max width
+                    maxWidth: "200px",
                   }}
                 >
                   {user.displayName}
@@ -79,6 +79,9 @@ export default function ProfileView() {
                   {user.completedGigs} reviews)
                 </p> */}
               </div>
+              <div className="flex items-center justify-center">
+                <UserLevelDisplay user={user} size="large" />
+              </div>
             </div>
             <div className="flex flex-col items-end">
               <button
@@ -87,7 +90,9 @@ export default function ProfileView() {
               >
                 Edit Profile
               </button>
-              <span className="mt-2 text-sm text-gray-400">{user.profile.faculty}</span>
+              <span className="mt-2 text-sm text-gray-400">
+                {user.profile.faculty}
+              </span>
             </div>
           </div>
           <div className="p-6">

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FaHome,
   FaClipboardList,
@@ -10,43 +10,57 @@ import {
   FaSignOutAlt,
   FaBars,
   FaWallet,
+  FaTable,
 } from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useAuth, useUser } from "@/utils/reactfire";
+import { useAuth, useFirestore, useUser } from "@/utils/reactfire";
 import UserProfilePicture from "@/components/Avatar/UserProfilePicture";
 import { User } from "@/utils/database/schema";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import UserLevelDisplay from "./UserLevelDisplay";
 
 function Sidebar() {
+  const db = useFirestore();
+  const [userDb, setUser] = useState<User | null>(null);
   const auth = useAuth();
   const { data: firebaseUser } = useUser(); // Firebase user object
   const [isExpanded, setIsExpanded] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Transform Firebase user object to match User schema
-  const user: User | null = firebaseUser
-    ? {
-        userId: firebaseUser.uid, // Map UID from Firebase auth
-        email: firebaseUser.email || "No email",
-        displayName: firebaseUser.displayName || "Anonymous",
-        profile: {
-          bio: "",
-          credits: 0,
-          picture: firebaseUser.photoURL,
-          
-          location: "",
-        },
-        stats: {
-          completedGigs: 0,
-          averageRating: 0,
-        },
-      }
-    : null;
-
   // Toggle the sidebar expanded/collapsed state
   const toggleSidebar = () => {
     setIsExpanded(!isExpanded);
   };
+
+  const fetchUser = async () => {
+    try {
+      if (firebaseUser) {
+        const usersRef = collection(db, "users");
+
+        const userQuery = query(
+          usersRef,
+          where("userId", "==", firebaseUser.uid),
+        );
+
+        const userSnapshot = await getDocs(userQuery);
+
+        const userDb = userSnapshot.docs[0]?.data() as User;
+
+        setUser(userDb);
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, [firebaseUser?.uid]);
+
+  if (!userDb) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <aside
@@ -64,18 +78,24 @@ function Sidebar() {
       </button>
 
       {/* Profile Section */}
-      {isExpanded && user && (
-        <div className="flex flex-col items-center">
+      {isExpanded && userDb && (
+        <div
+          className="flex flex-col items-center"
+          onClick={() => navigate("/app/profile")}
+        >
           <UserProfilePicture
-            user={user}
+            user={userDb}
             size="large"
-            hoverDetails={false} // Disable hover details
+            hoverDetails={true}
             rounded
           />
-          <h2 className="text-lg font-semibold text-blue-300">
-            {user.displayName}
-          </h2>
-          <p className="text-xs text-gray-500">{user.email}</p>
+          <div className="flex flex-row gap-4">
+            <UserLevelDisplay user={userDb} size="small" />
+            <h2 className="mt-2 text-lg font-semibold text-blue-300">
+              {userDb.displayName}
+            </h2>
+          </div>
+          <p className="text-xs text-gray-500">{userDb.email}</p>
           <div className="my-3 w-full border-t border-gray-600" />
         </div>
       )}
@@ -130,6 +150,13 @@ function Sidebar() {
           isExpanded={isExpanded}
           isActive={location.pathname === "/app/wallet"}
           onClick={() => navigate("/app/wallet")}
+        />
+        <SidebarItem
+          icon={<FaTable />}
+          label="LeaderBoard"
+          isExpanded={isExpanded}
+          isActive={location.pathname === "/app/leaderBoard"}
+          onClick={() => navigate("/app/leaderBoard")}
         />
       </nav>
 
