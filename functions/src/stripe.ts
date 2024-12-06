@@ -126,7 +126,12 @@ export const withdrawFunds = onCall(async (request) => {
 
   if (user) {
     try {
-      updateCoins(request.auth.uid, -request.data.amount || 0, userDoc, user);
+      await updateCoins(
+        request.auth.uid,
+        -request.data.amount || 0,
+        userDoc,
+        user
+      );
 
       const uuid = crypto.randomUUID();
       await transactionsRef.doc(uuid).create({
@@ -173,7 +178,12 @@ export const assignTransaction = onCall(async (request) => {
 
   if (user && thirdParty) {
     try {
-      updateCoins(request.auth.uid, -request.data.amount || 0, userDoc, user);
+      await updateCoins(
+        request.auth.uid,
+        -request.data.amount || 0,
+        userDoc,
+        user
+      );
 
       await transactionsRef.doc(ownerUUID).create({
         ownerUUID, // transaction ID
@@ -260,7 +270,7 @@ export const finalizeTransaction = onCall(async (request) => {
     if (user && thirdPartyTransaction && ownerTransaction) {
       transactionsRef.doc(thirdPartyTransaction.id).update({ onHold: false });
       transactionsRef.doc(ownerTransaction.id).update({ onHold: false });
-      updateCoins(
+      await updateCoins(
         request.data.thirdPartyId,
         thirdPartyTransaction.get("amount"),
         userDoc,
@@ -277,7 +287,4 @@ export const finalizeTransaction = onCall(async (request) => {
       status: "error",
     };
   }
-  return {
-    status: "error",
-  };
 });
