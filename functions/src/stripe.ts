@@ -21,10 +21,10 @@ async function updateCoins(
 ) {
   const transactions = await transactionsRef
     .where("ownerId", "==", userId)
-    .where("onHold", "==", false)
     .get();
 
   const totalCoins = transactions.docs
+    .filter((doc) => doc.data().amount < 0 || !doc.data().onHold)
     .map<number>((doc) => doc.data().amount)
     .reduce((sum, num) => sum + num);
 
@@ -100,7 +100,8 @@ export const getSessionStatus = onCall(async (request) => {
         };
       }
 
-      updateCoins(request.auth.uid, session.amount_total || 0, userDoc, user);
+      user.coins = (user.coins || 0) + session.amount_total;
+      await userDoc.set(user, { merge: true });
       return {
         paymentStatus: session.payment_status,
       };
