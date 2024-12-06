@@ -9,6 +9,9 @@ import { UndoButton } from "@/components/Buttons/UndoButton";
 import { doc, getDoc, updateDoc, getDocs, query, where, addDoc } from "firebase/firestore";
 import { gigsRef, applicationsRef, notificationsRef } from "@/utils/database/collections";
 import { user } from "rxfire/auth";
+import { httpsCallable } from "firebase/functions";
+import { useFunctions } from "@/utils/reactfire";
+
 
 
 
@@ -27,6 +30,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
 }) => {
   const isLister = gig.listerId === userId;
   const [applicantName, setApplicantName] = useState<string>("");
+  const functions = useFunctions();
 
   useEffect(() => {
     const fetchApplicantName = async () => {
@@ -110,6 +114,20 @@ const ChatCard: React.FC<ChatCardProps> = ({
 
     const handleAssign = async (db: any, gigId: string, assignedApplicationId: string) => {
       try {
+
+       
+        const res = await httpsCallable(
+            functions,
+            "stripe-assignTransaction",
+          )({ thirdPartyId: application?.applicantId, thirdPartyName: '',
+            gigId: gigId, gigName: gig.title, 
+            amount: gig.price, onHold: true, kind:"send"})
+        // if (res?.data?.status !== "success") {
+        // throw new Error("Transaction failed. Insufficient funds or other error.");
+        // }
+
+
+
         // Update gig status to "in-progress"
         await updateGigStatus(db, gigId, "in-progress");
         // update chat timestamp

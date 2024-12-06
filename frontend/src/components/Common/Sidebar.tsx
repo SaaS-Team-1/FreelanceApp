@@ -32,7 +32,8 @@ function Sidebar() {
         profile: {
           bio: "",
           credits: 0,
-          picture: firebaseUser.photoURL || "/default-avatar.jpg",
+          picture: firebaseUser.photoURL,
+          
           location: "",
         },
         stats: {
