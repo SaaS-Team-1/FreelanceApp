@@ -113,9 +113,39 @@ describe("Applying to a Gig", () => {
         cy.wait(2000); // Optional: Wait for Firestore synchronization
     });
 
-
     it("User 2 logs out", () => {
         cy.logout();
     });
 
 });
+
+describe("Schedule test - Pending Gigs", () => {
+    beforeEach(function () {
+        // Load the fixture data
+        cy.fixture('users').then((users) => {
+            this.users = users;
+        });
+        cy.fixture('gigs').then((gigs) => {
+            this.gigs = gigs;
+        });
+        cy.visit("/app");
+    });
+
+    // User 1 login
+    it("User 2 login", function () {
+        cy.loginUser2();
+        cy.log("User 2 logged in");
+    });
+
+    // Pending appears in schedule
+    it("User 2 sees the Pending Gig in the schedule", function () {
+        cy.visit("/app/schedule");
+        cy.get('.size-full > :nth-child(1)').contains("Pending");
+        cy.get('.ml-3 > .whitespace-normal').contains(this.gigs.gig1.title);
+        cy.log("Gig is in the schedule");
+    });
+
+    it("User 2 logs out", () => {
+        cy.logout();
+    });
+})
