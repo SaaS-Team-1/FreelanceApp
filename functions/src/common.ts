@@ -31,7 +31,7 @@ exports.createUser = onCall(
         profile: {
           bio: profile.bio || '',
           credits: 0,
-          picture: profile.picture || '',
+          picture: profile.picture || "https://avatars.githubusercontent.com/u/18249920",
           location: profile.location || '',
           degree: profile.degree || '',
           skills: profile.skills || '',

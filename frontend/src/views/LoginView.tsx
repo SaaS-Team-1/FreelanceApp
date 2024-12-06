@@ -1,5 +1,5 @@
 import { useAuth, useFunctions } from "@/utils/reactfire";
-import { useState } from "react";
+import { useState, KeyboardEvent } from "react";
 import "firebaseui/dist/firebaseui.css";
 import { httpsCallable } from "firebase/functions";
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -65,8 +65,19 @@ export default function LoginView() {
     }
   };
 
+  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (!showRegistration) {
+        handleLogin(e);
+      } else {
+        handleRegister(e);
+      }
+    }
+  };
+
   return (
-    <div className="font-[sans-serif]">
+    <div className="font-[sans-serif]" onKeyDown={handleKeyDown} tabIndex={0}>
       <div className="flex min-h-screen items-center justify-center px-4 py-6">
         <div className="grid w-full max-w-2xl items-center gap-10 rounded-3xl bg-slate-200 p-10">
           {!showRegistration ? (
