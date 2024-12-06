@@ -54,16 +54,20 @@ export async function getFirestoreInstance(app: FirebaseApp) {
   const db = getFirestore(app);
 
   if (import.meta.env.DEV) {
-    connectFirestoreEmulator(db, "127.0.0.1", 8080);
+    try {
+      connectFirestoreEmulator(db, "127.0.0.1", 8080);
+    } catch (error) {
+      console.log(error);
+    }
   }
   return db;
 }
 
-export async function getDatabaseInstance(app: FirebaseApp) {
-  const database = getDatabase(app);
+export async function getFunctionsInstance(app: FirebaseApp) {
+  const functions = getFunctions(app, "europe-west1");
 
   if (import.meta.env.DEV) {
-    connectDatabaseEmulator(database, "127.0.0.1", 9199);
+    connectFunctionsEmulator(functions, "127.0.0.1", 5001);
   }
-  return database;
+  return functions;
 }

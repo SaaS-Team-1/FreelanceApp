@@ -1,6 +1,6 @@
 import { HiSearch } from "react-icons/hi";
 import { useState, useEffect } from "react";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
 import { useUser, useFirestore } from "@/utils/reactfire";
 import { Gig, User, Notification } from "@/utils/database/schema";
 import NotificationList from "@/components/Notifications/NotificationsList";
@@ -28,7 +28,7 @@ export default function OverviewView() {
 
     try {
       const notificationsRef = collection(db, "notifications");
-      const q = query(notificationsRef, where("userId", "==", user.uid));
+      const q = query(notificationsRef, where("userId", "==", user.uid), orderBy("createdAt", "desc"));
       const querySnapshot = await getDocs(q);
 
       const notificationsList: Notification[] = querySnapshot.docs.map(
@@ -49,8 +49,8 @@ export default function OverviewView() {
     }
   };
 
-  const handleCreateSave = (newGig: any) => {
-    console.log("New Gig Created:", newGig);
+  const handleCreateSave = () => {
+    console.log("New Gig Created!");
   };
 
   const fetchOpenGigsAndCategories = async () => {

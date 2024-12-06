@@ -21,10 +21,11 @@ module.exports = {
     "/lib/**/*", // Ignore built files.
     "/generated/**/*", // Ignore generated files.
     ".eslint.js",
-    "/src/tests/**"
+    "/src/tests/**",
   ],
   plugins: ["@typescript-eslint", "import"],
   rules: {
+    "require-jsdoc": 0,
     "object-curly-spacing": ["error", "always"],
     quotes: ["error", "double"],
     "import/no-unresolved": 0,

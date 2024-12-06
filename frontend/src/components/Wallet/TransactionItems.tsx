@@ -5,19 +5,13 @@ import {
   LuSend,
   LuReceipt,
 } from "react-icons/lu";
-import { Gig, Transaction, User } from "@/utils/database/schema";
+import { Transaction } from "@/utils/database/schema";
 
 interface TransactionItemProps {
   transaction: Transaction;
-  user?: Pick<User, "displayName">;
-  gig?: Pick<Gig, "title">;
 }
 
-export default function TransactionItem({
-  transaction,
-  user,
-  gig,
-}: TransactionItemProps) {
+export default function TransactionItem({ transaction }: TransactionItemProps) {
   const getTransactionDetails = () => {
     switch (transaction.kind) {
       case "deposit":
@@ -39,16 +33,20 @@ export default function TransactionItem({
       case "send":
         return {
           icon: <LuSend className="size-5 text-blue-500" />,
-          title: `Sent to ${user?.displayName || "Unknown User"}`,
-          description: gig ? `Payment for: ${gig.title}` : "Transfer to user",
+          title: `${transaction.onHold && "On Hold - "}Sent to ${transaction.thirdPartyId || "Unknown User"}`,
+          description: transaction.gigId
+            ? `Payment for: ${transaction.thirdPartyName}`
+            : "Transfer to user",
           color: "text-blue-500",
         };
 
       case "recieve":
         return {
           icon: <LuReceipt className="size-5 text-green-500" />,
-          title: `Received from ${user?.displayName || "Unknown User"}`,
-          description: gig ? `Payment for: ${gig.title}` : "Transfer received",
+          title: `${transaction.onHold && "On Hold - "} Received from ${transaction.thirdPartyName || "Unknown User"}`,
+          description: transaction.gigId
+            ? `Payment for: ${transaction.gigName}`
+            : "Transfer received",
           color: "text-green-500",
         };
 
@@ -80,12 +78,12 @@ export default function TransactionItem({
           </span>
         </div>
       </div>
-      <div className="text-right">
+      <div className="ml-2 text-right">
         <span className={`font-medium ${details.color}`}>
           {transaction.kind === "withdraw" || transaction.kind === "send"
             ? "-"
             : "+"}
-          ${Math.abs(transaction.amount).toFixed(2)}
+          {Math.abs(transaction.amount).toLocaleString()}
         </span>
       </div>
     </div>

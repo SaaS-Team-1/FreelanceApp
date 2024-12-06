@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
+    "build:watch": "vite build --watch",
     "preview": "vite preview",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
@@ -16,6 +17,8 @@
     "test": "cypress run"
   },
   "dependencies": {
+    "@stripe/react-stripe-js": "^3.0.0",
+    "@stripe/stripe-js": "^5.2.0",
     "firebase": "^10.14.0",
     "firebaseui": "^6.1.0",
     "flowbite-react": "^0.10.2",

@@ -17,9 +17,6 @@
     "firestore": {
       "port": 8080
     },
-    "database": {
-      "port": 9000
-    },
     "hosting": {
       "port": 8081
     },
@@ -33,16 +30,9 @@
   "remoteconfig": {
     "template": "remoteconfig.template.json"
   },
-  "database": {
-    "rules": "database.rules.json"
-  },
   "hosting": {
     "source": "frontend",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "frameworksBackend": {
       "region": "europe-west1"
     }
@@ -59,7 +49,6 @@
         "*.local"
       ],
       "predeploy": [
-        "npm --prefix \"$RESOURCE_DIR\" run lint",
         "npm --prefix \"$RESOURCE_DIR\" run build"
       ]
     }

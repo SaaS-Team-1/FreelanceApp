@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 import CustomButton from "@/components/Buttons/CustomButton";
 import { Application, Chat, Gig, User } from "@/utils/database/schema";
@@ -26,19 +26,14 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
   db,
   lister,
 }) => {
+  const [applied, setApplied] = React.useState(false);
+  
   if (!isOpen) return null;
 
-  const handleApply = async () => {
+  const checkApply = async () => {
     if (!userId || !db) return;
-  
-    try {
-      // Check if fields are defined
-      if (!gig.gigId || !gig.listerId) {
-        throw new Error("Gig data is incomplete.");
-      }
-  
-      // Check for existing applications
-      const applicationRef = applicationsRef(db);
+
+    const applicationRef = applicationsRef(db);
       const existingApplicationQuery = query(
         applicationRef,
         where("gigId", "==", gig.gigId),
@@ -47,9 +42,21 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
       const existingApplications = await getDocs(existingApplicationQuery);
   
       if (!existingApplications.empty) {
-        alert("You have already applied for this gig!");
-        onClose();
+        setApplied(true);
         return;
+      }
+      else{
+        setApplied(false);
+      }
+  }
+
+  const handleApply = async () => {
+    if (!userId || !db) return;
+  
+    try {
+      // Check if fields are defined
+      if (!gig.gigId || !gig.listerId) {
+        throw new Error("Gig data is incomplete.");
       }
   
       const applicationData: Partial<Application> = {
@@ -97,6 +104,10 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
       alert("Failed to apply for the gig. Please try again.");
     }
   };
+
+  useEffect(() => {
+    checkApply();
+  }, []);
   
 
   const location = gig.location || "Remote";
@@ -215,12 +226,13 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
                 />
                 {userId && db && (
                   <CustomButton
-                    label="Apply"
+                    label={!applied ? "Apply" : "Applied Already"}
                     onClick={handleApply} // Trigger the apply function
-                    color="primary"
-                    textColor="white"
+                    color= {!applied ? "primary" : "gray"}
+                    textColor={!applied ? "white" : "black"}
                     size="medium"
                     rounded={true}
+                    disabled={applied}
                   />
                 )}
               </div>

@@ -3,18 +3,21 @@
   "version": "1.0.0",
   "description": "Freelance App",
   "scripts": {
-    "firebase:export": "firebase --project=demo-saas-team-1 emulators:start --only=hosting,functions,database,auth,storage,firestore --export-on-exit=.firestore",
-    "watch:firebase": "firebase --project=demo-saas-team-1 emulators:start --only=hosting,functions,database,auth,storage,firestore --import=.firestore",
-    "firebase:empty": "firebase --project=demo-saas-team-1 emulators:start --only=hosting,functions,database,auth,storage,firestore",
+    "firebase:export": "firebase --project=demo-saas-team-1 emulators:start --export-on-exit=.firestore",
+    "watch:firebase": "firebase --project=demo-saas-team-1 emulators:start --import=.firestore",
+    "firebase:empty": "firebase --project=demo-saas-team-1 emulators:start",
+    "test:firebase": "firebase --project=demo-saas-team-1 emulators:start",
+    "test:cypress": "cd ./frontend && npm run cy:open",
+    "test:frontend": "cd ./frontend && npm run build:watch",
     "watch:api": "cd ./functions && npm run build:watch",
-    "dev": "concurrently -kill-others  \"npm:watch:*\""
+    "dev": "concurrently -kill-others  \"npm:watch:*\"",
+    "test": "concurrently -kill-others  \"npm:test:*\""
   },
   "devDependencies": {
     "axios": "^1.7.2",
     "concurrently": "^8.2.2"
   },
   "dependencies": {
-    "@rollup/rollup-win32-x64-msvc": "^4.27.3",
     "firebase": "^11.0.2",
     "firebase-tools": "^13.23.0"
   }

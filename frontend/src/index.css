@@ -7,6 +7,10 @@ body {
   font-family: "Inter", sans-serif;
 }
 
+.firebase-emulator-warning {
+  display: none;
+}
+
 .scrollbar::-webkit-scrollbar {
   width: 6px;
 }
