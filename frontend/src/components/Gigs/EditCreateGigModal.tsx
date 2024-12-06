@@ -115,36 +115,36 @@ const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
-      <div className="w-[800px] max-w-full rounded-lg bg-gray-900 p-6 text-white shadow-lg">
-        <h2 className="mb-4 text-3xl font-bold">{title}</h2>
+      <div className="w-[800px] max-w-full rounded-lg bg-slate-200 p-6 text-white shadow-lg">
+        <h2 className="mb-4 text-3xl font-bold text-black">{title}</h2>
         <div className="space-y-4">
           {/* Title Input */}
           <div>
-            <label className="mb-2 block text-sm font-bold">Title</label>
+            <label className="mb-2 block text-sm font-bold text-black">Title</label>
             <input
               type="text"
               value={editedGig.title}
               onChange={(e) =>
                 setEditedGig({ ...editedGig, title: e.target.value })
               }
-              className="w-full rounded border-gray-700 bg-gray-800 p-2 text-white"
+              className="w-full rounded border-slate-300 bg-white p-2 text-black"
             />
           </div>
           {/* Description Input */}
           <div>
-            <label className="mb-2 block text-sm font-bold">Description</label>
+            <label className="mb-2 block text-sm font-bold text-black">Description</label>
             <textarea
               value={editedGig.description}
               onChange={(e) =>
                 setEditedGig({ ...editedGig, description: e.target.value })
               }
-              className="h-40 w-full rounded border-gray-700 bg-gray-800 p-2 text-white"
+              className="h-40 w-full rounded border-slate-300 bg-white p-2 text-black"
             />
           </div>
           {/* Price and Location on the Same Line */}
           <div className="flex gap-4">
             <div className="relative w-1/2">
-              <label className="mb-2 block text-sm font-bold">Price</label>
+              <label className="mb-2 block text-sm font-bold text-black">Price</label>
               <input
                 type="number"
                 disabled={true}
@@ -152,35 +152,35 @@ const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
                 onChange={(e) =>
                   setEditedGig({ ...editedGig, price: Number(e.target.value) })
                 }
-                className="w-full rounded border-gray-700 bg-gray-800 p-2 pr-10 text-white"
+                className="w-full rounded border-slate-300 bg-white p-2 pr-10 text-black"
               />
-              <FaDollarSign className="absolute bottom-3 right-3 text-gray-100" />
+              <FaDollarSign className="absolute bottom-3 right-3 text-black" />
             </div>
             <div className="relative w-1/2">
-              <label className="mb-2 block text-sm font-bold">Location</label>
+              <label className="mb-2 block text-sm font-bold text-black">Location</label>
               <input
                 type="text"
                 value={editedGig.location}
                 onChange={(e) =>
                   setEditedGig({ ...editedGig, location: e.target.value })
                 }
-                className="w-full rounded border-gray-700 bg-gray-800 p-2 pr-10 text-white"
+                className="w-full rounded border-slate-300 bg-white p-2 pr-10 text-white"
               />
-              <FaMapMarkerAlt className="absolute bottom-3 right-3 text-gray-100" />
+              <FaMapMarkerAlt className="absolute bottom-3 right-3 text-black" />
             </div>
           </div>
           {/* Category Input */}
           <div className="relative">
-            <label className="mb-2 block text-sm font-bold">Category</label>
+            <label className="mb-2 block text-sm font-bold text-black">Category</label>
             <input
               type="text"
               value={editedGig.category}
               onChange={(e) =>
                 setEditedGig({ ...editedGig, category: e.target.value })
               }
-              className="w-full rounded border-gray-700 bg-gray-800 p-2 pr-10 text-white"
+              className="w-full rounded border-slate-300 bg-white p-2 pr-10 text-white"
             />
-            <FaTag className="absolute bottom-3 right-3 text-gray-100" />
+            <FaTag className="absolute bottom-3 right-3 text-black" />
           </div>
           {/* Date Picker */}
           <DatePicker

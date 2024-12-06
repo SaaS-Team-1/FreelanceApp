@@ -13,7 +13,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ dueDate, onDateChange }) => {
     <div className="flex gap-4">
       {/* Date Input */}
       <div className="relative w-1/2">
-        <label className="mb-2 block text-sm font-bold">Due Date</label>
+        <label className="mb-2 block text-sm font-bold text-black">Due Date</label>
         <input
           type="date"
           value={selectedDate.toISOString().split("T")[0]}
@@ -25,12 +25,12 @@ const DatePicker: React.FC<DatePickerProps> = ({ dueDate, onDateChange }) => {
             );
             onDateChange(new Timestamp(newDate.getTime() / 1000, 0));
           }}
-          className="w-full rounded border-gray-700 bg-gray-800 p-2 text-white"
+          className="w-full rounded border-slate-300 bg-white p-2 text-black"
         />
       </div>
       {/* Time Input */}
       <div className="relative w-1/2">
-        <label className="mb-2 block text-sm font-bold">Due Time</label>
+        <label className="mb-2 block text-sm font-bold text-black">Due Time</label>
         <input
           type="time"
           value={selectedDate.toTimeString().slice(0, 5)}
@@ -40,7 +40,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ dueDate, onDateChange }) => {
             newDate.setHours(hours, minutes);
             onDateChange(new Timestamp(newDate.getTime() / 1000, 0));
           }}
-          className="w-full rounded border-gray-600 bg-gray-800 p-2 text-white"
+          className="w-full rounded border-slate-300 bg-white p-2 text-black"
         />
       </div>
       {/* Custom Styles */}
