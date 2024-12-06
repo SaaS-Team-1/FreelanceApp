@@ -120,7 +120,7 @@ export interface Transaction {
   amount: number;
   createdAt: Timestamp;
   onHold: boolean;
-  kind: "deposit" | "withdraw" | "send" | "recieve";
+  kind: "deposit" | "withdraw" | "send" | "receive";
 }
 
 export interface Notification {
