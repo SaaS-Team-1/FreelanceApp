@@ -10,7 +10,7 @@ import {
   doc,
   updateDoc,
   getDoc,
-  deleteDoc,
+  addDoc,
   serverTimestamp,
 } from "firebase/firestore";
 import CustomButton from "@/components/Buttons/CustomButton";
@@ -20,6 +20,7 @@ import {
   gigsRef,
   usersRef,
   chatsRef,
+  notificationsRef
 } from "@/utils/database/collections";
 import { useCallback } from "react";
 import { tr } from "@faker-js/faker";
@@ -168,45 +169,13 @@ function ScheduleView() {
     }
   };
   
-  const handleCompleteGig = async (gigId: string) => {
-    try {
-      const gigDocRef = doc(gigsRef(db), gigId);
-      await updateDoc(gigDocRef, { status: "awaiting-confirmation" });
-
-      const chatQuery = query(
-        chatsRef(db),
-        where("gigId", "==", gigId),
-        where("applicantId", "==", currUser?.uid)
-       );
-       
-       const chatDocs = await getDocs(chatQuery);
-       const chatUpdates = chatDocs.docs.map(doc => 
-        updateDoc(doc.ref, {
-          lastUpdatedTime: serverTimestamp()
-        })
-       );
-       await Promise.all(chatUpdates);
-
-      // Refresh in-progress and awaiting-approval gigs
-      const updatedInProgress = inProgressGigs.filter(
-        ({ gig }) => gig.gigId !== gigId,
-      );
-      const updatedGig = inProgressGigs.find(({ gig }) => gig.gigId === gigId);
-      if (updatedGig) {
-        setAwaitingApprovalGigs([...awaitingApprovalGigs, updatedGig]);
-      }
-      setInProgressGigs(updatedInProgress);
-
-      await fetchGigs();
-    } catch (error) {
-      console.error("Error updating gig status:", error);
-    }
-  };
 
   const handleCloseGigDetails = () => {
     setSelectedGig(null);
     setIsGigDetailsOpen(false);
   };
+
+
 
   const handleUndoClick = async (gigId: string) => {
     if (!currUser) {
@@ -215,21 +184,6 @@ function ScheduleView() {
     }
   
     try {
-
-      const chatQuery = query(
-        chatsRef(db),
-        where("gigId", "==", gigId),
-        where("applicantId", "==", currUser.uid)
-       );
-       
-       const chatDocs = await getDocs(chatQuery);
-       const chatUpdates = chatDocs.docs.map(doc => 
-        updateDoc(doc.ref, {
-          lastUpdatedTime: serverTimestamp()
-        })
-       );
-       await Promise.all(chatUpdates);
-       
       const applicationQuery = query(
         applicationsRef(db),
         where("applicantId", "==", currUser.uid),
@@ -241,21 +195,111 @@ function ScheduleView() {
   
       if (!applicationSnapshot.empty) {
         const applicationDoc = applicationSnapshot.docs[0];
-        await updateDoc(doc(applicationsRef(db), applicationDoc.id), {
+        const applicationId = applicationDoc.id;
+  
+        await updateDoc(doc(applicationsRef(db), applicationId), {
           status: "discarded",
         });
   
-        // Refresh the pending gigs list locally
+
+        const chatQuery = query(
+          chatsRef(db),
+          where("gigId", "==", gigId),
+          where("applicantId", "==", currUser.uid)
+        );
+        const chatSnapshot = await getDocs(chatQuery);
+        const chatUpdates = chatSnapshot.docs.map((chatDoc) =>
+          updateDoc(chatDoc.ref, {
+            lastUpdate: serverTimestamp(),
+          })
+        );
+        await Promise.all(chatUpdates);
+  
+        const gigDoc = await getDoc(doc(gigsRef(db), gigId));
+        if (gigDoc.exists()) {
+          const gigData = gigDoc.data() as Gig;
+          await addDoc(notificationsRef(db), {
+            userId: gigData.listerId,
+            notificationMessage: `${currUser.displayName}'s application has been canceled.`,
+            createdAt: serverTimestamp(),
+          });
+        }
+  
         setPendingGigs((prevPending) =>
           prevPending.filter(({ gig }) => gig.gigId !== gigId)
         );
-  
         await fetchGigs();
       }
     } catch (error) {
-      console.error("Error updating gig status:", error);
+      console.error("Error undoing application:", error);
+      alert("Failed to undo application. Please try again.");
     }
   };
+  
+  const handleCompleteGig = async (gigId: string) => {
+    if (!currUser) {
+      console.error("No current user found");
+      return;
+    }
+  
+    try {
+      const gigRef = doc(gigsRef(db), gigId);
+      await updateDoc(gigRef, { status: "awaiting-confirmation" });
+
+      const applicationsQuery = query(
+        applicationsRef(db),
+        where("gigId", "==", gigId),
+        where("status", "==", 'assigned')
+      );
+      const applicationsSnapshot = await getDocs(applicationsQuery);
+      if (!applicationsSnapshot.empty) {
+        const applicationDoc = applicationsSnapshot.docs[0];
+        await updateDoc(applicationDoc.ref, {
+          status: "awaiting-lister-completion",
+          updatedAt: serverTimestamp(),
+        });
+      }
+ 
+  
+      const gigDoc = await getDoc(gigRef);
+      if (gigDoc.exists()) {
+        const gigData = gigDoc.data() as Gig;
+        await addDoc(notificationsRef(db), {
+          userId: gigData.listerId,
+          notificationMessage: `Your gig "${gigData.title}" has been marked completed.`,
+          createdAt: serverTimestamp(),
+        });
+      }
+  
+      const chatQuery = query(
+        chatsRef(db),
+        where("gigId", "==", gigId),
+        where("applicantId", "==", currUser.uid)
+      );
+      const chatSnapshot = await getDocs(chatQuery);
+      const chatUpdates = chatSnapshot.docs.map((chatDoc) =>
+        updateDoc(chatDoc.ref, {
+          lastUpdate: serverTimestamp(),
+        })
+      );
+      await Promise.all(chatUpdates);
+ 
+      const updatedInProgress = inProgressGigs.filter(
+        ({ gig }) => gig.gigId !== gigId
+      );
+      const updatedGig = inProgressGigs.find(({ gig }) => gig.gigId === gigId);
+      if (updatedGig) {
+        setAwaitingApprovalGigs([...awaitingApprovalGigs, updatedGig]);
+      }
+      setInProgressGigs(updatedInProgress);
+  
+      await fetchGigs();
+    } catch (error) {
+      console.error("Error completing gig:", error);
+      alert("Failed to mark gig as completed. Please try again.");
+    }
+  };
+  
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isHoveringRight, setIsHoveringRight] = useState(false);

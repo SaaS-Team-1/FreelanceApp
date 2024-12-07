@@ -4,14 +4,13 @@ import { FaDollarSign, FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
 import Badge from "@/components/Buttons/CustomBadge";
 import CustomButton from "@/components/Buttons/CustomButton";
 
-
 interface GigDetailsModalProps {
   gig: Gig;
-  lister: User | null; // Lister details
-  onClose: () => void; // Close modal function
-  currentUserId: string; // Current logged-in user ID
-  onGoToMyGigs: () => void; // Callback for "Go to My Gigs" button
-  currentUser: User; // Current user details
+  lister: User | null;
+  onClose: () => void;
+  currentUserId: string;
+  onGoToMyGigs: () => void;
+  currentUser: User;
 }
 
 const GigDetailsModal: React.FC<GigDetailsModalProps> = ({
@@ -22,43 +21,57 @@ const GigDetailsModal: React.FC<GigDetailsModalProps> = ({
   onGoToMyGigs,
   currentUser,
 }) => {
-  // Determine who the lister is (currentUser or chatPartner)
   const isCurrentUserLister = gig.listerId === currentUserId;
 
-  // Ensure userToDisplay has all fields with fallback values
-  const userToDisplay: User = isCurrentUserLister
-    ? {
-        userId: currentUser.userId,
-        email: currentUser.email,
-        displayName: currentUser.displayName || "Unknown User",
+  if (gig.status === "deleted") {
+    return (
+      <div
+        className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50"
+        onClick={onClose}
+      >
+        <div
+          className="relative w-full max-w-md rounded-lg bg-gray-900 p-6 shadow-lg"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <h1 className="text-center text-2xl font-bold text-white">
+            Gig Deleted
+          </h1>
+          <div className="mt-6 flex justify-center">
+            <CustomButton
+              label="Close"
+              onClick={onClose}
+              color="secondary"
+              size="medium"
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const userToDisplay = isCurrentUserLister
+    ? currentUser
+    : lister || {
+        userId: "Unknown ID",
+        email: "Unknown email",
+        displayName: "Unknown User",
         profile: {
-          bio: currentUser.profile?.bio || "No bio available",
-          credits: currentUser.profile?.credits || 0,
-          picture: currentUser.profile?.picture || "/default-avatar.jpg",
-          location: currentUser.profile?.location || "Unknown location",
+          bio: "No bio available",
+          credits: 0,
+          picture: "/default-avatar.jpg",
+          location: "Unknown location",
         },
-        stats: {
-          completedGigs: currentUser.stats?.completedGigs || 0,
-          averageRating: currentUser.stats?.averageRating || 0,
-        },
-      }
-    : {
-        userId: lister?.userId || "Unknown ID",
-        email: lister?.email || "Unknown email",
-        displayName: lister?.displayName || "Unknown User",
-        profile: {
-          bio: lister?.profile?.bio || "No bio available",
-          credits: lister?.profile?.credits || 0,
-          picture: lister?.profile?.picture || "/default-avatar.jpg",
-          location: lister?.profile?.location || "Unknown location",
-        },
-        stats: {
-          completedGigs: lister?.stats?.completedGigs || 0,
-          averageRating: lister?.stats?.averageRating || 0,
-        },
+        completedGigs: 0,
+        averageRating: 0,
       };
 
   const location = gig.location || userToDisplay.profile.location || "Remote";
+  const dueDate =
+    gig.dueDate &&
+    new Date(gig.dueDate.seconds * 1000).toLocaleString("en-GB", {
+      dateStyle: "short",
+      timeStyle: "short",
+    });
 
   return (
     <div
@@ -71,9 +84,7 @@ const GigDetailsModal: React.FC<GigDetailsModalProps> = ({
       >
         {/* Modal Header */}
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-white sm:text-3xl">
-            Gig Details
-          </h1>
+          <h1 className="text-2xl font-bold text-white">Gig Details</h1>
           <CustomButton
             label="Close"
             onClick={onClose}
@@ -82,30 +93,20 @@ const GigDetailsModal: React.FC<GigDetailsModalProps> = ({
           />
         </div>
 
-        {/* Gig Title and Profile Picture */}
-        <div className="mb-4 flex items-start">
-          {/* <div className="mr-4">
-            <UserProfilePicture
-              user={userToDisplay}
-              size="large"
-              hoverDetails={false}
-              rounded={true}
-            />
-          </div> */}
-          <div>
-            <h2 className="text-2xl font-semibold text-white">{gig.title}</h2>
-            <p className="text-sm text-gray-300">
-              <strong>Lister:</strong>{" "}
-              {isCurrentUserLister ? "You" : userToDisplay.displayName}
-            </p>
-          </div>
+        {/* Gig Title and Lister Info */}
+        <div className="mb-4">
+          <h2 className="text-2xl font-semibold text-white">{gig.title}</h2>
+          <p className="text-sm text-gray-300">
+            <strong>Lister:</strong>{" "}
+            {isCurrentUserLister ? "You" : userToDisplay.displayName}
+          </p>
         </div>
 
         {/* Description */}
         <p className="mb-2 text-sm font-bold text-white">Description:</p>
         <p className="mb-4 text-gray-300">{gig.description}</p>
 
-        {/* Price, Due Date, and Location */}
+        {/* Gig Details */}
         <div className="mb-6 flex flex-col justify-center gap-6 text-sm text-white sm:flex-row">
           <div className="flex flex-col items-center">
             <div className="flex items-center">
@@ -118,18 +119,7 @@ const GigDetailsModal: React.FC<GigDetailsModalProps> = ({
           <div className="flex flex-col items-center">
             <div className="flex items-center">
               <FaCalendarAlt className="mr-2" />
-              <span>
-                {gig.dueDate
-                  ? `${new Date(gig.dueDate.seconds * 1000).toLocaleDateString(
-                      "en-GB",
-                    )} at ${new Date(
-                      gig.dueDate.seconds * 1000,
-                    ).toLocaleTimeString("en-GB", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}`
-                  : "N/A"}
-              </span>
+              <span>{dueDate || "N/A"}</span>
             </div>
             <span className="ml-2 text-xs text-gray-400">Due Date</span>
           </div>

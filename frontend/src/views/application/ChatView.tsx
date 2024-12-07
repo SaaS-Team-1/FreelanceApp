@@ -10,6 +10,7 @@ import {
   limit,
   onSnapshot,
   Timestamp,
+  serverTimestamp
 } from "firebase/firestore";
 import {
   chatsRef,
@@ -314,8 +315,8 @@ function ChatPage() {
                       profilePicture: chatPartner?.profile?.picture || "",
                       bio: chatPartner?.profile?.bio,
                       location: chatPartner?.profile?.location,
-                      completedGigs: chatPartner?.stats?.completedGigs,
-                      averageRating: chatPartner?.stats?.averageRating,
+                      completedGigs: chatPartner?.completedGigs,
+                      averageRating: chatPartner?.averageRating,
                     }}
                     status={
                       user?.uid === selectedChat?.listerId

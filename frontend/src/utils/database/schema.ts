@@ -24,10 +24,8 @@ export interface User {
     languages?: string;
     faculty?: string;
   };
-  stats: {
-    completedGigs: number;
-    averageRating: number;
-  };
+  completedGigs: number;
+  averageRating: number;
 }
 
 export interface Gig {
@@ -120,7 +118,7 @@ export interface Transaction {
   amount: number;
   createdAt: Timestamp;
   onHold: boolean;
-  kind: "deposit" | "withdraw" | "send" | "recieve";
+  kind: "deposit" | "withdraw" | "send" | "receive";
 }
 
 export interface Notification {

@@ -15,17 +15,15 @@ interface CreateGigModalProps {
 const CreateGigModal: React.FC<CreateGigModalProps> = ({ onClose, onCreate }) => {
   const db = useFirestore(); // Firestore instance
   const { data: user } = useUser();
-  if(!user){
-    return;
-  }
+
   const [newGig, setNewGig] = useState<Gig>({
-    gigId: "", 
+    gigId: "",
     title: "",
     description: "",
     price: 0,
-    dueDate: new Timestamp(Math.floor(Date.now() / 1000), 0),
+    dueDate: new Timestamp(Math.floor(Date.now() / 1000), 0), // Default to current date/time
     status: "open",
-    listerId: user.uid as string, // Should be populated by the logged-in user
+    listerId: user?.uid || "",
     selectedApplicantId: "",
     createdAt: new Timestamp(Math.floor(Date.now() / 1000), 0),
     updatedAt: new Timestamp(Math.floor(Date.now() / 1000), 0),
@@ -38,8 +36,8 @@ const CreateGigModal: React.FC<CreateGigModalProps> = ({ onClose, onCreate }) =>
 
     if (!gig.title.trim()) errors.push("Title is required.");
     if (!gig.description.trim()) errors.push("Description is required.");
-    if (gig.description.trim().split(/\s+/).length < 25)
-      errors.push("Description must contain at least 25 words.");
+    if (gig.description.length < 2)
+      errors.push("Description must contain at least 2 characters.");
     if (!gig.location.trim()) errors.push("Location is required.");
     if (!gig.category.trim()) errors.push("Category is required.");
     if (gig.price <= 0) errors.push("Price must be greater than 0.");
@@ -65,17 +63,24 @@ const CreateGigModal: React.FC<CreateGigModalProps> = ({ onClose, onCreate }) =>
 
       // Add gig to Firestore
       const gigDoc = await addDoc(gigsRef(db), newGigData);
-      await Promise.all([
-        updateDoc(gigDoc, {gigId: gigDoc.id})
-      ]);
+      await updateDoc(gigDoc, { gigId: gigDoc.id });
 
-      onCreate;
+      onCreate();
 
       alert("Gig successfully created.");
       onClose();
     } catch (error) {
       console.error("Error creating gig:", error);
       alert("There was an error creating the gig. Please try again.");
+    }
+  };
+
+  const handleDateChange = (newTimestamp: Timestamp | null) => {
+    if (newTimestamp && newTimestamp.seconds > 0) {
+      setNewGig({ ...newGig, dueDate: newTimestamp });
+    } else {
+      alert("Invalid date or time. Please choose a valid date.");
+      setNewGig({ ...newGig, dueDate: new Timestamp(Math.floor(Date.now() / 1000), 0) });
     }
   };
 
@@ -113,11 +118,15 @@ const CreateGigModal: React.FC<CreateGigModalProps> = ({ onClose, onCreate }) =>
               <label className="mb-2 block text-sm font-bold">Price</label>
               <input
                 type="number"
-                value={newGig.price}
+                value={newGig.price || ""}
                 onChange={(e) =>
-                  setNewGig({ ...newGig, price: Number(e.target.value) })
+                  setNewGig({
+                    ...newGig,
+                    price: e.target.value === "" ? 0 : parseFloat(e.target.value),
+                  })
                 }
                 className="w-full rounded border-gray-700 bg-gray-800 p-2 pr-10 text-white"
+                placeholder="0"
               />
               <FaDollarSign className="absolute bottom-3 right-3 text-gray-100" />
             </div>
@@ -148,12 +157,7 @@ const CreateGigModal: React.FC<CreateGigModalProps> = ({ onClose, onCreate }) =>
             <FaTag className="absolute bottom-3 right-3 text-gray-100" />
           </div>
           {/* Date Picker */}
-          <DatePicker
-            dueDate={newGig.dueDate}
-            onDateChange={(newTimestamp) =>
-              setNewGig({ ...newGig, dueDate: newTimestamp })
-            }
-          />
+          <DatePicker dueDate={newGig.dueDate} onDateChange={handleDateChange} />
         </div>
         {/* Buttons */}
         <div className="mt-6 flex justify-end gap-4">
