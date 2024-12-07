@@ -1,3 +1,5 @@
+
+
 import { useState, useEffect } from "react";
 import { FaFilter } from "react-icons/fa";
 import PostedGigList from "@/components/Gigs/MyPostedGigList";
@@ -10,7 +12,7 @@ import {
   gigsRef,
   usersRef,
 } from "@/utils/database/collections";
-import { query, where, getDocs ,doc,getDoc} from "firebase/firestore";
+import { query, where, getDocs, doc, getDoc } from "firebase/firestore";
 
 function MyPostedGigsView() {
   const db = useFirestore();
@@ -37,8 +39,8 @@ function MyPostedGigsView() {
     "awaiting-confirmation",
     "completed",
   ];
-   // Fetch full user data from the database
-   const fetchUserData = async (userId: string, db: any): Promise<User | null> => {
+
+  const fetchUserData = async (userId: string, db: any): Promise<User | null> => {
     try {
       const userDocRef = doc(usersRef(db), userId);
       const userSnapshot = await getDoc(userDocRef);
@@ -60,27 +62,27 @@ function MyPostedGigsView() {
       if (currUser) {
         try {
           setLoadingGigs(true);
-           // Fetch full user data to display profile of current user
-           const userData = await fetchUserData(currUser.uid, db);
-           setFullUser(userData);
-           // 
+          const userData = await fetchUserData(currUser.uid, db);
+          setFullUser(userData);
+
           const q = query(gigsRef(db), where("listerId", "==", currUser.uid));
           const querySnapshot = await getDocs(q);
 
-          const gigsWithListersData = querySnapshot.docs.map((doc) => ({
-            gig: { ...doc.data(), gigId: doc.id } as Gig,
-            lister: currUser as unknown as User,
-          }));
+          const gigsWithListersData = querySnapshot.docs
+            .map((doc) => ({
+              gig: { ...doc.data(), gigId: doc.id } as Gig,
+              lister: currUser as unknown as User,
+            }))
+            .filter((item) => item.gig.status !== "deleted"); // Exclude deleted gigs
 
           const sortedGigs = gigsWithListersData.sort(
             (a, b) =>
               STATUS_ORDER.indexOf(a.gig.status) -
-              STATUS_ORDER.indexOf(b.gig.status),
+              STATUS_ORDER.indexOf(b.gig.status)
           );
 
           setGigsWithListers(sortedGigs);
           setFilteredGigs(sortedGigs);
-          console.log(sortedGigs)
 
           if (sortedGigs.length > 0) {
             setSelectedGig(sortedGigs[0].gig);
@@ -101,36 +103,32 @@ function MyPostedGigsView() {
       if (selectedGig) {
         try {
           setLoadingApplicants(true);
-  
-          // Fetch applications for the gig
+
           const q = query(
             applicationsRef(db),
             where("gigId", "==", selectedGig.gigId)
           );
           const applicationSnapshot = await getDocs(q);
-  
-          // Extract and deduplicate applicant IDs
+
           const userIds = applicationSnapshot.docs.map(
             (doc) => (doc.data() as Application).applicantId
           );
           const uniqueUserIds = [...new Set(userIds)];
-  
-          // Fetch user details for unique IDs
+
           const userSnapshots = await Promise.all(
             uniqueUserIds.map((userId) =>
               getDocs(query(usersRef(db), where("userId", "==", userId)))
             )
           );
-  
-          // Map user documents to User objects and deduplicate
+
           const users = userSnapshots.flatMap((userSnapshot) =>
             userSnapshot.docs.map((userDoc) => userDoc.data() as User)
           );
+
           const uniqueUsers = Array.from(
             new Map(users.map((user) => [user.userId, user])).values()
           );
-  
-          // Update applicants state
+
           setApplicants(uniqueUsers);
         } catch (error) {
           console.error("Error fetching applicants:", error);
@@ -141,10 +139,9 @@ function MyPostedGigsView() {
         setApplicants([]);
       }
     };
-  
+
     fetchApplicantsForGig();
   }, [selectedGig, db]);
-  
 
   const handleSelectGig = (gig: Gig) => {
     setSelectedGig(gig);
@@ -158,7 +155,7 @@ function MyPostedGigsView() {
       status === "all"
         ? gigsWithListers
         : gigsWithListers.filter(
-            (gigWithLister) => gigWithLister.gig.status === status,
+            (gigWithLister) => gigWithLister.gig.status === status
           );
 
     setFilteredGigs(filtered);
@@ -172,33 +169,37 @@ function MyPostedGigsView() {
 
   const handleGigUpdate = (updatedGig: Gig) => {
     const updatedGigs = gigsWithListers.map((item) =>
-      item.gig.gigId === updatedGig.gigId ? { ...item, gig: updatedGig } : item,
+      item.gig.gigId === updatedGig.gigId ? { ...item, gig: updatedGig } : item
     );
 
-    const sortedUpdatedGigs = updatedGigs.sort(
-      (a, b) =>
-        STATUS_ORDER.indexOf(a.gig.status) - STATUS_ORDER.indexOf(b.gig.status),
-    );
+    const sortedUpdatedGigs = updatedGigs
+      .filter((item) => item.gig.status !== "deleted") // Ensure updated list excludes deleted gigs
+      .sort(
+        (a, b) =>
+          STATUS_ORDER.indexOf(a.gig.status) -
+          STATUS_ORDER.indexOf(b.gig.status)
+      );
 
     setGigsWithListers(sortedUpdatedGigs);
     setFilteredGigs(
       filterStatus === "all"
         ? sortedUpdatedGigs
         : sortedUpdatedGigs.filter(
-            (gigWithLister) => gigWithLister.gig.status === filterStatus,
-          ),
+            (gigWithLister) => gigWithLister.gig.status === filterStatus
+          )
     );
 
-    setSelectedGig(updatedGig);
+    setSelectedGig(updatedGig.status === "deleted" ? null : updatedGig);
   };
+
   const handleGigDelete = (gigId: string) => {
     const remainingGigs = gigsWithListers.filter(
-      (item) => item.gig.gigId !== gigId,
+      (item) => item.gig.gigId !== gigId
     );
 
     const sortedRemainingGigs = remainingGigs.sort(
       (a, b) =>
-        STATUS_ORDER.indexOf(a.gig.status) - STATUS_ORDER.indexOf(b.gig.status),
+        STATUS_ORDER.indexOf(a.gig.status) - STATUS_ORDER.indexOf(b.gig.status)
     );
 
     setGigsWithListers(sortedRemainingGigs);
@@ -206,14 +207,15 @@ function MyPostedGigsView() {
       filterStatus === "all"
         ? sortedRemainingGigs
         : sortedRemainingGigs.filter(
-            (gigWithLister) => gigWithLister.gig.status === filterStatus,
-          ),
+            (gigWithLister) => gigWithLister.gig.status === filterStatus
+          )
     );
 
     setSelectedGig(
-      sortedRemainingGigs.length > 0 ? sortedRemainingGigs[0].gig : null,
+      sortedRemainingGigs.length > 0 ? sortedRemainingGigs[0].gig : null
     );
   };
+
   if (loadingGigs) {
     return <p>Loading your gigs...</p>;
   }
@@ -272,7 +274,7 @@ function MyPostedGigsView() {
             <>
               <GigDetails
                 gig={selectedGig}
-                user={fullUser} //current user with profile pic 
+                user={fullUser}
                 onEditSave={handleGigUpdate}
                 onDelete={handleGigDelete}
               />

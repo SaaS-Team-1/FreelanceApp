@@ -120,13 +120,15 @@ export default function OverviewView() {
 
     try {
       const gigsRef = collection(db, "gigs");
-      const q = query(gigsRef, where("listerId", "==", user.uid)); // Filter for user.uid
+      const q = query(gigsRef, where("listerId", "==", user.uid));
       const querySnapshot = await getDocs(q);
 
-      const myGigs = querySnapshot.docs.map((doc) => ({
-        ...doc.data(),
-        gigId: doc.id, // Ensure gigId is included
-      })) as Gig[]; // Cast the mapped objects as Gig[]
+      const myGigs = querySnapshot.docs
+        .map((doc) => ({
+          ...doc.data(),
+          gigId: doc.id,
+        }))
+        .filter((gig) => gig.status !== "deleted") as Gig[];
 
       setMyPostedGigs(myGigs);
     } catch (error) {

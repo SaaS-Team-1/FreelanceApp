@@ -30,25 +30,34 @@ export default function TransactionItem({ transaction }: TransactionItemProps) {
           color: "text-red-500",
         };
 
-      case "send":
-        return {
-          icon: <LuSend className="size-5 text-blue-500" />,
-          title: `${transaction.onHold && "On Hold - "}Sent to ${transaction.thirdPartyName || "Unknown User"}`,
-          description: transaction.gigId
-            ? `Payment for: ${transaction.gigName}`
-            : "Transfer to user",
-          color: "text-blue-500",
-        };
-
-      case "receive":
-        return {
-          icon: <LuReceipt className="size-5 text-green-500" />,
-          title: `${transaction.onHold && "On Hold - "} Received from ${transaction.thirdPartyName || "Unknown User"}`,
-          description: transaction.gigId
-            ? `Payment for: ${transaction.gigName}`
-            : "Transfer received",
-          color: "text-green-500",
-        };
+        case "send":
+          return {
+            icon: <LuSend
+            className={`size-5 ${
+              transaction.onHold ? "text-blue-500" : "text-red-500"
+            }`}
+          />,
+            title: `${transaction.onHold ? "On Hold - " : ""}Sent to ${transaction.thirdPartyName || "Unknown User"}`,
+            description: transaction.gigId
+              ? `Payment for: ${transaction.gigName}`
+              : "Transfer to user",
+            color: transaction.onHold ? "text-blue-500" : "text-red-500",
+          };
+        
+        case "receive":
+          return {
+            icon: <LuReceipt
+            className={`size-5 ${
+              transaction.onHold ? "text-blue-500" : "text-green-500"
+            }`}
+          />,
+            title: `${transaction.onHold ? "On Hold - " : ""}Received from ${transaction.thirdPartyName || "Unknown User"}`,
+            description: transaction.gigId
+              ? `Payment for: ${transaction.gigName}`
+              : "Transfer received",
+            color: transaction.onHold ? "text-blue-500" : "text-green-500",
+          };
+        
 
       default:
         return {

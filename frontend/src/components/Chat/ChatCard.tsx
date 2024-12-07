@@ -74,6 +74,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
   const updateGigStatus = async (db: any, gigId: string, status: string) => {
     const gigRef = doc(gigsRef(db), gigId);
     await updateDoc(gigRef, { status });
+    await updateDoc(gigRef, { updatedAt: Timestamp.now() });
   };
 
   // update selected applicant of gig
@@ -225,6 +226,20 @@ const ChatCard: React.FC<ChatCardProps> = ({
     applicationId: string,
   ) => {
     try {
+
+      const res = await httpsCallable(
+        functions,
+        "stripe-finalizeTransaction",
+      )({
+        thirdPartyId: application?.applicantId,
+        gigId: gigId,
+      });
+      if (res?.data?.status !== "success") {
+        throw new Error(
+          "Transaction failed. Try Again.",
+        );
+      }
+
       // Update gig status to "completed"
       await updateGigStatus(db, gigId, "completed");
       // update chat timestamp
@@ -268,7 +283,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
       // send notification to lister
       await createNotification(
         gig.listerId,
-        `"${application?.applicantId}"'s application has been canceled.`,
+        `${applicantName}'s application has been canceled.`,
       );
     } catch (error) {
       setOpenError(true);
@@ -389,7 +404,11 @@ const ChatCard: React.FC<ChatCardProps> = ({
               </div>
             </>
           );
-        } else {
+        }  if (gig.status === "deleted") {
+          return <p>Gig deleted.</p>;
+        }
+        
+        else {
           return (
             <p>
               {" "}

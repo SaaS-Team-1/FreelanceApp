@@ -12,9 +12,9 @@ interface ChatHeaderProps {
     completedGigs?: number;
     averageRating?: number;
   };
-  status: string; // Gig or application status
-  onSeeGigDetails: () => void; // Function to open the gig details modal
-  isLister: boolean; // Whether the current user is the lister
+  status: string; 
+  onSeeGigDetails: () => void; 
+  isLister: boolean; 
 }
 const ChatHeader: React.FC<ChatHeaderProps> = ({
   user,
