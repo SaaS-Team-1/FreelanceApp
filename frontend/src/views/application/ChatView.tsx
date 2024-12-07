@@ -10,6 +10,7 @@ import {
   limit,
   onSnapshot,
   Timestamp,
+  serverTimestamp
 } from "firebase/firestore";
 import {
   chatsRef,

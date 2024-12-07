@@ -13,8 +13,16 @@ import {
 import UserProfilePicture from "@/components/Avatar/UserProfilePicture"; // Import the UserProfilePicture component
 
 import { useFirestore } from "@/utils/reactfire";
-import { doc, deleteDoc } from "firebase/firestore";
+import { doc, updateDoc, getDocs, query, where, writeBatch, serverTimestamp, addDoc} from "firebase/firestore";
 import ReactDOM from "react-dom";
+import {
+  applicationsRef,
+  gigsRef,
+  chatsRef,
+  notificationsRef,
+
+} from "@/utils/database/collections";
+import {  Application} from "@/utils/database/schema";
 
 interface GigDetailsProps {
   gig: Gig;
@@ -73,14 +81,49 @@ const GigDetails: React.FC<GigDetailsProps> = ({
 
   const handleDeleteConfirm = async () => {
     try {
-      await deleteDoc(doc(db, "gigs", gig.gigId));
-      onDelete(gig.gigId); // Notify parent to remove the gig
-      setIsDeleteModalOpen(false); // Close the modal
+      if (gig.status !== "open") {
+        alert("You can only delete a gig if its status is 'open'.");
+        return;
+      }
+      await updateDoc(doc(gigsRef(db), gig.gigId), { status: "deleted" });
+  
+      const applicationsQuery = query(
+        applicationsRef(db),
+        where("gigId", "==", gig.gigId)
+      );
+      const applicationsSnapshot = await getDocs(applicationsQuery);
+  
+      for (const applicationDoc of applicationsSnapshot.docs) {
+        const applicationData = applicationDoc.data() as Application;
+  
+        await updateDoc(doc(applicationsRef(db), applicationDoc.id), {
+          status: "discarded",
+        });
+  
+
+        await addDoc(notificationsRef(db), {
+          userId: applicationData.applicantId,
+          notificationMessage: `Your pending gig "${gig.title}" has been deleted.`,
+          createdAt: serverTimestamp(),
+        });
+  
+        if (applicationData.chatId) {
+          await updateDoc(doc(chatsRef(db), applicationData.chatId), {
+            lastUpdate: serverTimestamp(),
+          });
+        }
+      }
+  
+      // Notify the parent component
+      onDelete(gig.gigId);
+      setIsDeleteModalOpen(false);
     } catch (error) {
-      console.error("Error deleting gig:", error);
-      alert("Failed to delete gig. Please try again.");
+      console.error("Error deleting gig or updating applications:", error);
+      alert("Failed to delete the gig. Please try again.");
     }
   };
+  
+  
 
   const renderDeleteButton = () => {
     if (!showDelete) return null;
