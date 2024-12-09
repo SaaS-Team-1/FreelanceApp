@@ -120,32 +120,32 @@ const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
         <div className="space-y-6">
           {/* Title Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Title</label>
+            <label className="block text-sm font-medium text-slate-700">Title</label>
             <input
               type="text"
               value={editedGig.title}
               onChange={(e) =>
                 setEditedGig({ ...editedGig, title: e.target.value })
               }
-              className="mt-1 w-full rounded-lg border-gray-300 bg-gray-100 p-3 text-gray-800 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
+              className="mt-1 w-full rounded-lg border-gray-300 bg-slate-100 p-3 text-gray-800 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
             />
           </div>
           {/* Description Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Description</label>
+            <label className="block text-sm font-medium text-slate-700">Description</label>
             <textarea
               value={editedGig.description}
               onChange={(e) =>
                 setEditedGig({ ...editedGig, description: e.target.value })
               }
-              className="mt-1 w-full rounded-lg border-gray-300 bg-gray-100 p-3 text-gray-800 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
+              className="mt-1 w-full rounded-lg border-slate-300 bg-gray-100 p-3 text-gray-800 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
               rows={6}
             />
           </div>
           {/* Price and Location */}
           <div className="flex flex-col gap-6 md:flex-row">
             <div className="relative w-full">
-              <label className="block text-sm font-medium text-gray-700">Price</label>
+              <label className="block text-sm font-medium text-slate-700">Price</label>
               <input
                 type="number"
                 disabled={mode === "edit"}
@@ -153,39 +153,39 @@ const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
                 onChange={(e) =>
                   setEditedGig({ ...editedGig, price: Number(e.target.value) })
                 }
-                className="mt-1 w-full rounded-lg border-gray-300 bg-gray-100 p-3 pr-10 text-gray-800 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
+                className="mt-1 w-full rounded-lg border-slate-300 bg-slate-100 p-3 pr-10 text-slate-800 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
+                placeholder="0"
               />
-              <FaDollarSign className="absolute bottom-3 right-4 text-gray-400" />
+              <FaDollarSign className="absolute bottom-3 right-4 text-slate-400" />
             </div>
             <div className="relative w-full">
-              <label className="block text-sm font-medium text-gray-700">Location</label>
+              <label className="block text-sm font-medium text-slate-700">Location</label>
               <input
                 type="text"
                 value={editedGig.location}
                 onChange={(e) =>
                   setEditedGig({ ...editedGig, location: e.target.value })
                 }
-                className="mt-1 w-full rounded-lg border-gray-300 bg-gray-100 p-3 pr-10 text-gray-800 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
+                className="mt-1 w-full rounded-lg border-slate-300 bg-slate-100 p-3 pr-10 text-slate-800 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
               />
-              <FaMapMarkerAlt className="absolute bottom-3 right-4 text-gray-400" />
+              <FaMapMarkerAlt className="absolute bottom-3 right-4 text-slate-400" />
             </div>
           </div>
           {/* Category Input */}
           <div className="relative">
-            <label className="block text-sm font-medium text-gray-700">Category</label>
+            <label className="block text-sm font-medium text-slate-700">Category</label>
             <input
               type="text"
               value={editedGig.category}
               onChange={(e) =>
                 setEditedGig({ ...editedGig, category: e.target.value })
               }
-              className="mt-1 w-full rounded-lg border-gray-300 bg-gray-100 p-3 pr-10 text-gray-800 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
+              className="mt-1 w-full rounded-lg border-slate-300 bg-slate-100 p-3 pr-10 text-slate-800 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
             />
-            <FaTag className="absolute bottom-3 right-4 text-gray-400" />
+            <FaTag className="absolute bottom-3 right-4 text-slate-400" />
           </div>
           {/* Due Date Picker */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Due Date</label>
             <DatePicker
               dueDate={editedGig.dueDate}
               onDateChange={(newTimestamp) =>
@@ -200,10 +200,10 @@ const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
             label="Cancel"
             onClick={onClose}
             color="white"
-            textColor="black"
+            textColor="primary"
             size="medium"
             outline={true}
-            rounded={true}
+            rounded={false}
           />
           <CustomButton
             label={mode === "edit" ? "Save Changes" : "Create Gig"}
@@ -211,7 +211,7 @@ const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
             color="black"
             textColor="white"
             size="medium"
-            rounded={true}
+            rounded={false}
           />
         </div>
       </div>

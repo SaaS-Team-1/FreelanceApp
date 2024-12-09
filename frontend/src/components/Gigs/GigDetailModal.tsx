@@ -128,7 +128,7 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
       >
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm"></div>
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="w-3/4 max-w-4xl overflow-hidden rounded-lg bg-gray-800 p-8">
+          <div className="w-full max-w-4xl space-y-6 rounded-lg bg-white p-6 shadow-lg">
             <div className="pr-4">
               {/* Lister Profile Picture and Name */}
               <div className="mb-4 flex items-center gap-4">
@@ -139,7 +139,7 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
                 />
                 <div>
                   <h3
-                    className="w-fit text-nowrap text-lg font-bold text-white"
+                    className="text-xl font-semibold text-slate-800 truncate w-48"
                     style={{
                       whiteSpace: "nowrap",
                       overflow: "hidden",
@@ -150,27 +150,27 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
                     {lister.displayName}
                   </h3>
                   {lister.profile.location && (
-                    <p className="text-sm text-gray-400">
+                    <p className="text-sm text-slate-600">
                       {lister.profile.location}
                     </p>
                   )}
                 </div>
-                <h2 className="text-2xl font-bold text-white">{gig.title}</h2>
+                <h2 className="text-2xl font-bold text-slate-800">{gig.title}</h2>
               </div>
 
-              <p className="mb-4 text-gray-300">{gig.description}</p>
+              <p className="mb-4 text-slate-600">{gig.description}</p>
 
-              <div className="justify-left mb-6 flex flex-col gap-6 text-sm text-white sm:flex-row">
+              <div className="justify-left mb-6 flex flex-col gap-6 text-sm text-slate-800 sm:flex-row">
                 <div className="flex flex-col items-center">
                   <div className="flex items-center">
-                    <FaDollarSign className="mr-2" />
+                    <FaDollarSign className="mr-2 text-slate-800" />
                     <span>{gig.price ? `${gig.price} Tokens` : "TBD"}</span>
                   </div>
-                  <span className="ml-4 text-xs text-gray-400">Price</span>
+                  <span className="ml-4 text-xs text-slate-400">Price</span>
                 </div>
                 <div className="flex flex-col items-center">
                   <div className="flex items-center">
-                    <FaCalendarAlt className="mr-2" />
+                    <FaCalendarAlt className="mr-2 text-slate-800" />
                     <span>
                       {gig.dueDate
                         ? `${new Date(
@@ -179,19 +179,19 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
                         : "N/A"}
                     </span>
                   </div>
-                  <span className="ml-2 text-xs text-gray-400">Due Date</span>
+                  <span className="ml-2 text-xs text-slate-400">Due Date</span>
                 </div>
                 <div className="flex flex-col items-center">
                   <div className="flex items-center">
                     <FaMapMarkerAlt className="mr-2" />
                     <span>{location}</span>
                   </div>
-                  <span className="ml-6 text-xs text-gray-400">Location</span>
+                  <span className="ml-6 text-xs text-slate-400">Location</span>
                 </div>
               </div>
 
               <div>
-                <h4 className="text-sm font-semibold text-gray-400">Tags:</h4>
+                <h4 className="text-sm font-semibold text-slate-500">Tags:</h4>
                 <div className="mt-2 flex gap-2">
                   <Badge
                     label={gig.category}
@@ -230,7 +230,7 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
                   color="red"
                   textColor="black"
                   size="medium"
-                  rounded={true}
+                  rounded={false}
                 />
                 {userId && db && (
                   <CustomButton
@@ -239,7 +239,7 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
                     color= {!applied ? "primary" : "gray"}
                     textColor={!applied ? "white" : "black"}
                     size="medium"
-                    rounded={true}
+                    rounded={false}
                     disabled={applied}
                   />
                 )}

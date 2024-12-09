@@ -59,12 +59,12 @@ function PostedGigListHome({
       {gigs.map(({ gig, lister }, index) => (
         <div
           key={index}
-          className={`relative rounded-lg p-4 shadow-lg transition-transform duration-200 ease-in-out ${
+          className={`relative rounded-lg p-4 shadow-sm transition-transform duration-200 ease-in-out ${
             selectedGig && selectedGig.title === gig.title
-              ? "bg-[rgba(5,54,78,0.59)] text-white"
-              : "bg-slate-800 text-gray-300"
+              ? "border border-blue-400 bg-blue-100 text-blue-700"
+              : "bg-white text-slate-800"
           } ${enableSelection ? "cursor-pointer" : ""} 
-            ${hoverEffect ? "hover:bg-gray-700" : ""}`} // Hover effect applied conditionally
+            ${hoverEffect ? "hover:bg-slate-100" : ""}`} // Hover effect applied conditionally
           onClick={() => enableSelection && handleSeeMoreClick(gig, lister)} // Conditional click handler
         >
           {showUndoButton && (
@@ -104,7 +104,7 @@ function PostedGigListHome({
 
           <div className="mb-2 flex items-center">
             <div className="ml-3 flex flex-col">
-              <h3 className="whitespace-normal break-words pr-[120px] text-lg font-semibold text-white">
+              <h3 className="whitespace-normal break-words pr-[120px] text-lg font-semibold text-slate-800">
                 {gig.title}
               </h3>
               {showDateWithLine && (
@@ -127,10 +127,10 @@ function PostedGigListHome({
 
           {/* Render a white line if date is shown */}
           {showDateWithLine && (
-            <div className="mt-1 border-t border-white"></div>
+            <div className="mt-1 border-t border-slate-800"></div>
           )}
           {/* Render gig description (first 100 characters) */}
-          <p className="mt-2 text-gray-300">
+          <p className="mt-2 text-slate-800">
             {gig.description.length > 100
               ? gig.description.slice(0, 100) + "..."
               : gig.description}
@@ -174,7 +174,7 @@ function PostedGigListHome({
                 color="primary"
                 textColor="white"
                 size="small"
-                rounded={true}
+                rounded={false}
               />
             </div>
           )}

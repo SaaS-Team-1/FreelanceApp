@@ -86,36 +86,36 @@ const CreateGigModal: React.FC<CreateGigModalProps> = ({ onClose, onCreate }) =>
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
-      <div className="w-[800px] max-w-full rounded-lg bg-gray-900 p-6 text-white shadow-lg">
+      <div className="w-full max-w-2xl rounded-lg bg-white p-6 shadow-xl">
         <h2 className="mb-4 text-3xl font-bold">Create New Gig</h2>
         <div className="space-y-4">
           {/* Title Input */}
           <div>
-            <label className="mb-2 block text-sm font-bold">Title</label>
+            <label className="mb-2 block text-sm font-medium text-slate-700">Title</label>
             <input
               type="text"
               value={newGig.title}
               onChange={(e) =>
                 setNewGig({ ...newGig, title: e.target.value })
               }
-              className="w-full rounded border-gray-700 bg-gray-800 p-2 text-white"
+              className="mt-1 w-full rounded-lg border-gray-300 bg-slate-100 p-3 text-gray-800 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
             />
           </div>
           {/* Description Input */}
           <div>
-            <label className="mb-2 block text-sm font-bold">Description</label>
+            <label className="mb-2 block text-sm font-medium text-slate-700">Description</label>
             <textarea
               value={newGig.description}
               onChange={(e) =>
                 setNewGig({ ...newGig, description: e.target.value })
               }
-              className="h-40 w-full rounded border-gray-700 bg-gray-800 p-2 text-white"
+              className="mt-1 w-full rounded-lg border-gray-300 bg-gray-100 p-3 text-gray-800 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
             />
           </div>
           {/* Price and Location on the Same Line */}
-          <div className="flex gap-4">
-            <div className="relative w-1/2">
-              <label className="mb-2 block text-sm font-bold">Price</label>
+          <div className="flex flex-col gap-6 md:flex-row">
+            <div className="relative w-full">
+              <label className="block text-sm font-medium text-slate-700">Price</label>
               <input
                 type="number"
                 value={newGig.price || ""}
@@ -125,36 +125,36 @@ const CreateGigModal: React.FC<CreateGigModalProps> = ({ onClose, onCreate }) =>
                     price: e.target.value === "" ? 0 : parseFloat(e.target.value),
                   })
                 }
-                className="w-full rounded border-gray-700 bg-gray-800 p-2 pr-10 text-white"
+                className="mt-1 w-full rounded-lg border-slate-300 bg-slate-100 p-3 pr-10 text-slate-800 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
                 placeholder="0"
               />
-              <FaDollarSign className="absolute bottom-3 right-3 text-gray-100" />
+              <FaDollarSign className="absolute bottom-3 right-4 text-slate-400" />
             </div>
-            <div className="relative w-1/2">
-              <label className="mb-2 block text-sm font-bold">Location</label>
+            <div className="relative w-full">
+              <label className="block text-sm font-medium text-slate-700">Location</label>
               <input
                 type="text"
                 value={newGig.location}
                 onChange={(e) =>
                   setNewGig({ ...newGig, location: e.target.value })
                 }
-                className="w-full rounded border-gray-700 bg-gray-800 p-2 pr-10 text-white"
+                className="mt-1 w-full rounded-lg border-slate-300 bg-slate-100 p-3 pr-10 text-gray-800 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
               />
-              <FaMapMarkerAlt className="absolute bottom-3 right-3 text-gray-100" />
+              <FaMapMarkerAlt className="absolute bottom-3 right-4 text-slate-400" />
             </div>
           </div>
           {/* Category Input */}
           <div className="relative">
-            <label className="mb-2 block text-sm font-bold">Category</label>
+            <label className="block text-sm font-medium text-slate-700">Category</label>
             <input
               type="text"
               value={newGig.category}
               onChange={(e) =>
                 setNewGig({ ...newGig, category: e.target.value })
               }
-              className="w-full rounded border-gray-700 bg-gray-800 p-2 pr-10 text-white"
+              className="mt-1 w-full rounded-lg border-slate-300 bg-slate-100 p-3 pr-10 text-slate-800 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
             />
-            <FaTag className="absolute bottom-3 right-3 text-gray-100" />
+            <FaTag className="absolute bottom-3 right-4 text-slate-400" />
           </div>
           {/* Date Picker */}
           <DatePicker dueDate={newGig.dueDate} onDateChange={handleDateChange} />
@@ -166,18 +166,17 @@ const CreateGigModal: React.FC<CreateGigModalProps> = ({ onClose, onCreate }) =>
             onClick={onClose}
             color="white"
             textColor="primary"
-            size="small"
+            size="medium"
             outline={true}
-            rounded={true}
-            customStyle={{ borderColor: "#44B0E8" }}
+            rounded={false}
           />
           <CustomButton
             label="Create Gig"
             onClick={handleCreate}
             color="primary"
             textColor="white"
-            size="small"
-            rounded={true}
+            size="medium"
+            rounded={false}
           />
         </div>
       </div>
