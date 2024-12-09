@@ -74,15 +74,15 @@ function PostedGigList({
     <div className="space-y-4">
       {gigs.map(({ gig, lister }, index) => (
         <div
-          key={index}
-          className={`relative rounded-lg p-4 shadow-lg transition-transform duration-200 ease-in-out ${
-            selectedGig && selectedGig.title === gig.title
-              ? "bg-[rgba(5,54,78,0.59)] text-white"
-              : "bg-gray-900 text-gray-300"
-          } ${enableSelection ? "cursor-pointer" : ""} 
-            ${hoverEffect ? "hover:bg-gray-700" : ""}`}
-          onClick={() => enableSelection && onSelectGig && onSelectGig(gig)}
-        >
+        key={index}
+        className={`relative rounded-lg p-4 shadow-sm transition-transform duration-200 ease-in-out ${
+          selectedGig && selectedGig.title === gig.title
+            ? "border border-blue-400 bg-blue-100 text-blue-700"
+            : "bg-white text-slate-800"
+        } ${enableSelection ? "cursor-pointer" : ""} 
+          ${hoverEffect ? "hover:bg-slate-100" : ""}`}
+        onClick={() => enableSelection && onSelectGig && onSelectGig(gig)}
+      >
           {showUndoButton && (
             <div className="absolute right-4 top-4">
               <UndoButton onClick={() => onUndoClick && onUndoClick(gig.gigId)} />
@@ -119,18 +119,19 @@ function PostedGigList({
 
           <div className="mb-2 flex items-center">
             <div className="ml-3 flex flex-col">
-              <h3 className="whitespace-normal break-words text-lg font-semibold text-white pr-[120px]">{gig.title}</h3>
+              <h3 className="whitespace-normal break-words text-lg font-semibold text-slate-900 pr-[120px]">
+                {gig.title}</h3>
               {showDateWithLine && (
-                <p className="mt-1 text-xs text-orange-500">
+                <p className="mt-1 text-xs text-blue-600">
                   {formatDate(gig.dueDate)}
                 </p>
               )}
             </div>
           </div>
 
-          {showDateWithLine && <div className="mt-1 border-t border-white"></div>}
+          {showDateWithLine && <div className="mt-1 border-t border-blue-200"></div>}
           
-          <p className="mt-2 whitespace-normal break-words text-gray-300">
+          <p className="mt-2 whitespace-normal break-words text-slate-700">
             {gig.description.length >70? gig.description.slice(0, 70) + "..." : gig.description}
           </p>
 

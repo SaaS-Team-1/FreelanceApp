@@ -66,7 +66,7 @@ function Sidebar() {
     <aside
       className={`sticky top-0 h-screen ${
         isExpanded ? "w-64" : "w-20"
-      } fixed flex flex-col justify-between bg-slate-800 p-4 text-white transition-all duration-300`}
+      } fixed flex flex-col justify-between bg-slate-800 p-4 text-blue-200 transition-all duration-300`}
       style={{ fontFamily: "Inter, sans-serif" }}
     >
       {/* Toggle Button */}

@@ -34,29 +34,29 @@ interface BadgeProps {
 }
 
 const colorClasses: { [key in NonNullable<BadgeProps["color"]>]: string } = {
-  primary: "bg-blue-500",
-  secondary: "bg-orange-500",
-  warning: "bg-red-500",
-  gray: "bg-gray-500",
-  black: "bg-[rgba(11,33,44,1)]",
-  green: "bg-[rgba(42,168,21,1)]",
-  red: "bg-[rgba(255,73,64,0.67)]",
-  white: "bg-white",
-  beige: "bg-[rgba(225,217,217,1)]",
+  primary: "bg-blue-100", // Light blue background
+  secondary: "bg-orange-100", // Light orange
+  warning: "bg-red-100", // Light red
+  gray: "bg-gray-100", // Soft gray
+  black: "bg-gray-800", // Dark gray (for contrast in rare cases)
+  green: "bg-green-100", // Light green
+  red: "bg-red-100", // Light red
+  white: "bg-white", // White background
+  beige: "bg-beige-100", // Light beige
 };
 
 const borderColorClasses: {
   [key in NonNullable<BadgeProps["outlineColor"]>]: string;
 } = {
-  primary: "border-blue-500",
-  secondary: "border-orange-500",
-  warning: "border-red-500",
-  gray: "border-gray-500",
-  black: "border-[rgba(11,33,44,1)]",
-  green: "border-[rgba(42,168,21,1)]",
-  red: "border-[rgba(255,73,64,0.67)]",
-  white: "border-white",
-  beige: "border-[rgba(0,0,0,0.5)]",
+  primary: "border-blue-300", // Lighter blue border
+  secondary: "border-orange-300", // Lighter orange
+  warning: "border-red-300", // Lighter red
+  gray: "border-gray-300", // Lighter gray
+  black: "border-gray-800", // Dark gray
+  green: "border-green-300", // Lighter green
+  red: "border-red-300", // Lighter red
+  white: "border-gray-200", // Subtle gray border for white
+  beige: "border-beige-300", // Lighter beige
 };
 
 const sizeClasses: { [key: string]: string } = {
@@ -69,8 +69,8 @@ const textColorClasses: {
   [key in NonNullable<BadgeProps["textColor"]>]: string;
 } = {
   black: "text-black",
-  white: "text-white",
-  primary: "text-blue-500",
+  white: "text-slate-50", // Slightly soft white text for light contrasts
+  primary: "text-blue-700", // Deep blue for readability
 };
 
 const Badge: React.FC<BadgeProps> = ({
@@ -82,8 +82,8 @@ const Badge: React.FC<BadgeProps> = ({
   iconPosition = "left",
   outline = false,
   rounded = false,
-  textColor = "white",
-  className = "", // Default empty string for custom class
+  textColor = "black",
+  className = "",
 }) => {
   const colorClass = colorClasses[color];
   const sizeClass = sizeClasses[size];

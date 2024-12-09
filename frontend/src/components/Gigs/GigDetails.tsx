@@ -132,14 +132,14 @@ const GigDetails: React.FC<GigDetailsProps> = ({
         label="Delete"
         onClick={() => setIsDeleteModalOpen(true)}
         disabled={gig.status !== "open"}
-        color={gig.status === "open" ? "primary" : "gray"}
-        textColor={gig.status === "open" ? "black" : "white"}
+        color={"primary"}
+        textColor={"black"}
         size="medium"
         rounded={true}
         icon={FaTrashAlt}
         iconPosition="left"
         customStyle={{
-          backgroundColor: gig.status === "open" ? "#44B0E8" : "#b0b0b0",
+          backgroundColor: gig.status === "open" ? "bg-blue-400" : "bg-gray-400",
           padding: "6px 20px",
           width: "120px",
         }}
@@ -150,7 +150,7 @@ const GigDetails: React.FC<GigDetailsProps> = ({
   const renderGigDetails = (isModal: boolean = false) => (
     <div className={isModal ? "pr-4" : "h-fit pr-4"}>
       <div className="mb-1 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-white sm:text-4xl">
+        <h1 className="text-2xl font-bold text-gray-900 sm:text-4xl">
           Gig Details
         </h1>
         <div className="flex flex-col gap-2">
@@ -162,16 +162,14 @@ const GigDetails: React.FC<GigDetailsProps> = ({
                 setIsDetailModalOpen(false); // Close Gig Details Modal
               }}
               disabled={gig.status !== "open"}
-              color={gig.status === "open" ? "primary" : "gray"}
-              textColor={gig.status === "open" ? "black" : "white"}
+              color={"primary"}
+              textColor={"black"}
               size="medium"
               rounded={true}
               icon={FaPen}
               iconPosition="left"
               customStyle={{
-                backgroundColor: gig.status === "open" ? "#44B0E8" : "#b0b0b0",
-                padding: "6px 20px",
-                width: "120px",
+                backgroundColor: gig.status === "open" ? "bg-blue-400" : "bg-gray-400",
               }}
             />
           )}
@@ -180,7 +178,7 @@ const GigDetails: React.FC<GigDetailsProps> = ({
       </div>
 
       <div className="mb-6 flex items-center">
-        <p className="mr-2 text-sm text-white">
+        <p className="mr-2 text-sm text-gray-900">
           <strong>Status:</strong>
         </p>
         <Badge
@@ -207,19 +205,23 @@ const GigDetails: React.FC<GigDetailsProps> = ({
           hoverDetails={true}
           rounded={true}
         />
-        <h2 className="text-2xl font-semibold text-white">{gig.title}</h2>
+        <h2 className="text-2xl font-semibold text-gray-900">{gig.title}</h2>
       </div>
 
-      <p className="mb-2 text-sm font-bold text-white">Description:</p>
-      <p className="mb-4 text-gray-300">{gig.description}</p>
 
-      <div className="mb-6 flex flex-col justify-center gap-6 text-sm text-white sm:flex-row">
+
+      <p className="mb-2 text-sm font-bold text-gray-900">Description:</p>
+      <p className="mb-4 text-gray-900">{gig.description}</p>
+      
+
+
+      <div className="mb-6 flex flex-col justify-center gap-6 text-sm text-gray-900 sm:flex-row">
         <div className="flex flex-col items-center">
           <div className="flex items-center">
             <FaDollarSign className="mr-2" />
-            <span>{gig.price ? `${gig.price} Tokens` : "TBD"}</span>
+            <span>{gig.price ? `${gig.price}` : "TBD"}</span>
           </div>
-          <span className="ml-4 text-xs text-gray-400">Price</span>
+          <span className="ml-4 text-xs text-gray-900">Price</span>
         </div>
         <div className="flex flex-col items-center">
           <div className="flex  items-center">
@@ -228,25 +230,25 @@ const GigDetails: React.FC<GigDetailsProps> = ({
               {formatDate(gig.dueDate)}
             </span>
           </div>
-          <span className="ml-2 text-xs text-gray-400">Due Date</span>
+          <span className="ml-2 text-xs text-gray-900">Due Date</span>
         </div>
         <div className="flex flex-col items-center">
           <div className="flex items-center">
             <FaMapMarkerAlt className="mr-2" />
             <span>{location}</span>
           </div>
-          <span className="ml-6 text-xs text-gray-400">Location</span>
+          <span className="ml-6 text-xs text-gray-900">Location</span>
         </div>
       </div>
       <div>
-        <h4 className="text-sm font-semibold text-gray-400">Tags:</h4>
+        <h4 className="text-sm font-semibold text-gray-900">Tags:</h4>
         <div className="mt-2 flex gap-2">
           <Badge
             label={gig.category}
             color="beige"
             textColor="black"
             outline={true}
-            outlineColor="beige"
+            outlineColor="black"
             rounded={true}
             size="small"
           />
@@ -255,7 +257,7 @@ const GigDetails: React.FC<GigDetailsProps> = ({
             color="beige"
             textColor="black"
             outline={true}
-            outlineColor="beige"
+            outlineColor="black"
             rounded={true}
             size="small"
           />
@@ -264,7 +266,7 @@ const GigDetails: React.FC<GigDetailsProps> = ({
             color="beige"
             textColor="black"
             outline={true}
-            outlineColor="beige"
+            outlineColor="black"
             rounded={true}
             size="small"
           />
@@ -296,7 +298,7 @@ const GigDetails: React.FC<GigDetailsProps> = ({
 
   return (
     <div className="relative">
-      <div className="rounded-lg bg-gray-900 p-4 shadow-lg">
+      <div className="rounded-lg bg-gray-100 p-4 shadow-lg">
         {renderGigDetails()}
       </div>
 
@@ -322,13 +324,13 @@ const GigDetails: React.FC<GigDetailsProps> = ({
       {isDeleteModalOpen &&
         ReactDOM.createPortal(
           <>
-            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm"></div>
+            <div className="fixed inset-0 bg-white backdrop-blur-sm"></div>
             <div className="fixed inset-0 z-50 flex items-center justify-center">
-              <div className="w-3/4 max-w-lg rounded-lg bg-gray-800 p-6">
-                <h3 className="text-lg font-bold text-white">
+              <div className="w-3/4 max-w-lg rounded-lg bg-white p-6">
+                <h3 className="text-lg font-bold text-gray-800">
                   Are you sure you want to delete this gig?
                 </h3>
-                <p className="mt-2 text-gray-400">{gig.title}</p>
+                <p className="mt-2 text-gray-800">{gig.title}</p>
                 <div className="mt-4 flex justify-end gap-4">
                   <CustomButton
                     label="Cancel"

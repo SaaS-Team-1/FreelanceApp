@@ -222,27 +222,27 @@ function MyPostedGigsView() {
 
   return (
     <div className="flex h-[calc(100vh-4rem)] w-full space-x-6 p-4">
-      <div className="scrollbar h-full w-1/2 overflow-y-scroll">
+      <div className="scrollbar h-full w-1/2 overflow-y-scroll bg-slate-200 rounded-lg p-4 shadow-sm">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+          <h2 className="text-2xl font-semibold text-slate-800">
             My Posted Gigs
           </h2>
           <div className="relative">
             <button
               onClick={() => setIsDropdownVisible((prev) => !prev)}
-              className="flex items-center justify-center rounded-full bg-gray-800 p-2 text-white transition-all hover:bg-gray-600"
+              className="flex items-center justify-center rounded-full bg-blue-500 p-2 text-white transition-all hover:bg-blue-600"
             >
               <FaFilter />
             </button>
 
             {isDropdownVisible && (
               <div
-                className="absolute right-0 z-50 mt-2 w-48 scale-100 rounded-md bg-gray-800 opacity-100 shadow-lg transition-transform"
+                className="absolute right-0 z-50 mt-2 w-48 rounded-md bg-white border border-slate-200 shadow-lg transition-transform"
                 onMouseLeave={() => setIsDropdownVisible(false)}
               >
                 <button
                   onClick={() => handleFilterChange("all")}
-                  className="block w-full px-4 py-2 text-left text-white hover:bg-gray-700"
+                  className="block w-full px-4 py-2 text-left text-slate-800 hover:bg-slate-100"
                 >
                   All Gigs
                 </button>
@@ -250,7 +250,7 @@ function MyPostedGigsView() {
                   <button
                     key={status}
                     onClick={() => handleFilterChange(status)}
-                    className="block w-full px-4 py-2 text-left text-white hover:bg-gray-700"
+                    className="block w-full px-4 py-2 text-left text-slate-800 hover:bg-slate-100"
                   >
                     {status.charAt(0).toUpperCase() + status.slice(1)} Gigs
                   </button>
@@ -268,8 +268,7 @@ function MyPostedGigsView() {
         />
       </div>
 
-      <div className="scrollbar h-full w-1/2 overflow-y-scroll">
-        <div className="h-full min-h-fit rounded-lg bg-gray-700 p-6 shadow-lg">
+      <div className="-full w-1/2 overflow-y-scroll bg-white rounded-lg p-6 shadow-sm">
           {selectedGig ? (
             <>
               <GigDetails
@@ -279,21 +278,22 @@ function MyPostedGigsView() {
                 onDelete={handleGigDelete}
               />
               {loadingApplicants ? (
-                <p className="text-gray-500">Loading interested gigglers...</p>
-              ) : (
-                <InterestedGigglers
-                  gig={selectedGig}
-                  users={applicants}
-                  onGigUpdate={handleGigUpdate}
-                />
-              )}
+            <div className="flex items-center justify-center py-6">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+          ) : (
+            <InterestedGigglers
+              gig={selectedGig}
+              users={applicants}
+              onGigUpdate={handleGigUpdate}
+            />
+          )}
             </>
           ) : (
-            <p className="text-gray-500">No available gigs</p>
+            <p className="text-slate-500 text-center">No available gigs</p>
           )}
         </div>
       </div>
-    </div>
   );
 }
 

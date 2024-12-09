@@ -62,7 +62,7 @@ function PostedGigListHome({
           className={`relative rounded-lg p-4 shadow-lg transition-transform duration-200 ease-in-out ${
             selectedGig && selectedGig.title === gig.title
               ? "bg-[rgba(5,54,78,0.59)] text-white"
-              : "bg-gray-900 text-gray-300"
+              : "bg-slate-800 text-gray-300"
           } ${enableSelection ? "cursor-pointer" : ""} 
             ${hoverEffect ? "hover:bg-gray-700" : ""}`} // Hover effect applied conditionally
           onClick={() => enableSelection && handleSeeMoreClick(gig, lister)} // Conditional click handler

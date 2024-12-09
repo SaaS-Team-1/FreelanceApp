@@ -51,17 +51,17 @@ export default function AppRoot() {
         <Suspense fallback={<Loading />}>
           <div className="flex max-h-screen w-screen overflow-hidden">
             <Sidebar />
-            <div className="flex w-full flex-col items-center bg-slate-600 ">
+            <div className="flex w-full flex-col items-center bg-white ">
               {title ? (
                 <div className="w-full bg-slate-800">
-                  <h2 className="my-2 justify-self-center text-3xl font-extrabold text-white">
+                  <h2 className="my-2 justify-self-center text-3xl font-extrabold text-black">
                     {title}
                   </h2>
                 </div>
               ) : (
                 <></>
               )}
-              <div className="flex w-full bg-slate-600 p-1">
+              <div className="flex w-full bg-slate-200 p-1">
                 <Outlet />
               </div>
             </div>

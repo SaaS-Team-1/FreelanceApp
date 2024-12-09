@@ -114,81 +114,85 @@ const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
-      <div className="w-[800px] max-w-full rounded-lg bg-slate-200 p-6 text-white shadow-lg">
-        <h2 className="mb-4 text-3xl font-bold text-black">{title}</h2>
-        <div className="space-y-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div className="w-full max-w-2xl rounded-lg bg-white p-6 shadow-xl">
+        <h2 className="mb-6 text-2xl font-bold text-gray-800">{title}</h2>
+        <div className="space-y-6">
           {/* Title Input */}
           <div>
-            <label className="mb-2 block text-sm font-bold text-black">Title</label>
+            <label className="block text-sm font-medium text-gray-700">Title</label>
             <input
               type="text"
               value={editedGig.title}
               onChange={(e) =>
                 setEditedGig({ ...editedGig, title: e.target.value })
               }
-              className="w-full rounded border-slate-300 bg-white p-2 text-black"
+              className="mt-1 w-full rounded-lg border-gray-300 bg-gray-100 p-3 text-gray-800 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
             />
           </div>
           {/* Description Input */}
           <div>
-            <label className="mb-2 block text-sm font-bold text-black">Description</label>
+            <label className="block text-sm font-medium text-gray-700">Description</label>
             <textarea
               value={editedGig.description}
               onChange={(e) =>
                 setEditedGig({ ...editedGig, description: e.target.value })
               }
-              className="h-40 w-full rounded border-slate-300 bg-white p-2 text-black"
+              className="mt-1 w-full rounded-lg border-gray-300 bg-gray-100 p-3 text-gray-800 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
+              rows={6}
             />
           </div>
-          {/* Price and Location on the Same Line */}
-          <div className="flex gap-4">
-            <div className="relative w-1/2">
-              <label className="mb-2 block text-sm font-bold text-black">Price</label>
+          {/* Price and Location */}
+          <div className="flex flex-col gap-6 md:flex-row">
+            <div className="relative w-full">
+              <label className="block text-sm font-medium text-gray-700">Price</label>
               <input
                 type="number"
-                disabled={true}
+                disabled={mode === "edit"}
                 value={editedGig.price}
                 onChange={(e) =>
                   setEditedGig({ ...editedGig, price: Number(e.target.value) })
                 }
-                className="w-full rounded border-slate-300 bg-white p-2 pr-10 text-black"
+                className="mt-1 w-full rounded-lg border-gray-300 bg-gray-100 p-3 pr-10 text-gray-800 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
               />
-              <FaDollarSign className="absolute bottom-3 right-3 text-black" />
+              <FaDollarSign className="absolute bottom-3 right-4 text-gray-400" />
             </div>
-            <div className="relative w-1/2">
-              <label className="mb-2 block text-sm font-bold text-black">Location</label>
+            <div className="relative w-full">
+              <label className="block text-sm font-medium text-gray-700">Location</label>
               <input
                 type="text"
                 value={editedGig.location}
                 onChange={(e) =>
                   setEditedGig({ ...editedGig, location: e.target.value })
                 }
-                className="w-full rounded border-slate-300 bg-white p-2 pr-10 text-white"
+                className="mt-1 w-full rounded-lg border-gray-300 bg-gray-100 p-3 pr-10 text-gray-800 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
               />
-              <FaMapMarkerAlt className="absolute bottom-3 right-3 text-black" />
+              <FaMapMarkerAlt className="absolute bottom-3 right-4 text-gray-400" />
             </div>
           </div>
           {/* Category Input */}
           <div className="relative">
-            <label className="mb-2 block text-sm font-bold text-black">Category</label>
+            <label className="block text-sm font-medium text-gray-700">Category</label>
             <input
               type="text"
               value={editedGig.category}
               onChange={(e) =>
                 setEditedGig({ ...editedGig, category: e.target.value })
               }
-              className="w-full rounded border-slate-300 bg-white p-2 pr-10 text-white"
+              className="mt-1 w-full rounded-lg border-gray-300 bg-gray-100 p-3 pr-10 text-gray-800 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
             />
-            <FaTag className="absolute bottom-3 right-3 text-black" />
+            <FaTag className="absolute bottom-3 right-4 text-gray-400" />
           </div>
-          {/* Date Picker */}
-          <DatePicker
-            dueDate={editedGig.dueDate}
-            onDateChange={(newTimestamp) =>
-              setEditedGig({ ...editedGig, dueDate: newTimestamp })
-            }
-          />
+          {/* Due Date Picker */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Due Date</label>
+            <DatePicker
+              dueDate={editedGig.dueDate}
+              onDateChange={(newTimestamp) =>
+                setEditedGig({ ...editedGig, dueDate: newTimestamp })
+              }
+            />
+          </div>
         </div>
         {/* Buttons */}
         <div className="mt-6 flex justify-end gap-4">
@@ -196,18 +200,17 @@ const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
             label="Cancel"
             onClick={onClose}
             color="white"
-            textColor="primary"
-            size="small"
+            textColor="black"
+            size="medium"
             outline={true}
             rounded={true}
-            customStyle={{ borderColor: "#44B0E8" }}
           />
           <CustomButton
             label={mode === "edit" ? "Save Changes" : "Create Gig"}
             onClick={handleSave}
-            color="primary"
+            color="black"
             textColor="white"
-            size="small"
+            size="medium"
             rounded={true}
           />
         </div>

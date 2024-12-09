@@ -7,7 +7,7 @@ import { User, Gig, Application } from "@/utils/database/schema";
 import CustomButton from "@/components/Buttons/CustomButton";
 import { useNavigate } from "react-router-dom";
 import { useFirestore } from "@/utils/reactfire";
-import { FaRegMessage, FaUserCheck } from "react-icons/fa6";
+import { FaRegMessage, FaUserCheck, FaEnvelope } from "react-icons/fa6";
 
 import UserProfilePicture from "@/components/Avatar/UserProfilePicture";
 import { httpsCallable } from "firebase/functions";
@@ -231,15 +231,24 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
                   {user.displayName} has applied to this gig.
                 </span>
               </div>
+              <div className="flex">
               <CustomButton
-                label="Assign Gig"
+                label="Assign"
                 icon={FaUserCheck}
                 onClick={() => handleAssignGig(user.userId)}
                 color="green"
                 textColor="black"
                 size="small"
-                rounded={true}
+                rounded={false}
               />
+              <CustomButton
+                label="Message"
+                icon={FaEnvelope}
+                onClick={() => navigate(`/app/chat?user=${user.userId}`)}
+                color="gray"
+                size="small"
+              />
+              </div>
             </div>
           </div>
         );
@@ -312,7 +321,7 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
   };
 
   return (
-    <div className="relative mt-2 rounded-lg bg-gray-900 p-4">
+    <div className="relative mt-2 rounded-lg bg-slate-800 p-4">
       <h4 className="mb-2 text-2xl font-semibold text-white">
         Interested Gigglers
       </h4>
