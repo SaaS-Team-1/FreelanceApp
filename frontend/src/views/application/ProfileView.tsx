@@ -47,72 +47,78 @@ export default function ProfileView() {
   }
 
   return (
-    <div className="scrollbar mx-auto flex h-screen w-3/5 flex-col items-center space-y-10 overflow-y-scroll py-10 lg:overflow-y-hidden">
-      <div className="flex items-center justify-center space-x-6 lg:w-full">
-        <div className="min-w-full justify-self-end rounded-lg bg-gray-800 p-4 shadow-md">
-          <div className="mb-4 flex items-center justify-between gap-6">
-            <div className="flex flex-row items-center gap-6">
-              <UserProfilePicture
-                user={user}
-                size="large" // Display larger profile picture
-                hoverDetails={true} // Show hover details
-              />
+    <div className="scrollbar mx-auto w-full max-w-5xl px-6 py-10">
+      <div className="space-y-8">
+        {/* Profile Header */}
+        <div className="flex flex-col items-center rounded-lg bg-white shadow-lg p-6 md:flex-row md:items-start">
+          <div className="flex-shrink-0">
+            <UserProfilePicture
+              user={user}
+              size="large" // Larger profile picture
+              hoverDetails={false} // Disable hover details for cleaner look
+            />
+          </div>
+          <div className="mt-4 md:mt-0 md:ml-6 flex-1">
+            <div className="flex items-center justify-between">
               <div>
-                <h3
-                  className="w-fit text-nowrap text-lg font-bold text-white"
-                  style={{
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    maxWidth: "200px",
-                  }}
-                >
+                <h1 className="text-2xl font-bold text-gray-800">
                   {user.displayName}
-                </h3>
+                </h1>
                 {user.profile.location && (
-                  <p className="text-sm text-gray-400">
+                  <p className="mt-1 text-sm text-gray-500">
                     {user.profile.location}
                   </p>
                 )}
-                {/* <p className="text-lg text-yellow-400">
-                  ⭐ {user.averageRating.toFixed(1)} (
-                  {user.completedGigs} reviews)
-                </p> */}
               </div>
-              <div className="flex items-center justify-center">
-                <UserLevelDisplay user={user} size="large" />
-              </div>
-            </div>
-            <div className="flex flex-col items-end">
               <button
                 onClick={() => setShowModal(true)}
                 className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
               >
                 Edit Profile
               </button>
-              <span className="mt-2 text-sm text-gray-400">
-                {user.profile.faculty}
-              </span>
             </div>
-          </div>
-          <div className="p-6">
-            <h2 className="mb-2 text-xl font-semibold text-white">
-              {user.displayName}
-            </h2>
-            <p className="text-sm text-gray-300">{user.profile.location}</p>
-            <p className="mt-3 text-gray-400">{user.profile.bio}</p>
-          </div>
-          <hr className="my-4 border-gray-700" />
-          <div className="p-6">
-            <h2 className="mb-2 text-xl font-semibold text-white">
-              Degree and Skills
-            </h2>
-            <p className="text-sm text-gray-300">{user.profile.degree}</p>
-            <p className="mt-3 text-gray-400">{user.profile.skills}</p>
-            <p className="mt-3 text-gray-400">{user.profile.languages}</p>
+            <UserLevelDisplay user={user} size="medium" />
+            {user.profile.faculty && (
+              <p className="mt-2 text-sm text-slate-500">
+                Faculty: {user.profile.faculty}
+              </p>
+            )}
           </div>
         </div>
+
+        {/* About Section */}
+        <div className="rounded-lg bg-white shadow-lg p-6">
+          <h2 className="text-xl font-semibold text-gray-800">About Me</h2>
+          <p className="mt-3 text-slate-600">{user.profile.bio}</p>
+        </div>
+
+        {/* Degree and Skills Section */}
+        <div className="rounded-lg bg-white shadow-lg p-6">
+          <h2 className="text-xl font-semibold text-gray-800">
+            Degree and Skills
+          </h2>
+          {user.profile.degree && (
+            <p className="mt-3 text-slate-600">
+              <span className="font-medium text-slate-700">Degree:</span>{" "}
+              {user.profile.degree}
+            </p>
+          )}
+          {user.profile.skills && (
+            <p className="mt-3 text-slate-600">
+              <span className="font-medium text-slate-700">Skills:</span>{" "}
+              {user.profile.skills}
+            </p>
+          )}
+          {user.profile.languages && (
+            <p className="mt-3 text-slate-600">
+              <span className="font-medium text-slate-700">Languages:</span>{" "}
+              {user.profile.languages}
+            </p>
+          )}
+        </div>
       </div>
+
+      {/* Edit Modal */}
       {showModal && (
         <EditProfileModal
           onClose={() => setShowModal(false)}

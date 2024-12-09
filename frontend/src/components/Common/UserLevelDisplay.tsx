@@ -44,7 +44,7 @@ const UserLevelDisplay: React.FC<UserLevelDisplayProps> = ({ user, size = "mediu
 
   return (
     <div
-      className={`flex items-center justify-center rounded-full font-bold text-white ${sizeStyles[size]} ${levelBorderColor}`}
+      className={`flex items-center justify-center rounded-full bg-white font-bold text-slate-800 ${sizeStyles[size]} ${levelBorderColor}`}
     >
       {userLevel}
     </div>

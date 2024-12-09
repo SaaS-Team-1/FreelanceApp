@@ -75,12 +75,6 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
       >
         <div className="sticky top-0 z-10 flex justify-between items-center p-4 border-b bg-white shadow-sm">
           <h2 className="text-2xl font-semibold text-gray-800">Edit Profile</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-800"
-          >
-            ✕
-          </button>
         </div>
         <div className="p-6 space-y-6">
           {/* Display Name Input */}
