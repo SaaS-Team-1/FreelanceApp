@@ -12,9 +12,9 @@ interface ChatHeaderProps {
     completedGigs?: number;
     averageRating?: number;
   };
-  status: string; // Gig or application status
-  onSeeGigDetails: () => void; // Function to open the gig details modal
-  isLister: boolean; // Whether the current user is the lister
+  status: string; 
+  onSeeGigDetails: () => void; 
+  isLister: boolean; 
 }
 const ChatHeader: React.FC<ChatHeaderProps> = ({
   user,
@@ -33,10 +33,10 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
               bio: user.bio || "No bio available",
               location: user.location || "Uknown location",
             },
-            stats: {
-              completedGigs: user.completedGigs || 0,
-              averageRating: user.averageRating || 0,
-            },
+
+            completedGigs: user.completedGigs || 0,
+            averageRating: user.averageRating || 0,
+     
           }}
           size="medium"
           hoverDetails={true}

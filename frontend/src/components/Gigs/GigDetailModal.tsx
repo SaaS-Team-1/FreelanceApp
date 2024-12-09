@@ -1,13 +1,13 @@
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 import CustomButton from "@/components/Buttons/CustomButton";
-import { Application, Chat, Gig, User } from "@/utils/database/schema";
+import { Application, Chat, Gig, User, Notification } from "@/utils/database/schema";
 import { FaDollarSign, FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
 import Badge from "@/components/Buttons/CustomBadge";
 import { Firestore, Timestamp, addDoc, updateDoc } from "firebase/firestore";
 import { query, where, getDocs } from "firebase/firestore";
 import UserProfilePicture from "@/components/Avatar/UserProfilePicture"; // Import the UserProfilePicture component
-import { applicationsRef, chatsRef } from "@/utils/database/collections";
+import { applicationsRef, chatsRef, notificationsRef } from "@/utils/database/collections";
 
 interface GigDetailModalProps {
   gig: Gig;
@@ -54,17 +54,18 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
     if (!userId || !db) return;
   
     try {
-      // Check if fields are defined
+      // Ensure necessary gig fields are defined
       if (!gig.gigId || !gig.listerId) {
         throw new Error("Gig data is incomplete.");
       }
   
+      // Create application
       const applicationData: Partial<Application> = {
         gigId: gig.gigId,
         applicantId: userId,
         listerId: gig.listerId,
         status: "pending",
-        coverLetter: "randomCoverLetter",
+        coverLetter: "randomCoverLetter", // Customize if needed
         appliedAt: Timestamp.now(),
         chatId: "",
         applicationId: "",
@@ -72,10 +73,7 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
   
       const applicationDoc = await addDoc(applicationsRef(db), applicationData);
   
-      if (!applicationDoc.id) {
-        throw new Error("Failed to create application.");
-      }
-  
+      // Create chat
       const chatData: Partial<Chat> = {
         gigId: gig.gigId,
         applicationId: applicationDoc.id,
@@ -87,23 +85,33 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
   
       const chatDoc = await addDoc(chatsRef(db), chatData);
   
-      if (!chatDoc.id) {
-        throw new Error("Failed to create chat.");
-      }
-  
+      // Update application and chat IDs
       await Promise.all([
         updateDoc(chatDoc, { chatId: chatDoc.id }),
-        updateDoc(applicationDoc, { chatId: chatDoc.id }),
-        updateDoc(applicationDoc, {applicationId: applicationDoc.id})
+        updateDoc(applicationDoc, { chatId: chatDoc.id, applicationId: applicationDoc.id }),
       ]);
   
-      alert("Application and chat created successfully!");
+      await addDoc(notificationsRef(db), {
+        userId: gig.listerId,
+        notificationMessage: `New application for you gig: "${gig.title}".`,
+        createdAt: Timestamp.now(),
+      });
+
+  
+      // Set the application state to applied
+      setApplied(true);
+  
+      alert("Application submitted successfully!");
       onClose();
     } catch (error) {
       console.error("Error applying to gig:", error);
+  
+      // Partial cleanup or recovery could be implemented here if needed
       alert("Failed to apply for the gig. Please try again.");
     }
   };
+  
+  
 
   useEffect(() => {
     checkApply();

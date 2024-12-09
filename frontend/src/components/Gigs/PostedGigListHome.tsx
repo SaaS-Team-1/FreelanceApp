@@ -147,7 +147,7 @@ function PostedGigListHome({
               size="small"
             />
             <Badge
-              label={`€${gig.price.toFixed(2)}`}
+              label={`${gig.price} Tokens`}
               color="beige"
               textColor="black"
               outline={true}

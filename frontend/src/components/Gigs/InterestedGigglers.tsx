@@ -1,14 +1,35 @@
-import React, { useState } from "react";
-import ReactDOM from "react-dom"; // Import ReactDOM for portals
-import { User, Gig } from "@/utils/database/schema";
-import { doc, updateDoc, serverTimestamp, Timestamp, query, where, getDocs ,addDoc} from "firebase/firestore";
+
+
+import React, { useState, useEffect } from "react";
+import ReactDOM from "react-dom"; 
+import { User, Gig, Application } from "@/utils/database/schema";
+
 import CustomButton from "@/components/Buttons/CustomButton";
 import { useNavigate } from "react-router-dom";
 import { useFirestore } from "@/utils/reactfire";
-import {FaRegMessage, FaUserCheck } from "react-icons/fa6";
-import { applicationsRef,notificationsRef, chatsRef } from "@/utils/database/collections";
-import UserProfilePicture from "@/components/Avatar/UserProfilePicture"; // Import UserProfilePicture for hover details
-import { ReCaptchaEnterpriseProvider } from "firebase/app-check";
+import { FaRegMessage, FaUserCheck } from "react-icons/fa6";
+
+import UserProfilePicture from "@/components/Avatar/UserProfilePicture";
+import { httpsCallable } from "firebase/functions";
+
+import {
+  doc,
+  updateDoc,
+  increment,
+  serverTimestamp,
+  query,
+  where,
+  getDocs,
+  addDoc,
+} from "firebase/firestore";
+import {
+  applicationsRef,
+  gigsRef,
+  usersRef,
+  notificationsRef,
+  chatsRef,
+} from "@/utils/database/collections";
+import { useFunctions } from "@/utils/reactfire";
 
 interface InterestedGigglersProps {
   gig: Gig;
@@ -24,116 +45,164 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
   const db = useFirestore();
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
+  const [applicantStatuses, setApplicantStatuses] = useState<Application[]>([]);
+  const functions = useFunctions();
 
-  const assignedGiggler = users.find(
-    (user) => user.userId === gig.selectedApplicantId,
-  );
-  const otherApplicants = users.filter((user) => {
-    if (!assignedGiggler) return true;
-    return user.userId !== assignedGiggler.userId;
-  });
+  useEffect(() => {
+    const fetchApplications = async () => {
+      try {
+        const applicationsQuery = query(
+          applicationsRef(db),
+          where("gigId", "==", gig.gigId),
+          where("status", "in", [
+            "pending",
+            "assigned",
+            "awaiting-lister-completion",
+            "completed",
+          ])
+        );
+
+        const applicationsSnapshot = await getDocs(applicationsQuery);
+        const applications = applicationsSnapshot.docs.map((doc) => ({
+          ...doc.data(),
+          applicationId: doc.id,
+        })) as Application[];
+
+        setApplicantStatuses(applications);
+      } catch (error) {
+        console.error("Error fetching applications:", error);
+      }
+    };
+
+    fetchApplications();
+  }, [db, gig.gigId]);
 
   const handleAssignGig = async (applicantId: string) => {
     try {
-  
+      const res = await httpsCallable(functions, "stripe-assignTransaction")({
+        thirdPartyId: applicantId,
+        gigId: gig.gigId,
+        gigName: gig.title,
+        amount: gig.price,
+        onHold: true,
+        kind: "send",
+      });
+
+      if (res?.data?.status !== "success") {
+        throw new Error(
+          "Transaction failed. Insufficient funds or other error."
+        );
+      }
+
       await updateDoc(doc(db, "gigs", gig.gigId), {
         selectedApplicantId: applicantId,
         status: "in-progress",
         updatedAt: serverTimestamp(),
       });
 
-      const applicationsQuery = query(
-        applicationsRef(db),
-        where("gigId", "==", gig.gigId),
-      );
-      const pendingApps = await getDocs(applicationsQuery);
+      // Update application statuses and send notifications
+      const updatePromises = applicantStatuses.map(async (application) => {
+        const newStatus =
+          application.applicantId === applicantId ? "assigned" : "discarded";
 
-      const updatePromises = pendingApps.docs.map(appDoc =>
-        updateDoc(doc(applicationsRef(db), appDoc.id), {
-          status: appDoc.data().applicantId === applicantId ? "assigned" : "discarded",
-          updatedAt: serverTimestamp(),
-        })
-      );
+        await updateDoc(
+          doc(applicationsRef(db), application.applicationId),
+          { status: newStatus, updatedAt: serverTimestamp() }
+        );
+
+        const notificationMessage =
+          newStatus === "assigned"
+            ? `Congratulations! You have been assigned to the gig "${gig.title}".`
+            : `Your application for the gig "${gig.title}" has been discarded.`;
+
+        await addDoc(notificationsRef(db), {
+          userId: application.applicantId,
+          notificationMessage,
+          createdAt: serverTimestamp(),
+        });
+      });
+
       await Promise.all(updatePromises);
 
 
       const chatQuery = query(
         chatsRef(db),
         where("gigId", "==", gig.gigId),
-        where("applicantId", "==", applicantId)
-       );
-       
-       const chatDocs = await getDocs(chatQuery);
-       console.log(chatDocs)
-       const chatUpdates = chatDocs.docs.map(doc => 
-        updateDoc(doc.ref, {
-          lastUpdatedTime: serverTimestamp()
-        })
-       );
-       console.log(chatUpdates)
-       await Promise.all(chatUpdates);
-      
-      
-      const notificationPromises = [];
-      // Notification for the selected applicant
-      notificationPromises.push(
-        addDoc(notificationsRef(db), {
-          userId: applicantId, // This is the selected applicant's ID
-          notificationMessage: `Congratulations! You have been selected for the gig.`,
-          createdAt: serverTimestamp(),
+      );
+      const chatSnapshot = await getDocs(chatQuery);
+      const chatUpdates = chatSnapshot.docs.map((chatDoc) =>
+        updateDoc(chatDoc.ref, {
+          lastUpdate: serverTimestamp(),
         })
       );
-  
-      // Notification for other applicants
-      pendingApps.docs.forEach((appDoc) => {
-        const otherApplicantId = appDoc.data().applicantId;
-        notificationPromises.push(
-          addDoc(notificationsRef(db), {
-            userId: otherApplicantId, // This is for each discarded applicant
-            notificationMessage: `Sorry, the gig you applied for has been assigned to someone else.`,
-            createdAt: serverTimestamp(),
-          })
-        );
-      });
-  
-      // Wait for all notifications to be created
-      await Promise.all(notificationPromises);
-  
-      // Step 4: Update the gig state in the UI
-      const updatedGig: Gig = {
+      await Promise.all(chatUpdates);
+
+      onGigUpdate({
         ...gig,
-        selectedApplicantId: applicantId,  // Make sure the gig state reflects the selected applicant
+        selectedApplicantId: applicantId,
         status: "in-progress",
-        updatedAt: serverTimestamp() as unknown as Timestamp,
-      };
-  
-      onGigUpdate(updatedGig); // Notify the UI about the gig update
+      });
     } catch (error) {
       console.error("Error assigning gig:", error);
       alert("Failed to assign gig. Please try again.");
     }
   };
-  
-  
 
-  const handleMarkComplete = async () => {
+  const handleConfirmCompletion = async (application: Application) => {
     try {
-      const gigDocRef = doc(db, "gigs", gig.gigId);
-      await updateDoc(gigDocRef, {
+      const res = await httpsCallable(functions, "stripe-finalizeTransaction")({
+        thirdPartyId: application.applicantId,
+        gigId: gig.gigId,
+      });
+
+      if (res?.data?.status !== "success") {
+        throw new Error("Transaction failed. Please try again.");
+      }
+
+      await updateDoc(doc(db, "gigs", gig.gigId), {
         status: "completed",
         updatedAt: serverTimestamp(),
       });
 
-      const updatedGig: Gig = {
+      await updateDoc(
+        doc(applicationsRef(db), application.applicationId),
+        { status: "completed", updatedAt: serverTimestamp() }
+      );
+
+      await addDoc(notificationsRef(db), {
+        userId: application.applicantId,
+        notificationMessage: `Gig "${gig.title}" has been marked as completed.`,
+        createdAt: serverTimestamp(),
+      });
+
+      await Promise.all([
+        updateDoc(doc(usersRef(db), gig.listerId), { completedGigs: increment(1) }),
+        updateDoc(doc(usersRef(db), application.applicantId), {
+          completedGigs: increment(1),
+        }),
+      ]);
+
+
+      const chatQuery = query(
+        chatsRef(db),
+        where("gigId", "==", gig.gigId),
+        where("applicant", "==", application.applicantId)
+      );
+      const chatSnapshot = await getDocs(chatQuery);
+      const chatUpdates = chatSnapshot.docs.map((chatDoc) =>
+        updateDoc(chatDoc.ref, {
+          lastUpdate: serverTimestamp(),
+        })
+      );
+      await Promise.all(chatUpdates);
+
+      onGigUpdate({
         ...gig,
         status: "completed",
-        updatedAt: serverTimestamp() as unknown as Timestamp,
-      };
-
-      onGigUpdate(updatedGig);
+      });
     } catch (error) {
-      console.error("Error marking gig as completed:", error);
-      alert("Failed to mark gig as completed. Please try again.");
+      console.error("Error confirming completion:", error);
+      alert("Failed to confirm completion. Please try again.");
     }
   };
 
@@ -141,208 +210,115 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
     navigate(`/app/chat?user=${applicantId}`);
   };
 
-  // Modal JSX
-  const Modal = () => (
-    <>
-      <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"></div>
-      <div className="fixed inset-0 z-50 flex items-center justify-center">
-        <div className="w-full max-w-3xl rounded-lg bg-gray-800 p-6">
-          <h3 className="mb-3 text-xl font-semibold text-white">
-            All Interested Gigglers
-          </h3>
-          <div className="max-h-[400px] overflow-y-auto">
-            {otherApplicants.map((applicant) => (
-              <div key={applicant.userId} className="p-2">
-                    <div className="flex items-center justify-between">
-                    
-                    <div className="flex items-center">
-                    <UserProfilePicture
-                      user={applicant}
-                      size="medium"
-                      hoverDetails={true}
-                      rounded={true}
-                      position="default"
-                    />
-                      
-                    <span className="ml-3 text-white ">
-                      {applicant.displayName} has shown interest in this gig
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <CustomButton
-                      // label="Assign"
-                      icon={FaUserCheck}
-                      onClick={() => handleAssignGig(applicant.userId)}
-                      color="green"
-                      textColor="black"
-                      size="medium"
-                      rounded={true}
-                    />
-                    <CustomButton
-                      // label="Message"
-                      icon={FaRegMessage}
-                      onClick={() => handleMessageClick(applicant.userId)}
-                      color="primary"
-                      textColor="black"
-                      size="medium"
-                      rounded={true}
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="mt-2 flex justify-end">
-            <CustomButton
-              label="Close"
-              onClick={() => setShowModal(false)}
-              color="red"
-              textColor="black"
-              size="small"
-              rounded={true}
-            />
-          </div>
-        </div>
-      </div>
-    </>
-  );
+  const renderApplicationStatus = (application: Application) => {
+    const user = users.find((u) => u.userId === application.applicantId);
+    if (!user) return null;
 
-  return (
-    <div className="relative mt-2 rounded-lg bg-gray-900 p-4">
-      {/* Assigned Giggler Section */}
-      {assignedGiggler && gig.status !== "open" && (
-        <div className="mb-1">
-          <h4 className="mb-2 mt-4 text-2xl font-semibold text-white">
-            Assigned Giggler
-          </h4>
-          <div className="flex items-center justify-between p-2">
+    switch (application.status) {
+      case "pending":
+        return (
+          <div key={application.applicationId} className="p-2">
+            <div className="flex items-center justify-between">
               <div className="flex items-center">
-              <UserProfilePicture
-                user={assignedGiggler}
-                size="medium"
-                hoverDetails={true}
-                rounded={true}
-                position="above"
-              />
-              <span className="ml-3 font-semibold text-white">
-                {gig.status === "completed"
-                  ? `${assignedGiggler.displayName} was assigned`
-                  : `${assignedGiggler.displayName} is assigned`}
-              </span>
-            </div>
-            <div className="flex items-center space-x-2">
-              {gig.status === "awaiting-confirmation" && (
-                <CustomButton
-                  label="Complete"
-                  onClick={handleMarkComplete}
-                  color="green"
-                  textColor="black"
+                <UserProfilePicture
+                  user={user}
                   size="medium"
+                  hoverDetails={true}
                   rounded={true}
+                  position="default"
                 />
-              )}
+                <span className="ml-3 text-white">
+                  {user.displayName} has applied to this gig.
+                </span>
+              </div>
               <CustomButton
-                label="Message"
-                icon={FaRegMessage}
-                onClick={() => handleMessageClick(assignedGiggler.userId)}
-                color="primary"
+                label="Assign Gig"
+                icon={FaUserCheck}
+                onClick={() => handleAssignGig(user.userId)}
+                color="green"
                 textColor="black"
                 size="small"
                 rounded={true}
               />
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Divider */}
-      {assignedGiggler && gig.status !== "open" && (
-        <hr className="my-4 border-t border-gray-700" />
-      )}
-
-      {/* Interested Gigglers Section */}
-      {gig.status === "open" && (
-        <>
-          <h4 className="mb-2 text-2xl font-semibold text-white">
-            Interested Gigglers
-          </h4>
-          <div>
-            {otherApplicants.length > 0 ? (
-              <>
-                {otherApplicants.slice(0, 2).map((applicant, index) => (
-                  <div key={applicant.userId} className="p-2">
-                    <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                    <UserProfilePicture
-                    user={applicant}
-                    size="medium"
-                    hoverDetails={true}
-                    rounded={true}
-                    position="above"
-                    />
-                          <span className="ml-3 font-semibold text-white">
-                            
-                          {applicant.displayName.length > 11 ? (
-                          <>
-                            {applicant.displayName} has shown interest in
-                            <br />
-                            <span className="text-white">this gig</span>
-                          </>
-                        ) : (
-                          <>
-                            {applicant.displayName} has shown interest in this gig
-                          </>
-                        )}
-                        </span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <CustomButton
-                          label="Assign Gig"
-                          icon={FaUserCheck}
-                          onClick={() => handleAssignGig(applicant.userId)}
-                          color="green"
-                          textColor="black"
-                          size="small"
-                          rounded={true}
-                        />
-                        <CustomButton
-                          label="Message"
-                          icon={FaRegMessage}
-                          onClick={() => handleMessageClick(applicant.userId)}
-                          color="primary"
-                          textColor="black"
-                          size="small"
-                          rounded={true}
-                        />
-                      </div>
-                    </div>
-                    {index < otherApplicants.length - 1 && (
-                      <div className="my-2 border-t border-white"></div>
-                    )}
-                  </div>
-                ))}
-                {otherApplicants.length > 2 && (
-                  <div className="mt-1 flex justify-end">
-                    <CustomButton
-                      label="See More"
-                      onClick={() => setShowModal(true)}
-                      color="primary"
-                      textColor="black"
-                      size="small"
-                      rounded={true}
-                    />
-                  </div>
-                )}
-              </>
-            ) : (
-              <p className="text-gray-500">No other applicants yet.</p>
-            )}
+        );
+      case "assigned":
+        return (
+          <div key={application.applicationId} className="p-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <UserProfilePicture
+                  user={user}
+                  size="medium"
+                  hoverDetails={true}
+                  rounded={true}
+                  position="default"
+                />
+                <span className="ml-3 text-white">
+                  {user.displayName} has been assigned this gig.
+                </span>
+              </div>
+            </div>
           </div>
-        </>
-      )}
+        );
+      case "awaiting-lister-completion":
+        return (
+          <div key={application.applicationId} className="p-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <UserProfilePicture
+                  user={user}
+                  size="medium"
+                  hoverDetails={true}
+                  rounded={true}
+                  position="default"
+                />
+                <span className="ml-3 text-white">
+                  {user.displayName} marked the gig as completed.
+                </span>
+              </div>
+              <CustomButton
+                label="Confirm"
+                onClick={() => handleConfirmCompletion(application)}
+                color="blue"
+                textColor="black"
+                size="small"
+                rounded={true}
+              />
+            </div>
+          </div>
+        );
+      case "completed":
+        return (
+          <div key={application.applicationId} className="p-2">
+            <div className="flex items-center">
+              <UserProfilePicture
+                user={user}
+                size="medium"
+                hoverDetails={true}
+                rounded={true}
+                position="default"
+              />
+              <span className="ml-3 text-white">
+                Completed by {user.displayName}.
+              </span>
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
-      {/* Use React Portal for the Modal */}
-      {showModal && ReactDOM.createPortal(<Modal />, document.body)}
+  return (
+    <div className="relative mt-2 rounded-lg bg-gray-900 p-4">
+      <h4 className="mb-2 text-2xl font-semibold text-white">
+        Interested Gigglers
+      </h4>
+      <div className="max-h-[400px] overflow-y-auto">
+        {applicantStatuses.map(renderApplicationStatus)}
+      </div>
     </div>
   );
 };
