@@ -279,7 +279,7 @@ const GigDetails: React.FC<GigDetailsProps> = ({
     <>
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm"></div>
       <div className="fixed inset-0 z-50 flex items-center justify-center">
-        <div className="w-3/4 max-w-4xl overflow-hidden rounded-lg bg-gray-800 p-8">
+        <div className="w-3/4 max-w-4xl overflow-hidden rounded-lg bg-white p-8">
           {renderGigDetails(true)}
           <div className="mt-4 flex justify-end">
             <CustomButton
@@ -298,7 +298,7 @@ const GigDetails: React.FC<GigDetailsProps> = ({
 
   return (
     <div className="relative">
-      <div className="rounded-lg bg-gray-100 p-4 shadow-lg">
+      <div className="rounded-lg bg-white-100 p-4">
         {renderGigDetails()}
       </div>
 

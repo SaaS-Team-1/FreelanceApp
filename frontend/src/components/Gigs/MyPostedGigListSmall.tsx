@@ -7,6 +7,8 @@ import CustomButton from "@/components/Buttons/CustomButton";
 import { UndoButton } from "@/components/Buttons/UndoButton";
 import { useNavigate } from "react-router-dom";
 import { FaCheck } from "react-icons/fa";
+import { HiX } from "react-icons/hi";
+
 
 
 interface PostedGigListSmallProps {
@@ -74,23 +76,23 @@ function PostedGigListSmall({
       {gigs.map(({ gig, lister }, index) => (
         <div
           key={index}
-          className={`relative rounded-lg p-4 shadow-lg transition-transform duration-200 ease-in-out 
-            ${selectedGig && selectedGig.title === gig.title
-              ? "bg-[rgba(5,54,78,0.59)] text-white"
-              : "bg-gray-900 text-gray-300"
-            } ${enableSelection ? "cursor-pointer" : ""}
-            ${hoverEffect ? "hover:bg-gray-700" : ""}`}
+          className={`relative rounded-lg p-4 shadow-sm transition-transform duration-200 ease-in-out ${
+            selectedGig && selectedGig.title === gig.title
+              ? "border border-blue-400 bg-blue-100 text-blue-700"
+              : "bg-white text-slate-800"
+          } ${enableSelection ? "cursor-pointer" : ""} 
+            ${hoverEffect ? "hover:bg-slate-100" : ""}`}
           onClick={() => enableSelection && onSelectGig && onSelectGig(gig)}
         >
 
 
           {/* Header with title and date */}
           <div className="mb-2">
-            <h3 className="h-4 overflow-hidden text-ellipsis whitespace-normal  break-words text-sm font-semibold text-white">
+            <h3 className="whitespace-normal break-words text-lg font-semibold text-slate-900 pr-[120px]">
               {gig.title}
             </h3>
             {showDateWithLine && (
-              <p className="mt-1 text-xs text-orange-500">
+              <p className="mt-1 text-xs text-slate-500">
                 {formatDate(gig.dueDate)}
               </p>
             )}
@@ -110,11 +112,17 @@ function PostedGigListSmall({
                   color="green"
                   textColor="white"
                   size="small"
-                  rounded={true}
+                  rounded={false}
                 />
               )}
               {showUndoButton && (
-                <UndoButton 
+                <CustomButton
+                  label="Undo"
+                  icon={HiX}
+                  color="red"
+                  textColor="black"
+                  size="small"
+                  rounded={false}
                   onClick={() => onUndoClick && onUndoClick(gig.gigId)} 
                 />
               )}
@@ -129,7 +137,7 @@ function PostedGigListSmall({
                   size="medium"
                   icon={FaComments}
                   iconPosition="middle"
-                  rounded={true}
+                  rounded={false}
                 />
               )}
               {showSeeMoreButton && (
@@ -139,7 +147,7 @@ function PostedGigListSmall({
                   color="primary"
                   textColor="white"
                   size="small"
-                  rounded={true}
+                  rounded={false}
                 />
               )}
             </div>

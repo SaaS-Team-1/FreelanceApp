@@ -333,7 +333,7 @@ function ScheduleView() {
         className="mr-10 flex h-[calc(100vh-8rem)] snap-x snap-mandatory gap-6 scroll-smooth hide-scrollbar">
         {/* Page 1: Scheduled Gigs and Pending Gigs */}
         <div className="flex size-full w-1/2 shrink-0 snap-center gap-6">
-        <div className="scrollbar size-full overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg text-white">
+        <div className="scrollbar light:text-slate-800 size-full overflow-y-scroll rounded-lg bg-slate-200 p-4">
             <h1 className="mb-3 text-xl font-bold dark:text-white">Pending Gigs</h1>
             <PostedGigListSmall
               gigs={pendingGigs}
@@ -344,8 +344,13 @@ function ScheduleView() {
               onSeeMoreClick={handleSeeMoreClick}
             />
           </div>
-          <div className="scrollbar size-full overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
-            <h1 className="mb-3 text-xl font-bold text-white">Scheduled Gigs</h1>
+
+          {/* Divider */}
+          <div className="h-full w-px bg-slate-400"></div>
+          
+
+          <div className="scrollbar light:text-slate-800 size-full overflow-y-scroll rounded-lg bg-slate-200 p-4">
+            <h1 className="mb-3 text-xl font-bold dark:text-white">Scheduled Gigs</h1>
             <PostedGigListSmall
               gigs={inProgressGigs}
               showDateWithLine={true}
@@ -356,14 +361,19 @@ function ScheduleView() {
               onSeeMoreClick={handleSeeMoreClick}
             />
           </div>
+
+          {/* Divider */}
+          <div className="h-full w-px bg-slate-400"></div>
           
         </div>
+
+        
         
 
         {/* Page 2: Awaiting Approval and Completed Gigs */}
         <div className="flex  w-1/2 shrink-0 snap-center gap-6"> 
-          <div className="scrollbar h-full w-1/2 overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
-            <h1 className="mb-3 text-xl font-bold text-white">Awaiting Approval</h1>
+          <div className="scrollbar light:text-slate-800 size-full overflow-y-scroll rounded-lg bg-slate-200 p-4">
+            <h1 className="mb-3 text-xl font-bold dark:text-white">Awaiting Approval</h1>
             <PostedGigListSmall
               gigs={awaitingApprovalGigs}
               showDateWithLine={true}
@@ -372,8 +382,12 @@ function ScheduleView() {
               onSeeMoreClick={handleSeeMoreClick} 
             />
           </div>
-          <div className="scrollbar size-full w-1/2 overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
-            <h1 className="mb-3 text-xl font-bold text-white">Completed Gigs</h1>
+
+          {/* Divider */}
+          <div className="h-full w-px bg-slate-400"></div>
+
+          <div className="scrollbar light:text-slate-800 size-full overflow-y-scroll rounded-lg bg-slate-200 p-4">
+            <h1 className="mb-3 text-xl font-bold dark:text-white">Completed Gigs</h1>
             <PostedGigListSmall
               gigs={completedGigs}
               showDateWithLine={true}
@@ -388,7 +402,7 @@ function ScheduleView() {
       {/* Gig Details Popup */}
       {selectedGig && isGigDetailsOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
-          <div className="w-[800px] rounded-lg bg-gray-900 p-6 shadow-lg">
+          <div className="w-[800px] rounded-lg bg-slate-200 p-6 shadow-lg">
             <GigDetails
               gig={selectedGig}
               user={selectedLister}
@@ -405,7 +419,7 @@ function ScheduleView() {
                 color="red"
                 textColor="black"
                 size="medium"
-                rounded={true}
+                rounded={false}
               />
             </div>
           </div>
