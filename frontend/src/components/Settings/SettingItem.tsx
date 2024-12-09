@@ -21,8 +21,8 @@ const SettingItem = ({
   return (
     <div className="flex items-center justify-between py-4">
       <div className="flex flex-col">
-        <span className="text-sm font-semibold text-white">{name}</span>
-        {subtitle && <span className="text-xs text-gray-400">{subtitle}</span>}
+        <span className="text-sm font-semibold text-slate-800">{name}</span>
+        {subtitle && <span className="text-xs text-gray-500">{subtitle}</span>}
       </div>
       {type === "arrow" && <ArrowButton />}
       {type === "toggle" && (

@@ -35,53 +35,56 @@ const ChangePassword: React.FC = () => {
 
   return (
     <div>
-      <div onClick={openModal}>
-        <ArrowButton />
-      </div>
+      <button
+        onClick={openModal}
+        className="rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+      >
+        Change Password
+      </button>
 
       {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="w-full max-w-sm rounded-lg bg-gray-800 p-6 shadow-lg">
-            <h2 className="mb-4 text-lg font-bold text-white">
+          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+            <h2 className="mb-4 text-xl font-semibold text-gray-800">
               Change Password
             </h2>
 
             {/* Password Fields */}
             <div className="space-y-4">
               <div>
-                <label className="mb-2 block text-sm text-gray-300">
+                <label className="mb-2 block text-sm font-medium text-gray-600">
                   Old Password
                 </label>
                 <input
                   type="password"
                   value={oldPassword}
                   onChange={(e) => setOldPassword(e.target.value)}
-                  className="w-full rounded-md bg-gray-700 p-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-md border border-gray-300 bg-gray-50 p-2 text-gray-800 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                   placeholder="Enter old password"
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm text-gray-300">
+                <label className="mb-2 block text-sm font-medium text-gray-600">
                   New Password
                 </label>
                 <input
                   type="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full rounded-md bg-gray-700 p-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-md border border-gray-300 bg-gray-50 p-2 text-gray-800 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                   placeholder="Enter new password"
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm text-gray-300">
+                <label className="mb-2 block text-sm font-medium text-gray-600">
                   Confirm New Password
                 </label>
                 <input
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full rounded-md bg-gray-700 p-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-md border border-gray-300 bg-gray-50 p-2 text-gray-800 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                   placeholder="Confirm new password"
                 />
               </div>
@@ -89,18 +92,18 @@ const ChangePassword: React.FC = () => {
 
             {/* Buttons */}
             <div className="mt-6 flex justify-end space-x-4">
-              <CustomButton
-                label="Cancel"
+              <button
                 onClick={closeModal}
-                color="gray"
-                textColor="white"
-              />
-              <CustomButton
-                label="Confirm"
+                className="rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-600 hover:bg-gray-100"
+              >
+                Cancel
+              </button>
+              <button
                 onClick={handleConfirm}
-                color="primary"
-                textColor="white"
-              />
+                className="rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+              >
+                Confirm
+              </button>
             </div>
           </div>
         </div>
