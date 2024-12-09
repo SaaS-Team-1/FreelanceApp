@@ -65,37 +65,57 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm" onClick={onClose}>
-      <div className="scrollbar w-[800px] max-w-full rounded-lg bg-gray-900 text-white shadow-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-        <h2 className="m-4 text-3xl font-bold">Edit Profile</h2>
-        <div className="space-y-4 p-4">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="scrollbar w-[800px] max-w-full rounded-lg bg-white shadow-lg max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="sticky top-0 z-10 flex justify-between items-center p-4 border-b bg-white shadow-sm">
+          <h2 className="text-2xl font-semibold text-gray-800">Edit Profile</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-800"
+          >
+            ✕
+          </button>
+        </div>
+        <div className="p-6 space-y-6">
           {/* Display Name Input */}
           <div>
-            <label className="mb-2 block text-sm font-bold">Display Name</label>
+            <label className="mb-1 block text-sm font-medium text-gray-700">
+              Display Name
+            </label>
             <input
               type="text"
               value={updatedUser.displayName}
               onChange={(e) =>
                 setUpdatedUser({ ...updatedUser, displayName: e.target.value })
               }
-              className="w-full rounded border-gray-700 bg-gray-800 p-2 text-white"
+              className="w-full rounded border border-gray-300 bg-gray-100 p-2 text-gray-800"
             />
           </div>
           {/* Email Input */}
           <div>
-            <label className="mb-2 block text-sm font-bold">Email</label>
+            <label className="mb-1 block text-sm font-medium text-gray-700">
+              Email
+            </label>
             <input
               type="email"
               value={updatedUser.email}
               onChange={(e) =>
                 setUpdatedUser({ ...updatedUser, email: e.target.value })
               }
-              className="w-full rounded border-gray-700 bg-gray-800 p-2 text-white"
+              className="w-full rounded border border-gray-300 bg-gray-100 p-2 text-gray-800"
             />
           </div>
           {/* Bio Input */}
           <div>
-            <label className="mb-2 block text-sm font-bold">Bio</label>
+            <label className="mb-1 block text-sm font-medium text-gray-700">
+              Bio
+            </label>
             <textarea
               value={updatedUser.profile.bio}
               onChange={(e) =>
@@ -104,130 +124,42 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                   profile: { ...updatedUser.profile, bio: e.target.value },
                 })
               }
-              className="h-40 w-full rounded border-gray-700 bg-gray-800 p-2 text-white"
+              className="h-40 w-full rounded border border-gray-300 bg-gray-100 p-2 text-gray-800"
             />
           </div>
-          {/* Location Input */}
-          <div>
-            <label className="mb-2 block text-sm font-bold">Location</label>
-            <input
-              type="text"
-              value={updatedUser.profile.location}
-              onChange={(e) =>
-                setUpdatedUser({
-                  ...updatedUser,
-                  profile: { ...updatedUser.profile, location: e.target.value },
-                })
-              }
-              className="w-full rounded border-gray-700 bg-gray-800 p-2 text-white"
-            />
-          </div>
-          {/* Profile Picture Input */}
-          <div>
-            <label className="mb-2 block text-sm font-bold">
-              Profile Picture URL
-            </label>
-            <input
-              type="text"
-              value={updatedUser.profile.picture}
-              onChange={(e) =>
-                setUpdatedUser({
-                  ...updatedUser,
-                  profile: { ...updatedUser.profile, picture: e.target.value },
-                })
-              }
-              className="w-full rounded border-gray-700 bg-gray-800 p-2 text-white"
-            />
-          </div>
-          {/* Credits Input */}
-          <div>
-            <label className="mb-2 block text-sm font-bold">Credits</label>
-            <input
-              type="number"
-              value={updatedUser.profile.credits}
-              onChange={(e) =>
-                setUpdatedUser({
-                  ...updatedUser,
-                  profile: {
-                    ...updatedUser.profile,
-                    credits: Number(e.target.value),
-                  },
-                })
-              }
-              className="w-full rounded border-gray-700 bg-gray-800 p-2 text-white"
-            />
-          </div>
-          <div>
-            <label className="mb-2 block text-sm font-bold">Degree</label>
-            <input
-              type="text"
-              value={updatedUser.profile.degree}
-              onChange={(e) =>
-                setUpdatedUser({
-                  ...updatedUser,
-                  profile: {
-                    ...updatedUser.profile,
-                    degree: String(e.target.value),
-                  },
-                })
-              }
-              className="w-full rounded border-gray-700 bg-gray-800 p-2 text-white"
-            />
-          </div>
-          <div>
-            <label className="mb-2 block text-sm font-bold">Skills</label>
-            <input
-              type="text"
-              value={updatedUser.profile.skills}
-              onChange={(e) =>
-                setUpdatedUser({
-                  ...updatedUser,
-                  profile: {
-                    ...updatedUser.profile,
-                    skills: String(e.target.value),
-                  },
-                })
-              }
-              className="w-full rounded border-gray-700 bg-gray-800 p-2 text-white"
-            />
-          </div>
-          <div>
-            <label className="mb-2 block text-sm font-bold">Languages</label>
-            <input
-              type="text"
-              value={updatedUser.profile.languages}
-              onChange={(e) =>
-                setUpdatedUser({
-                  ...updatedUser,
-                  profile: {
-                    ...updatedUser.profile,
-                    languages: String(e.target.value),
-                  },
-                })
-              }
-              className="w-full rounded border-gray-700 bg-gray-800 p-2 text-white"
-            />
-          </div>
-          <div>
-            <label className="mb-2 block text-sm font-bold">Faculty</label>
-            <input
-              type="text"
-              value={updatedUser.profile.faculty}
-              onChange={(e) =>
-                setUpdatedUser({
-                  ...updatedUser,
-                  profile: {
-                    ...updatedUser.profile,
-                    faculty: String(e.target.value),
-                  },
-                })
-              }
-              className="w-full rounded border-gray-700 bg-gray-800 p-2 text-white"
-            />
-          </div>
+          {/* Other Inputs */}
+          {[
+            { label: "Location", field: "location" },
+            { label: "Profile Picture URL", field: "picture" },
+            { label: "Credits", field: "credits", type: "number" },
+            { label: "Degree", field: "degree" },
+            { label: "Skills", field: "skills" },
+            { label: "Languages", field: "languages" },
+            { label: "Faculty", field: "faculty" },
+          ].map(({ label, field, type = "text" }) => (
+            <div key={field}>
+              <label className="mb-1 block text-sm font-medium text-gray-700">
+                {label}
+              </label>
+              <input
+                type={type}
+                value={updatedUser.profile[field] || ""}
+                onChange={(e) =>
+                  setUpdatedUser({
+                    ...updatedUser,
+                    profile: {
+                      ...updatedUser.profile,
+                      [field]: type === "number" ? Number(e.target.value) : e.target.value,
+                    },
+                  })
+                }
+                className="w-full rounded border border-gray-300 bg-gray-100 p-2 text-gray-800"
+              />
+            </div>
+          ))}
         </div>
         {/* Buttons */}
-        <div className="py-2 flex w-full h-14 justify-end gap-4 sticky bottom-0 bg-gray-900">
+        <div className="sticky bottom-0 flex items-center justify-end gap-4 border-t bg-white p-4">
           <CustomButton
             label="Cancel"
             onClick={onClose}
@@ -235,7 +167,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
             textColor="primary"
             size="small"
             outline={true}
-            rounded={true}
+            rounded={false}
             customStyle={{ borderColor: "#44B0E8" }}
           />
           <CustomButton
@@ -244,7 +176,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
             color="primary"
             textColor="white"
             size="small"
-            rounded={true}
+            rounded={false}
           />
         </div>
       </div>
