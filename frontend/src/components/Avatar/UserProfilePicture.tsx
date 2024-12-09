@@ -1,5 +1,6 @@
 import React from "react";
 import { User } from "@/utils/database/schema";
+import UserLevelDisplay from "../Common/UserLevelDisplay";
 
 const sizeClasses = {
   small: "w-8 h-8 text-sm",
@@ -64,7 +65,7 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
               alt={displayName}
               className="size-10 rounded-full border border-gray-200 object-cover dark:border-gray-700"
             />
-            <div className="ml-3">
+            <div className="mx-3">
               <p className="text-base font-semibold text-gray-900 dark:text-white">
                 {displayName}
               </p>
@@ -74,6 +75,7 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
                 </p>
               )}
             </div>
+            <UserLevelDisplay user={user} size="small" textColor="text-black" />
           </div>
           <div className="mb-3">
             {bio && (

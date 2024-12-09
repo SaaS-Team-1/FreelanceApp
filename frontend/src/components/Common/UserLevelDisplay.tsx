@@ -4,9 +4,10 @@ import { User } from "@/utils/database/schema";
 interface UserLevelDisplayProps {
   user: User; // Pass the entire user object
   size?: "small" | "medium" | "large"; // Optional size prop
+  textColor?: "text-black" | "text-white";
 }
 
-const UserLevelDisplay: React.FC<UserLevelDisplayProps> = ({ user, size = "medium" }) => {
+const UserLevelDisplay: React.FC<UserLevelDisplayProps> = ({ user, size = "medium", textColor = "text-white"}) => {
   // Function to calculate the user level
   const calculateUserLevel = (completedGigs: number): number => {
     if (completedGigs >= 15) return 5;
@@ -44,7 +45,7 @@ const UserLevelDisplay: React.FC<UserLevelDisplayProps> = ({ user, size = "mediu
 
   return (
     <div
-      className={`flex items-center justify-center rounded-full font-bold text-white ${sizeStyles[size]} ${levelBorderColor}`}
+      className={`flex items-center justify-center rounded-full font-bold ${textColor} ${sizeStyles[size]} ${levelBorderColor}`}
     >
       {userLevel}
     </div>

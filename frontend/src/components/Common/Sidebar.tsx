@@ -89,9 +89,10 @@ function Sidebar() {
             hoverDetails={true}
             rounded
           />
-          <div className="flex flex-row gap-4">
+          {/* Align User Level Display and Name */}
+          <div className="mt-2 flex flex-row items-center gap-4">
             <UserLevelDisplay user={userDb} size="small" />
-            <h2 className="mt-2 text-lg font-semibold text-blue-300">
+            <h2 className="text-lg font-semibold text-blue-300">
               {userDb.displayName}
             </h2>
           </div>
