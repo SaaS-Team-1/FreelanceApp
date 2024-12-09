@@ -13,8 +13,8 @@ function MyPostedGigListCompressed({
   const navigate = useNavigate(); // Initialize navigate
 
   return (
-    <div className="scrollbar h-96 max-w-sm overflow-y-scroll rounded-xl border border-gray-700 bg-gray-800 p-4 shadow-lg">
-      <h2 className="header-bg-extension sticky top-0 z-10 bg-gray-800 p-2 text-center text-lg text-white">
+    <div className="h-96 max-w-sm overflow-y-scroll rounded-xl border border-slate-300 bg-white p-6 shadow-lg">
+      <h2 className="sticky top-0 z-10 mb-4 rounded-t-xl bg-white p-4 text-center text-xl font-semibold text-slate-800">
         My Posted Gigs
       </h2>
       {gigs.map((gig, index) => (

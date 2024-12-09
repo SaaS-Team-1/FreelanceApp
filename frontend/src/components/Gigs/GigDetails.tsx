@@ -135,7 +135,7 @@ const GigDetails: React.FC<GigDetailsProps> = ({
         color={"primary"}
         textColor={"black"}
         size="medium"
-        rounded={true}
+        rounded={false}
         icon={FaTrashAlt}
         iconPosition="left"
         customStyle={{
@@ -165,7 +165,7 @@ const GigDetails: React.FC<GigDetailsProps> = ({
               color={"primary"}
               textColor={"black"}
               size="medium"
-              rounded={true}
+              rounded={false}
               icon={FaPen}
               iconPosition="left"
               customStyle={{
@@ -288,7 +288,7 @@ const GigDetails: React.FC<GigDetailsProps> = ({
               color="red"
               textColor="black"
               size="medium"
-              rounded={true}
+              rounded={false}
             />
           </div>
         </div>
@@ -339,7 +339,7 @@ const GigDetails: React.FC<GigDetailsProps> = ({
                     textColor="primary"
                     size="small"
                     outline={true}
-                    rounded={true}
+                    rounded={false}
                   />
                   <CustomButton
                     label="Confirm"
@@ -347,7 +347,7 @@ const GigDetails: React.FC<GigDetailsProps> = ({
                     color="red"
                     textColor="black"
                     size="small"
-                    rounded={true}
+                    rounded={false}
                   />
                 </div>
               </div>

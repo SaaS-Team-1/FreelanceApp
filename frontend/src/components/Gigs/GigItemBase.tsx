@@ -26,8 +26,8 @@ const GigItemBase: React.FC<GigItemBaseProps> = ({
       <div className="flex flex-1 flex-col">
         <div className="flex items-start justify-between">
           <div className="flex flex-col text-left">
-            <h2 className="text-sm font-medium text-white">{title}</h2>
-            <span className="text-xs text-gray-400">
+            <h2 className="text-sm font-medium text-slate-800">{title}</h2>
+            <span className="text-xs text-slate-400">
               {dueDate.toDate().toLocaleDateString()}{" "}
               {/* Convert Timestamp to readable date */}
             </span>

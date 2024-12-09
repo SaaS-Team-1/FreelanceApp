@@ -8,8 +8,8 @@ interface NotificationListProps {
 
 const NotificationList = ({ notifications }: NotificationListProps) => {
   return (
-    <div className="scrollbar h-96 max-w-sm overflow-y-scroll rounded-xl border border-gray-700 bg-gray-800 p-4 shadow-lg">
-      <h2 className="header-bg-extension sticky top-0 z-10 mb-4 rounded-t-xl bg-gray-800 p-2 text-center text-lg text-white">
+    <div className="h-96 max-w-sm overflow-y-scroll rounded-xl border border-300-700 bg-white p-6 shadow-lg">
+      <h2 className="sticky top-0 z-10 mb-6 rounded-t-xl p-4 text-center text-xl font-semibold text-slate-800">
         Notifications
       </h2>
       {notifications.map((notification, index) => (
@@ -20,7 +20,7 @@ const NotificationList = ({ notifications }: NotificationListProps) => {
             createdAt={notification.createdAt}
           />
           {index < notifications.length - 1 && (
-            <hr className="my-4 border-gray-700" /> // Divider between items
+            <hr className="my-4 border-slate-600" /> // Divider between items
           )}
         </React.Fragment>
       ))}

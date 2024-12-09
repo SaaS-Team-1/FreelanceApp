@@ -208,7 +208,7 @@ const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
           <CustomButton
             label={mode === "edit" ? "Save Changes" : "Create Gig"}
             onClick={handleSave}
-            color="black"
+            color="primary"
             textColor="white"
             size="medium"
             rounded={false}

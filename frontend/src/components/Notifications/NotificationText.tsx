@@ -19,7 +19,7 @@ const NotificationText = ({ text, time }: NotificationTextProps) => {
 
   return (
     <div className="flex flex-col">
-      <p className="text-sm text-white">
+      <p className="text-sm text-slate-800">
         {text && (isExpanded || text.length <= MAX_LENGTH) ? (
           text
         ) : (
