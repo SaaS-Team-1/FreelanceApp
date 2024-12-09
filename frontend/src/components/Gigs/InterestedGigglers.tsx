@@ -144,7 +144,7 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
       });
     } catch (error) {
       console.error("Error assigning gig:", error);
-      alert("Failed to assign gig. Please try again.");
+      alert("Failed to assign gig / insufficient funds. Please try again.");
     }
   };
 
@@ -227,7 +227,7 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
                   rounded={true}
                   position="default"
                 />
-                <span className="ml-3 text-white">
+                <span className="ml-3 text-slate-800">
                   {user.displayName} has applied to this gig.
                 </span>
               </div>
@@ -264,7 +264,7 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
                   rounded={true}
                   position="default"
                 />
-                <span className="ml-3 text-white">
+                <span className="ml-3 text-slate-800">
                   {user.displayName} has been assigned this gig.
                 </span>
               </div>
@@ -283,7 +283,7 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
                   rounded={true}
                   position="default"
                 />
-                <span className="ml-3 text-white">
+                <span className="ml-3 text-slate-800">
                   {user.displayName} marked the gig as completed.
                 </span>
               </div>
@@ -321,8 +321,8 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
   };
 
   return (
-    <div className="relative mt-2 rounded-lg bg-slate-800 p-4">
-      <h4 className="mb-2 text-2xl font-semibold text-white">
+    <div className="relative mt-6 rounded-lg bg-white p-4">
+      <h4 className="mb-2 text-2xl font-semibold text-slate-800">
         Interested Gigglers
       </h4>
       <div className="max-h-[400px] overflow-y-auto">

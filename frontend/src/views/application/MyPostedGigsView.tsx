@@ -222,7 +222,7 @@ function MyPostedGigsView() {
 
   return (
     <div className="flex h-[calc(100vh-4rem)] w-full space-x-6 p-4">
-      <div className="scrollbar h-full w-1/2 overflow-y-scroll bg-slate-200 rounded-lg p-4 shadow-sm">
+      <div className="scrollbar h-full w-1/2 overflow-y-scroll bg-slate-200 rounded-lg p-4">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-2xl font-semibold text-slate-800">
             My Posted Gigs
@@ -268,7 +268,7 @@ function MyPostedGigsView() {
         />
       </div>
 
-      <div className="-full w-1/2 overflow-y-scroll bg-white rounded-lg p-6 shadow-sm">
+      <div className="-full w-1/2 bg-slate-200 rounded-lg p-6">
           {selectedGig ? (
             <>
               <GigDetails
