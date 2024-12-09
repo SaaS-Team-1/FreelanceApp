@@ -298,7 +298,7 @@ const GigDetails: React.FC<GigDetailsProps> = ({
 
   return (
     <div className="relative">
-      <div className="rounded-lg bg-white-100 p-4">
+      <div className="rounded-lg bg-white p-4 shadow-lg">
         {renderGigDetails()}
       </div>
 
