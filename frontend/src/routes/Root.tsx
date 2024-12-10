@@ -1,4 +1,7 @@
-import { getAuthInstance, getFunctionsInstance } from "@/utils/firebase/firebaseConfig";
+import {
+  getAuthInstance,
+  getFunctionsInstance,
+} from "@/utils/firebase/firebaseConfig";
 import {
   useFirebaseApp,
   AuthProvider,
@@ -13,14 +16,11 @@ import { Outlet } from "react-router-dom";
 export default function Root() {
   const app = useFirebaseApp();
   const { data: functionsInstance } = useInitFunctions(getFunctionsInstance);
-
   const content = (
     <AuthProvider sdk={getAuthInstance(app)}>
       <FunctionsProvider sdk={functionsInstance as Functions}>
-
-      <Outlet />
+        <Outlet />
       </FunctionsProvider>
-
     </AuthProvider>
   );
 

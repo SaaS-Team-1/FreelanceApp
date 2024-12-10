@@ -1,16 +1,13 @@
 import { useState, useEffect } from "react";
 import { useFirestore, useUser } from "@/utils/reactfire";
 import {
-  getDocs,
   query,
   where,
   orderBy,
   doc,
   getDoc,
-  limit,
   onSnapshot,
   Timestamp,
-  serverTimestamp
 } from "firebase/firestore";
 import {
   chatsRef,
@@ -54,8 +51,6 @@ function ChatPage() {
   const [chatPartner, setChatPartner] = useState<any | null>(null);
   const [isGigDetailsOpen, setIsGigDetailsOpen] = useState(false);
 
-
-
   const [hasInitializedChat, setHasInitializedChat] = useState(false);
 
   useEffect(() => {
@@ -64,11 +59,11 @@ function ChatPage() {
 
       const listerChatsQuery = query(
         chatsRef(db),
-        where("listerId", "==", user.uid)
+        where("listerId", "==", user.uid),
       );
       const applicantChatsQuery = query(
         chatsRef(db),
-        where("applicantId", "==", user.uid)
+        where("applicantId", "==", user.uid),
       );
 
       // Combine real-time listeners for both lister and applicant chats
@@ -81,14 +76,17 @@ function ChatPage() {
         updateChatsState(listerChats);
       });
 
-      const unsubscribeApplicant = onSnapshot(applicantChatsQuery, (snapshot) => {
-        const applicantChats = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as ExtendedChat[];
+      const unsubscribeApplicant = onSnapshot(
+        applicantChatsQuery,
+        (snapshot) => {
+          const applicantChats = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          })) as ExtendedChat[];
 
-        updateChatsState(applicantChats);
-      });
+          updateChatsState(applicantChats);
+        },
+      );
 
       const updateChatsState = async (newChats: ExtendedChat[]) => {
         const enrichedChats = await Promise.all(
@@ -109,28 +107,30 @@ function ChatPage() {
               partnerName: partnerData?.displayName || "Unknown User",
               gigTitle: truncateString(gigData?.title || "Untitled Gig", 30),
             };
-          })
+          }),
         );
 
         setChats((prevChats) => {
           const updatedChatsMap = new Map<string, ExtendedChat>(
-            prevChats.map((chat) => [chat.chatId, chat])
+            prevChats.map((chat) => [chat.chatId, chat]),
           );
 
           enrichedChats.forEach((chat) => {
             updatedChatsMap.set(chat.chatId, chat);
           });
 
-          const updatedChats = Array.from(updatedChatsMap.values()).sort((a, b) => {
-            const aTime = a.lastUpdate?.seconds || 0;
-            const bTime = b.lastUpdate?.seconds || 0;
-            return bTime - aTime;
-          });
+          const updatedChats = Array.from(updatedChatsMap.values()).sort(
+            (a, b) => {
+              const aTime = a.lastUpdate?.seconds || 0;
+              const bTime = b.lastUpdate?.seconds || 0;
+              return bTime - aTime;
+            },
+          );
 
           // Select the top chat only if it hasn't been initialized
           if (!hasInitializedChat && updatedChats.length > 0) {
             setSelectedChat(updatedChats[0]);
-            setHasInitializedChat(true); 
+            setHasInitializedChat(true);
           }
 
           return updatedChats;
@@ -146,7 +146,6 @@ function ChatPage() {
     }
   }, [user, db, hasInitializedChat]);
 
-  
   useEffect(() => {
     const fetchDetails = async () => {
       if (selectedChat) {
@@ -180,29 +179,28 @@ function ChatPage() {
         console.error("Invalid chat data: Missing chatId");
         return;
       }
-  
+
       const q = query(
         chatMessagesRef(db),
         where("chatId", "==", selectedChat.chatId),
-        orderBy("timestamp", "asc")
+        orderBy("timestamp", "asc"),
       );
-  
+
       const unsubscribe = onSnapshot(q, (snapshot) => {
         const messagesData = snapshot.docs.map((doc) => {
           const data = doc.data();
           return {
             id: doc.id,
             ...data,
-            timestamp: data.timestamp || null, 
+            timestamp: data.timestamp || null,
           };
         });
         setMessages(messagesData);
       });
-  
+
       return () => unsubscribe();
     }
   }, [selectedChat, db]);
-  
 
   const truncateString = (str: string, maxLength: number) => {
     return str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
@@ -231,7 +229,7 @@ function ChatPage() {
       chat.chatId === selectedChat.chatId
         ? {
             ...chat,
-            lastUpdate: Timestamp.now(), 
+            lastUpdate: Timestamp.now(),
           }
         : chat,
     );
@@ -251,37 +249,34 @@ function ChatPage() {
     navigate("/app/posted-gigs");
   };
 
-
-
   useEffect(() => {
     if (gig?.gigId) {
       const gigRef = doc(gigsRef(db), gig.gigId);
       const unsubscribeGig = onSnapshot(gigRef, (doc) => {
         setGig(doc.data() as Gig);
       });
-  
+
       return () => unsubscribeGig();
     }
   }, [gig?.gigId, db]);
-  
+
   useEffect(() => {
     if (application?.applicationId) {
       const appRef = doc(applicationsRef(db), application.applicationId);
       const unsubscribeApp = onSnapshot(appRef, (doc) => {
         setApplication(doc.data() as Application);
       });
-  
+
       return () => unsubscribeApp();
     }
   }, [application?.applicationId, db]);
-  
-
+  if (!user) return;
   return (
     <div className="flex w-full justify-center rounded-xl p-4 ">
       {!chatsLoading ? (
         <>
           <div className="flex h-[calc(100vh-8rem)] w-full justify-center lg:max-w-[60vw]">
-            <div className="w-3/5 scrollbar overflow-y-auto border-r bg-gray-800">
+            <div className="scrollbar w-3/5 overflow-y-auto border-r bg-gray-800">
               <h2 className="p-4 text-lg font-bold text-white">Active Chats</h2>
               {chats.map((chat) => (
                 <div
@@ -306,28 +301,23 @@ function ChatPage() {
               ))}
             </div>
 
-            <div className="w-full flex size-full flex-col overflow-y-auto bg-slate-600">
+            <div className="flex size-full w-full flex-col overflow-y-auto bg-slate-600">
               {selectedChat ? (
                 <>
                   <ChatHeader
-                    user={{
-                      name: chatPartner?.displayName || "Unknown User",
-                      profilePicture: chatPartner?.profile?.picture || "",
-                      bio: chatPartner?.profile?.bio,
-                      location: chatPartner?.profile?.location,
-                      completedGigs: chatPartner?.completedGigs,
-                      averageRating: chatPartner?.averageRating,
-                    }}
+                    user={user}
+                    chatPartner={chatPartner}
                     status={
                       user?.uid === selectedChat?.listerId
                         ? gig?.status || "Unknown"
                         : application?.status || "Unknown"
                     }
+                    gig={gig}
                     isLister={user?.uid === selectedChat?.listerId}
                     onSeeGigDetails={() => setIsGigDetailsOpen(true)}
                   />
 
-                  <div className="w-full scrollbar flex size-full flex-col overflow-y-scroll bg-gray-800 p-4">
+                  <div className="scrollbar flex size-full w-full flex-col overflow-y-scroll bg-gray-800 p-4">
                     <ChatWindow
                       messages={messages.map((message) => ({
                         text: message.content,
@@ -377,11 +367,10 @@ function ChatPage() {
               lister={chatPartner || null}
               onClose={() => setIsGigDetailsOpen(false)}
               currentUserId={user.uid}
-              currentUser={user as User} 
+              currentUser={user as User}
               onGoToMyGigs={handleGoToMyGigs}
             />
           )}
-
         </>
       ) : (
         <Loading />
@@ -391,12 +380,3 @@ function ChatPage() {
 }
 
 export default ChatPage;
-
-
-
-
-
-
-
-
-
