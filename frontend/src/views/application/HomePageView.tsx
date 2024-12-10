@@ -1,13 +1,13 @@
 import { HiSearch } from "react-icons/hi";
 import { useState, useEffect } from "react";
 import {
-  Timestamp,
   collection,
   query,
   where,
   getDocs,
   orderBy,
   updateDoc,
+  Timestamp,
 } from "firebase/firestore";
 import { useUser, useFirestore } from "@/utils/reactfire";
 import { Gig, User, Notification } from "@/utils/database/schema";
@@ -17,6 +17,7 @@ import FilterButton from "@/components/Buttons/FilterButton"; // Assuming this c
 import MyPostedGigListCompressed from "@/components/Gigs/MyPostedGigListCompressed";
 import Loading from "@/components/Loading";
 import CreateGigButton from "@/components/Gigs/CreateGigButton";
+import StreakModal from "@/components/Common/StreakModal";
 
 export default function OverviewView() {
   const { data: user } = useUser();
@@ -30,7 +31,8 @@ export default function OverviewView() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [myPostedGigs, setMyPostedGigs] = useState<Gig[]>([]);
   const [extendedUser, setExtendedUser] = useState<User | null>(null);
-  const [currentDate, setCurrentDate] = useState<Date | null>(null);
+  const [openLoginStreak, setOpenLogStr] = useState(false);
+  const [loginStreak, setLogStr] = useState(1);
 
   const fetchNotifications = async () => {
     if (!user) return;
@@ -157,7 +159,7 @@ export default function OverviewView() {
       try {
         const now = Timestamp.now(); // Firestore Timestamp for the current time
         const usersRef = collection(db, "users");
-        const userQuery = query(usersRef, where("userId", "==", user.uid));
+        const userQuery = query(usersRef, where("userId", "==", user.uid)); 
         const userSnapshot = await getDocs(userQuery);
 
         if (!userSnapshot.empty) {
@@ -189,8 +191,12 @@ export default function OverviewView() {
               lastActivity: now,
               loginStreak: loginStreak + 1,
             });
+            setOpenLogStr(true);
+            setLogStr(loginStreak + 1);
           } else if (differenceInDays > 1) {
             await updateDoc(userDocRef, { lastActivity: now, loginStreak: 1 });
+            setOpenLogStr(true);
+            setLogStr(1);
           }
         }
       } catch (error) {
@@ -276,6 +282,8 @@ export default function OverviewView() {
         ) : (
           <Loading />
         )}
+
+        {extendedUser && (<StreakModal openModal={openLoginStreak} setOpenModal={setOpenLogStr} loginStreak={loginStreak} user={extendedUser}></StreakModal>)}
       </div>
 
       {/* Fixed Right Column for Notifications */}
