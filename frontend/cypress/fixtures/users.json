@@ -16,7 +16,9 @@
       "faculty": "Arts and Humanities"
     },
     "completedGigs": 5,
-    "averageRating": 4.5
+    "averageRating": 4.5,
+    "loginStreak": 5,
+    "lastActivity": "2023-10-01T12:00:00Z"
   },
   "user2": {
     "userId": "user2-id",
@@ -35,6 +37,8 @@
       "faculty": "Science and Technology"
     },
     "completedGigs": 10,
-    "averageRating": 4.8
+    "averageRating": 4.8,
+    "loginStreak": 3,
+    "lastActivity": "2023-10-01T12:00:00Z"
   }
 }

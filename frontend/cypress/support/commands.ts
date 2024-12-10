@@ -20,8 +20,10 @@ declare global {
         photoURL?: string,
         claims?: Record<string, string>,
         profile?: Record<string, string>,
-        completedGigs: number,
-        averageRating: number,
+        completedGigs?: number,
+        averageRating?: number,
+        loginStreak?: number,
+        lastActivity?: Date,
       ): Chainable<void>;
 
       /**
@@ -106,6 +108,8 @@ Cypress.Commands.add(
     profile = {},
     completedGigs,
     averageRating,
+    loginStreak,
+    lastActivity,
   ) => {
     // Check if the user exists and delete if it does
     cy.authGetUserByEmail(email)
@@ -143,6 +147,8 @@ Cypress.Commands.add(
               profile,
               completedGigs,
               averageRating,
+              loginStreak,
+              lastActivity,
               userId: uid,
             }).then(() => {
               cy.log("User profile info uploaded to Firestore");
@@ -163,6 +169,8 @@ Cypress.Commands.add("createUser1", function () {
     this.users.user1.profile,
     this.users.user1.completedGigs,
     this.users.user1.averageRating,
+    this.users.user1.loginStreak,
+    this.users.user1.lastActivity
   );
 });
 
@@ -177,6 +185,8 @@ Cypress.Commands.add("createUser2", function () {
     this.users.user2.profile,
     this.users.user2.completedGigs,
     this.users.user2.averageRating,
+    this.users.user2.loginStreak,
+    this.users.user2.lastActivity
   );
 });
 
@@ -240,23 +250,14 @@ Cypress.Commands.add("postGig", (gigData) => {
   cy.log("User clicked on upload a gig button");
 
   // Fill in the gig details
-  cy.get(".space-y-4 > :nth-child(1) > .w-full").type(gigData.title);
-  cy.get(".h-40").type(gigData.description);
-  cy.get(":nth-child(3) > :nth-child(1) > .w-full")
-    .clear()
-    .type(gigData.price.toString())
-    .type("{del}");
-  cy.get(":nth-child(3) > :nth-child(2) > .w-full")
-    .clear()
-    .type(gigData.location);
-  cy.get(":nth-child(4) > .w-full").type(gigData.category);
-  cy.get(":nth-child(5) > :nth-child(1) > .w-full").type(
-    gigData.dueDate.split("T")[0],
-  );
-  cy.get(":nth-child(5) > :nth-child(2) > .w-full").type(
-    gigData.dueDate.split("T")[1].substring(0, 5),
-  );
-  cy.get("button.bg-blue-500").contains("Create Gig").click();
+  cy.get('.space-y-4 > :nth-child(1) > .w-full').type(gigData.title);
+  cy.get('.h-40').type(gigData.description);
+  cy.get('.space-y-4 > :nth-child(3) > :nth-child(1) > .w-full').type(gigData.price.toString(), { force: true });
+  cy.get(':nth-child(3) > :nth-child(2) > .w-full').clear().type(gigData.location);
+  cy.get(':nth-child(4) > .w-full').type(gigData.category);
+  cy.get(':nth-child(5) > :nth-child(1) > .w-full').type(gigData.dueDate.split("T")[0]);
+  cy.get(':nth-child(5) > :nth-child(2) > .w-full').type(gigData.dueDate.split("T")[1].substring(0, 5));
+  cy.get('button.bg-blue-500').contains('Create Gig').click();
 
   // Handle the alert confirmation
   cy.on("window:alert", (text) => {
