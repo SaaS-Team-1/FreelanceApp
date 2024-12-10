@@ -9,17 +9,18 @@ interface CreateGigButtonProps {
   onCreateSave: (newGig: Gig) => void; // Callback for saving the new gig
 }
 
-const CreateGigButton: React.FC<CreateGigButtonProps> = ({
-  onCreateSave,
-}) => {
+const CreateGigButton: React.FC<CreateGigButtonProps> = ({ onCreateSave }) => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   return (
     <div>
       {/* Button to open the Create Modal */}
 
-      <button className="flex w-96 justify-center items-center rounded-full bg-orange-500 py-3 text-sm font-semibold text-white" onClick={() => setIsCreateModalOpen(true)}>
-          + Upload new gig
+      <button
+        className="flex w-96 items-center justify-center rounded-full bg-orange-500 py-3 text-sm font-semibold text-white"
+        onClick={() => setIsCreateModalOpen(true)}
+      >
+        + Upload new gig
       </button>
 
       {/* Create Modal */}
@@ -37,4 +38,3 @@ const CreateGigButton: React.FC<CreateGigButtonProps> = ({
 };
 
 export default CreateGigButton;
-

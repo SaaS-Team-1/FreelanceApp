@@ -6,7 +6,7 @@ export default defineConfig({
   e2e: {
     baseUrl: "http://localhost:8081",
     chromeWebSecurity: false,
-    experimentalRunAllSpecs:true,
+    experimentalRunAllSpecs: true,
     setupNodeEvents(on, config) {
       // Set environment variables for Firebase Emulator
       process.env.FIRESTORE_EMULATOR_HOST = "127.0.0.1:8080"; // Firestore Emulator Host

@@ -8,13 +8,12 @@ import { UndoButton } from "@/components/Buttons/UndoButton";
 import { useNavigate } from "react-router-dom";
 import { FaCheck } from "react-icons/fa";
 
-
 interface PostedGigListSmallProps {
   gigs: { gig: Gig; lister: User }[];
   onSelectGig?: (gig: Gig) => void;
   onSeeMoreClick?: (gig: Gig) => void;
   onCompleteClick?: (gigId: string) => void;
-  onUndoClick ? :(gigId: string) => void;
+  onUndoClick?: (gigId: string) => void;
   enableSelection?: boolean;
   selectedGig?: Gig | null;
   showSeeMoreButton?: boolean;
@@ -30,7 +29,7 @@ function PostedGigListSmall({
   onSelectGig,
   onSeeMoreClick,
   onCompleteClick,
-  onUndoClick ,
+  onUndoClick,
   enableSelection = true,
   selectedGig = null,
   showSeeMoreButton = true,
@@ -45,11 +44,11 @@ function PostedGigListSmall({
   const formatDate = (dueDate: any) => {
     try {
       // Handle different date formats
-      const date = dueDate?.seconds 
-        ? new Date(dueDate.seconds * 1000)  // Firestore timestamp
-        : dueDate instanceof Date 
-        ? dueDate                           // JavaScript Date object
-        : new Date(dueDate);                // String or number timestamp
+      const date = dueDate?.seconds
+        ? new Date(dueDate.seconds * 1000) // Firestore timestamp
+        : dueDate instanceof Date
+          ? dueDate // JavaScript Date object
+          : new Date(dueDate); // String or number timestamp
 
       return date.toLocaleDateString("en-GB", {
         weekday: "long",
@@ -64,7 +63,7 @@ function PostedGigListSmall({
       return "Date unavailable";
     }
   };
-  
+
   const handleMessageClick = (userId: string) => {
     navigate(`/app/chat?user=${userId}`);
   };
@@ -75,15 +74,14 @@ function PostedGigListSmall({
         <div
           key={index}
           className={`relative rounded-lg p-4 shadow-lg transition-transform duration-200 ease-in-out 
-            ${selectedGig && selectedGig.title === gig.title
-              ? "bg-[rgba(5,54,78,0.59)] text-white"
-              : "bg-gray-900 text-gray-300"
+            ${
+              selectedGig && selectedGig.title === gig.title
+                ? "bg-[rgba(5,54,78,0.59)] text-white"
+                : "bg-gray-900 text-gray-300"
             } ${enableSelection ? "cursor-pointer" : ""}
             ${hoverEffect ? "hover:bg-gray-700" : ""}`}
           onClick={() => enableSelection && onSelectGig && onSelectGig(gig)}
         >
-
-
           {/* Header with title and date */}
           <div className="mb-2">
             <h3 className="h-4 overflow-hidden text-ellipsis whitespace-normal  break-words text-sm font-semibold text-white">
@@ -95,10 +93,10 @@ function PostedGigListSmall({
               </p>
             )}
           </div>
-  
+
           {/* Divider line */}
           {showDateWithLine && <div className="mt-1 border-t border-white" />}
-  
+
           {/* Button row */}
           <div className="mt-4 flex items-center justify-between gap-2">
             <div className="flex gap-2">
@@ -114,12 +112,12 @@ function PostedGigListSmall({
                 />
               )}
               {showUndoButton && (
-                <UndoButton 
-                  onClick={() => onUndoClick && onUndoClick(gig.gigId)} 
+                <UndoButton
+                  onClick={() => onUndoClick && onUndoClick(gig.gigId)}
                 />
               )}
             </div>
-  
+
             <div className="flex gap-2">
               {showChatIcon && (
                 <CustomButton
@@ -150,4 +148,4 @@ function PostedGigListSmall({
   );
 }
 
-export default PostedGigListSmall
+export default PostedGigListSmall;

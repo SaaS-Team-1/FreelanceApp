@@ -12,7 +12,10 @@ interface CreateGigModalProps {
   onCreate: () => void;
 }
 
-const CreateGigModal: React.FC<CreateGigModalProps> = ({ onClose, onCreate }) => {
+const CreateGigModal: React.FC<CreateGigModalProps> = ({
+  onClose,
+  onCreate,
+}) => {
   const db = useFirestore(); // Firestore instance
   const { data: user } = useUser();
 
@@ -80,7 +83,10 @@ const CreateGigModal: React.FC<CreateGigModalProps> = ({ onClose, onCreate }) =>
       setNewGig({ ...newGig, dueDate: newTimestamp });
     } else {
       alert("Invalid date or time. Please choose a valid date.");
-      setNewGig({ ...newGig, dueDate: new Timestamp(Math.floor(Date.now() / 1000), 0) });
+      setNewGig({
+        ...newGig,
+        dueDate: new Timestamp(Math.floor(Date.now() / 1000), 0),
+      });
     }
   };
 
@@ -95,9 +101,7 @@ const CreateGigModal: React.FC<CreateGigModalProps> = ({ onClose, onCreate }) =>
             <input
               type="text"
               value={newGig.title}
-              onChange={(e) =>
-                setNewGig({ ...newGig, title: e.target.value })
-              }
+              onChange={(e) => setNewGig({ ...newGig, title: e.target.value })}
               className="w-full rounded border-gray-700 bg-gray-800 p-2 text-white"
             />
           </div>
@@ -122,7 +126,8 @@ const CreateGigModal: React.FC<CreateGigModalProps> = ({ onClose, onCreate }) =>
                 onChange={(e) =>
                   setNewGig({
                     ...newGig,
-                    price: e.target.value === "" ? 0 : parseFloat(e.target.value),
+                    price:
+                      e.target.value === "" ? 0 : parseFloat(e.target.value),
                   })
                 }
                 className="w-full rounded border-gray-700 bg-gray-800 p-2 pr-10 text-white"
@@ -157,7 +162,10 @@ const CreateGigModal: React.FC<CreateGigModalProps> = ({ onClose, onCreate }) =>
             <FaTag className="absolute bottom-3 right-3 text-gray-100" />
           </div>
           {/* Date Picker */}
-          <DatePicker dueDate={newGig.dueDate} onDateChange={handleDateChange} />
+          <DatePicker
+            dueDate={newGig.dueDate}
+            onDateChange={handleDateChange}
+          />
         </div>
         {/* Buttons */}
         <div className="mt-6 flex justify-end gap-4">

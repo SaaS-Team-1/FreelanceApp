@@ -20,7 +20,7 @@ import {
   gigsRef,
   usersRef,
   chatsRef,
-  notificationsRef
+  notificationsRef,
 } from "@/utils/database/collections";
 import { useCallback } from "react";
 import { tr } from "@faker-js/faker";
@@ -90,10 +90,13 @@ function ScheduleView() {
             const gigDoc = await getDoc(doc(gigsRef(db), gigId));
             if (gigDoc.exists()) {
               const gigData = gigDoc.data();
-              if (gigData.status === "awaiting-confirmation" || gigData.status === "in-progress") {
+              if (
+                gigData.status === "awaiting-confirmation" ||
+                gigData.status === "in-progress"
+              ) {
                 return null;
               }
-              console.log(gigData)
+              console.log(gigData);
               const listerDoc = await getDoc(
                 doc(usersRef(db), gigData.listerId),
               );
@@ -108,16 +111,18 @@ function ScheduleView() {
             return null;
           }),
         );
-        
+
         setPendingGigs(
           Array.from(
             new Map(
               pendingGigsData
-                .filter((item): item is { gig: Gig; lister: User } => item !== null)
-                .map(item => [item.gig.gigId, item])
-            ).values()
-          )
-         );
+                .filter(
+                  (item): item is { gig: Gig; lister: User } => item !== null,
+                )
+                .map((item) => [item.gig.gigId, item]),
+            ).values(),
+          ),
+        );
 
         const awaitingApprovalQuery = query(
           gigsRef(db),
@@ -137,7 +142,7 @@ function ScheduleView() {
           where("selectedApplicantId", "==", currUser.uid),
           where("status", "==", "completed"),
         );
-        
+
         const completedSnapshot = await getDocs(completedQuery);
         setCompletedGigs(
           completedSnapshot.docs.map((doc) => ({
@@ -168,53 +173,49 @@ function ScheduleView() {
       }
     }
   };
-  
 
   const handleCloseGigDetails = () => {
     setSelectedGig(null);
     setIsGigDetailsOpen(false);
   };
 
-
-
   const handleUndoClick = async (gigId: string) => {
     if (!currUser) {
       console.error("No current user found");
       return;
     }
-  
+
     try {
       const applicationQuery = query(
         applicationsRef(db),
         where("applicantId", "==", currUser.uid),
         where("gigId", "==", gigId),
-        where("status", "==", "pending")
+        where("status", "==", "pending"),
       );
-  
+
       const applicationSnapshot = await getDocs(applicationQuery);
-  
+
       if (!applicationSnapshot.empty) {
         const applicationDoc = applicationSnapshot.docs[0];
         const applicationId = applicationDoc.id;
-  
+
         await updateDoc(doc(applicationsRef(db), applicationId), {
           status: "discarded",
         });
-  
 
         const chatQuery = query(
           chatsRef(db),
           where("gigId", "==", gigId),
-          where("applicantId", "==", currUser.uid)
+          where("applicantId", "==", currUser.uid),
         );
         const chatSnapshot = await getDocs(chatQuery);
         const chatUpdates = chatSnapshot.docs.map((chatDoc) =>
           updateDoc(chatDoc.ref, {
             lastUpdate: serverTimestamp(),
-          })
+          }),
         );
         await Promise.all(chatUpdates);
-  
+
         const gigDoc = await getDoc(doc(gigsRef(db), gigId));
         if (gigDoc.exists()) {
           const gigData = gigDoc.data() as Gig;
@@ -224,9 +225,9 @@ function ScheduleView() {
             createdAt: serverTimestamp(),
           });
         }
-  
+
         setPendingGigs((prevPending) =>
-          prevPending.filter(({ gig }) => gig.gigId !== gigId)
+          prevPending.filter(({ gig }) => gig.gigId !== gigId),
         );
         await fetchGigs();
       }
@@ -235,13 +236,13 @@ function ScheduleView() {
       alert("Failed to undo application. Please try again.");
     }
   };
-  
+
   const handleCompleteGig = async (gigId: string) => {
     if (!currUser) {
       console.error("No current user found");
       return;
     }
-  
+
     try {
       const gigRef = doc(gigsRef(db), gigId);
       await updateDoc(gigRef, { status: "awaiting-confirmation" });
@@ -249,7 +250,7 @@ function ScheduleView() {
       const applicationsQuery = query(
         applicationsRef(db),
         where("gigId", "==", gigId),
-        where("status", "==", 'assigned')
+        where("status", "==", "assigned"),
       );
       const applicationsSnapshot = await getDocs(applicationsQuery);
       if (!applicationsSnapshot.empty) {
@@ -259,8 +260,7 @@ function ScheduleView() {
           updatedAt: serverTimestamp(),
         });
       }
- 
-  
+
       const gigDoc = await getDoc(gigRef);
       if (gigDoc.exists()) {
         const gigData = gigDoc.data() as Gig;
@@ -270,36 +270,35 @@ function ScheduleView() {
           createdAt: serverTimestamp(),
         });
       }
-  
+
       const chatQuery = query(
         chatsRef(db),
         where("gigId", "==", gigId),
-        where("applicantId", "==", currUser.uid)
+        where("applicantId", "==", currUser.uid),
       );
       const chatSnapshot = await getDocs(chatQuery);
       const chatUpdates = chatSnapshot.docs.map((chatDoc) =>
         updateDoc(chatDoc.ref, {
           lastUpdate: serverTimestamp(),
-        })
+        }),
       );
       await Promise.all(chatUpdates);
- 
+
       const updatedInProgress = inProgressGigs.filter(
-        ({ gig }) => gig.gigId !== gigId
+        ({ gig }) => gig.gigId !== gigId,
       );
       const updatedGig = inProgressGigs.find(({ gig }) => gig.gigId === gigId);
       if (updatedGig) {
         setAwaitingApprovalGigs([...awaitingApprovalGigs, updatedGig]);
       }
       setInProgressGigs(updatedInProgress);
-  
+
       await fetchGigs();
     } catch (error) {
       console.error("Error completing gig:", error);
       alert("Failed to mark gig as completed. Please try again.");
     }
   };
-  
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isHoveringRight, setIsHoveringRight] = useState(false);
@@ -307,7 +306,7 @@ function ScheduleView() {
 
   useEffect(() => {
     let scrollInterval: NodeJS.Timeout;
-    
+
     if (isHoveringRight) {
       scrollInterval = setInterval(() => {
         if (scrollContainerRef.current) {
@@ -321,20 +320,23 @@ function ScheduleView() {
         }
       }, 16);
     }
-    
+
     return () => clearInterval(scrollInterval);
   }, [isHoveringRight, isHoveringLeft]);
 
   return (
-    <div className="relative h-screen w-full p-4" >
+    <div className="relative h-screen w-full p-4">
       {/* Horizontal Scrollable Container */}
       <div
         ref={scrollContainerRef}
-        className="mr-10 flex h-[calc(100vh-8rem)] snap-x snap-mandatory gap-6 scroll-smooth hide-scrollbar">
+        className="hide-scrollbar mr-10 flex h-[calc(100vh-8rem)] snap-x snap-mandatory gap-6 scroll-smooth"
+      >
         {/* Page 1: Scheduled Gigs and Pending Gigs */}
         <div className="flex size-full w-1/2 shrink-0 snap-center gap-6">
-        <div className="scrollbar size-full overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg text-white">
-            <h1 className="mb-3 text-xl font-bold dark:text-white">Pending Gigs</h1>
+          <div className="scrollbar size-full overflow-y-scroll rounded-lg bg-gray-800 p-4 text-white shadow-lg">
+            <h1 className="mb-3 text-xl font-bold dark:text-white">
+              Pending Gigs
+            </h1>
             <PostedGigListSmall
               gigs={pendingGigs}
               showDateWithLine={true}
@@ -345,7 +347,9 @@ function ScheduleView() {
             />
           </div>
           <div className="scrollbar size-full overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
-            <h1 className="mb-3 text-xl font-bold text-white">Scheduled Gigs</h1>
+            <h1 className="mb-3 text-xl font-bold text-white">
+              Scheduled Gigs
+            </h1>
             <PostedGigListSmall
               gigs={inProgressGigs}
               showDateWithLine={true}
@@ -356,24 +360,26 @@ function ScheduleView() {
               onSeeMoreClick={handleSeeMoreClick}
             />
           </div>
-          
         </div>
-        
 
         {/* Page 2: Awaiting Approval and Completed Gigs */}
-        <div className="flex  w-1/2 shrink-0 snap-center gap-6"> 
+        <div className="flex  w-1/2 shrink-0 snap-center gap-6">
           <div className="scrollbar h-full w-1/2 overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
-            <h1 className="mb-3 text-xl font-bold text-white">Awaiting Approval</h1>
+            <h1 className="mb-3 text-xl font-bold text-white">
+              Awaiting Approval
+            </h1>
             <PostedGigListSmall
               gigs={awaitingApprovalGigs}
               showDateWithLine={true}
               showChatIcon={true}
               showSeeMoreButton={true}
-              onSeeMoreClick={handleSeeMoreClick} 
+              onSeeMoreClick={handleSeeMoreClick}
             />
           </div>
           <div className="scrollbar size-full w-1/2 overflow-y-scroll rounded-lg bg-gray-800 p-4 shadow-lg dark:text-white">
-            <h1 className="mb-3 text-xl font-bold text-white">Completed Gigs</h1>
+            <h1 className="mb-3 text-xl font-bold text-white">
+              Completed Gigs
+            </h1>
             <PostedGigListSmall
               gigs={completedGigs}
               showDateWithLine={true}

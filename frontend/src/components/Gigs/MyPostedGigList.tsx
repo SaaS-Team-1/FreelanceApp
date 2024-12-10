@@ -8,13 +8,12 @@ import { UndoButton } from "@/components/Buttons/UndoButton";
 import { useNavigate } from "react-router-dom";
 import { FaCheck } from "react-icons/fa";
 
-
 interface PostedGigListProps {
   gigs: { gig: Gig; lister: User }[];
   onSelectGig?: (gig: Gig) => void;
   onSeeMoreClick?: (gig: Gig) => void;
   onCompleteClick?: (gigId: string) => void;
-  onUndoClick ? :(gigId: string) => void;
+  onUndoClick?: (gigId: string) => void;
   enableSelection?: boolean;
   selectedGig?: Gig | null;
   showSeeMoreButton?: boolean;
@@ -30,7 +29,7 @@ function PostedGigList({
   onSelectGig,
   onSeeMoreClick,
   onCompleteClick,
-  onUndoClick ,
+  onUndoClick,
   enableSelection = true,
   selectedGig = null,
   showSeeMoreButton = true,
@@ -45,11 +44,11 @@ function PostedGigList({
   const formatDate = (dueDate: any) => {
     try {
       // Handle different date formats
-      const date = dueDate?.seconds 
-        ? new Date(dueDate.seconds * 1000)  // Firestore timestamp
-        : dueDate instanceof Date 
-        ? dueDate                           // JavaScript Date object
-        : new Date(dueDate);                // String or number timestamp
+      const date = dueDate?.seconds
+        ? new Date(dueDate.seconds * 1000) // Firestore timestamp
+        : dueDate instanceof Date
+          ? dueDate // JavaScript Date object
+          : new Date(dueDate); // String or number timestamp
 
       return date.toLocaleDateString("en-GB", {
         weekday: "long",
@@ -64,7 +63,6 @@ function PostedGigList({
       return "Date unavailable";
     }
   };
-  
 
   const handleMessageClick = (userId: string) => {
     navigate(`/app/chat?user=${userId}`);
@@ -85,7 +83,9 @@ function PostedGigList({
         >
           {showUndoButton && (
             <div className="absolute right-4 top-4">
-              <UndoButton onClick={() => onUndoClick && onUndoClick(gig.gigId)} />
+              <UndoButton
+                onClick={() => onUndoClick && onUndoClick(gig.gigId)}
+              />
             </div>
           )}
 
@@ -119,7 +119,9 @@ function PostedGigList({
 
           <div className="mb-2 flex items-center">
             <div className="ml-3 flex flex-col">
-              <h3 className="whitespace-normal break-words text-lg font-semibold text-white pr-[120px]">{gig.title}</h3>
+              <h3 className="whitespace-normal break-words pr-[120px] text-lg font-semibold text-white">
+                {gig.title}
+              </h3>
               {showDateWithLine && (
                 <p className="mt-1 text-xs text-orange-500">
                   {formatDate(gig.dueDate)}
@@ -128,10 +130,14 @@ function PostedGigList({
             </div>
           </div>
 
-          {showDateWithLine && <div className="mt-1 border-t border-white"></div>}
-          
+          {showDateWithLine && (
+            <div className="mt-1 border-t border-white"></div>
+          )}
+
           <p className="mt-2 whitespace-normal break-words text-gray-300">
-            {gig.description.length >70? gig.description.slice(0, 70) + "..." : gig.description}
+            {gig.description.length > 70
+              ? gig.description.slice(0, 70) + "..."
+              : gig.description}
           </p>
 
           <div className="mt-2 flex flex-wrap items-center gap-2">
@@ -178,9 +184,8 @@ function PostedGigList({
           )}
         </div>
       ))}
-      
     </div>
   );
 }
 
-export default PostedGigList
+export default PostedGigList;

@@ -159,7 +159,7 @@ export default function OverviewView() {
       try {
         const now = Timestamp.now(); // Firestore Timestamp for the current time
         const usersRef = collection(db, "users");
-        const userQuery = query(usersRef, where("userId", "==", user.uid)); 
+        const userQuery = query(usersRef, where("userId", "==", user.uid));
         const userSnapshot = await getDocs(userQuery);
 
         if (!userSnapshot.empty) {
@@ -283,7 +283,11 @@ export default function OverviewView() {
           <Loading />
         )}
 
-        <StreakModal openModal={openLoginStreak} setOpenModal={setOpenLogStr} loginStreak={loginStreak}></StreakModal>
+        <StreakModal
+          openModal={openLoginStreak}
+          setOpenModal={setOpenLogStr}
+          loginStreak={loginStreak}
+        ></StreakModal>
       </div>
 
       {/* Fixed Right Column for Notifications */}

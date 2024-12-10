@@ -65,8 +65,14 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm" onClick={onClose}>
-      <div className="scrollbar w-[800px] max-w-full rounded-lg bg-gray-900 text-white shadow-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="scrollbar max-h-[90vh] w-[800px] max-w-full overflow-y-auto rounded-lg bg-gray-900 text-white shadow-lg"
+        onClick={(e) => e.stopPropagation()}
+      >
         <h2 className="m-4 text-3xl font-bold">Edit Profile</h2>
         <div className="space-y-4 p-4">
           {/* Display Name Input */}
@@ -227,7 +233,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
           </div>
         </div>
         {/* Buttons */}
-        <div className="py-2 flex w-full h-14 justify-end gap-4 sticky bottom-0 bg-gray-900">
+        <div className="sticky bottom-0 flex h-14 w-full justify-end gap-4 bg-gray-900 py-2">
           <CustomButton
             label="Cancel"
             onClick={onClose}

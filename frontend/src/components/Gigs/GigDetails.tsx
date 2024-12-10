@@ -13,16 +13,24 @@ import {
 import UserProfilePicture from "@/components/Avatar/UserProfilePicture"; // Import the UserProfilePicture component
 
 import { useFirestore } from "@/utils/reactfire";
-import { doc, updateDoc, getDocs, query, where, writeBatch, serverTimestamp, addDoc} from "firebase/firestore";
+import {
+  doc,
+  updateDoc,
+  getDocs,
+  query,
+  where,
+  writeBatch,
+  serverTimestamp,
+  addDoc,
+} from "firebase/firestore";
 import ReactDOM from "react-dom";
 import {
   applicationsRef,
   gigsRef,
   chatsRef,
   notificationsRef,
-
 } from "@/utils/database/collections";
-import {  Application} from "@/utils/database/schema";
+import { Application } from "@/utils/database/schema";
 
 interface GigDetailsProps {
   gig: Gig;
@@ -59,11 +67,11 @@ const GigDetails: React.FC<GigDetailsProps> = ({
   const formatDate = (dueDate: any) => {
     try {
       // Handle different date formats
-      const date = dueDate?.seconds 
-        ? new Date(dueDate.seconds * 1000)  // Firestore timestamp
-        : dueDate instanceof Date 
-        ? dueDate                           // JavaScript Date object
-        : new Date(dueDate);                // String or number timestamp
+      const date = dueDate?.seconds
+        ? new Date(dueDate.seconds * 1000) // Firestore timestamp
+        : dueDate instanceof Date
+          ? dueDate // JavaScript Date object
+          : new Date(dueDate); // String or number timestamp
 
       return date.toLocaleDateString("en-GB", {
         weekday: "long",
@@ -86,34 +94,33 @@ const GigDetails: React.FC<GigDetailsProps> = ({
         return;
       }
       await updateDoc(doc(gigsRef(db), gig.gigId), { status: "deleted" });
-  
+
       const applicationsQuery = query(
         applicationsRef(db),
-        where("gigId", "==", gig.gigId)
+        where("gigId", "==", gig.gigId),
       );
       const applicationsSnapshot = await getDocs(applicationsQuery);
-  
+
       for (const applicationDoc of applicationsSnapshot.docs) {
         const applicationData = applicationDoc.data() as Application;
-  
+
         await updateDoc(doc(applicationsRef(db), applicationDoc.id), {
           status: "discarded",
         });
-  
 
         await addDoc(notificationsRef(db), {
           userId: applicationData.applicantId,
           notificationMessage: `Your pending gig "${gig.title}" has been deleted.`,
           createdAt: serverTimestamp(),
         });
-  
+
         if (applicationData.chatId) {
           await updateDoc(doc(chatsRef(db), applicationData.chatId), {
             lastUpdate: serverTimestamp(),
           });
         }
       }
-  
+
       // Notify the parent component
       onDelete(gig.gigId);
       setIsDeleteModalOpen(false);
@@ -122,8 +129,6 @@ const GigDetails: React.FC<GigDetailsProps> = ({
       alert("Failed to delete the gig. Please try again.");
     }
   };
-  
-  
 
   const renderDeleteButton = () => {
     if (!showDelete) return null;
@@ -199,10 +204,16 @@ const GigDetails: React.FC<GigDetailsProps> = ({
           size="small"
         />
       </div>
-      
+
       <div className="mb-4 flex items-start gap-4">
         <UserProfilePicture
-          user={user || { profile: { bio: "", location: "", picture: "" }, stats: {} } as User}
+          user={
+            user ||
+            ({
+              profile: { bio: "", location: "", picture: "" },
+              stats: {},
+            } as User)
+          }
           size="large"
           hoverDetails={true}
           rounded={true}
@@ -224,9 +235,7 @@ const GigDetails: React.FC<GigDetailsProps> = ({
         <div className="flex flex-col items-center">
           <div className="flex  items-center">
             <FaCalendarAlt className="mr-2" />
-            <span>
-              {formatDate(gig.dueDate)}
-            </span>
+            <span>{formatDate(gig.dueDate)}</span>
           </div>
           <span className="ml-2 text-xs text-gray-400">Due Date</span>
         </div>

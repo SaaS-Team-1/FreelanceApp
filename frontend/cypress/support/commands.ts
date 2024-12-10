@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -32,7 +32,7 @@ declare global {
       /**
        * Creates user2
        */
-      createUser2(): Chainable<void>
+      createUser2(): Chainable<void>;
 
       /**
        * Creates and logs in user with the given email, password, and custom claims.
@@ -85,8 +85,6 @@ declare global {
   }
 }
 
-
-
 // Add the `clearSession` command
 Cypress.Commands.add("clearSession", () => {
   cy.get(".mt-3 > .flex").click();
@@ -124,10 +122,11 @@ Cypress.Commands.add(
         cy.createUserWithClaims(
           { email, password, displayName, photoURL },
           claims,
-        ).then(() => {
-          // Retrieve the UID of the newly created user
-          return cy.authGetUserByEmail(email); // Fetch the user again
-        })
+        )
+          .then(() => {
+            // Retrieve the UID of the newly created user
+            return cy.authGetUserByEmail(email); // Fetch the user again
+          })
           .then((user) => {
             if (!user || !user.uid) {
               throw new Error("Failed to retrieve UID from created user.");
@@ -137,7 +136,7 @@ Cypress.Commands.add(
             cy.log(`Retrieved UID: ${uid}`);
 
             // Upload user profile info to Firestore
-            cy.callFirestore('set', `users/${uid}`, {
+            cy.callFirestore("set", `users/${uid}`, {
               email,
               displayName,
               coins,
@@ -153,7 +152,7 @@ Cypress.Commands.add(
   },
 );
 
-Cypress.Commands.add('createUser1', function () {
+Cypress.Commands.add("createUser1", function () {
   cy.createUser(
     this.users.user1.email,
     this.users.user1.password,
@@ -163,11 +162,11 @@ Cypress.Commands.add('createUser1', function () {
     undefined, // claims
     this.users.user1.profile,
     this.users.user1.completedGigs,
-    this.users.user1.averageRating
+    this.users.user1.averageRating,
   );
 });
 
-Cypress.Commands.add('createUser2', function () {
+Cypress.Commands.add("createUser2", function () {
   cy.createUser(
     this.users.user2.email,
     this.users.user2.password,
@@ -177,7 +176,7 @@ Cypress.Commands.add('createUser2', function () {
     undefined, // claims
     this.users.user2.profile,
     this.users.user2.completedGigs,
-    this.users.user2.averageRating
+    this.users.user2.averageRating,
   );
 });
 
@@ -198,13 +197,18 @@ Cypress.Commands.add("loginUser", (email, password) => {
   cy.contains(email);
 });
 
-
-Cypress.Commands.add('loginUser1', function () {
-  cy.loginWithEmailAndPassword(this.users.user1.email, this.users.user1.password);
+Cypress.Commands.add("loginUser1", function () {
+  cy.loginWithEmailAndPassword(
+    this.users.user1.email,
+    this.users.user1.password,
+  );
 });
 
-Cypress.Commands.add('loginUser2', function () {
-  cy.loginWithEmailAndPassword(this.users.user2.email, this.users.user2.password);
+Cypress.Commands.add("loginUser2", function () {
+  cy.loginWithEmailAndPassword(
+    this.users.user2.email,
+    this.users.user2.password,
+  );
 });
 
 // Cypress.Commands.add(
@@ -221,31 +225,42 @@ Cypress.Commands.add('loginUser2', function () {
 //   },
 // );
 
-Cypress.Commands.add('logoutUI', () => {
+Cypress.Commands.add("logoutUI", () => {
   cy.visit("/app");
-  cy.get('.mt-3.border-t.border-gray-600.pt-3 .flex.cursor-pointer.items-center')
+  cy.get(
+    ".mt-3.border-t.border-gray-600.pt-3 .flex.cursor-pointer.items-center",
+  )
     .scrollIntoView()
     .click({ force: true });
   cy.location().should((loc) => expect(loc.pathname).to.eq("/login"));
 });
 
-Cypress.Commands.add('postGig', (gigData) => {
-  cy.get('.h-screen > :nth-child(2) > .flex').click();
+Cypress.Commands.add("postGig", (gigData) => {
+  cy.get(".h-screen > :nth-child(2) > .flex").click();
   cy.log("User clicked on upload a gig button");
 
   // Fill in the gig details
-  cy.get('.space-y-4 > :nth-child(1) > .w-full').type(gigData.title);
-  cy.get('.h-40').type(gigData.description);
-  cy.get(':nth-child(3) > :nth-child(1) > .w-full').clear().type(gigData.price.toString()).type('{del}');
-  cy.get(':nth-child(3) > :nth-child(2) > .w-full').clear().type(gigData.location);
-  cy.get(':nth-child(4) > .w-full').type(gigData.category);
-  cy.get(':nth-child(5) > :nth-child(1) > .w-full').type(gigData.dueDate.split("T")[0]);
-  cy.get(':nth-child(5) > :nth-child(2) > .w-full').type(gigData.dueDate.split("T")[1].substring(0, 5));
-  cy.get('button.bg-blue-500').contains('Create Gig').click();
+  cy.get(".space-y-4 > :nth-child(1) > .w-full").type(gigData.title);
+  cy.get(".h-40").type(gigData.description);
+  cy.get(":nth-child(3) > :nth-child(1) > .w-full")
+    .clear()
+    .type(gigData.price.toString())
+    .type("{del}");
+  cy.get(":nth-child(3) > :nth-child(2) > .w-full")
+    .clear()
+    .type(gigData.location);
+  cy.get(":nth-child(4) > .w-full").type(gigData.category);
+  cy.get(":nth-child(5) > :nth-child(1) > .w-full").type(
+    gigData.dueDate.split("T")[0],
+  );
+  cy.get(":nth-child(5) > :nth-child(2) > .w-full").type(
+    gigData.dueDate.split("T")[1].substring(0, 5),
+  );
+  cy.get("button.bg-blue-500").contains("Create Gig").click();
 
   // Handle the alert confirmation
-  cy.on('window:alert', (text) => {
-    expect(text).to.equal('Gig successfully created.');
+  cy.on("window:alert", (text) => {
+    expect(text).to.equal("Gig successfully created.");
   });
 
   cy.wait(2000); // Optional: Wait for Firestore synchronization
@@ -264,6 +279,4 @@ Cypress.Commands.add("addMockTransaction", (userId, amount) => {
   });
 });
 
-
-
-export { };
+export {};

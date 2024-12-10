@@ -1,7 +1,5 @@
-
-
 import React, { useState, useEffect } from "react";
-import ReactDOM from "react-dom"; 
+import ReactDOM from "react-dom";
 import { User, Gig, Application } from "@/utils/database/schema";
 
 import CustomButton from "@/components/Buttons/CustomButton";
@@ -59,7 +57,7 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
             "assigned",
             "awaiting-lister-completion",
             "completed",
-          ])
+          ]),
         );
 
         const applicationsSnapshot = await getDocs(applicationsQuery);
@@ -79,7 +77,10 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
 
   const handleAssignGig = async (applicantId: string) => {
     try {
-      const res = await httpsCallable(functions, "stripe-assignTransaction")({
+      const res = await httpsCallable(
+        functions,
+        "stripe-assignTransaction",
+      )({
         thirdPartyId: applicantId,
         gigId: gig.gigId,
         gigName: gig.title,
@@ -90,7 +91,7 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
 
       if (res?.data?.status !== "success") {
         throw new Error(
-          "Transaction failed. Insufficient funds or other error."
+          "Transaction failed. Insufficient funds or other error.",
         );
       }
 
@@ -105,10 +106,10 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
         const newStatus =
           application.applicantId === applicantId ? "assigned" : "discarded";
 
-        await updateDoc(
-          doc(applicationsRef(db), application.applicationId),
-          { status: newStatus, updatedAt: serverTimestamp() }
-        );
+        await updateDoc(doc(applicationsRef(db), application.applicationId), {
+          status: newStatus,
+          updatedAt: serverTimestamp(),
+        });
 
         const notificationMessage =
           newStatus === "assigned"
@@ -124,16 +125,12 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
 
       await Promise.all(updatePromises);
 
-
-      const chatQuery = query(
-        chatsRef(db),
-        where("gigId", "==", gig.gigId),
-      );
+      const chatQuery = query(chatsRef(db), where("gigId", "==", gig.gigId));
       const chatSnapshot = await getDocs(chatQuery);
       const chatUpdates = chatSnapshot.docs.map((chatDoc) =>
         updateDoc(chatDoc.ref, {
           lastUpdate: serverTimestamp(),
-        })
+        }),
       );
       await Promise.all(chatUpdates);
 
@@ -150,7 +147,10 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
 
   const handleConfirmCompletion = async (application: Application) => {
     try {
-      const res = await httpsCallable(functions, "stripe-finalizeTransaction")({
+      const res = await httpsCallable(
+        functions,
+        "stripe-finalizeTransaction",
+      )({
         thirdPartyId: application.applicantId,
         gigId: gig.gigId,
       });
@@ -164,10 +164,10 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
         updatedAt: serverTimestamp(),
       });
 
-      await updateDoc(
-        doc(applicationsRef(db), application.applicationId),
-        { status: "completed", updatedAt: serverTimestamp() }
-      );
+      await updateDoc(doc(applicationsRef(db), application.applicationId), {
+        status: "completed",
+        updatedAt: serverTimestamp(),
+      });
 
       await addDoc(notificationsRef(db), {
         userId: application.applicantId,
@@ -176,23 +176,24 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
       });
 
       await Promise.all([
-        updateDoc(doc(usersRef(db), gig.listerId), { completedGigs: increment(1) }),
+        updateDoc(doc(usersRef(db), gig.listerId), {
+          completedGigs: increment(1),
+        }),
         updateDoc(doc(usersRef(db), application.applicantId), {
           completedGigs: increment(1),
         }),
       ]);
 
-
       const chatQuery = query(
         chatsRef(db),
         where("gigId", "==", gig.gigId),
-        where("applicant", "==", application.applicantId)
+        where("applicant", "==", application.applicantId),
       );
       const chatSnapshot = await getDocs(chatQuery);
       const chatUpdates = chatSnapshot.docs.map((chatDoc) =>
         updateDoc(chatDoc.ref, {
           lastUpdate: serverTimestamp(),
-        })
+        }),
       );
       await Promise.all(chatUpdates);
 
