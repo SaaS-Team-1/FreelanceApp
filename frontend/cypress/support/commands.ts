@@ -251,7 +251,7 @@ Cypress.Commands.add("postGig", (gigData) => {
 
   // Fill in the gig details
   cy.get('.space-y-4 > :nth-child(1) > .w-full').type(gigData.title);
-  cy.get('.h-40').type(gigData.description);
+  cy.get('.space-y-4 > :nth-child(2) > .mt-1').type(gigData.description);
   cy.get('.space-y-4 > :nth-child(3) > :nth-child(1) > .w-full').type(gigData.price.toString(), { force: true });
   cy.get(':nth-child(3) > :nth-child(2) > .w-full').clear().type(gigData.location);
   cy.get(':nth-child(4) > .w-full').type(gigData.category);
