@@ -1,6 +1,14 @@
 import { HiSearch } from "react-icons/hi";
 import { useState, useEffect } from "react";
-import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  orderBy,
+  updateDoc,
+  Timestamp,
+} from "firebase/firestore";
 import { useUser, useFirestore } from "@/utils/reactfire";
 import { Gig, User, Notification } from "@/utils/database/schema";
 import NotificationList from "@/components/Notifications/NotificationsList";
@@ -9,6 +17,7 @@ import FilterButton from "@/components/Buttons/FilterButton"; // Assuming this c
 import MyPostedGigListCompressed from "@/components/Gigs/MyPostedGigListCompressed";
 import Loading from "@/components/Loading";
 import CreateGigButton from "@/components/Gigs/CreateGigButton";
+import StreakModal from "@/components/Common/StreakModal";
 
 export default function OverviewView() {
   const { data: user } = useUser();
@@ -22,13 +31,19 @@ export default function OverviewView() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [myPostedGigs, setMyPostedGigs] = useState<Gig[]>([]);
   const [extendedUser, setExtendedUser] = useState<User | null>(null);
+  const [openLoginStreak, setOpenLogStr] = useState(false);
+  const [loginStreak, setLogStr] = useState(1);
 
   const fetchNotifications = async () => {
     if (!user) return;
 
     try {
       const notificationsRef = collection(db, "notifications");
-      const q = query(notificationsRef, where("userId", "==", user.uid), orderBy("createdAt", "desc"));
+      const q = query(
+        notificationsRef,
+        where("userId", "==", user.uid),
+        orderBy("createdAt", "desc"),
+      );
       const querySnapshot = await getDocs(q);
 
       const notificationsList: Notification[] = querySnapshot.docs.map(
@@ -125,7 +140,7 @@ export default function OverviewView() {
 
       const myGigs = querySnapshot.docs
         .map((doc) => ({
-          ...doc.data(),
+          ...(doc.data() as Gig),
           gigId: doc.id,
         }))
         .filter((gig) => gig.status !== "deleted") as Gig[];
@@ -142,13 +157,47 @@ export default function OverviewView() {
       if (!user) return;
 
       try {
+        const now = Timestamp.now(); // Firestore Timestamp for the current time
         const usersRef = collection(db, "users");
         const userQuery = query(usersRef, where("userId", "==", user.uid));
         const userSnapshot = await getDocs(userQuery);
 
         if (!userSnapshot.empty) {
-          const userData = userSnapshot.docs[0].data() as User; // Cast Firestore data to User type
+          const userDoc = userSnapshot.docs[0]; // Get the first document
+          const userDocRef = userDoc.ref;
+          const userData = userDoc.data() as User; // Cast Firestore data to User type
           setExtendedUser(userData);
+
+          // Convert Firestore Timestamp to JavaScript Date for comparison
+          const lastActivityDate = userData.lastActivity.toDate(); // Assuming lastActivity is a Firestore Timestamp
+          const day1 = new Date(
+            lastActivityDate.getFullYear(),
+            lastActivityDate.getMonth(),
+            lastActivityDate.getDate(),
+          );
+          const nowDate = now.toDate(); // Convert Firestore Timestamp to JavaScript Date
+          const day2 = new Date(
+            nowDate.getFullYear(),
+            nowDate.getMonth(),
+            nowDate.getDate(),
+          );
+
+          const timeDifference = day2.getTime() - day1.getTime();
+          const differenceInDays = timeDifference / (1000 * 60 * 60 * 24);
+
+          if (differenceInDays === 1) {
+            const loginStreak = userData.loginStreak;
+            await updateDoc(userDocRef, {
+              lastActivity: now,
+              loginStreak: loginStreak + 1,
+            });
+            setOpenLogStr(true);
+            setLogStr(loginStreak + 1);
+          } else if (differenceInDays > 1) {
+            await updateDoc(userDocRef, { lastActivity: now, loginStreak: 1 });
+            setOpenLogStr(true);
+            setLogStr(1);
+          }
         }
       } catch (error) {
         console.error("Error fetching extended user details: ", error);
@@ -233,6 +282,12 @@ export default function OverviewView() {
         ) : (
           <Loading />
         )}
+
+        <StreakModal
+          openModal={openLoginStreak}
+          setOpenModal={setOpenLogStr}
+          loginStreak={loginStreak}
+        ></StreakModal>
       </div>
 
       {/* Fixed Right Column for Notifications */}

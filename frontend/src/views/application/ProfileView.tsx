@@ -70,6 +70,8 @@ export default function ProfileView() {
                   </p>
                 )}
               </div>
+            </div>
+            <div className="flex flex-col items-end">
               <button
                 onClick={() => setShowModal(true)}
                 className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"

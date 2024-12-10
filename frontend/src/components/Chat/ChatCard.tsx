@@ -226,7 +226,6 @@ const ChatCard: React.FC<ChatCardProps> = ({
     applicationId: string,
   ) => {
     try {
-
       const res = await httpsCallable(
         functions,
         "stripe-finalizeTransaction",
@@ -235,9 +234,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
         gigId: gigId,
       });
       if (res?.data?.status !== "success") {
-        throw new Error(
-          "Transaction failed. Try Again.",
-        );
+        throw new Error("Transaction failed. Try Again.");
       }
 
       // Update gig status to "completed"
@@ -404,11 +401,10 @@ const ChatCard: React.FC<ChatCardProps> = ({
               </div>
             </>
           );
-        }  if (gig.status === "deleted") {
-          return <p>Gig deleted.</p>;
         }
-        
-        else {
+        if (gig.status === "deleted") {
+          return <p>Gig deleted.</p>;
+        } else {
           return (
             <p>
               {" "}

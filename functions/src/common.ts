@@ -12,6 +12,10 @@ export const createUser = onCall(async (request) => {
       };
     }
 
+    if (!email.toLowerCase().endsWith('kuleuven.be')){
+      return {status: "error", message: "Ku Leuven email is required"};
+    }
+
     // Create Firebase Authentication user
     const userRecord = await auth.createUser({
       email: email,

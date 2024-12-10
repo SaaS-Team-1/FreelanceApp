@@ -1,34 +1,40 @@
 {
   "user1": {
-    "userId": null,
-    "email": "user1@gmail.com",
+    "userId": "user1-id",
+    "email": "user1@student.kuleuven.be",
     "password": "password",
     "displayName": "user1",
+    "coins": 0,
     "profile": {
       "bio": "I am user1, a gig enthusiast!",
-      "credits": 100,
+      "credits": 300,
       "picture": null,
-      "location": "New York, NY"
+      "location": "New York, NY",
+      "degree": "Bachelor of Arts",
+      "skills": "Writing, Editing",
+      "languages": "English, Spanish",
+      "faculty": "Arts and Humanities"
     },
-    "stats": {
-      "completedGigs": 5,
-      "averageRating": 4.5
-    }
+    "completedGigs": 5,
+    "averageRating": 4.5
   },
   "user2": {
-    "userId": null,
-    "email": "user2@gmail.com",
+    "userId": "user2-id",
+    "email": "user2@student.kuleuven.be",
     "password": "password",
     "displayName": "user2",
+    "coins": 0,
     "profile": {
       "bio": "User2 loves exploring new opportunities.",
-      "credits": 200,
+      "credits": 300,
       "picture": null,
-      "location": "Los Angeles, CA"
+      "location": "Los Angeles, CA",
+      "degree": "Master of Science",
+      "skills": "Data Analysis, Programming",
+      "languages": "English, French",
+      "faculty": "Science and Technology"
     },
-    "stats": {
-      "completedGigs": 10,
-      "averageRating": 4.8
-    }
+    "completedGigs": 10,
+    "averageRating": 4.8
   }
 }

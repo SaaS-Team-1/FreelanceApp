@@ -48,4 +48,8 @@ before(() => {
   cy.deleteAllAuthUsers();
 });
 
+beforeEach(() => {
+  cy.wait(500);
+});
+
 attachCustomCommands({ Cypress, cy, firebase });

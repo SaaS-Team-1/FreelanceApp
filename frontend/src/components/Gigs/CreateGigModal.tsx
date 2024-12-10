@@ -12,7 +12,10 @@ interface CreateGigModalProps {
   onCreate: () => void;
 }
 
-const CreateGigModal: React.FC<CreateGigModalProps> = ({ onClose, onCreate }) => {
+const CreateGigModal: React.FC<CreateGigModalProps> = ({
+  onClose,
+  onCreate,
+}) => {
   const db = useFirestore(); // Firestore instance
   const { data: user } = useUser();
 
@@ -80,7 +83,10 @@ const CreateGigModal: React.FC<CreateGigModalProps> = ({ onClose, onCreate }) =>
       setNewGig({ ...newGig, dueDate: newTimestamp });
     } else {
       alert("Invalid date or time. Please choose a valid date.");
-      setNewGig({ ...newGig, dueDate: new Timestamp(Math.floor(Date.now() / 1000), 0) });
+      setNewGig({
+        ...newGig,
+        dueDate: new Timestamp(Math.floor(Date.now() / 1000), 0),
+      });
     }
   };
 
@@ -95,9 +101,7 @@ const CreateGigModal: React.FC<CreateGigModalProps> = ({ onClose, onCreate }) =>
             <input
               type="text"
               value={newGig.title}
-              onChange={(e) =>
-                setNewGig({ ...newGig, title: e.target.value })
-              }
+              onChange={(e) => setNewGig({ ...newGig, title: e.target.value })}
               className="mt-1 w-full rounded-lg border-gray-300 bg-slate-100 p-3 text-gray-800 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
             />
           </div>
@@ -122,7 +126,8 @@ const CreateGigModal: React.FC<CreateGigModalProps> = ({ onClose, onCreate }) =>
                 onChange={(e) =>
                   setNewGig({
                     ...newGig,
-                    price: e.target.value === "" ? 0 : parseFloat(e.target.value),
+                    price:
+                      e.target.value === "" ? 0 : parseFloat(e.target.value),
                   })
                 }
                 className="mt-1 w-full rounded-lg border-slate-300 bg-slate-100 p-3 pr-10 text-slate-800 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
@@ -157,7 +162,10 @@ const CreateGigModal: React.FC<CreateGigModalProps> = ({ onClose, onCreate }) =>
             <FaTag className="absolute bottom-3 right-4 text-slate-400" />
           </div>
           {/* Date Picker */}
-          <DatePicker dueDate={newGig.dueDate} onDateChange={handleDateChange} />
+          <DatePicker
+            dueDate={newGig.dueDate}
+            onDateChange={handleDateChange}
+          />
         </div>
         {/* Buttons */}
         <div className="mt-6 flex justify-end gap-4">

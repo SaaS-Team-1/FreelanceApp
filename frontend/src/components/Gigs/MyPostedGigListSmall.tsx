@@ -10,13 +10,12 @@ import { FaCheck } from "react-icons/fa";
 import { HiX } from "react-icons/hi";
 
 
-
 interface PostedGigListSmallProps {
   gigs: { gig: Gig; lister: User }[];
   onSelectGig?: (gig: Gig) => void;
   onSeeMoreClick?: (gig: Gig) => void;
   onCompleteClick?: (gigId: string) => void;
-  onUndoClick ? :(gigId: string) => void;
+  onUndoClick?: (gigId: string) => void;
   enableSelection?: boolean;
   selectedGig?: Gig | null;
   showSeeMoreButton?: boolean;
@@ -32,7 +31,7 @@ function PostedGigListSmall({
   onSelectGig,
   onSeeMoreClick,
   onCompleteClick,
-  onUndoClick ,
+  onUndoClick,
   enableSelection = true,
   selectedGig = null,
   showSeeMoreButton = true,
@@ -47,11 +46,11 @@ function PostedGigListSmall({
   const formatDate = (dueDate: any) => {
     try {
       // Handle different date formats
-      const date = dueDate?.seconds 
-        ? new Date(dueDate.seconds * 1000)  // Firestore timestamp
-        : dueDate instanceof Date 
-        ? dueDate                           // JavaScript Date object
-        : new Date(dueDate);                // String or number timestamp
+      const date = dueDate?.seconds
+        ? new Date(dueDate.seconds * 1000) // Firestore timestamp
+        : dueDate instanceof Date
+          ? dueDate // JavaScript Date object
+          : new Date(dueDate); // String or number timestamp
 
       return date.toLocaleDateString("en-GB", {
         weekday: "long",
@@ -66,7 +65,7 @@ function PostedGigListSmall({
       return "Date unavailable";
     }
   };
-  
+
   const handleMessageClick = (userId: string) => {
     navigate(`/app/chat?user=${userId}`);
   };
@@ -84,8 +83,6 @@ function PostedGigListSmall({
             ${hoverEffect ? "hover:bg-slate-100" : ""}`}
           onClick={() => enableSelection && onSelectGig && onSelectGig(gig)}
         >
-
-
           {/* Header with title and date */}
           <div className="mb-2">
             <h3 className="whitespace-normal break-words text-lg font-semibold text-slate-900 pr-[120px]">
@@ -97,10 +94,10 @@ function PostedGigListSmall({
               </p>
             )}
           </div>
-  
+
           {/* Divider line */}
           {showDateWithLine && <div className="mt-1 border-t border-white" />}
-  
+
           {/* Button row */}
           <div className="mt-4 flex items-center justify-between gap-2">
             <div className="flex gap-2">
@@ -127,7 +124,7 @@ function PostedGigListSmall({
                 />
               )}
             </div>
-  
+
             <div className="flex gap-2">
               {showChatIcon && (
                 <CustomButton
@@ -158,4 +155,4 @@ function PostedGigListSmall({
   );
 }
 
-export default PostedGigListSmall
+export default PostedGigListSmall;

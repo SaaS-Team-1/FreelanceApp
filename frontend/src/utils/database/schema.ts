@@ -26,6 +26,8 @@ export interface User {
   };
   completedGigs: number;
   averageRating: number;
+  loginStreak: number;
+  lastActivity: Timestamp;
 }
 
 export interface Gig {

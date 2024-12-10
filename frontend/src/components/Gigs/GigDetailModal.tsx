@@ -1,13 +1,23 @@
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 import CustomButton from "@/components/Buttons/CustomButton";
-import { Application, Chat, Gig, User, Notification } from "@/utils/database/schema";
+import {
+  Application,
+  Chat,
+  Gig,
+  User,
+  Notification,
+} from "@/utils/database/schema";
 import { FaDollarSign, FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
 import Badge from "@/components/Buttons/CustomBadge";
 import { Firestore, Timestamp, addDoc, updateDoc } from "firebase/firestore";
 import { query, where, getDocs } from "firebase/firestore";
 import UserProfilePicture from "@/components/Avatar/UserProfilePicture"; // Import the UserProfilePicture component
-import { applicationsRef, chatsRef, notificationsRef } from "@/utils/database/collections";
+import {
+  applicationsRef,
+  chatsRef,
+  notificationsRef,
+} from "@/utils/database/collections";
 
 interface GigDetailModalProps {
   gig: Gig;
@@ -27,38 +37,37 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
   lister,
 }) => {
   const [applied, setApplied] = React.useState(false);
-  
+
   if (!isOpen) return null;
 
   const checkApply = async () => {
     if (!userId || !db) return;
 
     const applicationRef = applicationsRef(db);
-      const existingApplicationQuery = query(
-        applicationRef,
-        where("gigId", "==", gig.gigId),
-        where("applicantId", "==", userId)
-      );
-      const existingApplications = await getDocs(existingApplicationQuery);
-  
-      if (!existingApplications.empty) {
-        setApplied(true);
-        return;
-      }
-      else{
-        setApplied(false);
-      }
-  }
+    const existingApplicationQuery = query(
+      applicationRef,
+      where("gigId", "==", gig.gigId),
+      where("applicantId", "==", userId),
+    );
+    const existingApplications = await getDocs(existingApplicationQuery);
+
+    if (!existingApplications.empty) {
+      setApplied(true);
+      return;
+    } else {
+      setApplied(false);
+    }
+  };
 
   const handleApply = async () => {
     if (!userId || !db) return;
-  
+
     try {
       // Ensure necessary gig fields are defined
       if (!gig.gigId || !gig.listerId) {
         throw new Error("Gig data is incomplete.");
       }
-  
+
       // Create application
       const applicationData: Partial<Application> = {
         gigId: gig.gigId,
@@ -70,9 +79,9 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
         chatId: "",
         applicationId: "",
       };
-  
+
       const applicationDoc = await addDoc(applicationsRef(db), applicationData);
-  
+
       // Create chat
       const chatData: Partial<Chat> = {
         gigId: gig.gigId,
@@ -82,41 +91,40 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
         lastUpdate: Timestamp.now(),
         chatId: "",
       };
-  
+
       const chatDoc = await addDoc(chatsRef(db), chatData);
-  
+
       // Update application and chat IDs
       await Promise.all([
         updateDoc(chatDoc, { chatId: chatDoc.id }),
-        updateDoc(applicationDoc, { chatId: chatDoc.id, applicationId: applicationDoc.id }),
+        updateDoc(applicationDoc, {
+          chatId: chatDoc.id,
+          applicationId: applicationDoc.id,
+        }),
       ]);
-  
+
       await addDoc(notificationsRef(db), {
         userId: gig.listerId,
         notificationMessage: `New application for you gig: "${gig.title}".`,
         createdAt: Timestamp.now(),
       });
 
-  
       // Set the application state to applied
       setApplied(true);
-  
+
       alert("Application submitted successfully!");
       onClose();
     } catch (error) {
       console.error("Error applying to gig:", error);
-  
+
       // Partial cleanup or recovery could be implemented here if needed
       alert("Failed to apply for the gig. Please try again.");
     }
   };
-  
-  
 
   useEffect(() => {
     checkApply();
   }, []);
-  
 
   const location = gig.location || "Remote";
 
@@ -236,7 +244,7 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
                   <CustomButton
                     label={!applied ? "Apply" : "Applied Already"}
                     onClick={handleApply} // Trigger the apply function
-                    color= {!applied ? "primary" : "gray"}
+                    color={!applied ? "primary" : "gray"}
                     textColor={!applied ? "white" : "black"}
                     size="medium"
                     rounded={false}

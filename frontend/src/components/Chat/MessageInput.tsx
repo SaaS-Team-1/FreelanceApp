@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { doc, addDoc, updateDoc} from "firebase/firestore";
+import { doc, addDoc, updateDoc } from "firebase/firestore";
 import { chatMessagesRef, chatsRef } from "@/utils/database/collections";
 import { Timestamp } from "firebase/firestore";
 
@@ -32,13 +32,13 @@ const MessageInput: React.FC<MessageInputProps> = ({
           timestamp: Timestamp.now(), // Use Timestamp from Firestore
           isRead: false,
         });
-  
+
         // Update the lastUpdate field in the chat document
         const chatRef = doc(chatsRef(db), chatId);
         await updateDoc(chatRef, {
           lastUpdate: Timestamp.now(),
         });
-  
+
         setMessage("");
         onMessageSent(); // Notify parent component to update chats
       } catch (error) {
@@ -46,7 +46,6 @@ const MessageInput: React.FC<MessageInputProps> = ({
       }
     }
   };
-  
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
