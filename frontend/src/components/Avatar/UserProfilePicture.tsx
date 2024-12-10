@@ -14,7 +14,6 @@ interface UserProfilePictureProps {
   hoverDetails?: boolean;
   rounded?: boolean;
   position?: "above" | "default"; // Add position prop
-
 }
 
 const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
@@ -23,7 +22,6 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
   hoverDetails = false,
   rounded = true,
   position = "default", // Default position
-
 }) => {
   // Fallbacks for missing user data
   const displayName = user?.displayName || "Anonymous";
@@ -33,26 +31,26 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
   const completedGigs = user?.completedGigs;
   const averageRating = user?.averageRating;
   const hoverClass =
-  position === "above"
-    ? "bottom-full mb-3  "
-    : "top-full mt-3 l ";
+    position === "above" ? "bottom-full mb-3  " : "top-full mt-3 l ";
   return (
-    <div className="group relative">
+    <div
+      className={`group relative size-fit ${
+        rounded ? "rounded-full" : "rounded-md"
+      }`}
+    >
+      <div className="absolute -right-1 -top-1 ">
+        <UserLevelDisplay user={user} size="small" textColor="text-black" />
+      </div>
+
       {/* Profile Picture */}
       <div
         className={`${sizeClasses[size]} ${rounded ? "rounded-full" : "rounded-md"} 
         flex items-center justify-center overflow-hidden bg-gray-300`}
       >
-        <div className="absolute -right-1 -top-1 ">
-            <UserLevelDisplay user={user} size="small" textColor="text-black" />
-        </div>
-
         <img
           src={profilePicture}
           alt={displayName}
-          className={`size-full object-cover ${
-            rounded ? "rounded-full" : "rounded-md"
-          }`}
+          className={`size-full object-cover`}
         />
       </div>
 
