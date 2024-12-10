@@ -2,7 +2,6 @@ import React from "react";
 import { Timestamp } from "firebase/firestore";
 import { FaCalendarAlt, FaClock } from "react-icons/fa";
 
-
 interface DatePickerProps {
   dueDate: Timestamp;
   onDateChange: (date: Timestamp) => void;
@@ -15,7 +14,9 @@ const DatePicker: React.FC<DatePickerProps> = ({ dueDate, onDateChange }) => {
     <div className="flex flex-col gap-4 md:flex-row">
       {/* Date Input */}
       <div className="relative w-full md:w-1/2">
-        <label className="block text-sm font-medium text-gray-700">Due Date</label>
+        <label className="block text-sm font-medium text-gray-700">
+          Due Date
+        </label>
         <div className="relative">
           <input
             type="date"
@@ -36,7 +37,9 @@ const DatePicker: React.FC<DatePickerProps> = ({ dueDate, onDateChange }) => {
 
       {/* Time Input */}
       <div className="relative w-full md:w-1/2">
-        <label className="block text-sm font-medium text-gray-700">Due Time</label>
+        <label className="block text-sm font-medium text-gray-700">
+          Due Time
+        </label>
         <div className="relative">
           <input
             type="time"

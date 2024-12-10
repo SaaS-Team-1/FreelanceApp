@@ -70,13 +70,13 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
       onClick={onClose}
     >
       <div
-        className="scrollbar w-[800px] max-w-full rounded-lg bg-white shadow-lg max-h-[90vh] overflow-y-auto"
+        className="scrollbar max-h-[90vh] w-[800px] max-w-full overflow-y-auto rounded-lg bg-white shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="sticky top-0 z-10 flex justify-between items-center p-4 border-b bg-white shadow-sm">
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-white p-4 shadow-sm">
           <h2 className="text-2xl font-semibold text-gray-800">Edit Profile</h2>
         </div>
-        <div className="p-6 space-y-6">
+        <div className="space-y-6 p-6">
           {/* Display Name Input */}
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">
@@ -143,7 +143,10 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                     ...updatedUser,
                     profile: {
                       ...updatedUser.profile,
-                      [field]: type === "number" ? Number(e.target.value) : e.target.value,
+                      [field]:
+                        type === "number"
+                          ? Number(e.target.value)
+                          : e.target.value,
                     },
                   })
                 }

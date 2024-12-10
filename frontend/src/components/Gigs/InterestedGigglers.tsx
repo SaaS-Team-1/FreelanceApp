@@ -233,22 +233,22 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
                 </span>
               </div>
               <div className="flex">
-              <CustomButton
-                label="Assign"
-                icon={FaUserCheck}
-                onClick={() => handleAssignGig(user.userId)}
-                color="green"
-                textColor="black"
-                size="small"
-                rounded={false}
-              />
-              <CustomButton
-                label="Message"
-                icon={FaEnvelope}
-                onClick={() => navigate(`/app/chat?user=${user.userId}`)}
-                color="gray"
-                size="small"
-              />
+                <CustomButton
+                  label="Assign"
+                  icon={FaUserCheck}
+                  onClick={() => handleAssignGig(user.userId)}
+                  color="green"
+                  textColor="black"
+                  size="small"
+                  rounded={false}
+                />
+                <CustomButton
+                  label="Message"
+                  icon={FaEnvelope}
+                  onClick={() => navigate(`/app/chat?user=${user.userId}`)}
+                  color="gray"
+                  size="small"
+                />
               </div>
             </div>
           </div>

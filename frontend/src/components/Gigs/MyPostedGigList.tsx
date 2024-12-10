@@ -72,15 +72,15 @@ function PostedGigList({
     <div className="space-y-4">
       {gigs.map(({ gig, lister }, index) => (
         <div
-        key={index}
-        className={`relative rounded-lg p-4 shadow-sm transition-transform duration-200 ease-in-out ${
-          selectedGig && selectedGig.title === gig.title
-            ? "border border-blue-400 bg-blue-100 text-blue-700"
-            : "bg-white text-slate-800"
-        } ${enableSelection ? "cursor-pointer" : ""} 
+          key={index}
+          className={`relative rounded-lg p-4 shadow-sm transition-transform duration-200 ease-in-out ${
+            selectedGig && selectedGig.title === gig.title
+              ? "border border-blue-400 bg-blue-100 text-blue-700"
+              : "bg-white text-slate-800"
+          } ${enableSelection ? "cursor-pointer" : ""} 
           ${hoverEffect ? "hover:bg-slate-100" : ""}`}
-        onClick={() => enableSelection && onSelectGig && onSelectGig(gig)}
-      >
+          onClick={() => enableSelection && onSelectGig && onSelectGig(gig)}
+        >
           {showUndoButton && (
             <div className="absolute right-4 top-4">
               <UndoButton
@@ -119,8 +119,9 @@ function PostedGigList({
 
           <div className="mb-2 flex items-center">
             <div className="ml-3 flex flex-col">
-              <h3 className="whitespace-normal break-words text-lg font-semibold text-slate-900 pr-[120px]">
-                {gig.title}</h3>
+              <h3 className="whitespace-normal break-words pr-[120px] text-lg font-semibold text-slate-900">
+                {gig.title}
+              </h3>
               {showDateWithLine && (
                 <p className="mt-1 text-xs text-blue-600">
                   {formatDate(gig.dueDate)}

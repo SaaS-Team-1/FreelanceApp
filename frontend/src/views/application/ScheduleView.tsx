@@ -333,8 +333,10 @@ function ScheduleView() {
       >
         {/* Page 1: Scheduled Gigs and Pending Gigs */}
         <div className="flex size-full w-1/2 shrink-0 snap-center gap-6">
-        <div className="scrollbar light:text-slate-800 size-full overflow-y-scroll rounded-lg bg-slate-200 p-4">
-            <h1 className="mb-3 text-xl font-bold dark:text-white">Pending Gigs</h1>
+          <div className="scrollbar light:text-slate-800 size-full overflow-y-scroll rounded-lg bg-slate-200 p-4">
+            <h1 className="mb-3 text-xl font-bold dark:text-white">
+              Pending Gigs
+            </h1>
             <PostedGigListSmall
               gigs={pendingGigs}
               showDateWithLine={true}
@@ -347,10 +349,11 @@ function ScheduleView() {
 
           {/* Divider */}
           <div className="h-full w-px bg-slate-400"></div>
-          
 
           <div className="scrollbar light:text-slate-800 size-full overflow-y-scroll rounded-lg bg-slate-200 p-4">
-            <h1 className="mb-3 text-xl font-bold dark:text-white">Scheduled Gigs</h1>
+            <h1 className="mb-3 text-xl font-bold dark:text-white">
+              Scheduled Gigs
+            </h1>
             <PostedGigListSmall
               gigs={inProgressGigs}
               showDateWithLine={true}
@@ -364,16 +367,14 @@ function ScheduleView() {
 
           {/* Divider */}
           <div className="h-full w-px bg-slate-400"></div>
-          
         </div>
 
-        
-        
-
         {/* Page 2: Awaiting Approval and Completed Gigs */}
-        <div className="flex  w-1/2 shrink-0 snap-center gap-6"> 
+        <div className="flex  w-1/2 shrink-0 snap-center gap-6">
           <div className="scrollbar light:text-slate-800 size-full overflow-y-scroll rounded-lg bg-slate-200 p-4">
-            <h1 className="mb-3 text-xl font-bold dark:text-white">Awaiting Approval</h1>
+            <h1 className="mb-3 text-xl font-bold dark:text-white">
+              Awaiting Approval
+            </h1>
             <PostedGigListSmall
               gigs={awaitingApprovalGigs}
               showDateWithLine={true}
@@ -387,7 +388,9 @@ function ScheduleView() {
           <div className="h-full w-px bg-slate-400"></div>
 
           <div className="scrollbar light:text-slate-800 size-full overflow-y-scroll rounded-lg bg-slate-200 p-4">
-            <h1 className="mb-3 text-xl font-bold dark:text-white">Completed Gigs</h1>
+            <h1 className="mb-3 text-xl font-bold dark:text-white">
+              Completed Gigs
+            </h1>
             <PostedGigListSmall
               gigs={completedGigs}
               showDateWithLine={true}

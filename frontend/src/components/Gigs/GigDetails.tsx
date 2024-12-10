@@ -144,7 +144,8 @@ const GigDetails: React.FC<GigDetailsProps> = ({
         icon={FaTrashAlt}
         iconPosition="left"
         customStyle={{
-          backgroundColor: gig.status === "open" ? "bg-blue-400" : "bg-gray-400",
+          backgroundColor:
+            gig.status === "open" ? "bg-blue-400" : "bg-gray-400",
           padding: "6px 20px",
           width: "120px",
         }}
@@ -174,7 +175,8 @@ const GigDetails: React.FC<GigDetailsProps> = ({
               icon={FaPen}
               iconPosition="left"
               customStyle={{
-                backgroundColor: gig.status === "open" ? "bg-blue-400" : "bg-gray-400",
+                backgroundColor:
+                  gig.status === "open" ? "bg-blue-400" : "bg-gray-400",
               }}
             />
           )}
@@ -219,12 +221,8 @@ const GigDetails: React.FC<GigDetailsProps> = ({
         <h2 className="text-2xl font-semibold text-gray-900">{gig.title}</h2>
       </div>
 
-
-
       <p className="mb-2 text-sm font-bold text-gray-900">Description:</p>
       <p className="mb-4 text-gray-900">{gig.description}</p>
-      
-
 
       <div className="mb-6 flex flex-col justify-center gap-6 text-sm text-gray-900 sm:flex-row">
         <div className="flex flex-col items-center">

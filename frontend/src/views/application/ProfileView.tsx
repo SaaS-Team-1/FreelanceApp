@@ -50,7 +50,7 @@ export default function ProfileView() {
     <div className="scrollbar mx-auto w-full max-w-5xl px-6 py-10">
       <div className="space-y-8">
         {/* Profile Header */}
-        <div className="flex flex-col items-center rounded-lg bg-white shadow-lg p-6 md:flex-row md:items-start">
+        <div className="flex flex-col items-center rounded-lg bg-white p-6 shadow-lg md:flex-row md:items-start">
           <div className="flex-shrink-0">
             <UserProfilePicture
               user={user}
@@ -58,7 +58,7 @@ export default function ProfileView() {
               hoverDetails={false} // Disable hover details for cleaner look
             />
           </div>
-          <div className="mt-4 md:mt-0 md:ml-6 flex-1">
+          <div className="mt-4 flex-1 md:ml-6 md:mt-0">
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-bold text-gray-800">
@@ -89,13 +89,13 @@ export default function ProfileView() {
         </div>
 
         {/* About Section */}
-        <div className="rounded-lg bg-white shadow-lg p-6">
+        <div className="rounded-lg bg-white p-6 shadow-lg">
           <h2 className="text-xl font-semibold text-gray-800">About Me</h2>
           <p className="mt-3 text-slate-600">{user.profile.bio}</p>
         </div>
 
         {/* Degree and Skills Section */}
-        <div className="rounded-lg bg-white shadow-lg p-6">
+        <div className="rounded-lg bg-white p-6 shadow-lg">
           <h2 className="text-xl font-semibold text-gray-800">
             Degree and Skills
           </h2>

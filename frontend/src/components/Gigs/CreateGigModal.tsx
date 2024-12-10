@@ -97,7 +97,9 @@ const CreateGigModal: React.FC<CreateGigModalProps> = ({
         <div className="space-y-4">
           {/* Title Input */}
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">Title</label>
+            <label className="mb-2 block text-sm font-medium text-slate-700">
+              Title
+            </label>
             <input
               type="text"
               value={newGig.title}
@@ -107,7 +109,9 @@ const CreateGigModal: React.FC<CreateGigModalProps> = ({
           </div>
           {/* Description Input */}
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">Description</label>
+            <label className="mb-2 block text-sm font-medium text-slate-700">
+              Description
+            </label>
             <textarea
               value={newGig.description}
               onChange={(e) =>
@@ -119,7 +123,9 @@ const CreateGigModal: React.FC<CreateGigModalProps> = ({
           {/* Price and Location on the Same Line */}
           <div className="flex flex-col gap-6 md:flex-row">
             <div className="relative w-full">
-              <label className="block text-sm font-medium text-slate-700">Price</label>
+              <label className="block text-sm font-medium text-slate-700">
+                Price
+              </label>
               <input
                 type="number"
                 value={newGig.price || ""}
@@ -136,7 +142,9 @@ const CreateGigModal: React.FC<CreateGigModalProps> = ({
               <FaDollarSign className="absolute bottom-3 right-4 text-slate-400" />
             </div>
             <div className="relative w-full">
-              <label className="block text-sm font-medium text-slate-700">Location</label>
+              <label className="block text-sm font-medium text-slate-700">
+                Location
+              </label>
               <input
                 type="text"
                 value={newGig.location}
@@ -150,7 +158,9 @@ const CreateGigModal: React.FC<CreateGigModalProps> = ({
           </div>
           {/* Category Input */}
           <div className="relative">
-            <label className="block text-sm font-medium text-slate-700">Category</label>
+            <label className="block text-sm font-medium text-slate-700">
+              Category
+            </label>
             <input
               type="text"
               value={newGig.category}

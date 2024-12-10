@@ -223,7 +223,7 @@ function MyPostedGigsView() {
 
   return (
     <div className="flex h-[calc(100vh-4rem)] w-full space-x-6 p-4">
-      <div className="scrollbar h-full w-1/2 overflow-y-scroll bg-slate-200 rounded-lg p-4">
+      <div className="scrollbar h-full w-1/2 overflow-y-scroll rounded-lg bg-slate-200 p-4">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-2xl font-semibold text-slate-800">
             My Posted Gigs
@@ -238,7 +238,7 @@ function MyPostedGigsView() {
 
             {isDropdownVisible && (
               <div
-                className="absolute right-0 z-50 mt-2 w-48 rounded-md bg-white border border-slate-200 shadow-lg transition-transform"
+                className="absolute right-0 z-50 mt-2 w-48 rounded-md border border-slate-200 bg-white shadow-lg transition-transform"
                 onMouseLeave={() => setIsDropdownVisible(false)}
               >
                 <button
@@ -269,32 +269,32 @@ function MyPostedGigsView() {
         />
       </div>
 
-      <div className="-full w-1/2 bg-slate-200 rounded-lg p-6">
-          {selectedGig ? (
-            <>
-              <GigDetails
-                gig={selectedGig}
-                user={fullUser}
-                onEditSave={handleGigUpdate}
-                onDelete={handleGigDelete}
-              />
-              {loadingApplicants ? (
-            <div className="flex items-center justify-center py-6">
-              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-            </div>
-          ) : (
-            <InterestedGigglers
+      <div className="-full w-1/2 rounded-lg bg-slate-200 p-6">
+        {selectedGig ? (
+          <>
+            <GigDetails
               gig={selectedGig}
-              users={applicants}
-              onGigUpdate={handleGigUpdate}
+              user={fullUser}
+              onEditSave={handleGigUpdate}
+              onDelete={handleGigDelete}
             />
-          )}
-            </>
-          ) : (
-            <p className="text-slate-500 text-center">No available gigs</p>
-          )}
-        </div>
+            {loadingApplicants ? (
+              <div className="flex items-center justify-center py-6">
+                <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-blue-500"></div>
+              </div>
+            ) : (
+              <InterestedGigglers
+                gig={selectedGig}
+                users={applicants}
+                onGigUpdate={handleGigUpdate}
+              />
+            )}
+          </>
+        ) : (
+          <p className="text-center text-slate-500">No available gigs</p>
+        )}
       </div>
+    </div>
   );
 }
 

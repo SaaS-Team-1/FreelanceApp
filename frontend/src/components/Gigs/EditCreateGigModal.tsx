@@ -120,7 +120,9 @@ const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
         <div className="space-y-6">
           {/* Title Input */}
           <div>
-            <label className="block text-sm font-medium text-slate-700">Title</label>
+            <label className="block text-sm font-medium text-slate-700">
+              Title
+            </label>
             <input
               type="text"
               value={editedGig.title}
@@ -132,7 +134,9 @@ const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
           </div>
           {/* Description Input */}
           <div>
-            <label className="block text-sm font-medium text-slate-700">Description</label>
+            <label className="block text-sm font-medium text-slate-700">
+              Description
+            </label>
             <textarea
               value={editedGig.description}
               onChange={(e) =>
@@ -145,7 +149,9 @@ const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
           {/* Price and Location */}
           <div className="flex flex-col gap-6 md:flex-row">
             <div className="relative w-full">
-              <label className="block text-sm font-medium text-slate-700">Price</label>
+              <label className="block text-sm font-medium text-slate-700">
+                Price
+              </label>
               <input
                 type="number"
                 disabled={mode === "edit"}
@@ -159,7 +165,9 @@ const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
               <FaDollarSign className="absolute bottom-3 right-4 text-slate-400" />
             </div>
             <div className="relative w-full">
-              <label className="block text-sm font-medium text-slate-700">Location</label>
+              <label className="block text-sm font-medium text-slate-700">
+                Location
+              </label>
               <input
                 type="text"
                 value={editedGig.location}
@@ -173,7 +181,9 @@ const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
           </div>
           {/* Category Input */}
           <div className="relative">
-            <label className="block text-sm font-medium text-slate-700">Category</label>
+            <label className="block text-sm font-medium text-slate-700">
+              Category
+            </label>
             <input
               type="text"
               value={editedGig.category}

@@ -147,7 +147,7 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
                 />
                 <div>
                   <h3
-                    className="text-xl font-semibold text-slate-800 truncate w-48"
+                    className="w-48 truncate text-xl font-semibold text-slate-800"
                     style={{
                       whiteSpace: "nowrap",
                       overflow: "hidden",
@@ -163,7 +163,9 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
                     </p>
                   )}
                 </div>
-                <h2 className="text-2xl font-bold text-slate-800">{gig.title}</h2>
+                <h2 className="text-2xl font-bold text-slate-800">
+                  {gig.title}
+                </h2>
               </div>
 
               <p className="mb-4 text-slate-600">{gig.description}</p>

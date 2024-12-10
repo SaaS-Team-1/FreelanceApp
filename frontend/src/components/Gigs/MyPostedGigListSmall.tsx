@@ -9,7 +9,6 @@ import { useNavigate } from "react-router-dom";
 import { FaCheck } from "react-icons/fa";
 import { HiX } from "react-icons/hi";
 
-
 interface PostedGigListSmallProps {
   gigs: { gig: Gig; lister: User }[];
   onSelectGig?: (gig: Gig) => void;
@@ -85,7 +84,7 @@ function PostedGigListSmall({
         >
           {/* Header with title and date */}
           <div className="mb-2">
-            <h3 className="whitespace-normal break-words text-lg font-semibold text-slate-900 pr-[120px]">
+            <h3 className="whitespace-normal break-words pr-[120px] text-lg font-semibold text-slate-900">
               {gig.title}
             </h3>
             {showDateWithLine && (
@@ -120,7 +119,7 @@ function PostedGigListSmall({
                   textColor="black"
                   size="small"
                   rounded={false}
-                  onClick={() => onUndoClick && onUndoClick(gig.gigId)} 
+                  onClick={() => onUndoClick && onUndoClick(gig.gigId)}
                 />
               )}
             </div>
