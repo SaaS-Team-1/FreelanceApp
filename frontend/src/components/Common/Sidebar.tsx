@@ -3,7 +3,6 @@ import {
   FaHome,
   FaClipboardList,
   FaComments,
-  FaBell,
   FaUser,
   FaCalendarAlt,
   FaCog,
@@ -135,13 +134,6 @@ function Sidebar() {
           isExpanded={isExpanded}
           isActive={location.pathname === "/app/profile"}
           onClick={() => navigate("/app/profile")}
-        />
-        <SidebarItem
-          icon={<FaCog />}
-          label="Settings"
-          isExpanded={isExpanded}
-          isActive={location.pathname === "/app/settings"}
-          onClick={() => navigate("/app/settings")}
         />
         <SidebarItem
           icon={<FaWallet />}

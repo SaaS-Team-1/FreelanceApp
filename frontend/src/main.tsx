@@ -85,10 +85,6 @@ const router = createBrowserRouter([
             element: <ProfileView />,
           },
           {
-            path: "settings",
-            element: <SettingsView />,
-          },
-          {
             path: "wallet",
             element: <WalletView />,
           },
