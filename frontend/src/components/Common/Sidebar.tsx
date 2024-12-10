@@ -17,7 +17,6 @@ import { useAuth, useFirestore, useUser } from "@/utils/reactfire";
 import UserProfilePicture from "@/components/Avatar/UserProfilePicture";
 import { User } from "@/utils/database/schema";
 import { collection, getDocs, query, where } from "firebase/firestore";
-import UserLevelDisplay from "./UserLevelDisplay";
 
 function Sidebar() {
   const db = useFirestore();
@@ -91,7 +90,6 @@ function Sidebar() {
           />
           {/* Align User Level Display and Name */}
           <div className="mt-2 flex flex-row items-center gap-4">
-            <UserLevelDisplay user={userDb} size="small" />
             <h2 className="text-lg font-semibold text-blue-300">
               {userDb.displayName}
             </h2>

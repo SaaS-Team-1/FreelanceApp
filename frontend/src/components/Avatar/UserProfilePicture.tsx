@@ -43,6 +43,10 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
         className={`${sizeClasses[size]} ${rounded ? "rounded-full" : "rounded-md"} 
         flex items-center justify-center overflow-hidden bg-gray-300`}
       >
+        <div className="absolute -right-1 -top-1 ">
+            <UserLevelDisplay user={user} size="small" textColor="text-black" />
+        </div>
+
         <img
           src={profilePicture}
           alt={displayName}
