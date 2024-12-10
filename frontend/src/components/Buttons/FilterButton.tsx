@@ -33,7 +33,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
           <div className="flex items-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="size-5 text-gray-500"
+              className="size-5 text-secondary"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -54,7 +54,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
         {/* "Clear All" Option */}
         <Dropdown.Item
           onClick={clearAllCategories}
-          className="font-semibold text-red-500"
+          className="font-semibold text-error"
         >
           Clear All
         </Dropdown.Item>

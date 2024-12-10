@@ -5,7 +5,6 @@ import {
   FaComments,
   FaUser,
   FaCalendarAlt,
-  FaCog,
   FaSignOutAlt,
   FaBars,
   FaWallet,
@@ -63,14 +62,16 @@ function Sidebar() {
   return (
     <aside
       className={`sticky top-0 h-screen ${
-        isExpanded ? "w-64" : "w-20"
-      } fixed flex flex-col justify-between bg-slate-800 p-4 text-blue-200 transition-all duration-300`}
+        isExpanded ? "w-fit" : "w-20"
+      } fixed flex flex-col justify-between bg-surface-container p-4 text-on-surface transition-all duration-300`}
       style={{ fontFamily: "Inter, sans-serif" }}
     >
       {/* Toggle Button */}
       <button
         onClick={toggleSidebar}
-        className="mb-4 self-end rounded-md p-2 text-lg text-white hover:bg-slate-700"
+        className={`mb-4 rounded-md text-lg hover:bg-surface-dim ${
+          isExpanded ? "self-end" : "self-center"
+        }`}
       >
         <FaBars />
       </button>
@@ -78,7 +79,7 @@ function Sidebar() {
       {/* Profile Section */}
       {isExpanded && userDb && (
         <div
-          className="flex flex-col items-center"
+          className="flex flex-col items-center rounded-xl bg-secondary-container py-10"
           onClick={() => navigate("/app/profile")}
         >
           <UserProfilePicture
@@ -89,17 +90,16 @@ function Sidebar() {
           />
           {/* Align User Level Display and Name */}
           <div className="mt-2 flex flex-row items-center gap-4">
-            <h2 className="text-lg font-semibold text-blue-300">
+            <h2 className="text-xl font-bold text-on-primary-container mb-2">
               {userDb.displayName}
             </h2>
           </div>
-          <p className="text-xs text-gray-500">{userDb.email}</p>
-          <div className="my-3 w-full border-t border-gray-600" />
+          <p className="text-xs text-secondary">{userDb.email}</p>
         </div>
       )}
 
       {/* Navigation Items */}
-      <nav className="flex flex-col gap-1">
+      <nav className="flex w-fit flex-col gap-1">
         <SidebarItem
           icon={<FaHome />}
           label="Home"
@@ -108,18 +108,21 @@ function Sidebar() {
           onClick={() => navigate("/app")}
         />
         <SidebarItem
+          icon={<FaTable />}
+          label="Leaderboard"
+          isExpanded={isExpanded}
+          isActive={location.pathname === "/app/leaderBoard"}
+          onClick={() => navigate("/app/leaderBoard")}
+        />
+
+        <div className="my-3 w-full border-t border-primary" />
+
+        <SidebarItem
           icon={<FaClipboardList />}
           label="My Posted Gigs"
           isExpanded={isExpanded}
           isActive={location.pathname === "/app/posted-gigs"}
           onClick={() => navigate("/app/posted-gigs")}
-        />
-        <SidebarItem
-          icon={<FaComments />}
-          label="Chat"
-          isExpanded={isExpanded}
-          isActive={location.pathname === "/app/chat"}
-          onClick={() => navigate("/app/chat")}
         />
         <SidebarItem
           icon={<FaCalendarAlt />}
@@ -128,13 +131,15 @@ function Sidebar() {
           isActive={location.pathname === "/app/schedule"}
           onClick={() => navigate("/app/schedule")}
         />
+
         <SidebarItem
-          icon={<FaUser />}
-          label="Profile"
+          icon={<FaComments />}
+          label="Chat"
           isExpanded={isExpanded}
-          isActive={location.pathname === "/app/profile"}
-          onClick={() => navigate("/app/profile")}
+          isActive={location.pathname === "/app/chat"}
+          onClick={() => navigate("/app/chat")}
         />
+        <div className="my-3 w-full border-t border-primary" />
         <SidebarItem
           icon={<FaWallet />}
           label="Wallet"
@@ -142,16 +147,17 @@ function Sidebar() {
           isActive={location.pathname === "/app/wallet"}
           onClick={() => navigate("/app/wallet")}
         />
+
         <SidebarItem
-          icon={<FaTable />}
-          label="LeaderBoard"
+          icon={<FaUser />}
+          label="Profile"
           isExpanded={isExpanded}
-          isActive={location.pathname === "/app/leaderBoard"}
-          onClick={() => navigate("/app/leaderBoard")}
+          isActive={location.pathname === "/app/profile"}
+          onClick={() => navigate("/app/profile")}
         />
       </nav>
 
-      <div className="mt-3 border-t border-gray-600 pt-3">
+      <div className="mt-3 border-t border-primary pt-3">
         <SidebarItem
           icon={<FaSignOutAlt />}
           label="Logout"
@@ -183,14 +189,16 @@ function SidebarItem({
     <div
       onClick={onClick}
       className={`flex cursor-pointer items-center rounded-lg p-3 transition-colors duration-200 ${
-        isActive ? "bg-gray-900 text-white" : "text-blue-300"
+        isActive ? "bg-surface-dim text-primary" : "text-secondary"
       } ${isExpanded ? "justify-start gap-3" : "justify-center"}
-      hover:bg-blue-500 hover:bg-opacity-20`}
+      hover:`}
     >
-      <div className={`text-lg ${isActive ? "text-white" : "text-blue-300"}`}>
+      <div
+        className={`text-lg ${isActive ? "text-primary" : "text-secondary"}`}
+      >
         {icon}
       </div>
-      {isExpanded && <span>{label}</span>}
+      {isExpanded && <span className="text-nowrap">{label}</span>}
     </div>
   );
 }

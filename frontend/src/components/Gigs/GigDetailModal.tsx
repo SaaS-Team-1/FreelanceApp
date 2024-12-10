@@ -1,13 +1,7 @@
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 import CustomButton from "@/components/Buttons/CustomButton";
-import {
-  Application,
-  Chat,
-  Gig,
-  User,
-  Notification,
-} from "@/utils/database/schema";
+import { Application, Chat, Gig, User } from "@/utils/database/schema";
 import { FaDollarSign, FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
 import Badge from "@/components/Buttons/CustomBadge";
 import { Firestore, Timestamp, addDoc, updateDoc } from "firebase/firestore";
@@ -37,9 +31,6 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
   lister,
 }) => {
   const [applied, setApplied] = React.useState(false);
-
-  if (!isOpen) return null;
-
   const checkApply = async () => {
     if (!userId || !db) return;
 
@@ -58,6 +49,12 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
       setApplied(false);
     }
   };
+
+  useEffect(() => {
+    checkApply();
+  }, []);
+
+  if (!isOpen) return null;
 
   const handleApply = async () => {
     if (!userId || !db) return;
@@ -122,65 +119,56 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
     }
   };
 
-  useEffect(() => {
-    checkApply();
-  }, []);
-
   const location = gig.location || "Remote";
 
   return ReactDOM.createPortal(
     <>
       <div
-        className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50"
+        className="fixed inset-0 z-10 flex items-center justify-center"
         onClick={onClose}
       >
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm"></div>
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="w-full max-w-4xl space-y-6 rounded-lg bg-white p-6 shadow-lg">
-            <div className="pr-4">
-              {/* Lister Profile Picture and Name */}
-              <div className="mb-4 flex items-center gap-4">
+          <div className="w-full max-w-4xl space-y-6 rounded-lg bg-surface shadow-lg">
+            <div className="mb-4 flex h-fit w-full items-center justify-stretch rounded-xl bg-primary-container">
+              <div className="flex items-center justify-self-start p-2 pr-4">
                 <UserProfilePicture
                   user={lister}
                   size="large" // Display larger profile picture
                   hoverDetails={true} // Show hover details
                 />
-                <div>
-                  <h3
-                    className="w-48 truncate text-xl font-semibold text-slate-800"
-                    style={{
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      maxWidth: "200px", // Adjust this to your desired max width
-                    }}
-                  >
+                <div className="ml-4">
+                  <h3 className="w-fit max-w-56 truncate text-nowrap text-xl font-semibold text-on-primary-container">
                     {lister.displayName}
                   </h3>
                   {lister.profile.location && (
-                    <p className="text-sm text-slate-600">
-                      {lister.profile.location}
-                    </p>
+                    <p className="text-sm">{lister.profile.location}</p>
                   )}
                 </div>
-                <h2 className="text-2xl font-bold text-slate-800">
-                  {gig.title}
-                </h2>
+                <div className="ml-3 self-stretch border-l border-on-primary-container" />
               </div>
 
-              <p className="mb-4 text-slate-600">{gig.description}</p>
+              <h2 className="text-2xl font-bold text-on-primary-container">
+                {gig.title}
+              </h2>
+            </div>
 
-              <div className="justify-left mb-6 flex flex-col gap-6 text-sm text-slate-800 sm:flex-row">
+            <div className="w-full p-6">
+              {/* Lister Profile Picture and Name */}
+
+              <p className="mb-4">{gig.description}</p>
+
+              <div className="mb-6 flex flex-col gap-6 text-sm sm:flex-row justify-center">
                 <div className="flex flex-col items-center">
                   <div className="flex items-center">
-                    <FaDollarSign className="mr-2 text-slate-800" />
+                    <FaDollarSign className="mr-2" />
                     <span>{gig.price ? `${gig.price} Tokens` : "TBD"}</span>
                   </div>
-                  <span className="ml-4 text-xs text-slate-400">Price</span>
+                  <span className="ml-4 text-xs">Price</span>
                 </div>
                 <div className="flex flex-col items-center">
                   <div className="flex items-center">
-                    <FaCalendarAlt className="mr-2 text-slate-800" />
+                    <FaCalendarAlt className="mr-2" />
                     <span>
                       {gig.dueDate
                         ? `${new Date(
@@ -189,20 +177,20 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
                         : "N/A"}
                     </span>
                   </div>
-                  <span className="ml-2 text-xs text-slate-400">Due Date</span>
+                  <span className="ml-2 text-xs">Due Date</span>
                 </div>
                 <div className="flex flex-col items-center">
                   <div className="flex items-center">
                     <FaMapMarkerAlt className="mr-2" />
                     <span>{location}</span>
                   </div>
-                  <span className="ml-6 text-xs text-slate-400">Location</span>
+                  <span className="ml-6 text-xs">Location</span>
                 </div>
               </div>
 
-              <div>
-                <h4 className="text-sm font-semibold text-slate-500">Tags:</h4>
-                <div className="mt-2 flex gap-2">
+              <div className="mb-6 flex flex-col text-sm items-center">
+                <h4 className="text-sm font-semibold">Tags:</h4>
+                <div className="flex mt-4 gap-2">
                   <Badge
                     label={gig.category}
                     color="beige"

@@ -34,8 +34,8 @@ interface BadgeProps {
 }
 
 const colorClasses: { [key in NonNullable<BadgeProps["color"]>]: string } = {
-  primary: "bg-blue-100", // Light blue background
-  secondary: "bg-orange-100", // Light orange
+  primary: "bg-primary/10", // Light blue background
+  secondary: "bg-secondary/10", // Light orange
   warning: "bg-red-100", // Light red
   gray: "bg-gray-100", // Soft gray
   black: "bg-gray-800", // Dark gray (for contrast in rare cases)
@@ -48,8 +48,8 @@ const colorClasses: { [key in NonNullable<BadgeProps["color"]>]: string } = {
 const borderColorClasses: {
   [key in NonNullable<BadgeProps["outlineColor"]>]: string;
 } = {
-  primary: "border-blue-300", // Lighter blue border
-  secondary: "border-orange-300", // Lighter orange
+  primary: "border-primary/30", // Lighter blue border
+  secondary: "border-secondary/30", // Lighter orange
   warning: "border-red-300", // Lighter red
   gray: "border-gray-300", // Lighter gray
   black: "border-gray-800", // Dark gray
@@ -70,7 +70,7 @@ const textColorClasses: {
 } = {
   black: "text-black",
   white: "text-slate-50", // Slightly soft white text for light contrasts
-  primary: "text-blue-700", // Deep blue for readability
+  primary: "text-primary/70", // Deep blue for readability
 };
 
 const Badge: React.FC<BadgeProps> = ({

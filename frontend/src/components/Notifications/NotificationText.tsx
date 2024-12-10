@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase/firestore";
-import React, { useState } from "react";
+import { useState } from "react";
 
 interface NotificationTextProps {
   text: string;
@@ -19,7 +19,7 @@ const NotificationText = ({ text, time }: NotificationTextProps) => {
 
   return (
     <div className="flex flex-col">
-      <p className="text-sm text-slate-800">
+      <p className="mb-2 text-sm text-on-background">
         {text && (isExpanded || text.length <= MAX_LENGTH) ? (
           text
         ) : (
@@ -44,7 +44,11 @@ const NotificationText = ({ text, time }: NotificationTextProps) => {
           </span>
         )}
       </p>
-      <span className="text-xs text-blue-500">{time.toString()}</span>
+      <div className="mb-2 w-full border-t border-secondary" />
+
+      <span className="text-xs text-blue-500">
+        {time.toString()}
+      </span>
     </div>
   );
 };

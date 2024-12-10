@@ -42,9 +42,9 @@ const sizeClasses: { [key: string]: string } = {
 const colorClasses: {
   [key in NonNullable<CustomButtonProps["color"]>]: string;
 } = {
-  primary: "bg-blue-500 hover:bg-blue-600",
-  secondary: "bg-orange-500 hover:bg-orange-600",
-  warning: "bg-red-500 hover:bg-red-600",
+  primary: "bg-primary h over:bg-primary/90",
+  secondary: "bg-secondary hover:bg-secondary/90",
+  warning: "bg-error hover:bg-error/80",
   gray: "bg-gray-500 hover:bg-gray-600",
   black: "bg-[rgba(11,33,44,1)] hover:bg-opacity-90",
   green: "bg-[rgba(42,168,21,1)] hover:bg-opacity-90",
@@ -55,9 +55,9 @@ const colorClasses: {
 const borderColorClasses: {
   [key in NonNullable<CustomButtonProps["outlineColor"]>]: string;
 } = {
-  primary: "border-blue-500",
-  secondary: "border-orange-500",
-  warning: "border-red-500",
+  primary: "border-primary/50",
+  secondary: "border-secondary/50",
+  warning: "border-error/50",
   gray: "border-gray-500",
   black: "border-[rgba(11,33,44,1)]",
   green: "border-[rgba(42,168,21,1)]",
@@ -70,7 +70,7 @@ const textColorClasses: {
 } = {
   black: "text-black",
   white: "text-white",
-  primary: "text-blue-500",
+  primary: "text-primary",
 };
 
 const CustomButton: React.FC<CustomButtonProps> = ({

@@ -26,17 +26,76 @@ body {
 
 .scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+  scrollbar-color: rgba(88, 94, 113, 0.1) transparent;
 }
 
 .header-bg-extension::before {
   content: "";
   position: absolute;
-  top: -20px; /* Adjust to extend the background */
+  top: -20px;
+  /* Adjust to extend the background */
   left: 0;
   right: 0;
-  height: 24px; /* Height of the extension */
-  background-color: inherit; /* Match the header background */
-  border-top-left-radius: inherit; /* Match header border-radius */
-  border-top-right-radius: inherit; /* Match header border-radius */
+  height: 24px;
+  /* Height of the extension */
+  background-color: inherit;
+  /* Match the header background */
+  border-top-left-radius: inherit;
+  /* Match header border-radius */
+  border-top-right-radius: inherit;
+  /* Match header border-radius */
+}
+
+@layer base {
+  :root {
+    --color-primary: 73 93 146;
+    --color-surface-tint: 73 93 146;
+    --color-on-primary: 255 255 255;
+    --color-primary-container: 218 226 255;
+    --color-on-primary-container: 0 24 72;
+    --color-secondary: 88 94 113;
+    --color-on-secondary: 255 255 255;
+    --color-secondary-container: 220 226 249;
+    --color-on-secondary-container: 21 27 44;
+    --color-tertiary: 115 84 113;
+    --color-on-tertiary: 255 255 255;
+    --color-tertiary-container: 254 214 249;
+    --color-on-tertiary-container: 43 18 43;
+    --color-error: 186 26 26;
+    --color-on-error: 255 255 255;
+    --color-error-container: 255 218 214;
+    --color-on-error-container: 65 0 2;
+    --color-background: 250 248 255;
+    --color-on-background: 26 27 33;
+    --color-surface: 250 248 255;
+    --color-on-surface: 26 27 33;
+    --color-surface-variant: 225 226 236;
+    --color-on-surface-variant: 69 70 79;
+    --color-outline: 117 119 128;
+    --color-outline-variant: 197 198 208;
+    --color-shadow: 0 0 0;
+    --color-scrim: 0 0 0;
+    --color-inverse-surface: 47 48 54;
+    --color-inverse-on-surface: 241 240 247;
+    --color-inverse-primary: 178 197 255;
+    --color-primary-fixed: 218 226 255;
+    --color-on-primary-fixed: 0 24 72;
+    --color-primary-fixed-dim: 178 197 255;
+    --color-on-primary-fixed-variant: 49 69 120;
+    --color-secondary-fixed: 220 226 249;
+    --color-on-secondary-fixed: 21 27 44;
+    --color-secondary-fixed-dim: 192 198 221;
+    --color-on-secondary-fixed-variant: 64 70 89;
+    --color-tertiary-fixed: 254 214 249;
+    --color-on-tertiary-fixed: 43 18 43;
+    --color-tertiary-fixed-dim: 225 187 220;
+    --color-on-tertiary-fixed-variant: 90 61 89;
+    --color-surface-dim: 218 217 224;
+    --color-surface-bright: 250 248 255;
+    --color-surface-container-lowest: 255 255 255;
+    --color-surface-container-low: 244 243 250;
+    --color-surface-container: 238 237 244;
+    --color-surface-container-high: 232 231 239;
+    --color-surface-container-highest: 227 226 233;
+  }
 }

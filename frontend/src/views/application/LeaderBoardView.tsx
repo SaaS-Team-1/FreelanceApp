@@ -52,7 +52,7 @@ const LeaderBoardView: React.FC = () => {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <div className="text-2xl font-semibold text-gray-700 dark:text-gray-300">
+        <div className="dark:text-gray-300 text-2xl font-semibold text-gray-700">
           Loading...
         </div>
       </div>
@@ -61,38 +61,35 @@ const LeaderBoardView: React.FC = () => {
 
   // Render leaderboard
   return (
-    <div className="leaderboard container mx-auto p-6">
-      <h1 className="mb-6 text-center text-4xl font-bold text-gray-900 dark:text-white">
-        Leaderboard
-      </h1>
-      <div className="overflow-x-auto rounded-lg shadow-lg">
-        <table className="min-w-full border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
-          <thead className="bg-gray-200 dark:bg-gray-700">
+    <div className="container mx-auto">
+      <div className="overflow-x-auto rounded-lg mx-6 mt-1">
+        <table className="dark:bg-gray-800 min-w-full border">
+          <thead className="bg-primary-container">
             <tr>
-              <th className="border-b px-6 py-3 text-left text-sm font-medium uppercase leading-4 tracking-wider text-gray-900 dark:border-gray-700 dark:text-white">
+              <th className="border-b px-6 py-3 text-left text-sm font-bold uppercase leading-4 tracking-wider text-on-primary-container">
                 Rank
               </th>
-              <th className="border-b px-6 py-3 text-left text-sm font-medium uppercase leading-4 tracking-wider text-gray-900 dark:border-gray-700 dark:text-white">
+              <th className="border-b px-6 py-3 text-left text-sm font-bold uppercase leading-4 tracking-wider text-on-primary-container">
                 Name
               </th>
-              <th className="border-b px-6 py-3 text-left text-sm font-medium uppercase leading-4 tracking-wider text-gray-900 dark:border-gray-700 dark:text-white">
+              <th className="border-b px-6 py-3 text-left text-sm font-bold uppercase leading-4 tracking-wider text-on-primary-container">
                 Completed Gigs
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white dark:bg-gray-800">
+          <tbody className="dark:bg-gray-800 bg-white">
             {users.map((user, index) => (
               <tr
                 key={user.id}
-                className="hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="hover:bg-surface-container-low"
               >
-                <td className="border-b px-6 py-4 text-sm text-gray-900 dark:border-gray-700 dark:text-white">
+                <td className="border-b px-6 py-4 text-sm text-on-primary-container">
                   {index + 1}
                 </td>
-                <td className="border-b px-6 py-4 text-sm text-gray-900 dark:border-gray-700 dark:text-white">
+                <td className="border-b px-6 py-4 text-sm text-on-primary-container">
                   {user.displayName}
                 </td>
-                <td className="border-b px-6 py-4 text-sm text-gray-900 dark:border-gray-700 dark:text-white">
+                <td className="border-b px-6 py-4 text-sm text-on-primary-container">
                   {user.completedGigs}
                 </td>
               </tr>

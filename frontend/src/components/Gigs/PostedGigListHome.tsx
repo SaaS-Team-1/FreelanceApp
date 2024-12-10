@@ -1,9 +1,7 @@
-import React, { useState } from "react";
-import { FaComments } from "react-icons/fa";
+import { useState } from "react";
 import { Gig, User } from "@/utils/database/schema";
 import Badge from "@/components/Buttons/CustomBadge";
 import CustomButton from "@/components/Buttons/CustomButton";
-import { UndoButton } from "@/components/Buttons/UndoButton";
 import GigDetailModal from "@/components/Gigs/GigDetailModal";
 import { Firestore } from "firebase/firestore";
 
@@ -24,14 +22,10 @@ interface PostedGigListHomeProps {
 
 function PostedGigListHome({
   gigs,
-  onSelectGig,
   enableSelection = true,
   selectedGig = null,
   showSeeMoreButton = true,
-  showChatIcon = false,
-  showCompletedButton = false,
   showDateWithLine = false,
-  showUndoButton = false,
   hoverEffect = true,
   userId,
   db,
@@ -55,60 +49,25 @@ function PostedGigListHome({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 pt-5 sm:space-y-8">
       {gigs.map(({ gig, lister }, index) => (
         <div
           key={index}
-          className={`relative rounded-lg p-4 shadow-sm transition-transform duration-200 ease-in-out ${
+          className={`relative rounded-lg shadow-sm transition-transform duration-200 ease-in-out ${
             selectedGig && selectedGig.title === gig.title
               ? "border border-blue-400 bg-blue-100 text-blue-700"
-              : "bg-white text-slate-800"
+              : "bg-surface-container-low text-on-surface"
           } ${enableSelection ? "cursor-pointer" : ""} 
-            ${hoverEffect ? "hover:bg-slate-100" : ""}`} // Hover effect applied conditionally
+            ${hoverEffect ? "hover:bg-surface-container" : ""}`} // Hover effect applied conditionally
           onClick={() => enableSelection && handleSeeMoreClick(gig, lister)} // Conditional click handler
         >
-          {showUndoButton && (
-            <div className="absolute right-4 top-4">
-              <UndoButton
-                onClick={() => alert(`Undo clicked for gig: ${gig.title}`)}
-              />
-            </div>
-          )}
-
-          {showCompletedButton && (
-            <div className="absolute right-12 top-5">
-              <CustomButton
-                label="Completed Gig"
-                onClick={() => onCompleteClick && onCompleteClick(gig.gigId)}
-                color="green"
-                textColor="white"
-                size="small"
-                rounded={true}
-              />
-            </div>
-          )}
-
-          {showChatIcon && (
-            <div className="absolute right-2 top-6">
-              <CustomButton
-                onClick={() => handleMessageClick(lister.userId)}
-                color="primary"
-                textColor="white"
-                size="small"
-                icon={FaComments}
-                iconPosition="middle"
-                rounded={true}
-              />
-            </div>
-          )}
-
-          <div className="mb-2 flex items-center">
-            <div className="ml-3 flex flex-col">
-              <h3 className="whitespace-normal break-words pr-[120px] text-lg font-semibold text-slate-800">
-                {gig.title}
+          <div className="mb-2 flex items-center rounded-xl bg-secondary-container p-2 ">
+            <div className="flex flex-col">
+              <h3 className="flex whitespace-normal break-words text-lg font-bold text-on-primary-container">
+                {gig.title.toUpperCase()}
               </h3>
-              {showDateWithLine && (
-                <p className="mt-1 text-xs text-orange-500">
+              {gig.dueDate && (
+                <p className="mt-1 text-xs text-on-primary-container/90">
                   {new Date(gig.dueDate.seconds * 1000).toLocaleDateString(
                     "en-GB",
                     {
@@ -126,48 +85,42 @@ function PostedGigListHome({
           </div>
 
           {/* Render a white line if date is shown */}
-          {showDateWithLine && (
-            <div className="mt-1 border-t border-slate-800"></div>
-          )}
+          {showDateWithLine && <div className="mt-1 border-t"></div>}
           {/* Render gig description (first 100 characters) */}
-          <p className="mt-2 text-slate-800">
-            {gig.description.length > 100
-              ? gig.description.slice(0, 100) + "..."
-              : gig.description}
+          <p className="my-4 line-clamp-4 w-full lg:w-[40vw] px-3 text-secondary">
+            {gig.description}
           </p>
 
-          <div className="mt-2 flex flex-wrap items-center gap-2">
-            <Badge
-              label={gig.category}
-              color="beige"
-              textColor="black"
-              outline={true}
-              outlineColor="beige"
-              rounded={true}
-              size="small"
-            />
-            <Badge
-              label={`${gig.price} Tokens`}
-              color="beige"
-              textColor="black"
-              outline={true}
-              outlineColor="beige"
-              rounded={true}
-              size="small"
-            />
-            <Badge
-              label={gig.location}
-              color="beige"
-              textColor="black"
-              outline={true}
-              outlineColor="beige"
-              rounded={true}
-              size="small"
-            />
-          </div>
+          <div className="flex w-full items-center justify-end gap-2 p-3">
+            <div className="mr-auto space-x-2 justify-self-start">
+              <Badge
+                label={`${gig.price} ⛃⛂`}
+                color="secondary"
+                textColor="black"
+                outlineColor="secondary"
+                rounded={true}
+                size="small"
+              />
+              <Badge
+                label={gig.category}
+                color="secondary"
+                textColor="black"
+                outlineColor="secondary"
+                rounded={true}
+                size="small"
+              />
 
-          {showSeeMoreButton && (
-            <div className="mt-1 flex justify-end">
+              <Badge
+                label={gig.location}
+                color="secondary"
+                textColor="black"
+                outlineColor="secondary"
+                rounded={true}
+                size="small"
+              />
+            </div>
+
+            {showSeeMoreButton && (
               <CustomButton
                 label="See More"
                 onClick={() => handleSeeMoreClick(gig, lister)} // Open the modal with the selected gig
@@ -176,8 +129,8 @@ function PostedGigListHome({
                 size="small"
                 rounded={false}
               />
-            </div>
-          )}
+            )}
+          </div>
         </div>
       ))}
 

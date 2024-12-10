@@ -228,18 +228,18 @@ export default function OverviewView() {
   };
 
   return (
-    <div className="flex h-screen w-full flex-row p-10">
+    <div className="mt-10 flex h-screen w-full flex-row justify-center px-2 lg:px-0 2xl:space-x-20">
       {/* Fixed Left Column for Gigs */}
-      <div className="mr-4 flex grow flex-col items-center space-y-4 pb-10">
+      <div className="mr-4 flex flex-col items-center">
         {/* Filters */}
         <div className="flex w-full flex-col items-center">
-          <div className="flex items-center justify-center p-4 lg:w-7/12">
+          <div className="flex w-full items-center justify-center">
             <div className="w-full">
-              <HiSearch className="absolute ml-4 mt-3 text-2xl text-gray-400" />
+              <HiSearch className="absolute ml-2 mt-3 text-2xl text-secondary" />
               <input
                 type="text"
                 placeholder="Search for specific Gigs"
-                className="w-full rounded-md border border-gray-300 py-3 pl-12 pr-4 shadow-sm focus:outline-none"
+                className="w-full rounded-md border px-10 shadow-sm focus:outline-none"
                 value={searchQuery}
                 onChange={handleSearchInput}
                 style={{
@@ -249,7 +249,7 @@ export default function OverviewView() {
                 }}
               />
             </div>
-            <div className="ml-4">
+            <div className="ml-3 mt-1">
               <FilterButton
                 categories={categories}
                 onCategorySelect={handleCategorySelect}
@@ -261,7 +261,7 @@ export default function OverviewView() {
             {selectedCategories.map((category) => (
               <div
                 key={category}
-                className="rounded-full bg-gray-800 px-4 py-2 text-sm font-semibold text-white"
+                className="rounded-full text-sm font-semibold "
               >
                 {category}
               </div>
@@ -270,7 +270,7 @@ export default function OverviewView() {
         </div>
 
         {!openGigsLoading ? (
-          <div className="scrollbar h-fit overflow-y-scroll">
+          <div className="scrollbar h-fit overflow-y-scroll pb-10 pt-4 ">
             <PostedGigListHome
               gigs={openGigs}
               enableSelection={true}
@@ -291,7 +291,7 @@ export default function OverviewView() {
       </div>
 
       {/* Fixed Right Column for Notifications */}
-      <div className="flex h-screen min-w-fit shrink flex-col space-y-4">
+      <div className="hidden h-screen min-w-fit flex-col space-y-4 lg:visible lg:flex">
         <NotificationList notifications={notifications} />
 
         {extendedUser && (

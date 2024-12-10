@@ -1,8 +1,5 @@
 import React, { useState } from "react";
-import CustomButton from "@/components/Buttons/CustomButton"; // Import your button component
-import { FaPlus } from "react-icons/fa";
 import { Gig } from "@/utils/database/schema";
-import { Timestamp } from "firebase/firestore";
 import CreateGigModal from "./CreateGigModal";
 
 interface CreateGigButtonProps {
@@ -17,7 +14,7 @@ const CreateGigButton: React.FC<CreateGigButtonProps> = ({ onCreateSave }) => {
       {/* Button to open the Create Modal */}
 
       <button
-        className="flex w-96 items-center justify-center rounded-full bg-orange-500 py-3 text-sm font-semibold text-white"
+        className="flex w-96 items-center justify-center rounded-full bg-primary py-3 text-sm font-semibold text-on-primary"
         onClick={() => setIsCreateModalOpen(true)}
       >
         + Upload new gig

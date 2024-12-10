@@ -49,19 +49,19 @@ export default function AppRoot() {
     <FirebaseInitializer>
       <AuthWrapper signedIn fallback={<Navigate to={"/login"} />}>
         <Suspense fallback={<Loading />}>
-          <div className="flex max-h-screen w-screen overflow-hidden">
+          <div className="flex max-h-screen w-screen overflow-hidden bg-surface-container-lowest">
             <Sidebar />
-            <div className="flex w-full flex-col items-center bg-slate-200 ">
+            <div className="flex w-full flex-col items-center">
               {title ? (
-                <div className="w-full bg-slate-800">
-                  <h2 className="my-2 justify-self-center text-3xl font-extrabold text-black">
+                <div className="my-4 w-full">
+                  <h2 className="justify-self-center text-3xl font-extrabold text-on-surface">
                     {title}
                   </h2>
                 </div>
               ) : (
                 <></>
               )}
-              <div className="flex w-full bg-slate-200 p-1">
+              <div className="flex w-full p-1">
                 <Outlet />
               </div>
             </div>

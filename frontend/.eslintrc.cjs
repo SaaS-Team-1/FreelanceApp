@@ -18,6 +18,7 @@ module.exports = {
     },
   },
   rules: {
+    "tailwindcss/classnames-order": 0,
     "react-refresh/only-export-components": [
       "warn",
       { allowConstantExport: true },
