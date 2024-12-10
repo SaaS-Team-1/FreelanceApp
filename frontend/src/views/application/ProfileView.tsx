@@ -51,7 +51,7 @@ export default function ProfileView() {
       <div className="space-y-8">
         {/* Profile Header */}
         <div className="flex flex-col items-center rounded-lg bg-white p-6 shadow-lg md:flex-row md:items-start">
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             <UserProfilePicture
               user={user}
               size="large" // Larger profile picture

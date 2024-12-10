@@ -1,6 +1,4 @@
-import React from "react";
 import { FaComments } from "react-icons/fa";
-import PostedGigItemHome from "./PostedGigItemHome";
 import { Gig, User } from "@/utils/database/schema";
 import Badge from "@/components/Buttons/CustomBadge";
 import CustomButton from "@/components/Buttons/CustomButton";
@@ -41,6 +39,7 @@ function PostedGigList({
 }: PostedGigListProps) {
   const navigate = useNavigate();
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const formatDate = (dueDate: any) => {
     try {
       // Handle different date formats

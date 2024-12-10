@@ -23,7 +23,6 @@ import {
   notificationsRef,
 } from "@/utils/database/collections";
 import { useCallback } from "react";
-import { tr } from "@faker-js/faker";
 
 function ScheduleView() {
   const db = useFirestore();
@@ -47,6 +46,7 @@ function ScheduleView() {
     { gig: Gig; lister: User }[]
   >([]);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const processGigData = (gigData: any, docId: string): Gig => ({
     ...gigData,
     gigId: docId,
