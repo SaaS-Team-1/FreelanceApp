@@ -32,6 +32,7 @@ describe("Chat test", () => {
 
     it("User 2 sends a message", function () {
         cy.visit("/app/chat");
+        cy.wait(1000);
         cy.get('.border-t > .scrollbar').type('Hello, I am interested in your gig!');
         cy.get('.border-t > .ml-3').click();
         cy.log("User 2 clicked send button");
@@ -39,6 +40,7 @@ describe("Chat test", () => {
         //check if the chat message is sent
         cy.get('.max-w-xs > :nth-child(1)').contains('Hello, I am interested in your gig!');
         cy.log("The message sent shows up on the chat screen");
+        cy.wait(1000);
     });
 
     // check if the chat message is stored in firestore

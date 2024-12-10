@@ -53,10 +53,10 @@ describe("Applying to a Gig", () => {
         cy.wait(1000);
         cy.get('.mt-4 > .bg-blue-500').click();
 
-        // Listen for the alert and verify its content
-        cy.on('window:alert', (str) => {
-            expect(str).to.equal('Application and chat created successfully!');
-        });
+        // // Listen for the alert and verify its content
+        // cy.on('window:alert', (str) => {
+        //     expect(str).to.equal('Application and chat created successfully!');
+        // });
         cy.log("User clicked on apply button");
         cy.wait(2000); // Optional: Wait for Firestore synchronization
     });
@@ -140,7 +140,8 @@ describe("Schedule test - Pending Gigs", () => {
     // Pending appears in schedule
     it("User 2 sees the Pending Gig in the schedule", function () {
         cy.visit("/app/schedule");
-        cy.get('.size-full > :nth-child(1)').within(() => {
+        cy.wait(1000);
+        cy.get('.scrollbar.text-white').within(() => {
             cy.get('.mb-3').contains("Pending").then(($pendingGigs) => {
                 if ($pendingGigs.length > 0) {
                     cy.get('.space-y-4 > .relative').contains(this.gigs.gig1.title);

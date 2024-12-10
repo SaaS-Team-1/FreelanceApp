@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Cypress {
@@ -14,10 +16,12 @@ declare global {
         email: string,
         password: string,
         displayName: string,
+        coins: number,
         photoURL?: string,
         claims?: Record<string, string>,
         profile?: Record<string, string>,
-        stats?: Record<string, string>,
+        completedGigs: number,
+        averageRating: number,
       ): Chainable<void>;
 
       /**
@@ -72,6 +76,11 @@ declare global {
         category: string;
         dueDate: string;
       }): Chainable<void>;
+
+      /**
+       * Adds a mock transaction to Firestore.
+       */
+      addMockTransaction(userId: string, amount: number): Chainable<void>;
     }
   }
 }
@@ -93,10 +102,12 @@ Cypress.Commands.add(
     email,
     password,
     displayName,
+    coins,
     photoURL = "https://avatars.githubusercontent.com/u/69245724",
     claims = {},
     profile = {},
-    stats = {},
+    completedGigs,
+    averageRating,
   ) => {
     // Check if the user exists and delete if it does
     cy.authGetUserByEmail(email)
@@ -129,8 +140,10 @@ Cypress.Commands.add(
             cy.callFirestore('set', `users/${uid}`, {
               email,
               displayName,
+              coins,
               profile,
-              stats,
+              completedGigs,
+              averageRating,
               userId: uid,
             }).then(() => {
               cy.log("User profile info uploaded to Firestore");
@@ -145,10 +158,12 @@ Cypress.Commands.add('createUser1', function () {
     this.users.user1.email,
     this.users.user1.password,
     this.users.user1.displayName,
+    this.users.user1.coins,
     undefined, // photoURL
     undefined, // claims
     this.users.user1.profile,
-    this.users.user1.stats
+    this.users.user1.completedGigs,
+    this.users.user1.averageRating
   );
 });
 
@@ -157,10 +172,12 @@ Cypress.Commands.add('createUser2', function () {
     this.users.user2.email,
     this.users.user2.password,
     this.users.user2.displayName,
+    this.users.user2.coins,
     undefined, // photoURL
     undefined, // claims
     this.users.user2.profile,
-    this.users.user2.stats
+    this.users.user2.completedGigs,
+    this.users.user2.averageRating
   );
 });
 
@@ -206,7 +223,9 @@ Cypress.Commands.add('loginUser2', function () {
 
 Cypress.Commands.add('logoutUI', () => {
   cy.visit("/app");
-  cy.get(".mt-3 > .flex").click();
+  cy.get('.mt-3.border-t.border-gray-600.pt-3 .flex.cursor-pointer.items-center')
+    .scrollIntoView()
+    .click({ force: true });
   cy.location().should((loc) => expect(loc.pathname).to.eq("/login"));
 });
 
@@ -231,6 +250,20 @@ Cypress.Commands.add('postGig', (gigData) => {
 
   cy.wait(2000); // Optional: Wait for Firestore synchronization
 });
+
+// cypress/support/commands.js
+Cypress.Commands.add("addMockTransaction", (userId, amount) => {
+  const transactionId = uuidv4();
+  cy.callFirestore("set", `transactions/${transactionId}`, {
+    transactionId: transactionId,
+    ownerId: userId,
+    amount: amount,
+    createdAt: new Date(),
+    onHold: false,
+    kind: "deposit",
+  });
+});
+
 
 
 export { };

@@ -25,9 +25,12 @@ describe("Assigning a Gig", () => {
         cy.get('.relative.mt-2 > .mb-2').contains("Interested Giggler");
         cy.get('.justify-between > :nth-child(1) > .text-white').contains(new RegExp(`.*${this.users.user2.displayName}.*`, 'i'));
         cy.log("User 2 is an interested giggler");
-        cy.get('.space-x-2 > .bg-\\[rgba\\(42\\,168\\,21\\,1\\)\\]').click();
+        cy.get('.justify-between > .px-3')
+            .scrollIntoView()
+            .should('be.visible')
+            .click({ force: true });
         cy.log("User 1 clicked on the assign button");
-        cy.wait(1000);
+        cy.wait(2000);
     });
 
     // Confirm User 2 is assigned to the Gig on firestore
@@ -59,7 +62,7 @@ describe("Assigning a Gig", () => {
 
     });
 
-    
+
 
     // User 1 assigns User 2 to the gig
     it("User 1 logs out", () => {
@@ -94,13 +97,13 @@ describe("Schedule test - Scheduled Gigs", () => {
     //     cy.log("Gig is in the schedule");
     // });
 
-        // User 2 clicks on complete gig
-        it("User 2 sees the Scheduled Gig in the schedule", function () {
-            cy.visit("/app/schedule");
-            cy.get('.size-full > :nth-child(2)').within(() => {
-                cy.get('.mb-3').contains("Scheduled Gigs").should('be.visible');
-            });
+    // User 2 clicks on complete gig
+    it("User 2 sees the Scheduled Gig in the schedule", function () {
+        cy.visit("/app/schedule");
+        cy.get('.size-full > :nth-child(2)').within(() => {
+            cy.get('.mb-3').contains("Scheduled Gigs").should('be.visible');
         });
+    });
 
     it("User 2 logs out", () => {
         cy.logout();

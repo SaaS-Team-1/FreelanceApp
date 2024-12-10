@@ -1,6 +1,7 @@
 import { Stripe } from "stripe";
 import { onCall } from "firebase-functions/v2/https";
 import { transactionsRef, usersRef } from "./firebase";
+import * as crypto from "crypto";
 import {
   DocumentData,
   DocumentReference,
