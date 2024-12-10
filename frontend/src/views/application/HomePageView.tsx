@@ -283,7 +283,7 @@ export default function OverviewView() {
           <Loading />
         )}
 
-        {extendedUser && (<StreakModal openModal={openLoginStreak} setOpenModal={setOpenLogStr} loginStreak={loginStreak} user={extendedUser}></StreakModal>)}
+        <StreakModal openModal={openLoginStreak} setOpenModal={setOpenLogStr} loginStreak={loginStreak}></StreakModal>
       </div>
 
       {/* Fixed Right Column for Notifications */}

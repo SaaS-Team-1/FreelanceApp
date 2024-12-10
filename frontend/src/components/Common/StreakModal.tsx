@@ -1,22 +1,19 @@
-import { User } from "@/utils/database/schema";
-import { collection, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { useFunctions } from "@/utils/reactfire";
+import { httpsCallable } from "firebase/functions";
 import { Button, Modal } from "flowbite-react";
 import { PropsWithChildren } from "react";
 import { HiOutlineGift } from "react-icons/hi";
-import { useFirestore } from "@/utils/reactfire";
 
 interface StreakModalProps {
   openModal: boolean;
   setOpenModal: (set: boolean) => void;
   loginStreak: number;
-  user: User;
 }
 
 export default function StreakModal({
   openModal,
   setOpenModal,
   loginStreak,
-  user,
 }: PropsWithChildren<StreakModalProps>) {
   const calculateReward = (streak: number): number => {
     return Math.floor((streak - 1) / 7) + 1; // Reward increases every 7 days
@@ -24,26 +21,20 @@ export default function StreakModal({
 
   const reward = calculateReward(loginStreak);
 
-  const db = useFirestore();
-
-  const updateCoins = async () => {
-    const usersRef = collection(db, "users");
-    const userQuery = query(usersRef, where("userId", "==", user.userId)); 
-    const userSnapshot = await getDocs(userQuery);
-
-    const coins = user.coins;
-
-    if (!userSnapshot.empty && coins !== undefined) {
-        const userDoc = userSnapshot.docs[0]; // Get the first document
-        const userDocRef = userDoc.ref;
-
-        await updateDoc(userDocRef, { coins: coins + reward });
-    }
-  }
+  const functions = useFunctions();
 
   const handleCloseModal = async () => {
-    await updateCoins(); // Update coins when modal is closed
     setOpenModal(false); // Close the modal
+    const result = await httpsCallable<void, { paymentStatus: string }>(
+      functions,
+      "stripe-loginReward",
+    )();
+    const { paymentStatus } = result.data;
+    if (paymentStatus === "paid") {
+      console.log("Reward successfully added to the user's account.");
+    } else {
+      console.error("Error adding reward:", paymentStatus);
+    }
   };
 
   return (
@@ -67,7 +58,8 @@ export default function StreakModal({
             <span className="font-semibold">{loginStreak} days</span> in a row!
           </p>
           <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
-            Your reward: <span className="font-semibold">{reward} coins</span> 🎉
+            Your reward: <span className="font-semibold">{reward} coins</span>{" "}
+            🎉
           </p>
           <div className="flex justify-center gap-4">
             <Button onClick={handleCloseModal} color="success">
