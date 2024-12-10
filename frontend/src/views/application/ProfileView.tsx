@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import UserProfilePicture from "@/components/Avatar/UserProfilePicture";
 import EditProfileModal from "@/components/Profile/EditProfileModal";
-import UserLevelDisplay from "@/components/Common/UserLevelDisplay";
 
 export default function ProfileView() {
   const { data: userU } = useUser();
@@ -78,9 +77,6 @@ export default function ProfileView() {
                   ⭐ {user.averageRating.toFixed(1)} (
                   {user.completedGigs} reviews)
                 </p> */}
-              </div>
-              <div className="flex items-center justify-center">
-                <UserLevelDisplay user={user} size="large" />
               </div>
             </div>
             <div className="flex flex-col items-end">

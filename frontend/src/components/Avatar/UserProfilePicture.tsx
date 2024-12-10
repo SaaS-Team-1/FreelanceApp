@@ -1,5 +1,6 @@
 import React from "react";
 import { User } from "@/utils/database/schema";
+import UserLevelDisplay from "../Common/UserLevelDisplay";
 
 const sizeClasses = {
   small: "w-8 h-8 text-sm",
@@ -13,7 +14,6 @@ interface UserProfilePictureProps {
   hoverDetails?: boolean;
   rounded?: boolean;
   position?: "above" | "default"; // Add position prop
-
 }
 
 const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
@@ -22,7 +22,6 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
   hoverDetails = false,
   rounded = true,
   position = "default", // Default position
-
 }) => {
   // Fallbacks for missing user data
   const displayName = user?.displayName || "Anonymous";
@@ -32,11 +31,17 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
   const completedGigs = user?.completedGigs;
   const averageRating = user?.averageRating;
   const hoverClass =
-  position === "above"
-    ? "bottom-full mb-3  "
-    : "top-full mt-3 l ";
+    position === "above" ? "bottom-full mb-3  " : "top-full mt-3 l ";
   return (
-    <div className="group relative">
+    <div
+      className={`group relative size-fit ${
+        rounded ? "rounded-full" : "rounded-md"
+      }`}
+    >
+      <div className="absolute -right-1 -top-1 ">
+        <UserLevelDisplay user={user} size="small" textColor="text-black" />
+      </div>
+
       {/* Profile Picture */}
       <div
         className={`${sizeClasses[size]} ${rounded ? "rounded-full" : "rounded-md"} 
@@ -45,9 +50,7 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
         <img
           src={profilePicture}
           alt={displayName}
-          className={`size-full object-cover ${
-            rounded ? "rounded-full" : "rounded-md"
-          }`}
+          className={`size-full object-cover`}
         />
       </div>
 
@@ -64,7 +67,7 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
               alt={displayName}
               className="size-10 rounded-full border border-gray-200 object-cover dark:border-gray-700"
             />
-            <div className="ml-3">
+            <div className="mx-3">
               <p className="text-base font-semibold text-gray-900 dark:text-white">
                 {displayName}
               </p>
@@ -74,6 +77,7 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
                 </p>
               )}
             </div>
+            <UserLevelDisplay user={user} size="small" textColor="text-black" />
           </div>
           <div className="mb-3">
             {bio && (

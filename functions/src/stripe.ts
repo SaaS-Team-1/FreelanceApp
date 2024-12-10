@@ -288,3 +288,49 @@ export const finalizeTransaction = onCall(async (request) => {
     };
   }
 });
+
+export const loginReward = onCall(async (request) => {
+  if (!request.auth) return { paymentStatus: "error" };
+  try {
+    const userDoc = usersRef.doc(request.auth.uid);
+    const user = (await userDoc.get()).data();
+
+    const calculateReward = (streak: number): number => {
+      return Math.floor((streak - 1) / 7) + 1; // Reward increases every 7 days
+    };
+
+    const transactionId = crypto.randomUUID();
+
+    if (user) {
+      const reward = calculateReward(user.loginStreak);
+      try {
+        await transactionsRef.doc(transactionId).create({
+          transactionId: transactionId,
+          ownerId: request.auth.uid,
+          amount: reward,
+          createdAt: Timestamp.now(),
+          onHold: false,
+          kind: "deposit",
+        });
+      } catch (error) {
+        return {
+          paymentStatus: "paid",
+        };
+      }
+
+      user.coins = (user.coins || 0) + reward;
+      await userDoc.set(user, { merge: true });
+      return {
+        paymentStatus: "paid",
+      };
+    }
+  } catch (error) {
+    console.error("Error retrieving session:", error);
+    return {
+      paymentStatus: "error",
+    };
+  }
+  return {
+    paymentStatus: "error",
+  };
+});
