@@ -109,7 +109,7 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <FirebaseAppProvider firebaseConfig={config} suspense>
-      <Flowbite theme={{ theme: flowbiteTheme, mode: "dark" }}>
+      <Flowbite theme={{ theme: flowbiteTheme }}>
         <RouterProvider router={router} />
       </Flowbite>
     </FirebaseAppProvider>
