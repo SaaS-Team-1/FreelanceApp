@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import UserProfilePicture from "@/components/Avatar/UserProfilePicture";
-import Badge from "@/components/Buttons/CustomBadge";
 import { MdReport } from "react-icons/md";
 import ErrorModal from "../Common/ErrorModal";
-import { Clipboard, Tooltip } from "flowbite-react";
+import { Badge, Tooltip } from "flowbite-react";
 import * as Schema from "@/utils/database/schema";
 import { User } from "firebase/auth";
 
@@ -77,12 +76,9 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
         <div className="font-bold">
           {" "}
           {isLister ? "Gig Status:  " : "Application Status:  "}
-          <Badge
-            label={`${status}`}
-            color={isLister ? "secondary" : "primary"}
-            textColor="white"
-            size="small"
-          />
+          <Badge color={isLister ? "secondary" : "primary"} size="sm">
+            {status}
+          </Badge>
         </div>
       </div>
       <ErrorModal openModal={openError} setOpenModal={setOpenError}>

@@ -228,27 +228,30 @@ export default function OverviewView() {
   };
 
   return (
-    <div className="mt-10 flex h-screen w-full flex-row justify-center px-2 lg:px-0 2xl:space-x-20">
+    <div className="mt-10 flex h-screen w-full flex-row justify-center ">
       {/* Fixed Left Column for Gigs */}
-      <div className="mr-4 flex flex-col items-center">
+      <div className="mx-4 flex min-w-[40vw] xl:max-w-[40vw] flex-col items-center md:mx-10 xl:min-w-10">
         {/* Filters */}
         <div className="flex w-full flex-col items-center">
           <div className="flex w-full items-center justify-center">
-            <div className="w-full">
-              <HiSearch className="absolute ml-2 mt-3 text-2xl text-secondary" />
-              <input
-                type="text"
-                placeholder="Search for specific Gigs"
-                className="w-full rounded-md border px-10 shadow-sm focus:outline-none"
-                value={searchQuery}
-                onChange={handleSearchInput}
-                style={{
-                  height: "48px",
-                  backgroundColor: "white",
-                  fontFamily: "'Inter', sans-serif",
-                }}
-              />
-            </div>
+            <form className="mx-auto w-full">
+              <div className="relative">
+                <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
+                  <HiSearch
+                    className="size-6 text-primary"
+                    aria-hidden="true"
+                  ></HiSearch>
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search for specific Gigs"
+                  className="block w-full rounded-lg border-0 bg-surface-container p-4 ps-10 text-sm text-primary ring-0 placeholder:text-primary/90 focus:border-0 focus:ring-0"
+                  value={searchQuery}
+                  onChange={handleSearchInput}
+                />
+              </div>
+            </form>
+
             <div className="ml-3 mt-1">
               <FilterButton
                 categories={categories}
@@ -291,7 +294,7 @@ export default function OverviewView() {
       </div>
 
       {/* Fixed Right Column for Notifications */}
-      <div className="hidden h-screen min-w-fit flex-col space-y-4 lg:visible lg:flex">
+      <div className="hidden h-screen min-w-fit flex-col space-y-4 lg:visible lg:flex mr-10">
         <NotificationList notifications={notifications} />
 
         {extendedUser && (

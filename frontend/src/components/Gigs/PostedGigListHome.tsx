@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Gig, User } from "@/utils/database/schema";
-import Badge from "@/components/Buttons/CustomBadge";
 import CustomButton from "@/components/Buttons/CustomButton";
 import GigDetailModal from "@/components/Gigs/GigDetailModal";
 import { Firestore } from "firebase/firestore";
+import { Badge } from "flowbite-react";
 
 interface PostedGigListHomeProps {
   gigs: { gig: Gig; lister: User }[]; // List of gigs with lister data
@@ -49,7 +49,7 @@ function PostedGigListHome({
   };
 
   return (
-    <div className="space-y-4 pt-5 sm:space-y-8">
+    <div className="space-y-4 py-5 sm:space-y-8">
       {gigs.map(({ gig, lister }, index) => (
         <div
           key={index}
@@ -61,13 +61,13 @@ function PostedGigListHome({
             ${hoverEffect ? "hover:bg-surface-container" : ""}`} // Hover effect applied conditionally
           onClick={() => enableSelection && handleSeeMoreClick(gig, lister)} // Conditional click handler
         >
-          <div className="mb-2 flex items-center rounded-xl bg-secondary-container p-2 ">
+          <div className="mb-2 flex items-center rounded-xl bg-primary-container p-2 ">
             <div className="flex flex-col">
               <h3 className="flex whitespace-normal break-words text-lg font-bold text-on-primary-container">
                 {gig.title.toUpperCase()}
               </h3>
               {gig.dueDate && (
-                <p className="mt-1 text-xs text-on-primary-container/90">
+                <p className="mt-1 text-xs text-on-primary-container">
                   {new Date(gig.dueDate.seconds * 1000).toLocaleDateString(
                     "en-GB",
                     {
@@ -87,37 +87,19 @@ function PostedGigListHome({
           {/* Render a white line if date is shown */}
           {showDateWithLine && <div className="mt-1 border-t"></div>}
           {/* Render gig description (first 100 characters) */}
-          <p className="my-4 line-clamp-4 w-full lg:w-[40vw] px-3 text-secondary">
+          <p className="my-4 line-clamp-4 w-full px-3 text-on-surface">
             {gig.description}
           </p>
 
-          <div className="flex w-full items-center justify-end gap-2 p-3">
-            <div className="mr-auto space-x-2 justify-self-start">
-              <Badge
-                label={`${gig.price} ⛃⛂`}
-                color="secondary"
-                textColor="black"
-                outlineColor="secondary"
-                rounded={true}
-                size="small"
-              />
-              <Badge
-                label={gig.category}
-                color="secondary"
-                textColor="black"
-                outlineColor="secondary"
-                rounded={true}
-                size="small"
-              />
-
-              <Badge
-                label={gig.location}
-                color="secondary"
-                textColor="black"
-                outlineColor="secondary"
-                rounded={true}
-                size="small"
-              />
+          <div className="flex w-full items-center justify-center gap-2 p-3">
+            <div className="mr-auto flex flex-col space-y-2 justify-center items-center sm:flex-row sm:space-x-2 sm:space-y-0">
+              <Badge size="sm" color="yellow">{`${gig.price} ⛃⛂`}</Badge>
+              <Badge size="sm" color="secondary-container">
+                {gig.category}
+              </Badge>
+              <Badge size="sm" color="secondary-container">
+                {gig.location}
+              </Badge>
             </div>
 
             {showSeeMoreButton && (

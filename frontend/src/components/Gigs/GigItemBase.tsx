@@ -2,6 +2,7 @@ import React from "react";
 import Label from "../Common/Label"; // Custom Label
 import UserProfilePicture from "../Avatar/UserProfilePicture"; // UserProfilePicture component
 import { Gig, User } from "@/utils/database/schema"; // Import updated interfaces
+import { Badge } from "flowbite-react";
 
 export type GigItemBaseProps = {
   gig: Gig; // Use the Gig interface
@@ -18,21 +19,21 @@ const GigItemBase: React.FC<GigItemBaseProps> = ({
 
   return (
     <div
-      className={`p-3 ${isCompressed ? "bg-transparent" : "bg-gray-800"} flex items-start space-x-3 rounded-lg`}
+      className={`p-3 ${isCompressed ? "bg-transparent" : "bg-gray-800"} flex w-full items-start space-x-3 rounded-lg`}
     >
       {/* User Profile Picture */}
       <UserProfilePicture user={lister} size="medium" rounded={true} />
 
-      <div className="flex flex-1 flex-col">
-        <div className="flex items-start justify-between">
-          <div className="flex flex-col text-left">
-            <h2 className="text-sm font-medium text-slate-800">{title}</h2>
-            <span className="text-xs text-slate-400">
+      <div className="flex flex-1 flex-col w-full">
+        <div className="flex flex-row w-full items-start justify-end space-x-2">
+          <div className="flex flex-col text-left w-full">
+            <h2 className="text-on-surface text-sm font-medium line-clamp-2">{title}</h2>
+            <span className="text-on-surface-variant text-xs">
               {dueDate.toDate().toLocaleDateString()}{" "}
               {/* Convert Timestamp to readable date */}
             </span>
           </div>
-          {isCompressed && <Label text={category} />}
+          {isCompressed && <Badge color="secondary-container" className="ml-auto">{category}</Badge>}
         </div>
 
         {!isCompressed && description && (

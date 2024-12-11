@@ -3,7 +3,6 @@ import ReactDOM from "react-dom";
 import CustomButton from "@/components/Buttons/CustomButton";
 import { Application, Chat, Gig, User } from "@/utils/database/schema";
 import { FaDollarSign, FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
-import Badge from "@/components/Buttons/CustomBadge";
 import { Firestore, Timestamp, addDoc, updateDoc } from "firebase/firestore";
 import { query, where, getDocs } from "firebase/firestore";
 import UserProfilePicture from "@/components/Avatar/UserProfilePicture"; // Import the UserProfilePicture component
@@ -12,6 +11,7 @@ import {
   chatsRef,
   notificationsRef,
 } from "@/utils/database/collections";
+import { Badge } from "flowbite-react";
 
 interface GigDetailModalProps {
   gig: Gig;
@@ -30,7 +30,7 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
   db,
   lister,
 }) => {
-  const [applied, setApplied] = React.useState(false);
+  const [applied, setApplied] = React.useState(true);
   const checkApply = async () => {
     if (!userId || !db) return;
 
@@ -128,7 +128,7 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
         onClick={onClose}
       >
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm"></div>
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-2 py-10 sm:p-0">
           <div className="w-full max-w-4xl space-y-6 rounded-lg bg-surface shadow-lg">
             <div className="mb-4 flex h-fit w-full items-center justify-stretch rounded-xl bg-primary-container">
               <div className="flex items-center justify-self-start p-2 pr-4">
@@ -153,12 +153,14 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
               </h2>
             </div>
 
-            <div className="w-full p-6">
+            <div className="w-full px-6 pb-6">
               {/* Lister Profile Picture and Name */}
 
-              <p className="mb-4">{gig.description}</p>
+              <p className="mb-4 line-clamp-3 rounded-xl bg-surface-container px-2 sm:py-4 text-on-surface overflow-hidden sm:line-clamp-none">
+                {gig.description}
+              </p>
 
-              <div className="mb-6 flex flex-col gap-6 text-sm sm:flex-row justify-center">
+              <div className="mb-6 flex flex-col justify-center gap-6 text-sm text-on-surface sm:flex-row">
                 <div className="flex flex-col items-center">
                   <div className="flex items-center">
                     <FaDollarSign className="mr-2" />
@@ -188,36 +190,14 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
                 </div>
               </div>
 
-              <div className="mb-6 flex flex-col text-sm items-center">
+              <div className="mb-6 flex flex-col items-center text-sm">
                 <h4 className="text-sm font-semibold">Tags:</h4>
-                <div className="flex mt-4 gap-2">
-                  <Badge
-                    label={gig.category}
-                    color="beige"
-                    textColor="black"
-                    outline={true}
-                    outlineColor="beige"
-                    rounded={true}
-                    size="small"
-                  />
-                  <Badge
-                    label={location}
-                    color="beige"
-                    textColor="black"
-                    outline={true}
-                    outlineColor="beige"
-                    rounded={true}
-                    size="small"
-                  />
-                  <Badge
-                    label={`${gig.price ? `${gig.price} Tokens` : "TBD"}`}
-                    color="beige"
-                    textColor="black"
-                    outline={true}
-                    outlineColor="beige"
-                    rounded={true}
-                    size="small"
-                  />
+                <div className="mt-4 flex gap-2">
+                  <Badge color="yellow">
+                    {gig.price ? `${gig.price} Tokens` : "TBD"}
+                  </Badge>
+                  <Badge color="secondary-container">{gig.category}</Badge>
+                  <Badge color="secondary-container">{location}</Badge>
                 </div>
               </div>
 

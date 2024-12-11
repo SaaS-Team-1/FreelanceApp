@@ -1,10 +1,10 @@
 import { FaComments } from "react-icons/fa";
 import { Gig, User } from "@/utils/database/schema";
-import Badge from "@/components/Buttons/CustomBadge";
 import CustomButton from "@/components/Buttons/CustomButton";
 import { UndoButton } from "@/components/Buttons/UndoButton";
 import { useNavigate } from "react-router-dom";
 import { FaCheck } from "react-icons/fa";
+import { Badge } from "flowbite-react";
 
 interface PostedGigListProps {
   gigs: { gig: Gig; lister: User }[];
@@ -75,7 +75,7 @@ function PostedGigList({
           className={`relative rounded-lg p-4 shadow-sm transition-transform duration-200 ease-in-out ${
             selectedGig && selectedGig.title === gig.title
               ? "border border-blue-400 bg-blue-100 text-blue-700"
-              : "bg-white text-slate-800"
+              : "text-slate-800 bg-white"
           } ${enableSelection ? "cursor-pointer" : ""} 
           ${hoverEffect ? "hover:bg-slate-100" : ""}`}
           onClick={() => enableSelection && onSelectGig && onSelectGig(gig)}
@@ -118,7 +118,7 @@ function PostedGigList({
 
           <div className="mb-2 flex items-center">
             <div className="ml-3 flex flex-col">
-              <h3 className="whitespace-normal break-words pr-[120px] text-lg font-semibold text-slate-900">
+              <h3 className="text-slate-900 whitespace-normal break-words pr-[120px] text-lg font-semibold">
                 {gig.title}
               </h3>
               {showDateWithLine && (
@@ -133,40 +133,16 @@ function PostedGigList({
             <div className="mt-1 border-t border-blue-200"></div>
           )}
 
-          <p className="mt-2 whitespace-normal break-words text-slate-300">
+          <p className="text-slate-300 mt-2 whitespace-normal break-words">
             {gig.description.length > 70
               ? gig.description.slice(0, 70) + "..."
               : gig.description}
           </p>
 
           <div className="mt-2 flex flex-wrap items-center gap-2">
-            <Badge
-              label={gig.category}
-              color="beige"
-              textColor="black"
-              outline={true}
-              outlineColor="beige"
-              rounded={true}
-              size="small"
-            />
-            <Badge
-              label={`${gig.price} Tokens`}
-              color="beige"
-              textColor="black"
-              outline={true}
-              outlineColor="beige"
-              rounded={true}
-              size="small"
-            />
-            <Badge
-              label={gig.location}
-              color="beige"
-              textColor="black"
-              outline={true}
-              outlineColor="beige"
-              rounded={true}
-              size="small"
-            />
+            <Badge>{gig.category}</Badge>
+            <Badge>{`${gig.price} Tokens`}</Badge>
+            <Badge>{gig.location}</Badge>
           </div>
 
           {showSeeMoreButton && (

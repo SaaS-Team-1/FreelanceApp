@@ -1,8 +1,8 @@
 import React from "react";
 import { Gig, User } from "@/utils/database/schema";
 import { FaDollarSign, FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
-import Badge from "@/components/Buttons/CustomBadge";
 import CustomButton from "@/components/Buttons/CustomButton";
+import { Badge } from "flowbite-react";
 
 interface GigDetailsModalProps {
   gig: Gig;
@@ -137,24 +137,8 @@ const GigDetailsModal: React.FC<GigDetailsModalProps> = ({
         <div className="mb-4">
           <h4 className="text-sm font-semibold text-gray-400">Tags:</h4>
           <div className="mt-2 flex gap-2">
-            <Badge
-              label={gig.category}
-              color="beige"
-              textColor="black"
-              outline={true}
-              outlineColor="beige"
-              rounded={true}
-              size="small"
-            />
-            <Badge
-              label={location}
-              color="beige"
-              textColor="black"
-              outline={true}
-              outlineColor="beige"
-              rounded={true}
-              size="small"
-            />
+            <Badge size="sm">{gig.category}</Badge>
+            <Badge size="sm">{location}</Badge>
           </div>
         </div>
 

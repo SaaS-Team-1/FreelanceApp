@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { User, Gig } from "@/utils/database/schema";
 import CustomButton from "@/components/Buttons/CustomButton"; // Import your button component
-import Badge from "@/components/Buttons/CustomBadge"; // Import your badge component
 import EditCreateGigModal from "./EditCreateGigModal"; // Import your modal component
 import {
   FaPen,
@@ -31,6 +30,7 @@ import {
   notificationsRef,
 } from "@/utils/database/collections";
 import { Application } from "@/utils/database/schema";
+import { Badge } from "flowbite-react";
 
 interface GigDetailsProps {
   gig: Gig;
@@ -189,7 +189,6 @@ const GigDetails: React.FC<GigDetailsProps> = ({
           <strong>Status:</strong>
         </p>
         <Badge
-          label={gig.status}
           color={
             gig.status === "open"
               ? "green"
@@ -199,10 +198,9 @@ const GigDetails: React.FC<GigDetailsProps> = ({
                   ? "warning"
                   : "gray"
           }
-          textColor="white"
-          rounded={true}
-          size="small"
-        />
+        >
+          {gig.status}
+        </Badge>
       </div>
 
       <div className="mb-4 flex items-start gap-4">
@@ -212,7 +210,7 @@ const GigDetails: React.FC<GigDetailsProps> = ({
             ({
               profile: { bio: "", location: "", picture: "" },
               stats: {},
-            } as User)
+            } as unknown as User)
           }
           size="large"
           hoverDetails={true}
@@ -250,33 +248,11 @@ const GigDetails: React.FC<GigDetailsProps> = ({
       <div>
         <h4 className="text-sm font-semibold text-gray-900">Tags:</h4>
         <div className="mt-2 flex gap-2">
-          <Badge
-            label={gig.category}
-            color="beige"
-            textColor="black"
-            outline={true}
-            outlineColor="black"
-            rounded={true}
-            size="small"
-          />
-          <Badge
-            label={location}
-            color="beige"
-            textColor="black"
-            outline={true}
-            outlineColor="black"
-            rounded={true}
-            size="small"
-          />
-          <Badge
-            label={`${gig.price ? `${gig.price} Tokens` : "TBD"}`}
-            color="beige"
-            textColor="black"
-            outline={true}
-            outlineColor="black"
-            rounded={true}
-            size="small"
-          />
+          <Badge>{gig.category}</Badge>
+
+          <Badge>{location}</Badge>
+
+          <Badge>{gig.price ? `${gig.price} Tokens` : "TBD"}</Badge>
         </div>
       </div>
     </div>

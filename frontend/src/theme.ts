@@ -1,6 +1,45 @@
 import { CustomFlowbiteTheme } from "flowbite-react";
 
 export const flowbiteTheme: CustomFlowbiteTheme = {
+  badge: {
+    root: {
+      color: {
+        primary: "bg-primary text-on-primary group-hover:bg-on-secondary/80",
+        secondary:
+          "bg-secondary text-on-secondary group-hover:bg-on-secondary/80",
+        tertiary: "bg-tertiary text-on-tertiary group-hover:bg-on-secondary/80",
+        error: "bg-error text-on-error group-hover:bg-on-secondary/80",
+        "primary-container":
+          "bg-primary-container text-on-primary-container group-hover:bg-primary-container/90",
+        "secondary-container":
+          "bg-secondary-container text-on-secondary-container group-hover:bg-secondary-container/90",
+        "tertiary-container":
+          "bg-tertiary-container text-on-tertiary-container group-hover:bg-tertiary-container/90",
+        "surface-container":
+          "bg-surface-container text-on-surface-container group-hover:bg-surface-container/90",
+        yellow: "bg-amber-200 text-amber-700 group-hover:bg-on-secondary/80",
+      },
+    },
+  },
+  button: {
+    color: {
+      primary: "bg-primary text-on-primary group-hover:bg-on-secondary/80",
+      secondary:
+        "bg-secondary text-on-secondary group-hover:bg-on-secondary/80",
+      tertiary: "bg-tertiary text-on-tertiary group-hover:bg-on-secondary/80",
+      error: "bg-error text-on-error group-hover:bg-on-secondary/80",
+      "primary-container":
+        "bg-primary-container text-on-primary-container group-hover:bg-primary-container/90",
+      "secondary-container":
+        "bg-secondary-container text-on-secondary-container group-hover:bg-secondary-container/90",
+      "tertiary-container":
+        "bg-tertiary-container text-on-tertiary-container group-hover:bg-tertiary-container/90",
+      "surface-container":
+        "bg-surface-container text-on-surface-container group-hover:bg-surface-container/90",
+      yellow: "bg-amber-200 text-amber-700 group-hover:bg-on-secondary/80",
+    },
+  },
+
   tabs: {
     base: "flex flex-col gap-2 rounded-lg bg-gray-800 p-4 shadow-md h-full",
     tablist: {

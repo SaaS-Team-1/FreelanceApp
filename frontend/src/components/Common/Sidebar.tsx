@@ -79,7 +79,7 @@ function Sidebar() {
       {/* Profile Section */}
       {isExpanded && userDb && (
         <div
-          className="flex flex-col items-center rounded-xl bg-secondary-container py-10"
+          className="flex flex-col items-center rounded-xl bg-primary-container py-10"
           onClick={() => navigate("/app/profile")}
         >
           <UserProfilePicture
@@ -90,11 +90,11 @@ function Sidebar() {
           />
           {/* Align User Level Display and Name */}
           <div className="mt-2 flex flex-row items-center gap-4">
-            <h2 className="text-xl font-bold text-on-primary-container mb-2">
+            <h2 className="mb-2 text-xl font-bold text-on-primary-container">
               {userDb.displayName}
             </h2>
           </div>
-          <p className="text-xs text-secondary">{userDb.email}</p>
+          <p className="text-xs text-on-primary-container">{userDb.email}</p>
         </div>
       )}
 
@@ -188,16 +188,12 @@ function SidebarItem({
   return (
     <div
       onClick={onClick}
-      className={`flex cursor-pointer items-center rounded-lg p-3 transition-colors duration-200 ${
-        isActive ? "bg-surface-dim text-primary" : "text-secondary"
+      className={`flex cursor-pointer items-center rounded-lg p-3 text-primary transition-colors duration-200 ${
+        isActive && "bg-surface-dim"
       } ${isExpanded ? "justify-start gap-3" : "justify-center"}
       hover:`}
     >
-      <div
-        className={`text-lg ${isActive ? "text-primary" : "text-secondary"}`}
-      >
-        {icon}
-      </div>
+      <div className={`text-lg`}>{icon}</div>
       {isExpanded && <span className="text-nowrap">{label}</span>}
     </div>
   );
