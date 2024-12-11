@@ -11,7 +11,7 @@ import {
   chatsRef,
   notificationsRef,
 } from "@/utils/database/collections";
-import { Badge } from "flowbite-react";
+import { Badge, Button, Modal } from "flowbite-react";
 
 interface GigDetailModalProps {
   gig: Gig;
@@ -121,113 +121,103 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
 
   const location = gig.location || "Remote";
 
-  return ReactDOM.createPortal(
-    <>
-      <div
-        className="fixed inset-0 z-10 flex items-center justify-center"
-        onClick={onClose}
-      >
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm"></div>
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-2 py-10 sm:p-0">
-          <div className="w-full max-w-4xl space-y-6 rounded-xl bg-surface shadow-lg">
-            <div className="mb-4 flex h-fit w-full items-center justify-stretch rounded-xl bg-primary-container">
-              <div className="flex items-center justify-self-start p-2 pr-4">
-                <UserProfilePicture
-                  user={lister}
-                  size="large" // Display larger profile picture
-                  hoverDetails={true} // Show hover details
-                />
-                <div className="ml-4">
-                  <h3 className="w-fit max-w-56 truncate text-nowrap text-xl font-semibold text-on-primary-container">
-                    {lister.displayName}
-                  </h3>
-                  {lister.profile.location && (
-                    <p className="text-sm">{lister.profile.location}</p>
-                  )}
-                </div>
-                <div className="ml-3 self-stretch border-l border-on-primary-container" />
-              </div>
+  return (
+    <Modal show={isOpen} onClose={onClose}>
+      <Modal.Header>
+        <div className="flex h-fit w-full items-center justify-stretch">
+          <div className="flex items-center justify-self-start p-2 pr-4">
+            <UserProfilePicture
+              user={lister}
+              size="large" // Display larger profile picture
+              hoverDetails={true} // Show hover details
+            />
+            <div className="ml-4">
+              <h3 className="w-fit max-w-56 truncate text-nowrap text-sm font-semibold text-on-primary-container">
+                {lister.displayName}
+              </h3>
+              {lister.profile.location && (
+                <p className="text-xs font-normal">{lister.profile.location}</p>
+              )}
+            </div>
+            <div className="ml-3 self-stretch border-l border-on-primary-container" />
+          </div>
 
-              <h2 className="text-4xl line-clamp-1 font-bold text-on-primary-container">
-                {gig.title}
-              </h2>
+          <h2 className="line-clamp-1 font-bold text-on-primary-container">
+            {gig.title}
+          </h2>
+        </div>
+      </Modal.Header>
+      <Modal.Body>
+        <div className="w-full  space-y-6 ">
+          <div className="w-full px-6 pb-6">
+            {/* Lister Profile Picture and Name */}
+
+            <p className="mb-4 line-clamp-3 overflow-hidden rounded-xl bg-surface-container px-2 text-on-surface sm:line-clamp-none sm:py-4">
+              {gig.description}
+            </p>
+
+            <div className="mb-6 flex flex-col justify-center gap-6 text-sm text-on-surface sm:flex-row">
+              <div className="flex flex-col items-center">
+                <div className="flex items-center">
+                  <FaDollarSign className="mr-2" />
+                  <span>{gig.price ? `${gig.price} Tokens` : "TBD"}</span>
+                </div>
+                <span className="ml-4 text-xs">Price</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="flex items-center">
+                  <FaCalendarAlt className="mr-2" />
+                  <span>
+                    {gig.dueDate
+                      ? `${new Date(
+                          gig.dueDate.seconds * 1000,
+                        ).toLocaleDateString("en-GB")}`
+                      : "N/A"}
+                  </span>
+                </div>
+                <span className="ml-2 text-xs">Due Date</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="flex items-center">
+                  <FaMapMarkerAlt className="mr-2" />
+                  <span>{location}</span>
+                </div>
+                <span className="ml-6 text-xs">Location</span>
+              </div>
             </div>
 
-            <div className="w-full px-6 pb-6">
-              {/* Lister Profile Picture and Name */}
-
-              <p className="mb-4 line-clamp-3 rounded-xl bg-surface-container px-2 sm:py-4 text-on-surface overflow-hidden sm:line-clamp-none">
-                {gig.description}
-              </p>
-
-              <div className="mb-6 flex flex-col justify-center gap-6 text-sm text-on-surface sm:flex-row">
-                <div className="flex flex-col items-center">
-                  <div className="flex items-center">
-                    <FaDollarSign className="mr-2" />
-                    <span>{gig.price ? `${gig.price} Tokens` : "TBD"}</span>
-                  </div>
-                  <span className="ml-4 text-xs">Price</span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <div className="flex items-center">
-                    <FaCalendarAlt className="mr-2" />
-                    <span>
-                      {gig.dueDate
-                        ? `${new Date(
-                            gig.dueDate.seconds * 1000,
-                          ).toLocaleDateString("en-GB")}`
-                        : "N/A"}
-                    </span>
-                  </div>
-                  <span className="ml-2 text-xs">Due Date</span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <div className="flex items-center">
-                    <FaMapMarkerAlt className="mr-2" />
-                    <span>{location}</span>
-                  </div>
-                  <span className="ml-6 text-xs">Location</span>
-                </div>
-              </div>
-
-              <div className="mb-6 flex flex-col items-center text-sm">
-                <h4 className="text-sm font-semibold">Tags:</h4>
-                <div className="mt-4 flex gap-2">
-                  <Badge color="yellow">
-                    {gig.price ? `${gig.price} Tokens` : "TBD"}
-                  </Badge>
-                  <Badge color="secondary-container">{gig.category}</Badge>
-                  <Badge color="secondary-container">{location}</Badge>
-                </div>
-              </div>
-
-              <div className="mt-4 flex justify-between">
-                <CustomButton
-                  label="Close"
-                  onClick={onClose}
-                  color="red"
-                  textColor="black"
-                  size="medium"
-                  rounded={false}
-                />
-                {userId && db && (
-                  <CustomButton
-                    label={!applied ? "Apply" : "Applied Already"}
-                    onClick={handleApply} // Trigger the apply function
-                    color={!applied ? "primary" : "gray"}
-                    textColor={!applied ? "white" : "black"}
-                    size="medium"
-                    rounded={false}
-                    disabled={applied}
-                  />
-                )}
+            <div className="flex flex-col items-center text-sm">
+              <h4 className="text-sm font-semibold">Tags:</h4>
+              <div className="mt-4 flex gap-2">
+                <Badge color="yellow">
+                  {gig.price ? `${gig.price} Tokens` : "TBD"}
+                </Badge>
+                <Badge color="secondary-container">{gig.category}</Badge>
+                <Badge color="secondary-container">{location}</Badge>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </>,
-    document.body,
+      </Modal.Body>
+      
+      <Modal.Footer>
+        <div className="flex w-full justify-end space-x-2">
+          <Button onClick={onClose} color={"surface-container"} size="md">
+            Close
+          </Button>
+          {userId && db && (
+            <Button
+              onClick={handleApply} // Trigger the apply function
+              color="primary"
+              size="md"
+              disabled={applied}
+            >
+              {!applied ? "Apply" : "Applied Already"}
+            </Button>
+          )}
+        </div>
+      </Modal.Footer>
+    </Modal>
   );
 };
 

@@ -134,147 +134,145 @@ function EditCreateGigModal({
       <form onSubmit={handleSubmit}>
         <Modal.Header>{editable ? "Edit Gig" : "Create New Gig"}</Modal.Header>
         <Modal.Body>
-            <div className="space-y-4">
-              {/* Title Input */}
-              <div>
+          <div className="scrollbar max-h-[60vh] space-y-4 overflow-y-scroll sm:max-h-full">
+            {/* Title Input */}
+            <div>
+              <label className="block text-sm font-bold text-primary">
+                Title
+              </label>
+              <input
+                type="text"
+                value={gigData.title}
+                onChange={(e) =>
+                  setGigData({ ...gigData, title: e.target.value })
+                }
+                required
+                minLength={10}
+                maxLength={60}
+                className="mt-1 w-full rounded-lg border-0 bg-surface-container p-3 text-on-surface shadow-sm focus:border-0 focus:bg-surface-container-highest focus:ring-0"
+              />
+            </div>
+            {/* Description Input */}
+            <div>
+              <label className="block text-sm font-bold text-primary">
+                Description
+              </label>
+              <textarea
+                value={gigData.description}
+                onChange={(e) =>
+                  setGigData({ ...gigData, description: e.target.value })
+                }
+                required
+                minLength={10}
+                className="mt-1 w-full rounded-lg border-0 bg-surface-container p-3 text-on-surface shadow-sm focus:border-0 focus:bg-surface-container-highest focus:ring-0"
+                rows={6}
+              />
+            </div>
+            {/* Price and Location */}
+            <div className="flex flex-col gap-6 md:flex-row">
+              <div className="relative w-full">
                 <label className="block text-sm font-bold text-primary">
-                  Title
+                  Price
+                </label>
+                <input
+                  type="number"
+                  disabled={editable}
+                  value={gigData.price || ""}
+                  onChange={(e) =>
+                    setGigData({
+                      ...gigData,
+                      price:
+                        e.target.value === "" ? 0 : parseFloat(e.target.value),
+                    })
+                  }
+                  required
+                  min={10}
+                  max={1000000}
+                  className="mt-1 w-full rounded-lg border-0 bg-surface-container p-3 pr-10 text-on-surface shadow-sm focus:border-0 focus:bg-surface-container-highest focus:ring-0"
+                  placeholder="0"
+                />
+                <FaDollarSign className="text-slate-400 absolute bottom-4 right-4" />
+              </div>
+              <div className="relative w-full">
+                <label className="block text-sm font-bold text-primary">
+                  Location
                 </label>
                 <input
                   type="text"
-                  value={gigData.title}
+                  value={gigData.location}
                   onChange={(e) =>
-                    setGigData({ ...gigData, title: e.target.value })
+                    setGigData({ ...gigData, location: e.target.value })
                   }
                   required
-                  minLength={10}
-                  maxLength={60}
-                  className="mt-1 w-full rounded-lg border-0 bg-surface-container p-3 text-on-surface shadow-sm focus:border-0 focus:bg-surface-container-highest focus:ring-0"
+                  className="mt-1 w-full rounded-lg border-0 bg-surface-container p-3 pr-10 text-on-surface shadow-sm focus:border-0 focus:bg-surface-container-highest focus:ring-0"
                 />
+                <FaMapMarkerAlt className="text-slate-400 absolute bottom-4 right-4" />
               </div>
-              {/* Description Input */}
-              <div>
-                <label className="block text-sm font-bold text-primary">
-                  Description
-                </label>
-                <textarea
-                  value={gigData.description}
-                  onChange={(e) =>
-                    setGigData({ ...gigData, description: e.target.value })
-                  }
-                  required
-                  minLength={10}
-                  className="mt-1 w-full rounded-lg border-0 bg-surface-container p-3 text-on-surface shadow-sm focus:border-0 focus:bg-surface-container-highest focus:ring-0"
-                  rows={6}
-                />
-              </div>
-              {/* Price and Location */}
-              <div className="flex flex-col gap-6 md:flex-row">
-                <div className="relative w-full">
-                  <label className="block text-sm font-bold text-primary">
-                    Price
-                  </label>
-                  <input
-                    type="number"
-                    disabled={editable}
-                    value={gigData.price || ""}
-                    onChange={(e) =>
-                      setGigData({
-                        ...gigData,
-                        price:
-                          e.target.value === ""
-                            ? 0
-                            : parseFloat(e.target.value),
-                      })
-                    }
-                    required
-                    min={10}
-                    max={1000000}
-                    className="mt-1 w-full rounded-lg border-0 bg-surface-container p-3 pr-10 text-on-surface shadow-sm focus:border-0 focus:bg-surface-container-highest focus:ring-0"
-                    placeholder="0"
-                  />
-                  <FaDollarSign className="text-slate-400 absolute bottom-4 right-4" />
-                </div>
-                <div className="relative w-full">
-                  <label className="block text-sm font-bold text-primary">
-                    Location
-                  </label>
-                  <input
-                    type="text"
-                    value={gigData.location}
-                    onChange={(e) =>
-                      setGigData({ ...gigData, location: e.target.value })
-                    }
-                    required
-                    className="mt-1 w-full rounded-lg border-0 bg-surface-container p-3 pr-10 text-on-surface shadow-sm focus:border-0 focus:bg-surface-container-highest focus:ring-0"
-                  />
-                  <FaMapMarkerAlt className="text-slate-400 absolute bottom-4 right-4" />
-                </div>
-              </div>
-              {/* Category Input */}
-              <div className="relative w-full">
-                <label className="block text-sm font-bold text-primary">
-                  Category
-                </label>
-                <select
-                  value={gigData.category}
-                  onChange={(e) =>
-                    setGigData({ ...gigData, category: e.target.value })
-                  }
-                  required
-                  className="mt-1 w-full appearance-none rounded-lg border-0 bg-surface-container p-3 pr-10 text-on-surface shadow-sm focus:border-0 focus:bg-surface-container-highest focus:ring-0"
-                >
-                  <option value="" disabled className="text-on-surface">
-                    Select a category
-                  </option>
-                  {categories.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              {/* Due Date Picker */}
-              <div className="flex flex-col gap-4 md:flex-row">
-                <div className="relative w-full md:w-1/2">
-                  <label className="mb-1 block text-sm font-bold text-primary">
-                    Due Date
-                  </label>
-                  <Datepicker
-                    minDate={new Date(Date.now())}
-                    color="surface-container"
-                    value={gigData.dueDate.toDate()}
-                    onChange={(date) => handleDateChange(date)}
-                    required
-                  />
-                </div>
-                <div className="relative w-full md:w-1/2">
-                  <label className="mb-1 block text-sm font-bold text-primary">
-                    Due Time
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="time"
-                      value={gigData.dueDate
-                        .toDate()
-                        .toLocaleTimeString("en-US", {
-                          hour12: false,
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      onChange={handleTimeChange}
-                      className="block w-full rounded-lg border-0 bg-surface-container p-2.5 text-sm leading-none focus:border-0 focus:bg-surface-container-highest focus:ring-0"
-                      required
-                    />
-                    <FaClock className="absolute right-4 top-3 text-gray-400" />
-                  </div>
-                </div>
-              </div>
-              {/* Buttons */}
             </div>
+            {/* Category Input */}
+            <div className="relative w-full">
+              <label className="block text-sm font-bold text-primary">
+                Category
+              </label>
+              <select
+                value={gigData.category}
+                onChange={(e) =>
+                  setGigData({ ...gigData, category: e.target.value })
+                }
+                required
+                className="mt-1 w-full appearance-none rounded-lg border-0 bg-surface-container p-3 pr-10 text-on-surface shadow-sm focus:border-0 focus:bg-surface-container-highest focus:ring-0"
+              >
+                <option value="" disabled className="text-on-surface">
+                  Select a category
+                </option>
+                {categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {/* Due Date Picker */}
+            <div className="flex flex-col gap-4 md:flex-row">
+              <div className="relative w-full md:w-1/2">
+                <label className="mb-1 block text-sm font-bold text-primary">
+                  Due Date
+                </label>
+                <Datepicker
+                  minDate={new Date(Date.now())}
+                  color="surface-container"
+                  value={gigData.dueDate.toDate()}
+                  onChange={(date) => handleDateChange(date)}
+                  required
+                />
+              </div>
+              <div className="relative w-full md:w-1/2">
+                <label className="mb-1 block text-sm font-bold text-primary">
+                  Due Time
+                </label>
+                <div className="relative">
+                  <input
+                    type="time"
+                    value={gigData.dueDate
+                      .toDate()
+                      .toLocaleTimeString("en-US", {
+                        hour12: false,
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    onChange={handleTimeChange}
+                    className="block w-full rounded-lg border-0 bg-surface-container p-2.5 text-sm leading-none focus:border-0 focus:bg-surface-container-highest focus:ring-0"
+                    required
+                  />
+                  <FaClock className="absolute right-4 top-3 text-gray-400" />
+                </div>
+              </div>
+            </div>
+            {/* Buttons */}
+          </div>
         </Modal.Body>
-        <Modal.Footer >
-          <div className="flex space-x-4 size-full justify-end">
+        <Modal.Footer>
+          <div className="flex size-full justify-end space-x-4">
             <Button onClick={onClose} color="surface-container" type="button">
               Close
             </Button>
