@@ -43,7 +43,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
 
   return (
     <>
-      <div className="flex w-full items-center justify-between border-b border-gray-700 bg-gray-800 p-4 text-white">
+      <div className="flex w-full items-center justify-between p-4 border-b border-surface-dim">
         <div className="flex items-center gap-4">
           <UserProfilePicture
             user={chatPartner}
@@ -51,7 +51,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             hoverDetails={true}
           />
           <div>
-            <span className="flex text-lg font-semibold text-blue-400">
+            <span className="flex text-lg font-semibold text-primary">
               {chatPartner.displayName}
               <Tooltip content="Report" style="light">
                 <a
@@ -61,12 +61,12 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
                     setOpenError(true);
                   }}
                 >
-                  <MdReport className="mb-1 ml-1 inline text-red-500" />
+                  <MdReport className="mb-1 ml-1 inline text-error" />
                 </a>
               </Tooltip>
             </span>
             <span
-              className="block cursor-pointer text-sm text-orange-500 underline"
+              className="block cursor-pointer text-sm text-primary/80 underline"
               onClick={onSeeGigDetails}
             >
               See gig details
@@ -81,16 +81,20 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
           </Badge>
         </div>
       </div>
-      <ErrorModal openModal={openError} setOpenModal={setOpenError}>
-        <div className="flex w-fit flex-col">
-          <h1 className="mb-4 text-xl font-bold">Report User</h1>
-          <span className="mb-4 text-sm ">
+
+      <ErrorModal
+        openModal={openError}
+        setOpenModal={setOpenError}
+        title={<span className="ml-2 text-2xl">Report User</span>}
+      >
+        <div className="flex w-fit flex-col text-on-surface">
+          <span className="mb-4 text-sm">
             If you wish to report a user, add the reason and send the generated
             email.
           </span>
           <textarea
             onChange={(e) => setMessage(e.target.value)}
-            className="m-2 h-[20vh] w-[30vh] overflow-x-hidden overflow-y-scroll whitespace-pre-wrap text-pretty rounded-md bg-gray-100 text-left text-sm"
+            className="scrollbar m-2 h-[20vh] w-full overflow-x-hidden overflow-y-scroll whitespace-pre-wrap text-pretty rounded-md bg-surface-container-low text-left text-sm"
           >
             {message}
           </textarea>
@@ -104,7 +108,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
                 );
               }}
               href=""
-              className="mt-4 w-full rounded-lg bg-red-500 py-2 text-white hover:bg-red-600"
+              className="mt-4 w-full rounded-lg bg-error py-2 text-on-error hover:bg-error/90"
             >
               Report
             </a>

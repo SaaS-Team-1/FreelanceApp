@@ -1,16 +1,18 @@
-import { Button, Modal } from "flowbite-react";
-import { PropsWithChildren } from "react";
+import { Modal } from "flowbite-react";
+import { PropsWithChildren, ReactNode } from "react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 
 interface ErrorModalProps {
   openModal: boolean;
   setOpenModal: (set: boolean) => void;
+  title?: ReactNode;
 }
 
 export default function ErrorModal({
   openModal,
   setOpenModal,
   children,
+  title,
 }: PropsWithChildren<ErrorModalProps>) {
   return (
     <Modal
@@ -20,11 +22,11 @@ export default function ErrorModal({
       popup
       dismissible
     >
-      <Modal.Header />
+      <Modal.Header>{title}</Modal.Header>
 
       <Modal.Body>
         <div className="text-center">
-          <HiOutlineExclamationCircle className="mx-auto mb-4 size-14 text-gray-400 dark:text-gray-200" />
+          <HiOutlineExclamationCircle className="mx-auto my-4 size-14 text-on-surface" />
           <div className="flex justify-center gap-4">{children}</div>
         </div>
       </Modal.Body>

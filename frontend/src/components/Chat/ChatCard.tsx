@@ -480,7 +480,7 @@ const ChatCard: React.FC<ChatCardProps> = ({
   };
 
   return (
-    <div className="flex flex-col items-center rounded-md bg-orange-300 p-4 shadow-md">
+    <div className="flex flex-col items-center rounded-md bg-secondary-container text-on-secondary-container p-4 shadow-md">
       {isLister ? renderListerView() : renderApplicantView()}
       <ErrorModal openModal={openError} setOpenModal={setOpenError}>
         {errorMessage}

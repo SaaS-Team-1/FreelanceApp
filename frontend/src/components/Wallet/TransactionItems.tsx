@@ -75,15 +75,15 @@ export default function TransactionItem({ transaction }: TransactionItemProps) {
   const details = getTransactionDetails();
 
   return (
-    <div className="flex items-center justify-between rounded-md border-b p-4 last:border-b-0 hover:bg-slate-700">
+    <div className="flex items-center justify-between rounded-md border-y border-surface-dim p-4 first:border-t-0 last:border-b-0 hover:bg-surface-container-highest">
       <div className="flex items-center space-x-4">
-        <div className="flex size-10 items-center justify-center rounded-full bg-gray-100">
+        <div className="flex size-10 items-center justify-center rounded-full">
           {details.icon}
         </div>
         <div>
-          <h3 className="font-bold text-gray-100">{details.title}</h3>
-          <p className="text-sm  text-gray-300">{details.description}</p>
-          <span className="text-xs text-gray-200">
+          <h3 className="font-bold ">{details.title}</h3>
+          <p className="text-sm  ">{details.description}</p>
+          <span className="text-xs ">
             {new Date(
               transaction.createdAt.seconds * 1000,
             ).toLocaleDateString()}

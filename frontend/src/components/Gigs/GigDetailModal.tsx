@@ -20,14 +20,9 @@ interface GigDetailModalProps {
   lister: User; // Add lister prop to display the user's profile picture and name
 }
 
-const GigDetailModal: React.FC<GigDetailModalProps> = ({
-  gig,
-  isOpen,
-  onClose,
-  userId,
-  db,
-  lister,
-}) => {
+function GigDetailModal({
+  gig, isOpen, onClose, userId, db, lister,
+}: GigDetailModalProps) {
   const [applied, setApplied] = React.useState(true);
   const checkApply = async () => {
     if (!userId || !db) return;
@@ -36,7 +31,7 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
     const existingApplicationQuery = query(
       applicationRef,
       where("gigId", "==", gig.gigId),
-      where("applicantId", "==", userId),
+      where("applicantId", "==", userId)
     );
     const existingApplications = await getDocs(existingApplicationQuery);
 
@@ -168,8 +163,8 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
                   <span>
                     {gig.dueDate
                       ? `${new Date(
-                          gig.dueDate.seconds * 1000,
-                        ).toLocaleDateString("en-GB")}`
+                        gig.dueDate.seconds * 1000
+                      ).toLocaleDateString("en-GB")}`
                       : "N/A"}
                   </span>
                 </div>
@@ -197,7 +192,7 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
           </div>
         </div>
       </Modal.Body>
-      
+
       <Modal.Footer>
         <div className="flex w-full justify-end space-x-2">
           <Button onClick={onClose} color={"surface-container"} size="md">
@@ -217,6 +212,6 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
       </Modal.Footer>
     </Modal>
   );
-};
+}
 
 export default GigDetailModal;

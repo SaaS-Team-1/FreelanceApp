@@ -14,8 +14,8 @@ export default function CoinPurchaseForm({
   };
 
   return (
-    <div className="relative space-y-4 text-white 2xl:min-h-[35vh] 2xl:max-w-[25vw]">
-      <div className="absolute right-0 top-0 rounded bg-gray-800 px-2 py-1 text-sm text-gray-300">
+    <div className="relative space-y-4  2xl:min-h-[35vh] 2xl:max-w-[25vw]">
+      <div className="absolute right-0 top-0 rounded px-2 py-1 text-sm ">
         100 coins = 1€
       </div>
 
@@ -46,7 +46,7 @@ export default function CoinPurchaseForm({
 
       <button
         onClick={() => onBuy(selectedCoins)}
-        className="mt-4 w-full rounded-lg bg-blue-500 py-2 text-white hover:bg-blue-600"
+        className="mt-4 w-full rounded-lg bg-blue-500 py-2  hover:bg-blue-600"
       >
         Buy
       </button>

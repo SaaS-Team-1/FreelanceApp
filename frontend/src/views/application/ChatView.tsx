@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import { useFirestore, useUser } from "@/utils/reactfire";
 import {
@@ -24,6 +25,7 @@ import GigDetailsModal from "@/components/Chat/GigDetailsModal";
 import { useNavigate } from "react-router-dom";
 import Loading from "@/components/Loading";
 import { Gig, User, Application } from "@/utils/database/schema";
+import GigDetailModal from "@/components/Gigs/GigDetailModal";
 
 interface ExtendedChat {
   id: string;
@@ -272,36 +274,32 @@ function ChatPage() {
   }, [application?.applicationId, db]);
   if (!user) return;
   return (
-    <div className="flex w-full justify-center rounded-xl p-4 ">
+    <div className="flex h-screen w-full justify-center rounded-xl p-4">
       {!chatsLoading ? (
         <>
-          <div className="flex h-[calc(100vh-8rem)] w-full justify-center lg:max-w-[60vw]">
-            <div className="scrollbar w-3/5 overflow-y-auto border-r bg-gray-800">
-              <h2 className="p-4 text-lg font-bold text-white">Active Chats</h2>
+          <div className="flex w-full justify-center rounded-xl bg-surface-container">
+            <div className="scrollbar w-3/5 overflow-y-auto border-surface-dim border-r">
+              <h2 className="p-4 text-lg font-bold">Active Chats</h2>
               {chats.map((chat) => (
                 <div
                   key={chat.chatId}
                   onClick={() => setSelectedChat(chat)}
-                  className={`flex cursor-pointer justify-between p-4 ${
+                  className={`flex cursor-pointer justify-between border-y border-surface-dim p-4 ${
                     chat.chatId === selectedChat?.chatId
-                      ? "bg-blue-700 text-white"
-                      : "bg-gray-700 text-gray-100"
-                  } hover:bg-blue-500`}
+                      ? "bg-primary text-on-primary"
+                      : "bg-surface-container text-on-surface"
+                  } hover:bg-surface-container-highest`}
                 >
                   <div>
                     <p className="truncate font-bold">{chat.partnerName}</p>
-                    <p className="truncate text-sm text-gray-400">
-                      {chat.gigTitle}
-                    </p>
+                    <p className="truncate text-sm">{chat.gigTitle}</p>
                   </div>
-                  <p className="text-sm text-gray-300">
-                    {formatTimestamp(chat.lastUpdate)}
-                  </p>
+                  <p className="text-sm">{formatTimestamp(chat.lastUpdate)}</p>
                 </div>
               ))}
             </div>
 
-            <div className="flex size-full w-full flex-col overflow-y-auto bg-slate-600">
+            <div className="flex size-full w-full flex-col overflow-y-auto">
               {selectedChat ? (
                 <>
                   <ChatHeader
@@ -317,7 +315,7 @@ function ChatPage() {
                     onSeeGigDetails={() => setIsGigDetailsOpen(true)}
                   />
 
-                  <div className="scrollbar flex size-full w-full flex-col overflow-y-scroll bg-gray-800 p-4">
+                  <div className="scrollbar flex size-full w-full flex-col overflow-y-scroll p-4">
                     <ChatWindow
                       messages={messages.map((message) => ({
                         text: message.content,
@@ -361,14 +359,13 @@ function ChatPage() {
             </div>
           </div>
 
-          {isGigDetailsOpen && gig && user && (
-            <GigDetailsModal
+          {gig && user && (
+            <GigDetailModal
               gig={gig}
               lister={chatPartner || null}
               onClose={() => setIsGigDetailsOpen(false)}
-              currentUserId={user.uid}
-              currentUser={user as User}
-              onGoToMyGigs={handleGoToMyGigs}
+              userId={user.uid}
+              isOpen={isGigDetailsOpen}
             />
           )}
         </>
