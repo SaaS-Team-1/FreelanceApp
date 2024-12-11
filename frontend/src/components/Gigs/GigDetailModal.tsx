@@ -129,7 +129,7 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
       >
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm"></div>
         <div className="fixed inset-0 z-50 flex items-center justify-center px-2 py-10 sm:p-0">
-          <div className="w-full max-w-4xl space-y-6 rounded-lg bg-surface shadow-lg">
+          <div className="w-full max-w-4xl space-y-6 rounded-xl bg-surface shadow-lg">
             <div className="mb-4 flex h-fit w-full items-center justify-stretch rounded-xl bg-primary-container">
               <div className="flex items-center justify-self-start p-2 pr-4">
                 <UserProfilePicture
@@ -148,7 +148,7 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
                 <div className="ml-3 self-stretch border-l border-on-primary-container" />
               </div>
 
-              <h2 className="text-2xl font-bold text-on-primary-container">
+              <h2 className="text-4xl line-clamp-1 font-bold text-on-primary-container">
                 {gig.title}
               </h2>
             </div>

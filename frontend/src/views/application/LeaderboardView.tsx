@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
 import { useFirestore } from "@/utils/reactfire";
 import "flowbite";
+import Loading from "react-loading";
 
 // Define the User interface
 interface User {
@@ -10,7 +11,7 @@ interface User {
   completedGigs: number;
 }
 
-const LeaderBoardView: React.FC = () => {
+function LeaderboardView() {
   // Initialize Firestore
   const db = useFirestore();
 
@@ -50,19 +51,13 @@ const LeaderBoardView: React.FC = () => {
 
   // Render loading state
   if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="dark:text-gray-300 text-2xl font-semibold text-gray-700">
-          Loading...
-        </div>
-      </div>
-    );
+    return <Loading />;
   }
 
-  // Render leaderboard
   return (
-    <div className="container mx-auto">
-      <div className="overflow-x-auto rounded-lg mx-6 mt-1">
+    <div className="container mx-auto max-w-3xl px-4">
+      {/* Hide regular table on mobile, show on larger screens */}
+      <div className="mt-1 hidden overflow-x-auto rounded-lg sm:block">
         <table className="dark:bg-gray-800 min-w-full border">
           <thead className="bg-primary-container">
             <tr>
@@ -79,10 +74,7 @@ const LeaderBoardView: React.FC = () => {
           </thead>
           <tbody className="dark:bg-gray-800 bg-white">
             {users.map((user, index) => (
-              <tr
-                key={user.id}
-                className="hover:bg-surface-container-low"
-              >
+              <tr key={user.id} className="hover:bg-surface-container-low">
                 <td className="border-b px-6 py-4 text-sm text-on-primary-container">
                   {index + 1}
                 </td>
@@ -97,8 +89,42 @@ const LeaderBoardView: React.FC = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Show cards on mobile, hide on larger screens */}
+      <div className="space-y-4 sm:hidden">
+        {users.map((user, index) => (
+          <div
+            key={user.id}
+            className="dark:bg-gray-800 rounded-lg border bg-surface hover:bg-surface-container-low"
+          >
+            <div className="mb-2 flex items-center justify-between bg-primary-container w-full">
+              <span className=" m-1 font-bold text-on-primary-container">
+                Position {index + 1}
+              </span>
+            </div>
+            <div className="space-y-2 p-4">
+              <div className="flex justify-between">
+                <span className="text-sm font-medium text-on-primary-container">
+                  Name:
+                </span>
+                <span className="text-sm text-on-primary-container">
+                  {user.displayName}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm font-medium text-on-primary-container">
+                  Completed Gigs:
+                </span>
+                <span className="text-sm text-on-primary-container">
+                  {user.completedGigs}
+                </span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
-};
+}
 
-export default LeaderBoardView;
+export default LeaderboardView;

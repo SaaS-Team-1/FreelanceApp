@@ -1,12 +1,8 @@
 import React, { useState } from "react";
 import { Gig } from "@/utils/database/schema";
-import CreateGigModal from "./CreateGigModal";
+import EditCreateGigModal from "./EditCreateGigModal";
 
-interface CreateGigButtonProps {
-  onCreateSave: (newGig: Gig) => void; // Callback for saving the new gig
-}
-
-const CreateGigButton: React.FC<CreateGigButtonProps> = ({ onCreateSave }) => {
+function CreateGigButton() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   return (
@@ -22,16 +18,13 @@ const CreateGigButton: React.FC<CreateGigButtonProps> = ({ onCreateSave }) => {
 
       {/* Create Modal */}
       {isCreateModalOpen && (
-        <CreateGigModal
-          onCreate={() => {
-            onCreateSave;
-            setIsCreateModalOpen(false); // Close the modal
-          }}
+        <EditCreateGigModal
+          isOpen={isCreateModalOpen}
           onClose={() => setIsCreateModalOpen(false)} // Close the modal
         />
       )}
     </div>
   );
-};
+}
 
 export default CreateGigButton;

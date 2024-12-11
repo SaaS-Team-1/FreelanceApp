@@ -21,7 +21,7 @@ function Sidebar() {
   const [userDb, setUser] = useState<User | null>(null);
   const auth = useAuth();
   const { data: firebaseUser } = useUser(); // Firebase user object
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -73,7 +73,7 @@ function Sidebar() {
           isExpanded ? "self-end" : "self-center"
         }`}
       >
-        <FaBars />
+        <FaBars className="text-primary" />
       </button>
 
       {/* Profile Section */}

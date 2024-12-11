@@ -32,7 +32,7 @@ import PortfolioView from "./views/application/PortfolioView.tsx";
 import ScheduleView from "./views/application/ScheduleView.tsx";
 import SettingsView from "./views/application/SettingsView.tsx";
 import WalletView from "./views/application/WalletView.tsx";
-import LeaderBoardView from "./views/application/LeaderBoardView.tsx";
+import LeaderboardView from "./views/application/LeaderboardView.tsx";
 import ProfileView from "./views/application/ProfileView.tsx";
 import AdminView from "./views/application/AdminView.tsx";
 
@@ -90,7 +90,7 @@ const router = createBrowserRouter([
           },
           {
             path: "leaderBoard",
-            element: <LeaderBoardView />,
+            element: <LeaderboardView />,
           },
           {
             path: "admin",

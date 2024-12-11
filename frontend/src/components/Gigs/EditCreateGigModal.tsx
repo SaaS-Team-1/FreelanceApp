@@ -1,232 +1,296 @@
 import React, { useState, useEffect } from "react";
 import { Gig } from "@/utils/database/schema";
-import { Timestamp, doc, updateDoc } from "firebase/firestore"; // Firestore imports
-import CustomButton from "@/components/Buttons/CustomButton";
-import { FaDollarSign, FaTag, FaMapMarkerAlt } from "react-icons/fa";
-import DatePicker from "@/components/Calendar/DatePicker";
-import { gigsRef } from "@/utils/database/collections"; // Your Firestore collection reference
-import { useFirestore } from "@/utils/reactfire"; // Hook for Firestore instance
+import { Timestamp, doc, updateDoc, addDoc } from "firebase/firestore";
+import { FaDollarSign, FaMapMarkerAlt, FaClock } from "react-icons/fa";
+import { gigsRef } from "@/utils/database/collections";
+import { useFirestore, useUser } from "@/utils/reactfire";
+import { Button, Datepicker } from "flowbite-react";
 
-interface EditCreateGigModalProps {
+const categories = [
+  "Academic Support & Tutoring",
+  "Software Development & Programming",
+  "Design & Creative Work",
+  "Writing & Editing",
+  "Research Assistance",
+  "Data Entry & Analysis",
+  "Marketing & Social Media",
+  "Translation & Language Services",
+  "Event Planning & Support",
+  "Technical & IT Support",
+  "Others",
+];
+
+interface GigModalProps {
   gig?: Gig;
-  title: string;
   isOpen: boolean;
-  onSave: (gig: Gig) => void;
   onClose: () => void;
-  mode: "edit" | "create";
+  editable?: boolean;
 }
 
-const EditCreateGigModal: React.FC<EditCreateGigModalProps> = ({
+function EditCreateGigModal({
   gig,
-  title,
   isOpen,
-  onSave,
   onClose,
-  mode,
-}) => {
-  const db = useFirestore(); // Firestore instance
-  const [editedGig, setEditedGig] = useState<Gig>(
-    gig || {
+  editable = false,
+}: GigModalProps) {
+  const db = useFirestore();
+  const { data: user } = useUser();
+
+  const [gigData, setGigData] = useState<Gig>(() => {
+    const defaultGig: Gig = {
       gigId: "",
       title: "",
       description: "",
       price: 0,
-      dueDate: new Timestamp(new Date().getTime() / 1000, 0),
+      dueDate: new Timestamp(Math.floor(Date.now() / 1000), 0),
       status: "open",
-      listerId: "",
-      selectedApplicantId: undefined,
-      createdAt: new Timestamp(new Date().getTime() / 1000, 0),
-      updatedAt: new Timestamp(new Date().getTime() / 1000, 0),
-      applicantIds: [],
+      listerId: user?.uid || "",
+      selectedApplicantId: "",
+      createdAt: new Timestamp(Math.floor(Date.now() / 1000), 0),
+      updatedAt: new Timestamp(Math.floor(Date.now() / 1000), 0),
       location: "Remote",
       category: "",
-    },
-  );
+    };
+
+    return gig || defaultGig;
+  });
+
+  // Handle escape key and outside clicks
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+
+    if (isOpen) {
+      document.addEventListener("keydown", handleEscape);
+      return () => document.removeEventListener("keydown", handleEscape);
+    }
+  }, [isOpen, onClose]);
 
   useEffect(() => {
-    if (gig) {
-      setEditedGig(gig);
+    if (gig && isOpen) {
+      setGigData(gig);
     }
   }, [gig, isOpen]);
 
-  const validateGig = (gig: Gig) => {
-    const errors: string[] = [];
-
-    if (!gig.title.trim()) errors.push("Title is required.");
-    if (!gig.description.trim()) errors.push("Description is required.");
-    if (gig.description.trim().split(/\s+/).length < 25)
-      errors.push("Description must contain at least 25 words.");
-    if (!gig.location.trim()) errors.push("Location is required.");
-    if (!gig.category.trim()) errors.push("Category is required.");
-    if (gig.price <= 0) errors.push("Price must be greater than 0.");
-    if (!gig.dueDate || !(gig.dueDate instanceof Timestamp))
-      errors.push("Due Date is required and must be a valid timestamp.");
-    if (
-      !gig.status ||
-      ![
-        "open",
-        "in-progress",
-        "awaiting-confirmation",
-        "completed",
-        "deleted",
-        "problem-reported",
-      ].includes(gig.status)
-    )
-      errors.push("Status must be one of the predefined values.");
-    if (!gig.listerId.trim()) errors.push("Lister ID is required.");
-
-    return errors;
-  };
-
-  const handleSave = async () => {
-    const errors = validateGig(editedGig);
-    if (errors.length > 0) {
-      alert(`Please fix the following errors:\n- ${errors.join("\n- ")}`);
-      return;
-    }
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
     try {
-      if (mode === "edit" && gig) {
-        const gigDocRef = doc(gigsRef(db), gig.gigId); // Reference to the gig document
+      if (editable && gig) {
+        const gigDocRef = doc(gigsRef(db), gig.gigId);
         await updateDoc(gigDocRef, {
-          title: editedGig.title.trim(),
-          description: editedGig.description.trim(),
-          price: editedGig.price,
-          dueDate: editedGig.dueDate,
-          status: editedGig.status,
-          location: editedGig.location.trim(),
-          category: editedGig.category.trim(),
+          title: gigData.title.trim(),
+          description: gigData.description.trim(),
+          price: gigData.price,
+          dueDate: gigData.dueDate,
+          status: gigData.status,
+          location: gigData.location.trim(),
+          category: gigData.category.trim(),
           updatedAt: Timestamp.now(),
         });
         alert("Gig successfully updated.");
-      } else if (mode === "create") {
-        alert("Create mode is not implemented in this example.");
+        onClose();
+      } else {
+        const newGigData = {
+          ...gigData,
+          createdAt: Timestamp.now(),
+          updatedAt: Timestamp.now(),
+        };
+        const gigDoc = await addDoc(gigsRef(db), newGigData);
+        await updateDoc(gigDoc, { gigId: gigDoc.id });
+        alert("Gig successfully created.");
+        onClose();
       }
-
-      onSave(editedGig); // Notify parent of the save
-      onClose();
     } catch (error) {
-      console.error("Error updating gig:", error);
-      alert("There was an error saving the gig. Please try again.");
+      console.error(`Error ${editable ? "updating" : "creating"} gig:`, error);
+      alert(
+        `There was an error ${editable ? "updating" : "creating"} the gig. Please try again.`,
+      );
+    }
+  };
+
+  const handleDateChange = (date: Date | null) => {
+    if (!date) return;
+    const newTimestamp = Timestamp.fromDate(date);
+    setGigData({ ...gigData, dueDate: newTimestamp });
+  };
+
+  const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const [hours, minutes] = e.target.value.split(":").map(Number);
+    const currentDate = gigData.dueDate.toDate();
+    currentDate.setHours(hours, minutes);
+    setGigData({ ...gigData, dueDate: Timestamp.fromDate(currentDate) });
+  };
+
+  const handleOutsideClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      onClose();
     }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="w-full max-w-2xl rounded-lg bg-white p-6 shadow-xl">
-        <h2 className="mb-6 text-2xl font-bold text-gray-800">{title}</h2>
-        <div className="space-y-6">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+      onClick={handleOutsideClick}
+    >
+      <div className="mx-10 w-full max-w-2xl rounded-xl bg-surface-container-lowest shadow-xl sm:m-0">
+        <div className="mb-2 rounded-xl bg-primary-container p-2 text-center">
+          <h3 className="text-2xl my-2 font-bold text-on-primary-container lg:text-4xl">
+            {editable ? "Edit Gig" : "Create New Gig"}
+          </h3>
+        </div>
+
+        <form
+          onSubmit={handleSubmit}
+          className="scrollbar max-h-[90vh] space-y-6 overflow-y-scroll p-6"
+        >
           {/* Title Input */}
           <div>
-            <label className="block text-sm font-medium text-slate-700">
+            <label className="block text-sm font-bold text-primary">
               Title
             </label>
             <input
               type="text"
-              value={editedGig.title}
+              value={gigData.title}
               onChange={(e) =>
-                setEditedGig({ ...editedGig, title: e.target.value })
+                setGigData({ ...gigData, title: e.target.value })
               }
-              className="mt-1 w-full rounded-lg border-gray-300 bg-slate-100 p-3 text-gray-800 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
+              required
+              minLength={10}
+              maxLength={60}
+              className="mt-1 w-full rounded-lg border-0 bg-surface-container p-3 text-on-surface shadow-sm focus:border-0 focus:bg-surface-container-highest focus:ring-0"
             />
           </div>
           {/* Description Input */}
           <div>
-            <label className="block text-sm font-medium text-slate-700">
+            <label className="block text-sm font-bold text-primary">
               Description
             </label>
             <textarea
-              value={editedGig.description}
+              value={gigData.description}
               onChange={(e) =>
-                setEditedGig({ ...editedGig, description: e.target.value })
+                setGigData({ ...gigData, description: e.target.value })
               }
-              className="mt-1 w-full rounded-lg border-slate-300 bg-gray-100 p-3 text-gray-800 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
+              required
+              minLength={10}
+              className="mt-1 w-full rounded-lg border-0 bg-surface-container p-3 text-on-surface shadow-sm focus:border-0 focus:bg-surface-container-highest focus:ring-0"
               rows={6}
             />
           </div>
           {/* Price and Location */}
           <div className="flex flex-col gap-6 md:flex-row">
             <div className="relative w-full">
-              <label className="block text-sm font-medium text-slate-700">
+              <label className="block text-sm font-bold text-primary">
                 Price
               </label>
               <input
                 type="number"
-                disabled={mode === "edit"}
-                value={editedGig.price}
+                disabled={editable}
+                value={gigData.price || ""}
                 onChange={(e) =>
-                  setEditedGig({ ...editedGig, price: Number(e.target.value) })
+                  setGigData({
+                    ...gigData,
+                    price:
+                      e.target.value === "" ? 0 : parseFloat(e.target.value),
+                  })
                 }
-                className="mt-1 w-full rounded-lg border-slate-300 bg-slate-100 p-3 pr-10 text-slate-800 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
+                required
+                min={10}
+                max={1000000}
+                className="mt-1 w-full rounded-lg border-0 bg-surface-container p-3 pr-10 text-on-surface shadow-sm focus:border-0 focus:bg-surface-container-highest focus:ring-0"
                 placeholder="0"
               />
-              <FaDollarSign className="absolute bottom-3 right-4 text-slate-400" />
+              <FaDollarSign className="text-slate-400 absolute bottom-4 right-4" />
             </div>
             <div className="relative w-full">
-              <label className="block text-sm font-medium text-slate-700">
+              <label className="block text-sm font-bold text-primary">
                 Location
               </label>
               <input
                 type="text"
-                value={editedGig.location}
+                value={gigData.location}
                 onChange={(e) =>
-                  setEditedGig({ ...editedGig, location: e.target.value })
+                  setGigData({ ...gigData, location: e.target.value })
                 }
-                className="mt-1 w-full rounded-lg border-slate-300 bg-slate-100 p-3 pr-10 text-slate-800 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
+                required
+                className="mt-1 w-full rounded-lg border-0 bg-surface-container p-3 pr-10 text-on-surface shadow-sm focus:border-0 focus:bg-surface-container-highest focus:ring-0"
               />
-              <FaMapMarkerAlt className="absolute bottom-3 right-4 text-slate-400" />
+              <FaMapMarkerAlt className="text-slate-400 absolute bottom-4 right-4" />
             </div>
           </div>
           {/* Category Input */}
-          <div className="relative">
-            <label className="block text-sm font-medium text-slate-700">
+          <div className="relative w-full">
+            <label className="block text-sm font-bold text-primary">
               Category
             </label>
-            <input
-              type="text"
-              value={editedGig.category}
+            <select
+              value={gigData.category}
               onChange={(e) =>
-                setEditedGig({ ...editedGig, category: e.target.value })
+                setGigData({ ...gigData, category: e.target.value })
               }
-              className="mt-1 w-full rounded-lg border-slate-300 bg-slate-100 p-3 pr-10 text-slate-800 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500"
-            />
-            <FaTag className="absolute bottom-3 right-4 text-slate-400" />
+              required
+              className="mt-1 w-full appearance-none rounded-lg border-0 bg-surface-container p-3 pr-10 text-on-surface shadow-sm focus:border-0 focus:bg-surface-container-highest focus:ring-0"
+            >
+              <option value="" disabled className="text-on-surface">
+                Select a category
+              </option>
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
           </div>
           {/* Due Date Picker */}
-          <div>
-            <DatePicker
-              dueDate={editedGig.dueDate}
-              onDateChange={(newTimestamp) =>
-                setEditedGig({ ...editedGig, dueDate: newTimestamp })
-              }
-            />
+          <div className="flex flex-col gap-4 md:flex-row">
+            <div className="relative w-full md:w-1/2">
+              <label className="mb-1 block text-sm font-bold text-primary">
+                Due Date
+              </label>
+              <Datepicker
+                minDate={new Date(Date.now())}
+                color="surface-container"
+                value={gigData.dueDate.toDate()}
+                onChange={(date) => handleDateChange(date)}
+                required
+              />
+            </div>
+            <div className="relative w-full md:w-1/2">
+              <label className="mb-1 block text-sm font-bold text-primary">
+                Due Time
+              </label>
+              <div className="relative">
+                <input
+                  type="time"
+                  value={gigData.dueDate.toDate().toLocaleTimeString("en-US", {
+                    hour12: false,
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                  onChange={handleTimeChange}
+                  className="block w-full rounded-lg border-0 bg-surface-container p-2.5 text-sm leading-none focus:border-0 focus:bg-surface-container-highest focus:ring-0"
+                  required
+                />
+                <FaClock className="absolute right-4 top-3 text-gray-400" />
+              </div>
+            </div>
           </div>
-        </div>
-        {/* Buttons */}
-        <div className="mt-6 flex justify-end gap-4">
-          <CustomButton
-            label="Cancel"
-            onClick={onClose}
-            color="white"
-            textColor="primary"
-            size="medium"
-            outline={true}
-            rounded={false}
-          />
-          <CustomButton
-            label={mode === "edit" ? "Save Changes" : "Create Gig"}
-            onClick={handleSave}
-            color="primary"
-            textColor="white"
-            size="medium"
-            rounded={false}
-          />
-        </div>
+          {/* Buttons */}
+          <div className="mt-6 flex justify-end gap-4">
+            <Button onClick={onClose} color="surface-container" type="button">
+              Close
+            </Button>
+            <Button color="primary" type="submit">
+              {editable ? "Save Changes" : "Create Gig"}
+            </Button>
+          </div>
+        </form>
       </div>
     </div>
   );
-};
+}
 
 export default EditCreateGigModal;

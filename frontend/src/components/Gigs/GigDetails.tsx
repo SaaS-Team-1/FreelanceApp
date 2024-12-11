@@ -45,11 +45,9 @@ interface GigDetailsProps {
 const GigDetails: React.FC<GigDetailsProps> = ({
   gig,
   user,
-  onEditSave,
   onDelete,
   showEdit = true, // Default to show the Edit button
   showDelete = true, // Default to not show the Delete button
-  showSeeMoreButton = false,
 }) => {
   const db = useFirestore();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -287,15 +285,10 @@ const GigDetails: React.FC<GigDetailsProps> = ({
 
       {isEditModalOpen && (
         <EditCreateGigModal
-          title="Edit Gig"
           gig={currentGig}
           isOpen={isEditModalOpen}
-          onSave={(updatedGig) => {
-            onEditSave(updatedGig);
-            setIsEditModalOpen(false);
-          }}
           onClose={() => setIsEditModalOpen(false)}
-          mode="edit"
+          editable
         />
       )}
 

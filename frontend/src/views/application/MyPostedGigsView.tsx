@@ -10,7 +10,21 @@ import {
   gigsRef,
   usersRef,
 } from "@/utils/database/collections";
-import { query, where, getDocs, doc, getDoc } from "firebase/firestore";
+import {
+  query,
+  where,
+  getDocs,
+  doc,
+  getDoc,
+  Firestore,
+} from "firebase/firestore";
+
+const STATUS_ORDER: Gig["status"][] = [
+  "open",
+  "in-progress",
+  "awaiting-confirmation",
+  "completed",
+];
 
 function MyPostedGigsView() {
   const db = useFirestore();
@@ -31,16 +45,9 @@ function MyPostedGigsView() {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [fullUser, setFullUser] = useState<User | null>(null);
 
-  const STATUS_ORDER: Gig["status"][] = [
-    "open",
-    "in-progress",
-    "awaiting-confirmation",
-    "completed",
-  ];
-
   const fetchUserData = async (
     userId: string,
-    db: any,
+    db: Firestore,
   ): Promise<User | null> => {
     try {
       const userDocRef = doc(usersRef(db), userId);
@@ -223,27 +230,25 @@ function MyPostedGigsView() {
 
   return (
     <div className="flex h-[calc(100vh-4rem)] w-full space-x-6 p-4">
-      <div className="scrollbar h-full w-1/2 overflow-y-scroll rounded-lg bg-slate-200 p-4">
+      <div className="scrollbar  h-full w-1/2 overflow-y-scroll rounded-lg p-4">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-2xl font-semibold text-slate-800">
-            My Posted Gigs
-          </h2>
+          <h2 className="text-2xl font-bold text-primary">Gigs</h2>
           <div className="relative">
             <button
               onClick={() => setIsDropdownVisible((prev) => !prev)}
-              className="flex items-center justify-center rounded-full bg-blue-500 p-2 text-white transition-all hover:bg-blue-600"
+              className="flex items-center justify-center rounded-full bg-primary p-2 text-white transition-all hover:bg-primary/90"
             >
               <FaFilter />
             </button>
 
             {isDropdownVisible && (
               <div
-                className="absolute right-0 z-50 mt-2 w-48 rounded-md border border-slate-200 bg-white shadow-lg transition-transform"
+                className="absolute right-0 z-50 mt-2 w-48 rounded-md  bg-white transition-transform"
                 onMouseLeave={() => setIsDropdownVisible(false)}
               >
                 <button
                   onClick={() => handleFilterChange("all")}
-                  className="block w-full px-4 py-2 text-left text-slate-800 hover:bg-slate-100"
+                  className="text-slate-800 hover:bg-slate-100 block w-full px-4 py-2 text-left"
                 >
                   All Gigs
                 </button>
@@ -251,7 +256,7 @@ function MyPostedGigsView() {
                   <button
                     key={status}
                     onClick={() => handleFilterChange(status)}
-                    className="block w-full px-4 py-2 text-left text-slate-800 hover:bg-slate-100"
+                    className="text-slate-800 hover:bg-slate-100 block w-full px-4 py-2 text-left"
                   >
                     {status.charAt(0).toUpperCase() + status.slice(1)} Gigs
                   </button>
@@ -269,7 +274,7 @@ function MyPostedGigsView() {
         />
       </div>
 
-      <div className="-full w-1/2 rounded-lg bg-slate-200 p-6">
+      <div className="bg-slate-200 w-1/2 rounded-lg p-6">
         {selectedGig ? (
           <>
             <GigDetails
@@ -280,7 +285,7 @@ function MyPostedGigsView() {
             />
             {loadingApplicants ? (
               <div className="flex items-center justify-center py-6">
-                <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-blue-500"></div>
+                <div className="h-8 w-8 animate-spin rounded-full"></div>
               </div>
             ) : (
               <InterestedGigglers
@@ -291,7 +296,7 @@ function MyPostedGigsView() {
             )}
           </>
         ) : (
-          <p className="text-center text-slate-500">No available gigs</p>
+          <p className="text-slate-500 text-center">No available gigs</p>
         )}
       </div>
     </div>

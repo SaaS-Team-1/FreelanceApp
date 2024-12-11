@@ -64,10 +64,6 @@ export default function OverviewView() {
     }
   };
 
-  const handleCreateSave = () => {
-    console.log("New Gig Created!");
-  };
-
   const fetchOpenGigsAndCategories = async () => {
     setOpenGigsLoading(true);
     try {
@@ -228,9 +224,9 @@ export default function OverviewView() {
   };
 
   return (
-    <div className="mt-10 flex h-screen w-full flex-row justify-center ">
+    <div className="mt-10 flex h-screen w-full flex-row justify-center">
       {/* Fixed Left Column for Gigs */}
-      <div className="mx-4 flex min-w-[40vw] xl:max-w-[40vw] flex-col items-center md:mx-10 xl:min-w-10">
+      <div className="mx-4 flex min-w-[40vw] flex-col items-center md:mx-10 xl:min-w-10 xl:max-w-[40vw]">
         {/* Filters */}
         <div className="flex w-full flex-col items-center">
           <div className="flex w-full items-center justify-center">
@@ -273,7 +269,7 @@ export default function OverviewView() {
         </div>
 
         {!openGigsLoading ? (
-          <div className="scrollbar h-fit overflow-y-scroll pb-10 pt-4 ">
+          <div className="scrollbar h-fit overflow-y-scroll pb-10 sm:pt-4 ">
             <PostedGigListHome
               gigs={openGigs}
               enableSelection={true}
@@ -294,13 +290,13 @@ export default function OverviewView() {
       </div>
 
       {/* Fixed Right Column for Notifications */}
-      <div className="hidden h-screen min-w-fit flex-col space-y-4 lg:visible lg:flex mr-10">
+      <div className="mr-10 hidden h-screen min-w-fit flex-col space-y-4 lg:visible lg:flex">
         <NotificationList notifications={notifications} />
 
         {extendedUser && (
           <MyPostedGigListCompressed gigs={myPostedGigs} user={extendedUser} />
         )}
-        <CreateGigButton onCreateSave={handleCreateSave} />
+        <CreateGigButton />
       </div>
     </div>
   );
