@@ -191,7 +191,7 @@ function EditCreateGigModal({
                   className="mt-1 w-full rounded-lg border-0 bg-surface-container p-3 pr-10 text-on-surface shadow-sm focus:border-0 focus:bg-surface-container-highest focus:ring-0"
                   placeholder="0"
                 />
-                <FaDollarSign className="text-slate-400 absolute bottom-4 right-4" />
+                <FaDollarSign className="absolute bottom-4 right-4 text-slate-400" />
               </div>
               <div className="relative w-full">
                 <label className="block text-sm font-bold text-primary">
@@ -206,7 +206,7 @@ function EditCreateGigModal({
                   required
                   className="mt-1 w-full rounded-lg border-0 bg-surface-container p-3 pr-10 text-on-surface shadow-sm focus:border-0 focus:bg-surface-container-highest focus:ring-0"
                 />
-                <FaMapMarkerAlt className="text-slate-400 absolute bottom-4 right-4" />
+                <FaMapMarkerAlt className="absolute bottom-4 right-4 text-slate-400" />
               </div>
             </div>
             {/* Category Input */}

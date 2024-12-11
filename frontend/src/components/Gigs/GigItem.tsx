@@ -1,5 +1,5 @@
 import { Gig, User } from "@/utils/database/schema"; // Import updated interfaces
-import { Badge } from "flowbite-react";
+import { Badge, Button } from "flowbite-react";
 import CustomButton from "../Buttons/CustomButton";
 
 interface GigItemBaseProps {
@@ -15,12 +15,13 @@ interface GigItemBaseProps {
 function GigItem({
   gig,
   lister,
+  children,
   isSelected = false,
   enableSelection = false,
   showSeeMoreButton = false,
   showStatus = false,
   onSeeMoreClick = () => null,
-}: React.PropsWithRef<GigItemBaseProps>) {
+}: React.PropsWithChildren<GigItemBaseProps>) {
   return (
     <div
       key={gig.gigId}
@@ -59,10 +60,10 @@ function GigItem({
                   gig.status === "open"
                     ? "tertiary"
                     : gig.status === "in-progress"
-                      ? "tertiary"
+                      ? "primary"
                       : gig.status === "awaiting-confirmation"
                         ? "warning"
-                        : "gray"
+                        : "surface-container"
                 }
               >
                 {gig.status}
@@ -88,15 +89,16 @@ function GigItem({
         </div>
 
         {showSeeMoreButton && (
-          <CustomButton
-            label="See More"
+          <Button
             onClick={() => onSeeMoreClick(gig, lister)} // Open the modal with the selected gig
             color="primary"
-            textColor="white"
-            size="small"
-            rounded={false}
-          />
+            size="sm"
+            className="size-fit text-nowrap"
+          >
+            See More
+          </Button>
         )}
+        {children}
       </div>
     </div>
   );

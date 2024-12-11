@@ -1,6 +1,4 @@
 import React, { useEffect } from "react";
-import ReactDOM from "react-dom";
-import CustomButton from "@/components/Buttons/CustomButton";
 import { Application, Chat, Gig, User } from "@/utils/database/schema";
 import { FaDollarSign, FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
 import { Firestore, Timestamp, addDoc, updateDoc } from "firebase/firestore";
@@ -122,7 +120,7 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
   const location = gig.location || "Remote";
 
   return (
-    <Modal show={isOpen} onClose={onClose}>
+    <Modal show={isOpen} onClose={onClose} dismissible>
       <Modal.Header>
         <div className="flex h-fit w-full items-center justify-stretch">
           <div className="flex items-center justify-self-start p-2 pr-4">
@@ -142,7 +140,7 @@ const GigDetailModal: React.FC<GigDetailModalProps> = ({
             <div className="ml-3 self-stretch border-l border-on-primary-container" />
           </div>
 
-          <h2 className="line-clamp-1 font-bold text-on-primary-container">
+          <h2 className="line-clamp-1 font-bold text-lg text-on-primary-container">
             {gig.title}
           </h2>
         </div>

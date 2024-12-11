@@ -161,7 +161,7 @@ function MyPostedGigsView() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] w-full space-x-6 p-4">
+    <div className="flex h-screen space-x-6 p-4">
       <div className="h-full w-1/2 rounded-lg p-4">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-2xl font-bold text-primary">My Posted Gigs</h2>
@@ -170,7 +170,7 @@ function MyPostedGigsView() {
             onCategorySelect={handleFilterChange}
           />
         </div>
-        <div className="scrollbar max-h-[90vh] overflow-y-scroll">
+        <div className="scrollbar max-h-[95vh] overflow-y-scroll">
           <PostedGigList
             gigs={filteredGigs}
             onSelectGig={setSelectedGig}
@@ -179,7 +179,7 @@ function MyPostedGigsView() {
         </div>
       </div>
 
-      <div className="w-1/2 rounded-lg">
+      <div className="scrollbar max-h-[95vh] w-1/2 overflow-y-scroll rounded-lg">
         {selectedGig ? (
           <>
             <GigDetails
@@ -187,6 +187,7 @@ function MyPostedGigsView() {
               user={fullUser}
               onChange={fetchUserGigs}
             />
+            <div className="mt-4 mb-3 border-t border-primary/60 mx-2"></div>
             {loadingApplicants ? (
               <div className="flex items-center justify-center py-6">
                 <div className="size-8 animate-spin rounded-full"></div>
@@ -200,7 +201,7 @@ function MyPostedGigsView() {
             )}
           </>
         ) : (
-          <p className="text-slate-500 text-center">No available gigs</p>
+          <p className="text-center text-slate-500">No available gigs</p>
         )}
       </div>
     </div>

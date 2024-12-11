@@ -1,6 +1,5 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import PostedGigListSmall from "@/components/Gigs/MyPostedGigListSmall";
-import GigDetails from "@/components/Gigs/GigDetails";
 import { Gig, User } from "@/utils/database/schema";
 import {
   query,
@@ -13,7 +12,6 @@ import {
   addDoc,
   serverTimestamp,
 } from "firebase/firestore";
-import CustomButton from "@/components/Buttons/CustomButton";
 import { useAuth, useFirestore } from "@/utils/reactfire";
 import {
   applicationsRef,
@@ -23,6 +21,9 @@ import {
   notificationsRef,
 } from "@/utils/database/collections";
 import { useCallback } from "react";
+import GigDetailModal from "@/components/Gigs/GigDetailModal";
+import { Tabs } from "flowbite-react";
+import { FaCalendar, FaCheck, FaClock, FaComments, FaToggleOff } from "react-icons/fa";
 
 function ScheduleView() {
   const db = useFirestore();
@@ -104,7 +105,7 @@ function ScheduleView() {
                 ? (listerDoc.data() as User)
                 : null;
               return {
-                gig: processGigData(gigData, gigId),
+                gig: processGigData(gigData, gigId as string),
                 lister: listerData || (currUser as unknown as User),
               };
             }
@@ -172,11 +173,6 @@ function ScheduleView() {
         setSelectedLister(null);
       }
     }
-  };
-
-  const handleCloseGigDetails = () => {
-    setSelectedGig(null);
-    setIsGigDetailsOpen(false);
   };
 
   const handleUndoClick = async (gigId: string) => {
@@ -300,133 +296,73 @@ function ScheduleView() {
     }
   };
 
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [isHoveringRight, setIsHoveringRight] = useState(false);
-  const [isHoveringLeft, setIsHoveringLeft] = useState(false);
-
-  useEffect(() => {
-    let scrollInterval: NodeJS.Timeout;
-
-    if (isHoveringRight) {
-      scrollInterval = setInterval(() => {
-        if (scrollContainerRef.current) {
-          scrollContainerRef.current.scrollLeft += 10;
-        }
-      }, 16);
-    } else if (isHoveringLeft) {
-      scrollInterval = setInterval(() => {
-        if (scrollContainerRef.current) {
-          scrollContainerRef.current.scrollLeft -= 10;
-        }
-      }, 16);
-    }
-
-    return () => clearInterval(scrollInterval);
-  }, [isHoveringRight, isHoveringLeft]);
-
   return (
     <div className="relative h-screen w-full p-4">
       {/* Horizontal Scrollable Container */}
-      <div
-        ref={scrollContainerRef}
-        className="hide-scrollbar mr-10 flex h-[calc(100vh-8rem)] snap-x snap-mandatory gap-6 scroll-smooth"
-      >
-        {/* Page 1: Scheduled Gigs and Pending Gigs */}
-        <div className="flex size-full w-1/2 shrink-0 snap-center gap-6">
-          <div className="scrollbar light:text-slate-800 size-full overflow-y-scroll rounded-lg bg-slate-200 p-4">
-            <h1 className="mb-3 text-xl font-bold dark:text-white">
+      <Tabs aria-label="Schedule Tabs" variant="fullWidth">
+        <Tabs.Item active title="Pending Gigs" icon={FaToggleOff}>
+          <div className="scrollbar size-full overflow-y-scroll rounded-lg p-4">
+            <h1 className="dark:text-white mb-3 text-xl font-bold">
               Pending Gigs
             </h1>
             <PostedGigListSmall
               gigs={pendingGigs}
-              showDateWithLine={true}
-              showUndoButton={true}
-              showSeeMoreButton={true}
-              onUndoClick={handleUndoClick}
+              showChatIcon={true}
               onSeeMoreClick={handleSeeMoreClick}
             />
           </div>
-
-          {/* Divider */}
-          <div className="h-full w-px bg-slate-400"></div>
-
-          <div className="scrollbar light:text-slate-800 size-full overflow-y-scroll rounded-lg bg-slate-200 p-4">
-            <h1 className="mb-3 text-xl font-bold dark:text-white">
+        </Tabs.Item>
+        <Tabs.Item active title="Scheduled Gigs" icon={FaCalendar}>
+          <div className="scrollbar size-full overflow-y-scroll rounded-lg p-4">
+            <h1 className="dark:text-white mb-3 text-xl font-bold">
               Scheduled Gigs
             </h1>
             <PostedGigListSmall
               gigs={inProgressGigs}
-              showDateWithLine={true}
               showCompletedButton={true}
-              showSeeMoreButton={true}
               showChatIcon={true}
               onCompleteClick={handleCompleteGig}
               onSeeMoreClick={handleSeeMoreClick}
             />
           </div>
+        </Tabs.Item>
 
-          {/* Divider */}
-          <div className="h-full w-px bg-slate-400"></div>
-        </div>
-
-        {/* Page 2: Awaiting Approval and Completed Gigs */}
-        <div className="flex  w-1/2 shrink-0 snap-center gap-6">
-          <div className="scrollbar light:text-slate-800 size-full overflow-y-scroll rounded-lg bg-slate-200 p-4">
-            <h1 className="mb-3 text-xl font-bold dark:text-white">
+        <Tabs.Item active title="Awaiting Approval" icon={FaClock}>
+          <div className="scrollbar size-full overflow-y-scroll rounded-lg p-4">
+            <h1 className="dark:text-white mb-3 text-xl font-bold">
               Awaiting Approval
             </h1>
             <PostedGigListSmall
               gigs={awaitingApprovalGigs}
-              showDateWithLine={true}
               showChatIcon={true}
-              showSeeMoreButton={true}
               onSeeMoreClick={handleSeeMoreClick}
             />
           </div>
+        </Tabs.Item>
 
-          {/* Divider */}
-          <div className="h-full w-px bg-slate-400"></div>
-
-          <div className="scrollbar light:text-slate-800 size-full overflow-y-scroll rounded-lg bg-slate-200 p-4">
-            <h1 className="mb-3 text-xl font-bold dark:text-white">
+        <Tabs.Item active title="Completed Gigs" icon={FaCheck}>
+          <div className="scrollbar size-full overflow-y-scroll rounded-lg p-4">
+            <h1 className="dark:text-white mb-3 text-xl font-bold">
               Completed Gigs
             </h1>
             <PostedGigListSmall
               gigs={completedGigs}
-              showDateWithLine={true}
-              showChatIcon={false}
-              showSeeMoreButton={true}
               onSeeMoreClick={handleSeeMoreClick}
             />
           </div>
-        </div>
-      </div>
+        </Tabs.Item>
+      </Tabs>
 
       {/* Gig Details Popup */}
-      {selectedGig && isGigDetailsOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
-          <div className="w-[800px] rounded-lg bg-white p-6 shadow-lg">
-            <GigDetails
-              gig={selectedGig}
-              user={selectedLister}
-              onEditSave={() => {}} // No edit functionality
-              onDelete={() => {}} // No delete functionality
-              showEdit={false} // Remove Edit button
-              showDelete={false} // Remove Delete button
-              showSeeMoreButton={true}
-            />
-            <div className="mt-4 flex justify-end">
-              <CustomButton
-                label="Close"
-                onClick={handleCloseGigDetails}
-                color="red"
-                textColor="black"
-                size="medium"
-                rounded={false}
-              />
-            </div>
-          </div>
-        </div>
+      {selectedGig && selectedLister && (
+        <GigDetailModal
+          gig={selectedGig}
+          lister={selectedLister}
+          isOpen={isGigDetailsOpen}
+          userId={currUser?.uid} // Pass the logged-in user's ID
+          db={db} // Pass the Firestore database instance
+          onClose={() => setIsGigDetailsOpen(false)}
+        />
       )}
     </div>
   );

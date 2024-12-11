@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { User, Gig } from "@/utils/database/schema";
-import CustomButton from "@/components/Buttons/CustomButton"; // Import your button component
 import EditCreateGigModal from "./EditCreateGigModal"; // Import your modal component
 import {
   FaPen,
@@ -21,7 +20,6 @@ import {
   serverTimestamp,
   addDoc,
 } from "firebase/firestore";
-import ReactDOM from "react-dom";
 import {
   applicationsRef,
   gigsRef,
@@ -162,10 +160,10 @@ const GigDetails: React.FC<GigDetailsProps> = ({
             gig.status === "open"
               ? "tertiary"
               : gig.status === "in-progress"
-                ? "tertiary"
+                ? "primary"
                 : gig.status === "awaiting-confirmation"
                   ? "warning"
-                  : "gray"
+                  : "surface-container"
           }
         >
           {gig.status}
