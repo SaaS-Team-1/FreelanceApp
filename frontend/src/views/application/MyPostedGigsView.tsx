@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { FaFilter } from "react-icons/fa";
 import PostedGigList from "@/components/Gigs/MyPostedGigList";
 import GigDetails from "@/components/Gigs/GigDetails";
 import InterestedGigglers from "@/components/Gigs/InterestedGigglers";
@@ -10,14 +9,10 @@ import {
   gigsRef,
   usersRef,
 } from "@/utils/database/collections";
-import {
-  query,
-  where,
-  getDocs,
-  doc,
-  getDoc,
-  Firestore,
-} from "firebase/firestore";
+import { query, where, getDocs, doc, getDoc } from "firebase/firestore";
+import Loading from "@/components/Loading";
+import FilterButton from "@/components/Buttons/FilterButton";
+import { useSearchParams } from "react-router-dom";
 
 const STATUS_ORDER: Gig["status"][] = [
   "open",
@@ -41,130 +36,116 @@ function MyPostedGigsView() {
   const [applicants, setApplicants] = useState<User[]>([]);
   const [loadingGigs, setLoadingGigs] = useState(true);
   const [loadingApplicants, setLoadingApplicants] = useState(false);
-  const [filterStatus, setFilterStatus] = useState<string | "all">("all");
-  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [fullUser, setFullUser] = useState<User | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const fetchUserData = async (
-    userId: string,
-    db: Firestore,
-  ): Promise<User | null> => {
-    try {
-      const userDocRef = doc(usersRef(db), userId);
-      const userSnapshot = await getDoc(userDocRef);
+  const fetchUserGigs = async () => {
+    if (currUser) {
+      try {
+        setLoadingGigs(true);
+        const userDocRef = doc(usersRef(db), currUser.uid);
+        const userSnapshot = await getDoc(userDocRef);
 
-      if (userSnapshot.exists()) {
-        return userSnapshot.data() as User;
-      } else {
-        console.error("User data not found in database for userId:", userId);
-        return null;
+        const userData = await userSnapshot.data();
+        if (!userData) return;
+
+        setFullUser(userData as User);
+
+        const q = query(gigsRef(db), where("listerId", "==", currUser.uid));
+        const querySnapshot = await getDocs(q);
+
+        const gigsWithListersData = querySnapshot.docs
+          .map((doc) => ({
+            gig: { ...doc.data(), gigId: doc.id } as Gig,
+            lister: currUser as unknown as User,
+          }))
+          .filter((item) => item.gig.status !== "deleted"); // Exclude deleted gigs
+
+        const sortedGigs = gigsWithListersData.sort(
+          (a, b) =>
+            STATUS_ORDER.indexOf(a.gig.status) -
+            STATUS_ORDER.indexOf(b.gig.status),
+        );
+
+        setGigsWithListers(sortedGigs);
+        setFilteredGigs(sortedGigs);
+        const gigIdParam = searchParams.get("gigId");
+        if (sortedGigs.length > 0) {
+          if (gigIdParam) {
+            const foundGig = sortedGigs.find(
+              (gig) => gig.gig.gigId === gigIdParam,
+            );
+            setSelectedGig(foundGig?.gig || null);
+            setSearchParams({});
+          } else {
+            setSelectedGig(sortedGigs[0].gig);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching gigs:", error);
+      } finally {
+        setLoadingGigs(false);
       }
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-      return null;
     }
   };
 
   useEffect(() => {
-    const fetchUserGigs = async () => {
-      if (currUser) {
-        try {
-          setLoadingGigs(true);
-          const userData = await fetchUserData(currUser.uid, db);
-          setFullUser(userData);
-
-          const q = query(gigsRef(db), where("listerId", "==", currUser.uid));
-          const querySnapshot = await getDocs(q);
-
-          const gigsWithListersData = querySnapshot.docs
-            .map((doc) => ({
-              gig: { ...doc.data(), gigId: doc.id } as Gig,
-              lister: currUser as unknown as User,
-            }))
-            .filter((item) => item.gig.status !== "deleted"); // Exclude deleted gigs
-
-          const sortedGigs = gigsWithListersData.sort(
-            (a, b) =>
-              STATUS_ORDER.indexOf(a.gig.status) -
-              STATUS_ORDER.indexOf(b.gig.status),
-          );
-
-          setGigsWithListers(sortedGigs);
-          setFilteredGigs(sortedGigs);
-
-          if (sortedGigs.length > 0) {
-            setSelectedGig(sortedGigs[0].gig);
-          }
-        } catch (error) {
-          console.error("Error fetching gigs:", error);
-        } finally {
-          setLoadingGigs(false);
-        }
-      }
-    };
-
     fetchUserGigs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currUser, db]);
 
-  useEffect(() => {
-    const fetchApplicantsForGig = async () => {
-      if (selectedGig) {
-        try {
-          setLoadingApplicants(true);
+  const fetchApplicantsForGig = async () => {
+    if (selectedGig) {
+      try {
+        setLoadingApplicants(true);
 
-          const q = query(
-            applicationsRef(db),
-            where("gigId", "==", selectedGig.gigId),
-          );
-          const applicationSnapshot = await getDocs(q);
+        const q = query(
+          applicationsRef(db),
+          where("gigId", "==", selectedGig.gigId),
+        );
+        const applicationSnapshot = await getDocs(q);
 
-          const userIds = applicationSnapshot.docs.map(
-            (doc) => (doc.data() as Application).applicantId,
-          );
-          const uniqueUserIds = [...new Set(userIds)];
+        const userIds = applicationSnapshot.docs.map(
+          (doc) => (doc.data() as Application).applicantId,
+        );
+        const uniqueUserIds = [...new Set(userIds)];
 
-          const userSnapshots = await Promise.all(
-            uniqueUserIds.map((userId) =>
-              getDocs(query(usersRef(db), where("userId", "==", userId))),
-            ),
-          );
+        const userSnapshots = await Promise.all(
+          uniqueUserIds.map((userId) =>
+            getDocs(query(usersRef(db), where("userId", "==", userId))),
+          ),
+        );
 
-          const users = userSnapshots.flatMap((userSnapshot) =>
-            userSnapshot.docs.map((userDoc) => userDoc.data() as User),
-          );
+        const users = userSnapshots.flatMap((userSnapshot) =>
+          userSnapshot.docs.map((userDoc) => userDoc.data() as User),
+        );
 
-          const uniqueUsers = Array.from(
-            new Map(users.map((user) => [user.userId, user])).values(),
-          );
+        const uniqueUsers = Array.from(
+          new Map(users.map((user) => [user.userId, user])).values(),
+        );
 
-          setApplicants(uniqueUsers);
-        } catch (error) {
-          console.error("Error fetching applicants:", error);
-        } finally {
-          setLoadingApplicants(false);
-        }
-      } else {
-        setApplicants([]);
+        setApplicants(uniqueUsers);
+      } catch (error) {
+        console.error("Error fetching applicants:", error);
+      } finally {
+        setLoadingApplicants(false);
       }
-    };
-
-    fetchApplicantsForGig();
-  }, [selectedGig, db]);
-
-  const handleSelectGig = (gig: Gig) => {
-    setSelectedGig(gig);
+    } else {
+      setApplicants([]);
+    }
   };
 
-  const handleFilterChange = (status: string | "all") => {
-    setFilterStatus(status);
-    setIsDropdownVisible(false);
+  useEffect(() => {
+    fetchApplicantsForGig();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [db, selectedGig]);
 
-    const filtered =
-      status === "all"
-        ? gigsWithListers
-        : gigsWithListers.filter(
-            (gigWithLister) => gigWithLister.gig.status === status,
-          );
+  const handleFilterChange = (status: string[]) => {
+    const filtered = status.length
+      ? gigsWithListers.filter((gigWithLister) =>
+          status.includes(gigWithLister.gig.status),
+        )
+      : gigsWithListers;
 
     setFilteredGigs(filtered);
 
@@ -175,123 +156,46 @@ function MyPostedGigsView() {
     }
   };
 
-  const handleGigUpdate = (updatedGig: Gig) => {
-    const updatedGigs = gigsWithListers.map((item) =>
-      item.gig.gigId === updatedGig.gigId ? { ...item, gig: updatedGig } : item,
-    );
-
-    const sortedUpdatedGigs = updatedGigs
-      .filter((item) => item.gig.status !== "deleted") // Ensure updated list excludes deleted gigs
-      .sort(
-        (a, b) =>
-          STATUS_ORDER.indexOf(a.gig.status) -
-          STATUS_ORDER.indexOf(b.gig.status),
-      );
-
-    setGigsWithListers(sortedUpdatedGigs);
-    setFilteredGigs(
-      filterStatus === "all"
-        ? sortedUpdatedGigs
-        : sortedUpdatedGigs.filter(
-            (gigWithLister) => gigWithLister.gig.status === filterStatus,
-          ),
-    );
-
-    setSelectedGig(updatedGig.status === "deleted" ? null : updatedGig);
-  };
-
-  const handleGigDelete = (gigId: string) => {
-    const remainingGigs = gigsWithListers.filter(
-      (item) => item.gig.gigId !== gigId,
-    );
-
-    const sortedRemainingGigs = remainingGigs.sort(
-      (a, b) =>
-        STATUS_ORDER.indexOf(a.gig.status) - STATUS_ORDER.indexOf(b.gig.status),
-    );
-
-    setGigsWithListers(sortedRemainingGigs);
-    setFilteredGigs(
-      filterStatus === "all"
-        ? sortedRemainingGigs
-        : sortedRemainingGigs.filter(
-            (gigWithLister) => gigWithLister.gig.status === filterStatus,
-          ),
-    );
-
-    setSelectedGig(
-      sortedRemainingGigs.length > 0 ? sortedRemainingGigs[0].gig : null,
-    );
-  };
-
   if (loadingGigs) {
-    return <p>Loading your gigs...</p>;
+    return <Loading />;
   }
 
   return (
     <div className="flex h-[calc(100vh-4rem)] w-full space-x-6 p-4">
-      <div className="scrollbar  h-full w-1/2 overflow-y-scroll rounded-lg p-4">
+      <div className="h-full w-1/2 rounded-lg p-4">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-primary">Gigs</h2>
-          <div className="relative">
-            <button
-              onClick={() => setIsDropdownVisible((prev) => !prev)}
-              className="flex items-center justify-center rounded-full bg-primary p-2 text-white transition-all hover:bg-primary/90"
-            >
-              <FaFilter />
-            </button>
-
-            {isDropdownVisible && (
-              <div
-                className="absolute right-0 z-50 mt-2 w-48 rounded-md  bg-white transition-transform"
-                onMouseLeave={() => setIsDropdownVisible(false)}
-              >
-                <button
-                  onClick={() => handleFilterChange("all")}
-                  className="text-slate-800 hover:bg-slate-100 block w-full px-4 py-2 text-left"
-                >
-                  All Gigs
-                </button>
-                {STATUS_ORDER.map((status) => (
-                  <button
-                    key={status}
-                    onClick={() => handleFilterChange(status)}
-                    className="text-slate-800 hover:bg-slate-100 block w-full px-4 py-2 text-left"
-                  >
-                    {status.charAt(0).toUpperCase() + status.slice(1)} Gigs
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          <h2 className="text-2xl font-bold text-primary">My Posted Gigs</h2>
+          <FilterButton
+            categories={STATUS_ORDER}
+            onCategorySelect={handleFilterChange}
+          />
         </div>
-        <PostedGigList
-          gigs={filteredGigs}
-          onSelectGig={handleSelectGig}
-          selectedGig={selectedGig}
-          enableSelection={true}
-          showSeeMoreButton={false}
-        />
+        <div className="scrollbar max-h-[90vh] overflow-y-scroll">
+          <PostedGigList
+            gigs={filteredGigs}
+            onSelectGig={setSelectedGig}
+            selectedGig={selectedGig}
+          />
+        </div>
       </div>
 
-      <div className="bg-slate-200 w-1/2 rounded-lg p-6">
+      <div className="w-1/2 rounded-lg">
         {selectedGig ? (
           <>
             <GigDetails
               gig={selectedGig}
               user={fullUser}
-              onEditSave={handleGigUpdate}
-              onDelete={handleGigDelete}
+              onChange={fetchUserGigs}
             />
             {loadingApplicants ? (
               <div className="flex items-center justify-center py-6">
-                <div className="h-8 w-8 animate-spin rounded-full"></div>
+                <div className="size-8 animate-spin rounded-full"></div>
               </div>
             ) : (
               <InterestedGigglers
                 gig={selectedGig}
                 users={applicants}
-                onGigUpdate={handleGigUpdate}
+                onGigUpdate={fetchUserGigs}
               />
             )}
           </>

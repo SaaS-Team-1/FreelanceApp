@@ -1,4 +1,3 @@
-import React from "react";
 import Label from "../Common/Label"; // Custom Label
 import UserProfilePicture from "../Avatar/UserProfilePicture"; // UserProfilePicture component
 import { Gig, User } from "@/utils/database/schema"; // Import updated interfaces
@@ -10,11 +9,11 @@ export type GigItemBaseProps = {
   isCompressed?: boolean; // Flag to toggle between views
 };
 
-const GigItemBase: React.FC<GigItemBaseProps> = ({
+function CompressedGigItem({
   gig,
   lister,
-  isCompressed = false,
-}) => {
+  isCompressed = true,
+}: GigItemBaseProps) {
   const { title, description, category, price, dueDate, status } = gig;
 
   return (
@@ -24,16 +23,22 @@ const GigItemBase: React.FC<GigItemBaseProps> = ({
       {/* User Profile Picture */}
       <UserProfilePicture user={lister} size="medium" rounded={true} />
 
-      <div className="flex flex-1 flex-col w-full">
-        <div className="flex flex-row w-full items-start justify-end space-x-2">
-          <div className="flex flex-col text-left w-full">
-            <h2 className="text-on-surface text-sm font-medium line-clamp-2">{title}</h2>
-            <span className="text-on-surface-variant text-xs">
+      <div className="flex w-full flex-1 flex-col">
+        <div className="flex w-full flex-row items-start justify-end space-x-2">
+          <div className="flex w-full flex-col text-left">
+            <h2 className="line-clamp-2 text-sm font-medium text-on-surface">
+              {title}
+            </h2>
+            <span className="text-xs text-on-surface-variant">
               {dueDate.toDate().toLocaleDateString()}{" "}
               {/* Convert Timestamp to readable date */}
             </span>
           </div>
-          {isCompressed && <Badge color="secondary-container" className="ml-auto">{category}</Badge>}
+          {isCompressed && (
+            <Badge color="secondary-container" className="ml-auto">
+              {category}
+            </Badge>
+          )}
         </div>
 
         {!isCompressed && description && (
@@ -50,6 +55,6 @@ const GigItemBase: React.FC<GigItemBaseProps> = ({
       </div>
     </div>
   );
-};
+}
 
-export default GigItemBase;
+export default CompressedGigItem;

@@ -1,20 +1,20 @@
-import React, { useState } from "react";
-import { Gig } from "@/utils/database/schema";
+import { useState } from "react";
 import EditCreateGigModal from "./EditCreateGigModal";
+import { Button } from "flowbite-react";
 
-function CreateGigButton() {
+function CreateGigButton({
+  children,
+  color,
+}: React.PropsWithChildren<{ color: string }>) {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   return (
-    <div>
+    <>
       {/* Button to open the Create Modal */}
 
-      <button
-        className="flex w-96 items-center justify-center rounded-full bg-primary py-3 text-sm font-semibold text-on-primary"
-        onClick={() => setIsCreateModalOpen(true)}
-      >
-        + Upload new gig
-      </button>
+      <Button color={color} onClick={() => setIsCreateModalOpen(true)}>
+        {children}
+      </Button>
 
       {/* Create Modal */}
       {isCreateModalOpen && (
@@ -23,7 +23,7 @@ function CreateGigButton() {
           onClose={() => setIsCreateModalOpen(false)} // Close the modal
         />
       )}
-    </div>
+    </>
   );
 }
 

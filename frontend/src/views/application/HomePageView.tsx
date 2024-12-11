@@ -18,6 +18,8 @@ import MyPostedGigListCompressed from "@/components/Gigs/MyPostedGigListCompress
 import Loading from "@/components/Loading";
 import CreateGigButton from "@/components/Gigs/CreateGigButton";
 import StreakModal from "@/components/Common/StreakModal";
+import { Badge } from "flowbite-react";
+import { FaCirclePlus } from "react-icons/fa6";
 
 export default function OverviewView() {
   const { data: user } = useUser();
@@ -256,20 +258,33 @@ export default function OverviewView() {
             </div>
           </div>
 
-          <div className="flex min-h-9 flex-wrap gap-2">
-            {selectedCategories.map((category) => (
-              <div
-                key={category}
-                className="rounded-full text-sm font-semibold "
+          <div className="flex w-full flex-wrap items-center justify-center space-x-2">
+            {selectedCategories.length ? (
+              selectedCategories.map((category) => (
+                <Badge
+                  key={category}
+                  size="xs"
+                  color="surface-container"
+                  className="mt-2"
+                >
+                  {category}
+                </Badge>
+              ))
+            ) : (
+              <Badge
+                key={"All"}
+                size="xs"
+                color="surface-container"
+                className="mt-2"
               >
-                {category}
-              </div>
-            ))}
+                All Selected
+              </Badge>
+            )}
           </div>
         </div>
 
         {!openGigsLoading ? (
-          <div className="scrollbar h-fit overflow-y-scroll pb-10 sm:pt-4 ">
+          <div className="scrollbar h-fit overflow-y-scroll pb-10 sm:pt-2 ">
             <PostedGigListHome
               gigs={openGigs}
               enableSelection={true}
@@ -296,7 +311,13 @@ export default function OverviewView() {
         {extendedUser && (
           <MyPostedGigListCompressed gigs={myPostedGigs} user={extendedUser} />
         )}
-        <CreateGigButton />
+        <CreateGigButton color="primary">
+          <span className="text-nowrap text-xl font-bold text-on-primary flex">
+          <FaCirclePlus className="text-on-primary mt-1 mr-2" />
+
+            Create A New Gig{" "}
+          </span>
+        </CreateGigButton>
       </div>
     </div>
   );

@@ -18,7 +18,6 @@ import {
   getDocs,
   query,
   where,
-  writeBatch,
   serverTimestamp,
   addDoc,
 } from "firebase/firestore";
@@ -30,13 +29,12 @@ import {
   notificationsRef,
 } from "@/utils/database/collections";
 import { Application } from "@/utils/database/schema";
-import { Badge } from "flowbite-react";
+import { Badge, Button, Modal } from "flowbite-react";
 
 interface GigDetailsProps {
   gig: Gig;
   user: User | null; // Allow user to be nullable
-  onEditSave: (updatedGig: Gig) => void;
-  onDelete: (gigId: string) => void;
+  onChange?: () => void;
   showEdit?: boolean; // Optional prop to show/hide Edit button
   showDelete?: boolean; // Optional prop to show or remove Delete button
   showSeeMoreButton?: boolean; // Optional prop to show/hide See More button
@@ -45,13 +43,10 @@ interface GigDetailsProps {
 const GigDetails: React.FC<GigDetailsProps> = ({
   gig,
   user,
-  onDelete,
-  showEdit = true, // Default to show the Edit button
-  showDelete = true, // Default to not show the Delete button
+  onChange = () => null,
 }) => {
   const db = useFirestore();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false); // Modal state for "See More"
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // Modal state for delete confirmation
   const [currentGig, setCurrentGig] = useState<Gig>(gig);
 
@@ -120,7 +115,7 @@ const GigDetails: React.FC<GigDetailsProps> = ({
       }
 
       // Notify the parent component
-      onDelete(gig.gigId);
+      onChange();
       setIsDeleteModalOpen(false);
     } catch (error) {
       console.error("Error deleting gig or updating applications:", error);
@@ -128,57 +123,31 @@ const GigDetails: React.FC<GigDetailsProps> = ({
     }
   };
 
-  const renderDeleteButton = () => {
-    if (!showDelete) return null;
-    return (
-      <CustomButton
-        label="Delete"
-        onClick={() => setIsDeleteModalOpen(true)}
-        disabled={gig.status !== "open"}
-        color={"primary"}
-        textColor={"black"}
-        size="medium"
-        rounded={false}
-        icon={FaTrashAlt}
-        iconPosition="left"
-        customStyle={{
-          backgroundColor:
-            gig.status === "open" ? "bg-blue-400" : "bg-gray-400",
-          padding: "6px 20px",
-          width: "120px",
-        }}
-      />
-    );
-  };
-
   const renderGigDetails = (isModal: boolean = false) => (
     <div className={isModal ? "pr-4" : "h-fit pr-4"}>
       <div className="mb-1 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900 sm:text-4xl">
+        <h1 className="text-2xl font-bold text-primary sm:text-4xl">
           Gig Details
         </h1>
-        <div className="flex flex-col gap-2">
-          {showEdit && (
-            <CustomButton
-              label="Edit"
-              onClick={() => {
-                setIsEditModalOpen(true);
-                setIsDetailModalOpen(false); // Close Gig Details Modal
-              }}
-              disabled={gig.status !== "open"}
-              color={"primary"}
-              textColor={"black"}
-              size="medium"
-              rounded={false}
-              icon={FaPen}
-              iconPosition="left"
-              customStyle={{
-                backgroundColor:
-                  gig.status === "open" ? "bg-blue-400" : "bg-gray-400",
-              }}
-            />
-          )}
-          {renderDeleteButton()}
+        <div className="flex w-32 flex-col gap-2">
+          <Button
+            onClick={() => {
+              setIsEditModalOpen(true);
+            }}
+            disabled={gig.status !== "open"}
+            color="primary"
+          >
+            <FaPen className="mr-2 size-4" />
+            <span className="font-bold">Edit</span>
+          </Button>
+          <Button
+            color="error"
+            onClick={() => setIsDeleteModalOpen(true)}
+            disabled={gig.status !== "open"}
+          >
+            <FaTrashAlt className="mr-2 size-4" />
+            <span className="font-bold">Delete</span>
+          </Button>
         </div>
       </div>
 
@@ -187,11 +156,13 @@ const GigDetails: React.FC<GigDetailsProps> = ({
           <strong>Status:</strong>
         </p>
         <Badge
+          size="sm"
+          className="capitalize"
           color={
             gig.status === "open"
-              ? "green"
+              ? "tertiary"
               : gig.status === "in-progress"
-                ? "secondary"
+                ? "tertiary"
                 : gig.status === "awaiting-confirmation"
                   ? "warning"
                   : "gray"
@@ -246,40 +217,21 @@ const GigDetails: React.FC<GigDetailsProps> = ({
       <div>
         <h4 className="text-sm font-semibold text-gray-900">Tags:</h4>
         <div className="mt-2 flex gap-2">
-          <Badge>{gig.category}</Badge>
-
-          <Badge>{location}</Badge>
-
-          <Badge>{gig.price ? `${gig.price} Tokens` : "TBD"}</Badge>
+          <Badge size="sm" color="yellow">{`${gig.price} ⛃⛂`}</Badge>
+          <Badge size="sm" color="secondary-container">
+            {gig.category}
+          </Badge>
+          <Badge size="sm" color="secondary-container">
+            {gig.location}
+          </Badge>
         </div>
       </div>
     </div>
   );
 
-  const DetailModal = () => (
-    <>
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm"></div>
-      <div className="fixed inset-0 z-50 flex items-center justify-center">
-        <div className="w-3/4 max-w-4xl overflow-hidden rounded-lg bg-white p-8">
-          {renderGigDetails(true)}
-          <div className="mt-4 flex justify-end">
-            <CustomButton
-              label="Close"
-              onClick={() => setIsDetailModalOpen(false)}
-              color="red"
-              textColor="black"
-              size="medium"
-              rounded={false}
-            />
-          </div>
-        </div>
-      </div>
-    </>
-  );
-
   return (
     <div className="relative">
-      <div className="rounded-lg bg-white p-4 shadow-lg">
+      <div className="rounded-lg bg-surface-container-low p-4">
         {renderGigDetails()}
       </div>
 
@@ -288,49 +240,39 @@ const GigDetails: React.FC<GigDetailsProps> = ({
           gig={currentGig}
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
+          onSubmit={onChange}
           editable
         />
       )}
 
-      {/* Render Detail Modal using React Portal */}
-      {isDetailModalOpen &&
-        ReactDOM.createPortal(<DetailModal />, document.body)}
-
       {/* Render Delete Confirmation Modal */}
-      {isDeleteModalOpen &&
-        ReactDOM.createPortal(
-          <>
-            <div className="fixed inset-0 bg-white backdrop-blur-sm"></div>
-            <div className="fixed inset-0 z-50 flex items-center justify-center">
-              <div className="w-3/4 max-w-lg rounded-lg bg-white p-6">
-                <h3 className="text-lg font-bold text-gray-800">
-                  Are you sure you want to delete this gig?
-                </h3>
-                <p className="mt-2 text-gray-800">{gig.title}</p>
-                <div className="mt-4 flex justify-end gap-4">
-                  <CustomButton
-                    label="Cancel"
-                    onClick={() => setIsDeleteModalOpen(false)}
-                    color="white"
-                    textColor="primary"
-                    size="small"
-                    outline={true}
-                    rounded={false}
-                  />
-                  <CustomButton
-                    label="Confirm"
-                    onClick={handleDeleteConfirm}
-                    color="red"
-                    textColor="black"
-                    size="small"
-                    rounded={false}
-                  />
-                </div>
-              </div>
-            </div>
-          </>,
-          document.body,
-        )}
+      <Modal
+        show={isDeleteModalOpen}
+        dismissible
+        onClose={() => setIsDeleteModalOpen(false)}
+      >
+        <Modal.Header>
+          <h3 className="text-lg font-bold text-gray-800">
+            Are you sure you want to delete this gig?
+          </h3>
+        </Modal.Header>
+        <Modal.Body>
+          <p className="mt-2 text-gray-800">{gig.title}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <div className="mt-4 flex w-full justify-end gap-4">
+            <Button
+              onClick={() => setIsDeleteModalOpen(false)}
+              color="surface-container"
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleDeleteConfirm} color="error">
+              Confirm
+            </Button>
+          </div>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

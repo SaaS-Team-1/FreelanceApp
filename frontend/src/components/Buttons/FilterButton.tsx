@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Dropdown } from "flowbite-react";
+import { FaFilter } from "react-icons/fa";
 
 interface FilterButtonProps {
   categories: string[];
@@ -29,23 +30,11 @@ const FilterButton: React.FC<FilterButtonProps> = ({
   return (
     <div className="relative inline-block text-left">
       <Dropdown
+        dismissOnClick={false}
         label={
-          <div className="flex items-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="size-5 text-secondary"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-5.414 5.414A2 2 0 0014 13.414V18a1 1 0 01-.553.894l-4 2A1 1 0 018 20v-6.586a2 2 0 00-.586-1.414L2 6.707A1 1 0 012 6V4z"
-              />
-            </svg>
-          </div>
+          <button className="flex items-center justify-center rounded-full bg-primary p-2 text-on-primary transition-all hover:bg-primary/90">
+            <FaFilter />
+          </button>
         }
         inline
         arrowIcon={false}
@@ -72,7 +61,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
               className="mr-2"
               readOnly
             />
-            <span className="truncate">{category}</span>
+            <span className="truncate capitalize">{category}</span>
           </Dropdown.Item>
         ))}
       </Dropdown>

@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { Gig, User } from "@/utils/database/schema";
-import CustomButton from "@/components/Buttons/CustomButton";
 import GigDetailModal from "@/components/Gigs/GigDetailModal";
 import { Firestore } from "firebase/firestore";
-import { Badge } from "flowbite-react";
+import GigItem from "./GigItem";
 
 interface PostedGigListHomeProps {
   gigs: { gig: Gig; lister: User }[]; // List of gigs with lister data
@@ -13,7 +12,6 @@ interface PostedGigListHomeProps {
   showSeeMoreButton?: boolean; // Prop to conditionally show "See More" button
   showChatIcon?: boolean; // Optional prop to show the chat icon
   showCompletedButton?: boolean; // Optional prop to show the "Completed Gig" button
-  showDateWithLine?: boolean; // Optional prop to show/hide the date with a white line
   showUndoButton?: boolean; // New prop to optionally display the UndoButton
   hoverEffect?: boolean; // Prop to conditionally apply hover effect
   userId?: string; // Optional logged-in user's ID
@@ -25,7 +23,6 @@ function PostedGigListHome({
   enableSelection = true,
   selectedGig = null,
   showSeeMoreButton = true,
-  showDateWithLine = false,
   hoverEffect = true,
   userId,
   db,
@@ -50,70 +47,8 @@ function PostedGigListHome({
 
   return (
     <div className="space-y-4 py-5 sm:space-y-8">
-      {gigs.map(({ gig, lister }, index) => (
-        <div
-          key={index}
-          className={`relative rounded-lg shadow-sm transition-transform duration-200 ease-in-out ${
-            selectedGig && selectedGig.title === gig.title
-              ? "border border-blue-400 bg-blue-100 text-blue-700"
-              : "bg-surface-container-low text-on-surface"
-          } ${enableSelection ? "cursor-pointer" : ""} 
-            ${hoverEffect ? "hover:bg-surface-container" : ""}`} // Hover effect applied conditionally
-          onClick={() => enableSelection && handleSeeMoreClick(gig, lister)} // Conditional click handler
-        >
-          <div className="mb-2 flex items-center rounded-xl bg-primary-container p-2 ">
-            <div className="flex flex-col">
-              <h3 className="flex whitespace-normal break-words text-lg font-bold text-on-primary-container">
-                {gig.title.toUpperCase()}
-              </h3>
-              {gig.dueDate && (
-                <p className="mt-1 text-xs text-on-primary-container">
-                  {new Date(gig.dueDate.seconds * 1000).toLocaleDateString(
-                    "en-GB",
-                    {
-                      weekday: "long",
-                      day: "2-digit",
-                      month: "long",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    },
-                  )}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* Render a white line if date is shown */}
-          {showDateWithLine && <div className="mt-1 border-t"></div>}
-          {/* Render gig description (first 100 characters) */}
-          <p className="my-4 line-clamp-4 w-full px-3 text-on-surface">
-            {gig.description}
-          </p>
-
-          <div className="flex w-full items-center justify-center gap-2 p-3">
-            <div className="mr-auto flex flex-col space-y-2 justify-center items-center sm:flex-row sm:space-x-2 sm:space-y-0">
-              <Badge size="sm" color="yellow">{`${gig.price} ⛃⛂`}</Badge>
-              <Badge size="sm" color="secondary-container">
-                {gig.category}
-              </Badge>
-              <Badge size="sm" color="secondary-container">
-                {gig.location}
-              </Badge>
-            </div>
-
-            {showSeeMoreButton && (
-              <CustomButton
-                label="See More"
-                onClick={() => handleSeeMoreClick(gig, lister)} // Open the modal with the selected gig
-                color="primary"
-                textColor="white"
-                size="small"
-                rounded={false}
-              />
-            )}
-          </div>
-        </div>
+      {gigs.map(({ gig, lister }) => (
+        <GigItem gig={gig} lister={lister} showSeeMoreButton onSeeMoreClick={handleSeeMoreClick}/>
       ))}
 
       {/* Gig Details Modal */}

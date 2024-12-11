@@ -1,7 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import MyPostedGigItemCompressed from "./MyPostedGigItemCompressed";
 import { Gig, User } from "@/utils/database/schema";
+import GigItem from "./GigItem";
+import CompressedGigItem from "./CompressedGigItem";
 
 function MyPostedGigListCompressed({
   gigs,
@@ -19,10 +20,10 @@ function MyPostedGigListCompressed({
         {gigs.map((gig, index) => (
           <React.Fragment key={index}>
             <Link
-              to={`posted-gigs/?` + gig.gigId}
+              to={`posted-gigs/?gigId=` + gig.gigId}
               className="m-2 flex items-center gap-4 rounded-xl bg-surface-container-high hover:bg-surface-container"
             >
-              <MyPostedGigItemCompressed gig={gig} lister={user} />
+              <CompressedGigItem gig={gig} lister={user} isCompressed/>
             </Link>
           </React.Fragment>
         ))}

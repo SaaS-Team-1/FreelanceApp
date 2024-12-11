@@ -9,19 +9,23 @@ import {
   FaBars,
   FaWallet,
   FaTable,
+  FaPlus,
 } from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth, useFirestore, useUser } from "@/utils/reactfire";
 import UserProfilePicture from "@/components/Avatar/UserProfilePicture";
 import { User } from "@/utils/database/schema";
 import { collection, getDocs, query, where } from "firebase/firestore";
+import CreateGigButton from "../Gigs/CreateGigButton";
+import { Tooltip } from "flowbite-react";
+import { FaCirclePlus } from "react-icons/fa6";
 
 function Sidebar() {
   const db = useFirestore();
   const [userDb, setUser] = useState<User | null>(null);
   const auth = useAuth();
   const { data: firebaseUser } = useUser(); // Firebase user object
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -79,8 +83,7 @@ function Sidebar() {
       {/* Profile Section */}
       {isExpanded && userDb && (
         <div
-          className="flex flex-col items-center rounded-xl bg-primary-container py-10"
-          onClick={() => navigate("/app/profile")}
+          className="flex flex-col items-center rounded-xl bg-primary-container pt-10 pb-2"
         >
           <UserProfilePicture
             user={userDb}
@@ -94,7 +97,13 @@ function Sidebar() {
               {userDb.displayName}
             </h2>
           </div>
-          <p className="text-xs text-on-primary-container">{userDb.email}</p>
+          <p className="text-xs mb-2 text-on-primary-container">{userDb.email}</p>
+
+          <Tooltip content="New Gig">
+            <CreateGigButton color="transparent">
+              <FaCirclePlus className="text-3xl text-primary" />
+            </CreateGigButton>
+          </Tooltip>
         </div>
       )}
 
