@@ -1,3 +1,4 @@
+import Loading from "@/components/Loading";
 import {
   getAuthInstance,
   getFunctionsInstance,
@@ -11,17 +12,20 @@ import {
 } from "@/utils/reactfire";
 import { getAnalytics } from "firebase/analytics";
 import { Functions } from "firebase/functions";
+import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
 
 export default function Root() {
   const app = useFirebaseApp();
   const { data: functionsInstance } = useInitFunctions(getFunctionsInstance);
   const content = (
-    <AuthProvider sdk={getAuthInstance(app)}>
-      <FunctionsProvider sdk={functionsInstance as Functions}>
-        <Outlet />
-      </FunctionsProvider>
-    </AuthProvider>
+    <Suspense fallback={<Loading />}>
+      <AuthProvider sdk={getAuthInstance(app)}>
+        <FunctionsProvider sdk={functionsInstance as Functions}>
+          <Outlet />
+        </FunctionsProvider>
+      </AuthProvider>
+    </Suspense>
   );
 
   return import.meta.env.DEV ? (

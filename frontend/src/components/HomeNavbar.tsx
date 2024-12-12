@@ -1,5 +1,4 @@
 import { Navbar, NavbarBrand, Button } from "flowbite-react";
-import React from "react";
 import { Link } from "react-router-dom";
 
 
@@ -24,7 +23,7 @@ export default function HomeNavbar() {
           </NavbarBrand>
           <div className="flex space-x-4">
               <Button
-                to={"app"} as={Link}
+                to={"login"} as={Link}
                 color="color-on-primary"
                 className="hover:bg-slate-200"
               >
@@ -32,7 +31,7 @@ export default function HomeNavbar() {
               </Button>
 
               <Button
-                to={"app"} as={Link}
+                href={"login?register=1"}
                 color="primary"
                 className="hover:opacity-80"
               >

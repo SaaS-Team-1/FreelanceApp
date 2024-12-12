@@ -1,12 +1,12 @@
 import { useAuth, useFunctions } from "@/utils/reactfire";
-import { useState, KeyboardEvent } from "react";
+import { useState, KeyboardEvent, useEffect } from "react";
 import "firebaseui/dist/firebaseui.css";
 import { httpsCallable } from "firebase/functions";
 import {
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Alert } from "flowbite-react";
 import { HiInformationCircle } from "react-icons/hi";
 
@@ -28,6 +28,15 @@ export default function LoginView() {
   const [screen, setScreen] = useState<"register" | "login" | "forgot">(
     "login",
   );
+
+  const [searchParams, ] = useSearchParams();
+  useEffect(() => {
+    if (searchParams.get("register")) {
+      setScreen("register");
+    }else{
+      setScreen("login");
+    }
+  }, []);
 
   const [registrationForm, setRegistrationData] = useState<
     RgParams | Partial<RgParams>

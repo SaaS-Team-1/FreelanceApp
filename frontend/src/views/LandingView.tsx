@@ -33,7 +33,7 @@ const LandingPage = () => {
               
               <Button 
                 color="on-primary" 
-                to={"app"} as={Link} 
+                to={"login?register=1"} as = {Link} 
                 className="border-2 bg-on-secondary font-bold px-4 py-2 rounded-md text-primary hover:opacity-80">
                 Post A Gig
               </Button>

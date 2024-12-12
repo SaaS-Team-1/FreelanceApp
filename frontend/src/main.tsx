@@ -31,7 +31,6 @@ import ChatView from "./views/application/ChatView.tsx";
 import MyPostedGigsView from "./views/application/MyPostedGigsView.tsx";
 import PortfolioView from "./views/application/PortfolioView.tsx";
 import ScheduleView from "./views/application/ScheduleView.tsx";
-import SettingsView from "./views/application/SettingsView.tsx";
 import WalletView from "./views/application/WalletView.tsx";
 import LeaderboardView from "./views/application/LeaderboardView.tsx";
 import ProfileView from "./views/application/ProfileView.tsx";
