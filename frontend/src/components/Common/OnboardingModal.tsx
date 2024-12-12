@@ -126,7 +126,7 @@ function TutorialModal({ isOpen, onClose }: TutorialModalProps) {
           )}
           {isLastStep && (
             <Button
-              color="success"
+              color="tertiary"
               onClick={() => {
                 setCurrentStep(0);
                 onClose();
