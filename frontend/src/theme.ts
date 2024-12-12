@@ -55,7 +55,7 @@ export const flowbiteTheme: CustomFlowbiteTheme = {
           default: {
             base: "rounded-t-lg ",
             active: {
-              on: "bg-gray-100 text-primary dark:bg-gray-800 dark:text-blue-500",
+              on: "active bg-primary-container p-4 text-primary",
               off: "text-secondary hover:bg-gray-50 hover:text-gray-600 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-300",
             },
           },

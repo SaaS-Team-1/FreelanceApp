@@ -16,14 +16,6 @@ export default function CoinPurchaseForm({
 
   return (
     <div className="flex flex-col space-y-4  2xl:min-h-[35vh] 2xl:max-w-[25vw]">
-      <div className="absolute right-0 top-0 rounded px-2 py-1 text-sm ">
-        100 coins = 1€
-      </div>
-
-      <div>
-        <h2 className="mb-4 text-xl font-semibold">Buy Coins</h2>
-      </div>
-
       <div className="grid grid-cols-3 gap-4 text-on-surface">
         {coinOptions.map((coins) => (
           <div
@@ -31,11 +23,11 @@ export default function CoinPurchaseForm({
             onClick={() => setSelectedCoins(coins)}
             className={`rounded-lg ${
               selectedCoins === coins && "outline outline-primary/30"
-            } cursor-pointer p-4 transition-colors hover:bg-surface-container-highest bg-surface-dim`}
+            } cursor-pointer bg-surface-dim p-4 transition-colors hover:bg-surface-container-highest`}
           >
-            <p className="flex text-2xl font-bold items-center w-28 text-slate-900">
+            <p className="flex w-28 items-center text-2xl font-bold text-slate-900">
               {coins.toLocaleString()}
-              <FaCoins className="text-amber-500 justify-self-end ml-auto" />
+              <FaCoins className="ml-auto justify-self-end text-amber-500" />
             </p>
           </div>
         ))}
@@ -48,9 +40,8 @@ export default function CoinPurchaseForm({
       <Button
         onClick={() => onBuy(selectedCoins)}
         color="primary"
-        size="xl"
-        
-        className="w-full h-fit"
+        size="lg"
+        className="h-fit w-full"
       >
         Buy
       </Button>

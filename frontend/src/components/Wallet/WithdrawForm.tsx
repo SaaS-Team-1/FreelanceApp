@@ -48,19 +48,13 @@ export default function WithdrawForm({ currentUser }: { currentUser?: User }) {
         withdrawFunction();
       }}
     >
-      <div className="flex justify-between">
-
-        <h2 className="mb-4 text-xl font-semibold">Withdraw to Bank Account</h2>
-        <div className="rounded text-sm ">100 coins = 1€</div>
-      </div>
-
       <div className="flex flex-col space-y-4">
-        <div className="grid grid-rows-2 grid-cols-none sm:grid-rows-none sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-none grid-rows-2 gap-4 sm:grid-cols-2 sm:grid-rows-none">
           <div>
             <label className="mb-2 block text-sm font-medium">First Name</label>
             <input
               type="text"
-              className="w-2/3 sm:w-full rounded-lg border p-2 "
+              className="w-2/3 rounded-lg border-0  bg-surface-dim p-4 text-sm text-on-primary-container ring-0 placeholder:text-on-surface/30 focus:border-0 focus:ring-0 sm:w-full"
               value={currentUser.displayName}
               disabled
             />
@@ -73,7 +67,7 @@ export default function WithdrawForm({ currentUser }: { currentUser?: User }) {
             <div className="relative">
               <input
                 type="number"
-                className="w-2/3 sm:w-full rounded-lg border p-2 "
+                className="w-2/3 rounded-lg border-0 bg-surface-container-highest p-4 text-sm text-on-primary-container ring-0 placeholder:text-on-surface/30 focus:border-0 focus:ring-0 sm:w-full"
                 min="1000"
                 max={currentUser.coins?.toString()}
                 value={amount || ""}
@@ -88,7 +82,7 @@ export default function WithdrawForm({ currentUser }: { currentUser?: User }) {
           <label className="mb-2 block text-sm font-medium">IBAN</label>
           <input
             type="text"
-            className="w-2/3 sm:w-full rounded-lg border  p-2 "
+            className="w-2/3 rounded-lg border-0 bg-surface-container-highest p-4 text-sm text-on-primary-container ring-0 placeholder:text-on-surface/30 focus:border-0 focus:ring-0 sm:w-full"
             placeholder="DE89 3704 0044 0532 0130 00"
             required
             value={IBAN}
@@ -97,7 +91,7 @@ export default function WithdrawForm({ currentUser }: { currentUser?: User }) {
         </div>
       </div>
 
-      <div className="mt-6 rounded-lg  p-4">
+      <div className="mt-6 rounded-lg  py-4 px-2">
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span className="">Coins</span>
@@ -127,7 +121,12 @@ export default function WithdrawForm({ currentUser }: { currentUser?: User }) {
         </div>
       </div>
 
-      <Button type="submit" color="primary" size="xl" className="mt-4 w-2/3 sm:w-full">
+      <Button
+        type="submit"
+        color="primary"
+        size="xl"
+        className="mt-4 w-2/3 sm:w-full"
+      >
         Withdraw
       </Button>
     </form>
