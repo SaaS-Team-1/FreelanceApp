@@ -22,7 +22,7 @@ export const createUser = onCall(async (request) => {
       password: password,
       displayName: displayName,
       photoURL: `https://randomuser.me/api/portraits/${
-        Math.random() < 0.5 ? "male" : "women"
+        Math.random() < 0.5 ? "men" : "women"
       }/${Math.floor(Math.random() * (99 - 1) + 1)}.jpg`,
     });
 
