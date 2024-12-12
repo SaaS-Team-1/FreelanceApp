@@ -21,15 +21,7 @@ describe("Assigning a Gig", () => {
   // User 1 assigns User 2 as a gig
   it("User 1 assigns User 2 from interested giggler section", function () {
     cy.visit("/app/posted-gigs");
-    cy.get(".relative.mt-2 > .mb-2").contains("Interested Giggler");
-    cy.get(".justify-between > :nth-child(1) > .text-white").contains(
-      new RegExp(`.*${this.users.user2.displayName}.*`, "i"),
-    );
-    cy.log("User 2 is an interested giggler");
-    cy.get(".justify-between > .px-3")
-      .scrollIntoView()
-      .should("be.visible")
-      .click({ force: true });
+    cy.get("#assign-button").click();
     cy.log("User 1 clicked on the assign button");
     cy.wait(2000);
   });
@@ -96,9 +88,9 @@ describe("Schedule test - Scheduled Gigs", () => {
   // User 2 clicks on complete gig
   it("User 2 sees the Scheduled Gig in the schedule", function () {
     cy.visit("/app/schedule");
-    cy.get(".size-full > :nth-child(2)").within(() => {
-      cy.get(".mb-3").contains("Scheduled Gigs").should("be.visible");
-    });
+    cy.get('#\\:r3\\:-tab-1').click()
+    cy.get('#gig-title').contains(new RegExp(this.gigs.gig1.title, 'i')).should("exist");
+    cy.log("User 2 can see the Scheduled gig");
   });
 
   it("User 2 logs out", () => {

@@ -311,13 +311,14 @@ export default function OverviewView() {
         {extendedUser && (
           <MyPostedGigListCompressed gigs={myPostedGigs} user={extendedUser} />
         )}
-        <CreateGigButton color="primary">
-          <span className="text-nowrap text-xl font-bold text-on-primary flex">
-          <FaCirclePlus className="text-on-primary mt-1 mr-2" />
-
-            Create A New Gig{" "}
-          </span>
-        </CreateGigButton>
+        <div id="create-gig-button">
+          <CreateGigButton color="primary">
+            <span className="text-nowrap text-xl font-bold text-on-primary flex">
+              <FaCirclePlus className="text-on-primary mt-1 mr-2" />
+              Create A New Gig{" "}
+            </span>
+          </CreateGigButton>
+        </div>
       </div>
     </div>
   );

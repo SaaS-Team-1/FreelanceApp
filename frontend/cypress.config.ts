@@ -7,6 +7,8 @@ export default defineConfig({
     baseUrl: "http://localhost:8081",
     chromeWebSecurity: false,
     experimentalRunAllSpecs: true,
+    viewportWidth: 1920, // Set the width to match your desired screen size
+    viewportHeight: 1080, // Set the height to match your desired screen size
     setupNodeEvents(on, config) {
       // Set environment variables for Firebase Emulator
       process.env.FIRESTORE_EMULATOR_HOST = "127.0.0.1:8080"; // Firestore Emulator Host

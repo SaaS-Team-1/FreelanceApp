@@ -40,7 +40,7 @@ describe("Posting a Gig", () => {
 
   // Check if post shows up in my posted gigs
   it("Check if posted gig shows up in my posted gigs", function () {
-    cy.get(".gap-1 > :nth-child(2)").click();
+    cy.visit("/app/posted-gigs");
     cy.contains(this.gigs.gig1.title).should("exist");
     cy.log("Gig is visible in My Posted Gigs");
   });

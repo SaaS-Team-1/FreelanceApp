@@ -300,8 +300,8 @@ function ScheduleView() {
     <div className="relative h-screen w-full p-4">
       {/* Horizontal Scrollable Container */}
       <Tabs aria-label="Schedule Tabs" variant="fullWidth">
-        <Tabs.Item active title="Pending Gigs" icon={FaToggleOff}>
-          <div className="scrollbar size-full overflow-y-scroll rounded-lg p-4">
+        <Tabs.Item id="pending-gigs-tab" active title="Pending Gigs" icon={FaToggleOff}>
+          <div id="pending-gigs" className="scrollbar size-full overflow-y-scroll rounded-lg p-4">
             <h1 className="dark:text-white mb-3 text-xl font-bold">
               Pending Gigs
             </h1>
@@ -312,8 +312,8 @@ function ScheduleView() {
             />
           </div>
         </Tabs.Item>
-        <Tabs.Item active title="Scheduled Gigs" icon={FaCalendar}>
-          <div className="scrollbar size-full overflow-y-scroll rounded-lg p-4">
+        <Tabs.Item id="scheduled-gigs-tab" active title="Scheduled Gigs" icon={FaCalendar}>
+          <div id="scheduled-gigs" className="scrollbar size-full overflow-y-scroll rounded-lg p-4">
             <h1 className="dark:text-white mb-3 text-xl font-bold">
               Scheduled Gigs
             </h1>
@@ -327,8 +327,8 @@ function ScheduleView() {
           </div>
         </Tabs.Item>
 
-        <Tabs.Item active title="Awaiting Approval" icon={FaClock}>
-          <div className="scrollbar size-full overflow-y-scroll rounded-lg p-4">
+        <Tabs.Item id="awaiting-approval-tab" active title="Awaiting Approval" icon={FaClock}>
+          <div id="awaiting-approval" className="scrollbar size-full overflow-y-scroll rounded-lg p-4">
             <h1 className="dark:text-white mb-3 text-xl font-bold">
               Awaiting Approval
             </h1>
@@ -340,8 +340,8 @@ function ScheduleView() {
           </div>
         </Tabs.Item>
 
-        <Tabs.Item active title="Completed Gigs" icon={FaCheck}>
-          <div className="scrollbar size-full overflow-y-scroll rounded-lg p-4">
+        <Tabs.Item id="completed-gigs-tab" active title="Completed Gigs" icon={FaCheck}>
+          <div id="completed-gigs" className="scrollbar size-full overflow-y-scroll rounded-lg p-4">
             <h1 className="dark:text-white mb-3 text-xl font-bold">
               Completed Gigs
             </h1>

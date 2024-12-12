@@ -23,7 +23,7 @@ function PostedGigList({
   }, [selectedRef]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" id="my-posted-gig-list">
       {gigs.map(
         ({ gig, lister }) =>
           gig && (

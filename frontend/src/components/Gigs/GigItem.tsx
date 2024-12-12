@@ -33,7 +33,7 @@ function GigItem({
     >
       <div className="mb-2 flex w-full items-center rounded-lg bg-primary-container p-2">
         <div className="ml-1 flex w-full flex-col">
-          <h3 className="line-clamp-2 text-lg font-bold text-on-primary-container">
+          <h3 className="line-clamp-2 text-lg font-bold text-on-primary-container" id="gig-title">
             {gig.title.toUpperCase()}
           </h3>
           <div className="flex w-full">
@@ -90,6 +90,7 @@ function GigItem({
 
         {showSeeMoreButton && (
           <Button
+            id="see-more-button"
             onClick={() => onSeeMoreClick(gig, lister)} // Open the modal with the selected gig
             color="primary"
             size="sm"

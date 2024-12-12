@@ -200,6 +200,7 @@ function GigDetailModal({
           </Button>
           {userId && db && (
             <Button
+              id="apply-button"
               onClick={handleApply} // Trigger the apply function
               color="primary"
               size="md"

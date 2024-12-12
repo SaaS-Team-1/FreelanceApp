@@ -45,6 +45,7 @@ function PostedGigListSmall({
                   onCompleteClick && onCompleteClick(gig.gigId);
                 }}
                 color="primary"
+                id="complete-button"
                 size="sm"
                 className="size-fit"
               >
