@@ -142,14 +142,14 @@ export default function LoginView() {
           <button
             onClick={() => setScreen("forgot")}
             className="w-fit text-nowrap text-sm text-on-surface underline"
-            type="submit"
+            type="button"
           >
             Forgot Password?
           </button>
         </div>
       </div>
 
-      <div className="space-y-4">
+      <form onSubmit={handleLogin} className="space-y-4">
         <div>
           <label
             htmlFor="email"
@@ -164,7 +164,7 @@ export default function LoginView() {
               loginForm.email = e.target.value;
               setLoginData(loginForm);
             }}
-            className="block w-full rounded-lg focus:border-0 focus:ring-4 focus:ring-primary/20 p-2.5 text-sm text-on-primary-container border-surface-dim bg-primary-container outline-none"
+            className="block w-full rounded-lg border-surface-dim bg-primary-container p-2.5 text-sm text-on-primary-container outline-none focus:border-0 focus:ring-4 focus:ring-primary/20"
             required
           />
         </div>
@@ -182,14 +182,14 @@ export default function LoginView() {
               loginForm.password = e.target.value;
               setLoginData(loginForm);
             }}
-            className="block w-full rounded-lg focus:border-0 focus:ring-4 focus:ring-primary/20 p-2.5 text-sm text-on-primary-container border-surface-dim bg-primary-container outline-none"
+            className="block w-full rounded-lg border-surface-dim bg-primary-container p-2.5 text-sm text-on-primary-container outline-none focus:border-0 focus:ring-4 focus:ring-primary/20"
             required
           />
         </div>
 
         <div className="flex flex-col space-y-4">
           <button
-            onClick={handleLogin}
+            type="submit"
             className="w-full rounded-lg bg-primary px-5 py-2.5 text-center text-sm font-medium text-on-primary hover:bg-primary/80"
           >
             Sign In
@@ -198,23 +198,23 @@ export default function LoginView() {
           <button
             onClick={() => setScreen("register")}
             className="font-extrabold text-primary hover:underline"
-            type="submit"
+            type="button"
           >
             Create New Account
           </button>
         </div>
-      </div>
+      </form>
     </div>
   );
   const forgotSection = (
     <div className="w-full space-y-6">
       <div>
         <h2 className="text-4xl font-extrabold text-on-surface lg:text-5xl lg:leading-[55px]">
-          Forgot password
+          Forgot Password
         </h2>
       </div>
 
-      <div className="space-y-4">
+      <form onSubmit={handleForgot} className="space-y-4">
         <div>
           <label
             htmlFor="email"
@@ -229,14 +229,14 @@ export default function LoginView() {
               loginForm.email = e.target.value;
               setForgotData(loginForm);
             }}
-            className="block w-full rounded-lg focus:border-0 focus:ring-4 focus:ring-primary/20 p-2.5 text-sm text-on-primary-container border-surface-dim bg-primary-container outline-none"
+            className="block w-full rounded-lg border-surface-dim bg-primary-container p-2.5 text-sm text-on-primary-container outline-none focus:border-0 focus:ring-4 focus:ring-primary/20"
             required
           />
         </div>
 
         <div className="flex flex-col space-y-4">
           <button
-            onClick={handleForgot}
+            type="submit"
             className="w-full rounded-lg bg-primary px-5 py-2.5 text-center text-sm font-medium text-on-primary hover:bg-primary/80"
           >
             Reset Password
@@ -245,12 +245,12 @@ export default function LoginView() {
           <button
             onClick={() => setScreen("login")}
             className="font-extrabold text-primary hover:underline"
-            type="submit"
+            type="button"
           >
             Already have an account? Login
           </button>
         </div>
-      </div>
+      </form>
     </div>
   );
 
@@ -265,7 +265,7 @@ export default function LoginView() {
           * are required
         </p>
       </div>
-      <div className="space-y-4">
+      <form onSubmit={handleRegister} className="space-y-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <label
@@ -281,7 +281,7 @@ export default function LoginView() {
                 registrationForm.email = e.target.value;
                 setRegistrationData(registrationForm);
               }}
-              className="block w-full rounded-lg focus:border-0 focus:ring-4 focus:ring-primary/20 p-2.5 text-sm text-on-primary-container border-surface-dim bg-primary-container outline-none"
+              className="block w-full rounded-lg border-surface-dim bg-primary-container p-2.5 text-sm text-on-primary-container outline-none focus:border-0 focus:ring-4 focus:ring-primary/20"
               required
             />
           </div>
@@ -300,8 +300,9 @@ export default function LoginView() {
                 registrationForm.displayName = e.target.value;
                 setRegistrationData(registrationForm);
               }}
-              className="block w-full rounded-lg focus:border-0 focus:ring-4 focus:ring-primary/20 p-2.5 text-sm text-on-primary-container border-surface-dim bg-primary-container outline-none"
+              className="block w-full rounded-lg border-surface-dim bg-primary-container p-2.5 text-sm text-on-primary-container outline-none focus:border-0 focus:ring-4 focus:ring-primary/20"
               required
+              minLength={5}
             />
           </div>
         </div>
@@ -321,8 +322,9 @@ export default function LoginView() {
                 registrationForm.password = e.target.value;
                 setRegistrationData(registrationForm);
               }}
-              className="block w-full rounded-lg focus:border-0 focus:ring-4 focus:ring-primary/20 p-2.5 text-sm text-on-primary-container border-surface-dim bg-primary-container outline-none"
+              className="block w-full rounded-lg border-surface-dim bg-primary-container p-2.5 text-sm text-on-primary-container outline-none focus:border-0 focus:ring-4 focus:ring-primary/20"
               required
+              minLength={8}
             />
           </div>
 
@@ -340,7 +342,7 @@ export default function LoginView() {
                 registrationForm.profile!.location = e.target.value;
                 setRegistrationData(registrationForm);
               }}
-              className="block w-full rounded-lg focus:border-0 focus:ring-4 focus:ring-primary/20 p-2.5 text-sm text-on-primary-container border-surface-dim bg-primary-container outline-none"
+              className="block w-full rounded-lg border-surface-dim bg-primary-container p-2.5 text-sm text-on-primary-container outline-none focus:border-0 focus:ring-4 focus:ring-primary/20"
             />
           </div>
         </div>
@@ -358,13 +360,13 @@ export default function LoginView() {
               registrationForm.profile!.bio = e.target.value;
               setRegistrationData(registrationForm);
             }}
-            className="block w-full rounded-lg focus:border-0 focus:ring-4 focus:ring-primary/20 p-2.5 text-sm text-on-primary-container border-surface-dim bg-primary-container outline-none"
+            className="block w-full rounded-lg border-surface-dim bg-primary-container p-2.5 text-sm text-on-primary-container outline-none focus:border-0 focus:ring-4 focus:ring-primary/20"
           />
         </div>
 
         <div className="flex flex-col space-y-4">
           <button
-            onClick={handleRegister}
+            type="submit"
             className="w-full rounded-lg bg-primary px-5 py-2.5 text-center text-sm font-medium text-on-primary hover:bg-primary/80"
           >
             Create Account
@@ -373,12 +375,12 @@ export default function LoginView() {
           <button
             onClick={() => setScreen("login")}
             className="font-extrabold text-primary hover:underline"
-            type="submit"
+            type="button"
           >
             Already have an account? Login
           </button>
         </div>
-      </div>
+      </form>
     </div>
   );
 
@@ -397,35 +399,35 @@ export default function LoginView() {
 
   return (
     <div className="font-[sans-serif]" onKeyDown={handleKeyDown} tabIndex={0}>
-      <div className="flex min-h-screen items-center justify-center px-4 py-6">
+      <div className="flex flex-col min-h-screen items-center justify-center px-4 py-6 space-y-4">
+        {errorMessage && (
+          <Alert color="failure" icon={HiInformationCircle}>
+            <span>
+              <span className="font-medium">Error:</span> {errorMessage}
+            </span>
+            <button
+              className="ml-4 inline-flex items-center text-sm text-red-700 underline hover:no-underline"
+              onClick={() => setErrorMessage(null)}
+            >
+              Close
+            </button>
+          </Alert>
+        )}
+        {successMessage && (
+          <Alert color="green" icon={HiInformationCircle}>
+            <span>
+              <span className="font-medium">Success: </span> {successMessage}
+            </span>
+            <button
+              className="ml-4 inline-flex items-center text-sm text-red-700 underline hover:no-underline"
+              onClick={() => setSuccessMessage(null)}
+            >
+              Close
+            </button>
+          </Alert>
+        )}
         <div className="grid w-full max-w-2xl items-center gap-10 rounded-3xl bg-surface-container-low p-10">
           {child}
-          {errorMessage && (
-            <Alert color="failure" icon={HiInformationCircle}>
-              <span>
-                <span className="font-medium">Error:</span> {errorMessage}
-              </span>
-              <button
-                className="ml-4 inline-flex items-center text-sm text-red-700 underline hover:no-underline"
-                onClick={() => setErrorMessage(null)}
-              >
-                Close
-              </button>
-            </Alert>
-          )}
-          {successMessage && (
-            <Alert color="green" icon={HiInformationCircle}>
-              <span>
-                <span className="font-medium">Success: </span> {successMessage}
-              </span>
-              <button
-                className="ml-4 inline-flex items-center text-sm text-red-700 underline hover:no-underline"
-                onClick={() => setSuccessMessage(null)}
-              >
-                Close
-              </button>
-            </Alert>
-          )}
         </div>
       </div>
     </div>
