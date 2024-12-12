@@ -1,3 +1,4 @@
+import { Button } from "flowbite-react";
 import { useState } from "react";
 import { FaCoins } from "react-icons/fa";
 
@@ -14,27 +15,19 @@ export default function CoinPurchaseForm({
   };
 
   return (
-    <div className="relative space-y-4  2xl:min-h-[35vh] 2xl:max-w-[25vw]">
-      <div className="absolute right-0 top-0 rounded px-2 py-1 text-sm ">
-        100 coins = 1€
-      </div>
-
-      <div>
-        <h2 className="mb-4 text-xl font-semibold">Buy Coins</h2>
-      </div>
-
-      <div className="grid grid-cols-3 gap-4">
+    <div className="flex flex-col space-y-4  2xl:min-h-[35vh] 2xl:max-w-[25vw]">
+      <div className="grid grid-cols-3 gap-4 text-on-surface">
         {coinOptions.map((coins) => (
           <div
             key={coins}
             onClick={() => setSelectedCoins(coins)}
             className={`rounded-lg ${
-              selectedCoins === coins ? "bg-slate-400" : "bg-slate-300"
-            } cursor-pointer p-4 shadow-md transition-colors hover:bg-slate-400`}
+              selectedCoins === coins && "outline outline-primary/30"
+            } cursor-pointer bg-surface-dim p-4 transition-colors hover:bg-surface-container-highest`}
           >
-            <p className="flex text-2xl font-bold text-slate-900">
+            <p className="flex w-28 items-center text-2xl font-bold text-slate-900">
               {coins.toLocaleString()}
-              <FaCoins className="m-1 ml-2 text-yellow-400" />
+              <FaCoins className="ml-auto justify-self-end text-amber-500" />
             </p>
           </div>
         ))}
@@ -44,12 +37,14 @@ export default function CoinPurchaseForm({
         Total: {calculatePrice(selectedCoins)}€
       </div>
 
-      <button
+      <Button
         onClick={() => onBuy(selectedCoins)}
-        className="mt-4 w-full rounded-lg bg-blue-500 py-2  hover:bg-blue-600"
+        color="primary"
+        size="lg"
+        className="h-fit w-full"
       >
         Buy
-      </button>
+      </Button>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { User } from "@/utils/database/schema";
 import { useFunctions } from "@/utils/reactfire";
 import { httpsCallable } from "firebase/functions";
+import { Button } from "flowbite-react";
 import { useCallback, useState } from "react";
 
 function calculateEuros(coins: number): number {
@@ -29,8 +30,8 @@ export default function WithdrawForm({ currentUser }: { currentUser?: User }) {
 
   if ((currentUser.coins || 0) < 1000)
     return (
-      <div className="flex items-center justify-center space-y-4 text-white 2xl:h-[35vh] 2xl:w-[25vw]">
-        <h2 className="mb-4 text-xl font-semibold text-red-400">
+      <div className="flex items-center justify-center space-y-4 2xl:h-[35vh] 2xl:w-[25vw]">
+        <h2 className="mb-4 text-xl font-semibold text-error">
           Minimum amount to withdraw is 1,000 Coins!
         </h2>
       </div>
@@ -40,26 +41,20 @@ export default function WithdrawForm({ currentUser }: { currentUser?: User }) {
 
   return (
     <form
-      className="flex flex-col justify-evenly space-y-4 text-white 2xl:min-h-[35vh] 2xl:max-w-[25vw]"
+      className="flex flex-col space-y-4 text-on-surface 2xl:min-h-[35vh] 2xl:max-w-[25vw]"
       method=""
       onSubmit={(event) => {
         event.preventDefault();
         withdrawFunction();
       }}
     >
-      <div className="absolute right-0 top-0 rounded bg-gray-800 px-2 py-1 text-sm text-gray-300">
-        100 coins = 1€
-      </div>
-
-      <h2 className="mb-4 text-xl font-semibold">Withdraw to Bank Account</h2>
-
-      <div className="grid gap-4">
-        <div className="grid grid-cols-2 gap-4">
+      <div className="flex flex-col space-y-4">
+        <div className="grid grid-cols-none grid-rows-2 gap-4 sm:grid-cols-2 sm:grid-rows-none">
           <div>
             <label className="mb-2 block text-sm font-medium">First Name</label>
             <input
               type="text"
-              className="w-full rounded-lg border bg-slate-300 p-2 text-black"
+              className="w-2/3 rounded-lg border-0  bg-surface-dim p-4 text-sm text-on-primary-container ring-0 placeholder:text-on-surface/30 focus:border-0 focus:ring-0 sm:w-full"
               value={currentUser.displayName}
               disabled
             />
@@ -72,7 +67,7 @@ export default function WithdrawForm({ currentUser }: { currentUser?: User }) {
             <div className="relative">
               <input
                 type="number"
-                className="w-full rounded-lg border bg-slate-300 p-2 text-black"
+                className="w-2/3 rounded-lg border-0 bg-surface-container-highest p-4 text-sm text-on-primary-container ring-0 placeholder:text-on-surface/30 focus:border-0 focus:ring-0 sm:w-full"
                 min="1000"
                 max={currentUser.coins?.toString()}
                 value={amount || ""}
@@ -87,7 +82,7 @@ export default function WithdrawForm({ currentUser }: { currentUser?: User }) {
           <label className="mb-2 block text-sm font-medium">IBAN</label>
           <input
             type="text"
-            className="w-full rounded-lg border bg-slate-300 p-2 text-black"
+            className="w-2/3 rounded-lg border-0 bg-surface-container-highest p-4 text-sm text-on-primary-container ring-0 placeholder:text-on-surface/30 focus:border-0 focus:ring-0 sm:w-full"
             placeholder="DE89 3704 0044 0532 0130 00"
             required
             value={IBAN}
@@ -96,29 +91,29 @@ export default function WithdrawForm({ currentUser }: { currentUser?: User }) {
         </div>
       </div>
 
-      <div className="mt-6 rounded-lg bg-gray-800 p-4">
+      <div className="mt-6 rounded-lg  py-4 px-2">
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-gray-300">Coins</span>
+            <span className="">Coins</span>
             <span className="font-medium">{amount.toLocaleString()}</span>
           </div>
 
           <div className="flex justify-between text-sm">
-            <span className="text-gray-300">Price per Coin</span>
+            <span className="">Price per Coin</span>
             <span className="font-medium">€0.01</span>
           </div>
 
           <div className="flex justify-between text-sm">
-            <span className="text-gray-300">Processing Fee (25%)</span>
-            <span className="font-medium text-red-400">
+            <span className="">Processing Fee (25%)</span>
+            <span className="font-medium text-error">
               -€{processingFee.toFixed(2)}
             </span>
           </div>
 
-          <div className="mt-2 border-t border-gray-600 pt-2">
+          <div className="mt-2 border-t-2 border-primary/20 pt-2">
             <div className="flex justify-between">
               <span className="font-medium">Final Amount</span>
-              <span className="font-bold text-green-400">
+              <span className="font-bold text-tertiary">
                 €{finalAmount.toFixed(2)}
               </span>
             </div>
@@ -126,12 +121,14 @@ export default function WithdrawForm({ currentUser }: { currentUser?: User }) {
         </div>
       </div>
 
-      <button
+      <Button
         type="submit"
-        className="mt-4 w-full rounded-lg bg-blue-500 py-2 text-white hover:bg-blue-600"
+        color="primary"
+        size="xl"
+        className="mt-4 w-2/3 sm:w-full"
       >
         Withdraw
-      </button>
+      </Button>
     </form>
   );
 }

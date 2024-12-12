@@ -72,9 +72,16 @@ export default function WalletView() {
       <div className="flex h-fit w-max flex-col gap-10 space-y-10 pb-10 2xl:flex-row 2xl:space-y-0">
         <div className="max-h-[55vh]">
           <h2 className="mb-4 text-xl font-bold text-white">Deposit</h2>
-          <Tabs aria-label="Deposit Tabs" variant="underline">
+          <Tabs aria-label="Deposit Tabs" variant="fullWidth">
             <Tabs.Item active title="Deposit" icon={FaWallet}>
-              <div className="p-6">
+              <div className="w-[50vw] justify-self-center px-6">
+                <div className="flex justify-between my-4 items-start">
+                  <h2 className="mb-4 text-xl font-semibold">Buy Coins</h2>
+                  <div className="rounded px-2 py-1 text-sm ">
+                    100 coins = 1€
+                  </div>
+                </div>
+
                 <CoinPurchaseForm
                   onBuy={(number) => {
                     setCheckoutOpen(true);
@@ -85,7 +92,16 @@ export default function WalletView() {
             </Tabs.Item>
 
             <Tabs.Item title="Withdraw" icon={FaWallet}>
-              <div className="p-6">
+              <div className="w-[50vw] justify-self-center px-6">
+                <div className="flex justify-between my-4 items-start">
+                  <h2 className="mb-4 text-xl font-semibold">
+                    Withdraw to bank account
+                  </h2>
+                  <div className="rounded px-2 py-1 text-sm ">
+                    100 coins = 1€
+                  </div>
+                </div>
+
                 <WithdrawForm currentUser={userDoc} />
               </div>
             </Tabs.Item>
