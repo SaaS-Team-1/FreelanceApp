@@ -1,5 +1,6 @@
 import { onCall } from "firebase-functions/https";
 import { auth, usersRef } from "./firebase";
+import { Timestamp } from "firebase-admin/firestore";
 
 export const createUser = onCall(async (request) => {
   try {
@@ -34,6 +35,8 @@ export const createUser = onCall(async (request) => {
       coins: 0,
       completedGigs: 0,
       averageRating: 0,
+      loginStreak: 0,
+      lastActivity: Timestamp.now(),
       profile: {
         bio: profile.bio || "",
         credits: 0,
