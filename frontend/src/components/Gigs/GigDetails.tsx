@@ -28,6 +28,7 @@ import {
 } from "@/utils/database/collections";
 import { Application } from "@/utils/database/schema";
 import { Badge, Button, Modal } from "flowbite-react";
+import { toast } from "react-toastify";
 
 interface GigDetailsProps {
   gig: Gig;
@@ -81,7 +82,7 @@ const GigDetails: React.FC<GigDetailsProps> = ({
   const handleDeleteConfirm = async () => {
     try {
       if (gig.status !== "open") {
-        alert("You can only delete a gig if its status is 'open'.");
+        toast.error("You can only delete a gig if its status is 'open'.");
         return;
       }
       await updateDoc(doc(gigsRef(db), gig.gigId), { status: "deleted" });
@@ -117,7 +118,7 @@ const GigDetails: React.FC<GigDetailsProps> = ({
       setIsDeleteModalOpen(false);
     } catch (error) {
       console.error("Error deleting gig or updating applications:", error);
-      alert("Failed to delete the gig. Please try again.");
+      toast.error("Failed to delete the gig. Please try again.");
     }
   };
 

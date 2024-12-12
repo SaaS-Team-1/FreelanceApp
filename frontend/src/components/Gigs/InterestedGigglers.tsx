@@ -28,6 +28,7 @@ import {
 import { useFunctions } from "@/utils/reactfire";
 import { Button } from "flowbite-react";
 import { FaCheck } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 interface InterestedGigglersProps {
   gig: Gig;
@@ -140,7 +141,7 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
       });
     } catch (error) {
       console.error("Error assigning gig:", error);
-      alert("Failed to assign gig / insufficient funds. Please try again.");
+      toast.error("Failed to assign gig / insufficient funds. Please try again.");
     }
   };
 
@@ -202,7 +203,7 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
       });
     } catch (error) {
       console.error("Error confirming completion:", error);
-      alert("Failed to confirm completion. Please try again.");
+      toast.error("Failed to confirm completion. Please try again.");
     }
   };
 
