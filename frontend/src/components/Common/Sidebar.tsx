@@ -153,6 +153,7 @@ function Sidebar() {
           isExpanded={isExpanded}
           isActive={location.pathname === "/app/chat"}
           onClick={() => navigate("/app/chat")}
+          hideOnSmall
         />
         <div className="my-1 w-full border-t border-primary sm:my-3" />
         <SidebarItem

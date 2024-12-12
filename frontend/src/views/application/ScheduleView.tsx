@@ -242,9 +242,12 @@ function ScheduleView() {
 
   const isSmall = width < 700;
   return (
-    <div className="relative h-screen w-full p-4 sm:p-4">
-      {/* Horizontal Scrollable Container */}
-      <Tabs aria-label="Schedule Tabs" variant="fullWidth">
+    <div className="flex h-screen w-full justify-center  p-4 sm:p-4">
+      <Tabs
+        aria-label="Schedule Tabs"
+        variant="fullWidth"
+        className="xl:max-w-[70vw]"
+      >
         <Tabs.Item
           id="pending-gigs-tab"
           active
@@ -253,7 +256,7 @@ function ScheduleView() {
         >
           <div
             id="pending-gigs"
-            className="scrollbar size-full overflow-y-scroll rounded-lg p-4"
+            className="scrollbar size-full max-h-[80vh] overflow-y-scroll rounded-lg  px-4 sm:p-4"
           >
             <h1 className="dark:text-white mb-3 font-bold sm:text-xl">
               Pending Gigs
@@ -273,9 +276,9 @@ function ScheduleView() {
         >
           <div
             id="scheduled-gigs"
-            className="scrollbar size-full overflow-y-scroll rounded-lg p-4"
+            className="scrollbar size-full max-h-[80vh] overflow-y-scroll rounded-lg p-4"
           >
-            <h1 className="dark:text-white mb-3 text-xl font-bold">
+            <h1 className="dark:text-white mb-3 font-bold sm:text-xl">
               Scheduled Gigs
             </h1>
             <PostedGigListSmall
@@ -296,9 +299,9 @@ function ScheduleView() {
         >
           <div
             id="awaiting-approval"
-            className="scrollbar size-full overflow-y-scroll rounded-lg p-4"
+            className="scrollbar size-full max-h-[80vh] overflow-y-scroll rounded-lg p-4"
           >
-            <h1 className="dark:text-white mb-3 text-xl font-bold">
+            <h1 className="dark:text-white mb-3 font-bold sm:text-xl">
               Awaiting Approval
             </h1>
             <PostedGigListSmall
@@ -317,9 +320,9 @@ function ScheduleView() {
         >
           <div
             id="completed-gigs"
-            className="scrollbar size-full overflow-y-scroll rounded-lg p-4"
+            className="scrollbar size-full max-h-[80vh] overflow-y-scroll rounded-lg p-4"
           >
-            <h1 className="dark:text-white mb-3 text-xl font-bold">
+            <h1 className="dark:text-white mb-3 font-bold sm:text-xl">
               Completed Gigs
             </h1>
             <PostedGigListSmall
