@@ -58,7 +58,7 @@ const tutorialSteps = [
   {
     title: "Login Streak",
     content:
-      "Logging in every day rewards you with a small number of coins, increasing every week the streak continues. Simply navigate to the home page to view new available gigs and receive your reward. Remember to login everyday or your streak will reset :).",
+      "Logging in daily rewards you with a small number of coins, increasing every week the streak continues. Simply navigate to the home page to view new available gigs and receive your reward. Remember to login everyday or your streak will reset :).",
     image: "/screenshots/chat.png", // Screenshot for this step
   },
   {
