@@ -17,13 +17,13 @@ const tutorialSteps = [
     title: "Home Page",
     content:
       "In the home page, you can view all available gigs and filter them. The home page also provides simplified views for your notifications and posted gigs.",
-    image: "/onboarding/home.png", // Screenshot for this step
+    image: "/onboarding/homepage.png", // Screenshot for this step
   },
   {
     title: "Applying to Gigs",
     content:
       "Clicking on see more on a gig in the home page allows you to apply to it. Once you've done so, you can navigate to the schedule tab to view the gigs you've applied to and been assigned.",
-    image: "/onboarding/home.png", // Screenshot for this step
+    image: "/onboarding/apply.png", // Screenshot for this step
   },
   {
     title: "Chat",
@@ -35,13 +35,13 @@ const tutorialSteps = [
     title: "Creating Gigs",
     content:
       "You can create gigs by clicking on the create a new gig button or on the plus below your profile in the sidebar. Make sure to fill in all the fields and set an appropriate reward.",
-    image: "/onboarding/manage-tasks.png", // Screenshot for this step
+    image: "/onboarding/create.png", // Screenshot for this step
   },
   {
     title: "View your Gigs",
     content:
       "Once you've created a gig you can see it in the My Posted Gigs page, accessible through the sidebar. This page also allows you to view who applied for your gig and to assign it to someone to complete.",
-    image: "/onboarding/chat.png", // Screenshot for this step
+    image: "/onboarding/posted.png", // Screenshot for this step
   },
   //HERE
   {
