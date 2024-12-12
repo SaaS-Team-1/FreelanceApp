@@ -29,12 +29,12 @@ export default function PurchaseReturn({
 
   if (status === "paid") {
     return (
-      <section>
-        <p className="font-bold text-white">
+      <section className="w-full text-on-surface">
+        <p className="font-bold">
           We appreciate your business! A confirmation email will be sent to{" "}
           {email}. If you have any questions, please email{" "}
           <a
-            className="text-blue-600 hover:underline dark:text-blue-500"
+            className="text-primary hover:underline dark:text-blue-500"
             href="mailto:orders@example.com"
           >
             orders@example.com
@@ -51,7 +51,7 @@ export default function PurchaseReturn({
 
   return (
     <section>
-      <p className="font-bold text-white">
+      <p className="font-bold text-error/80">
         An error has occured, please contact support.
       </p>
     </section>

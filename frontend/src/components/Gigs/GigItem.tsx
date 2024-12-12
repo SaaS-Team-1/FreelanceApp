@@ -55,7 +55,7 @@ function GigItem({
             {showStatus && (
               <Badge
                 size="sm"
-                className="ml-auto justify-self-end capitalize"
+                className="ml-auto justify-self-end capitalize text-nowrap"
                 color={
                   gig.status === "open"
                     ? "tertiary"

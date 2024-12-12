@@ -1,6 +1,6 @@
 import { Transaction, User } from "@/utils/database/schema";
 import { FaCoins, FaWallet } from "react-icons/fa6";
-import { Badge, Modal, Tabs } from "flowbite-react";
+import { Badge, Button, Modal, Tabs } from "flowbite-react";
 import CoinPurchaseForm from "@/components/Wallet/CoinPurchaseForm";
 import TransactionItem from "@/components/Wallet/TransactionItems";
 import WithdrawForm from "@/components/Wallet/WithdrawForm";
@@ -132,11 +132,28 @@ export default function WalletView() {
         }}
         show={returnOpen}
       >
-        <div className="h-40 w-96 p-5">
-          {sessionId && (
-            <PurchaseReturn email={userDoc?.email} sessionId={sessionId} />
-          )}
-        </div>
+        <Modal.Header>
+          <span className="text-3xl">Success!</span>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="max-w-[50vw] justify-self-center rounded-xl bg-surface-container p-5">
+            {sessionId && (
+              <PurchaseReturn email={userDoc?.email} sessionId={sessionId} />
+            )}
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            color="primary"
+            className="ml-auto justify-self-end"
+            onClick={() => {
+              setReturnOpen(false);
+              setSearchParams({});
+            }}
+          >
+            Close
+          </Button>
+        </Modal.Footer>
       </Modal>
       <Modal onClose={() => setCheckoutOpen(false)} show={checkoutOpen}>
         <Modal.Header></Modal.Header>

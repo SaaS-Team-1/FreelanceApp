@@ -16,7 +16,7 @@ export default function TransactionItem({ transaction }: TransactionItemProps) {
     switch (transaction.kind) {
       case "deposit":
         return {
-          icon: <LuArrowDownLeft className="size-5 text-green-500" />,
+          icon: <LuArrowDownLeft className="size-8 text-green-500" />,
           title: "Deposit to Wallet",
           description: "Added funds to wallet",
           color: "text-green-500",
@@ -24,7 +24,7 @@ export default function TransactionItem({ transaction }: TransactionItemProps) {
 
       case "withdraw":
         return {
-          icon: <LuArrowUpRight className="size-5 text-red-500" />,
+          icon: <LuArrowUpRight className="size-8 text-red-500" />,
           title: "Withdraw from Wallet",
           description: "Withdrawn to bank account",
           color: "text-red-500",
@@ -34,7 +34,7 @@ export default function TransactionItem({ transaction }: TransactionItemProps) {
         return {
           icon: (
             <LuSend
-              className={`size-5 ${
+              className={`size-8 ${
                 transaction.onHold ? "text-blue-500" : "text-red-500"
               }`}
             />
@@ -50,7 +50,7 @@ export default function TransactionItem({ transaction }: TransactionItemProps) {
         return {
           icon: (
             <LuReceipt
-              className={`size-5 ${
+              className={`size-8 ${
                 transaction.onHold ? "text-blue-500" : "text-green-500"
               }`}
             />
@@ -64,7 +64,7 @@ export default function TransactionItem({ transaction }: TransactionItemProps) {
 
       default:
         return {
-          icon: <LuWallet className="size-5 text-gray-500" />,
+          icon: <LuWallet className="size-8 text-gray-500" />,
           title: "Transaction",
           description: "",
           color: "text-gray-500",
@@ -77,7 +77,7 @@ export default function TransactionItem({ transaction }: TransactionItemProps) {
   return (
     <div className="flex items-center justify-between rounded-md border-y border-surface-dim p-4 first:border-t-0 last:border-b-0 hover:bg-surface-container-highest">
       <div className="flex items-center space-x-4">
-        <div className="flex size-10 items-center justify-center rounded-full">
+        <div className="flex size-16 items-center justify-center rounded-full bg-surface-container-lowest">
           {details.icon}
         </div>
         <div>
