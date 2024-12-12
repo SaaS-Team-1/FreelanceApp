@@ -46,7 +46,7 @@ function PostedGigListHome({
   };
 
   return (
-    <div className="space-y-4 py-5 sm:space-y-8">
+    <div className="space-y-4 py-5 sm:space-y-8" id="posted-gig-list-home">
       {gigs.map(({ gig, lister }) => (
         <GigItem gig={gig} lister={lister} showSeeMoreButton onSeeMoreClick={handleSeeMoreClick}/>
       ))}

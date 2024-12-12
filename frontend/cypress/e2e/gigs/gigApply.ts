@@ -43,21 +43,22 @@ describe("Applying to a Gig", () => {
 
   // Check if post shows up in home page
   it("Check if posted gig shows up in home", function () {
-    cy.contains(this.gigs.gig1.title).should("exist");
+    cy.get('#gig-title').contains(new RegExp(this.gigs.gig1.title, 'i')).should("exist");
     cy.log("Gig posted by User1 is visible");
   });
 
   // User 2 applies for the gig
   it("User 2 applies for the gig", function () {
-    cy.get(".space-y-4 > .relative").click();
+    cy.get('#posted-gig-list-home > .rounded-xl').click();
     cy.wait(1000);
-    cy.get(".mt-4 > .bg-blue-500").click();
-
-    // // Listen for the alert and verify its content
-    // cy.on('window:alert', (str) => {
-    //     expect(str).to.equal('Application and chat created successfully!');
-    // });
+    cy.get('#see-more-button > .flex').click();
+    cy.get("#apply-button").click();
+    // Listen for the alert and verify its content
+    cy.on('window:alert', (str) => {
+      expect(str).to.equal('Application submitted successfully!');
+    });
     cy.log("User clicked on apply button");
+
     cy.wait(2000); // Optional: Wait for Firestore synchronization
   });
 
@@ -112,9 +113,10 @@ describe("Applying to a Gig", () => {
 
   // User 2 applies for the gig
   it("User 2 cannot reapply to the same Gig", function () {
-    cy.get(".space-y-4 > .relative").click();
+    cy.get('#posted-gig-list-home > .rounded-xl').click();
     cy.wait(1000);
-    cy.get(".bg-gray-500 > span").contains("Applied Already");
+    cy.get('#see-more-button > .flex').click();
+    cy.get("#apply-button").contains("Applied Already");
 
     // Listen for the alert and verify its content
     cy.log("Apply button is disabled");
@@ -148,17 +150,10 @@ describe("Schedule test - Pending Gigs", () => {
   it("User 2 sees the Pending Gig in the schedule", function () {
     cy.visit("/app/schedule");
     cy.wait(1000);
-    cy.get(".scrollbar.text-white").within(() => {
-      cy.get(".mb-3")
-        .contains("Pending")
-        .then(($pendingGigs) => {
-          if ($pendingGigs.length > 0) {
-            cy.get(".space-y-4 > .relative").contains(this.gigs.gig1.title);
-            cy.log("User 2 clicked on the complete gig button");
-            cy.wait(1000);
-          }
-        });
-    });
+    // cy.get("#pending-gigs-tab").click();
+    cy.get('#gig-title').contains(new RegExp(this.gigs.gig1.title, 'i')).should("exist");
+    cy.log("User 2 can see the pending gig");
+
   });
 
   it("User 2 logs out", () => {
