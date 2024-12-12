@@ -1,22 +1,46 @@
-import { DarkThemeToggle, Navbar, NavbarBrand } from "flowbite-react";
+import { Navbar, NavbarBrand, Button } from "flowbite-react";
+import React from "react";
+import { Link } from "react-router-dom";
+
+
 
 export default function HomeNavbar() {
+
   return (
-    <header className="fixed z-40 w-full">
+    <header className="fixed z-40 w-full bg-surface-container shadow-lg">
       <Navbar fluid>
-        <NavbarBrand href="/">
-          <img
-            alt="Logo"
-            height="24"
-            src="/favicon.ico"
-            width="24"
-            className="ml-2 mr-1 "
-          />
-          <span className="mt-1 self-center whitespace-nowrap px-1 text-xl font-semibold uppercase dark:text-white">
-            Ai Classroom
-          </span>
-        </NavbarBrand>
-        <DarkThemeToggle className="z-50" />
+        <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+          <NavbarBrand href="/">
+            <img
+              alt="Logo"
+              height="24"
+              src="/favicon.ico"
+              width="24"
+              className="ml-2 mr-2"
+            />
+            <span className="text-2xl font-bold text-primary">
+              UniGigs
+            </span>
+          </NavbarBrand>
+          <div className="flex space-x-4">
+              <Button
+                to={"app"} as={Link}
+                color="color-on-primary"
+                className="hover:bg-slate-200"
+              >
+                Log In
+              </Button>
+
+              <Button
+                to={"app"} as={Link}
+                color="primary"
+                className="hover:opacity-80"
+              >
+                Sign Up
+              </Button>
+
+          </div>
+        </div>
       </Navbar>
     </header>
   );

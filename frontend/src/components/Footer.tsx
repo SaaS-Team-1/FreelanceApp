@@ -6,7 +6,7 @@ export default function DefaultFooter() {
       container
       theme={{
         root: {
-          base: "fixed inset-x-0 bottom-0 w-full bg-white shadow dark:bg-gray-800",
+          base: "fixed inset-x-0 bottom-0 w-full shadow dark:bg-gray-800",
           container: "h-min-3 h-fit w-full",
           bgDark: "bg-gray-800",
         },
