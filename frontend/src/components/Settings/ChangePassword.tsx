@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import CustomButton from "../Buttons/CustomButton";
 import ArrowButton from "../Buttons/ArrowButton";
+import { toast } from "react-toastify";
 
 const ChangePassword: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,7 +19,7 @@ const ChangePassword: React.FC = () => {
 
   const handleConfirm = () => {
     if (newPassword !== confirmPassword) {
-      alert("New password and confirmation do not match.");
+      toast.error("New password and confirmation do not match.");
       return;
     }
     // Perform password update logic here

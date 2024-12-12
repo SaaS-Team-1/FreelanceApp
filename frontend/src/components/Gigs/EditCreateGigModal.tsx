@@ -5,6 +5,7 @@ import { FaDollarSign, FaMapMarkerAlt, FaClock } from "react-icons/fa";
 import { gigsRef } from "@/utils/database/collections";
 import { useFirestore, useUser } from "@/utils/reactfire";
 import { Button, Datepicker, Modal } from "flowbite-react";
+import { toast } from "react-toastify";
 
 const categories = [
   "Academic Support & Tutoring",
@@ -91,7 +92,7 @@ function EditCreateGigModal({
           category: gigData.category.trim(),
           updatedAt: Timestamp.now(),
         });
-        alert("Gig successfully updated.");
+        toast.success("Gig successfully updated.")
         onSubmit();
         onClose();
       } else {
@@ -102,15 +103,13 @@ function EditCreateGigModal({
         };
         const gigDoc = await addDoc(gigsRef(db), newGigData);
         await updateDoc(gigDoc, { gigId: gigDoc.id });
-        alert("Gig successfully created.");
+        toast.success("Gig successfully created.");
         onSubmit();
         onClose();
       }
     } catch (error) {
       console.error(`Error ${editable ? "updating" : "creating"} gig:`, error);
-      alert(
-        `There was an error ${editable ? "updating" : "creating"} the gig. Please try again.`,
-      );
+      toast.error(`There was an error ${editable ? "updating" : "creating"} the gig. Please try again.`);
     }
   };
 

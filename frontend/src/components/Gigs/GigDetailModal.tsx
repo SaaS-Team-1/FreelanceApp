@@ -10,6 +10,7 @@ import {
   notificationsRef,
 } from "@/utils/database/collections";
 import { Badge, Button, Modal } from "flowbite-react";
+import { toast } from "react-toastify";
 
 interface GigDetailModalProps {
   gig: Gig;
@@ -102,13 +103,13 @@ function GigDetailModal({
       // Set the application state to applied
       setApplied(true);
 
-      alert("Application submitted successfully!");
+      toast.success("Application submitted successfully!");
       onClose();
     } catch (error) {
       console.error("Error applying to gig:", error);
 
       // Partial cleanup or recovery could be implemented here if needed
-      alert("Failed to apply for the gig. Please try again.");
+      toast.error("Failed to apply for the gig. Please try again.");
     }
   };
 

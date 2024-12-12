@@ -4,6 +4,7 @@ import { Timestamp, doc, updateDoc } from "firebase/firestore";
 import CustomButton from "@/components/Buttons/CustomButton";
 import { useFirestore, useUser } from "@/utils/reactfire";
 import { Button, Modal } from "flowbite-react";
+import { toast } from "react-toastify";
 
 interface EditProfileModalProps {
   onClose: () => void;
@@ -43,7 +44,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
   const handleSave = async () => {
     const errors = validateProfile(updatedUser);
     if (errors.length > 0) {
-      alert(`Please fix the following errors:\n- ${errors.join("\n- ")}`);
+      toast.error(`Please fix the following errors:\n- ${errors.join("\n- ")}`);
       return;
     }
 
@@ -59,11 +60,11 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
       // Pass updated user data back to the parent component
       onUpdate(updatedUser);
-      alert("Profile successfully updated.");
+      toast.success("Profile successfully updated.");
       onClose();
     } catch (error) {
       console.error("Error updating profile:", error);
-      alert("There was an error updating the profile. Please try again.");
+      toast.error("There was an error updating the profile. Please try again.");
     }
   };
 

@@ -24,6 +24,7 @@ import { useCallback } from "react";
 import GigDetailModal from "@/components/Gigs/GigDetailModal";
 import { Tabs } from "flowbite-react";
 import { FaCalendar, FaCheck, FaClock, FaComments, FaToggleOff } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 function ScheduleView() {
   const db = useFirestore();
@@ -229,7 +230,7 @@ function ScheduleView() {
       }
     } catch (error) {
       console.error("Error undoing application:", error);
-      alert("Failed to undo application. Please try again.");
+      toast.error("Failed to undo application. Please try again.");
     }
   };
 
@@ -292,7 +293,7 @@ function ScheduleView() {
       await fetchGigs();
     } catch (error) {
       console.error("Error completing gig:", error);
-      alert("Failed to mark gig as completed. Please try again.");
+      toast.error("Failed to mark gig as completed. Please try again.");
     }
   };
 
