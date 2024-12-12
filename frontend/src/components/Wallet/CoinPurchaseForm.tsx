@@ -23,11 +23,11 @@ export default function CoinPurchaseForm({
             onClick={() => setSelectedCoins(coins)}
             className={`rounded-lg ${
               selectedCoins === coins && "outline outline-primary/30"
-            } cursor-pointer bg-surface-dim p-4 transition-colors hover:bg-surface-container-highest`}
+            } cursor-pointer bg-surface-dim p-4 w-32 transition-colors hover:bg-surface-container-highest`}
           >
-            <p className="flex w-28 items-center text-2xl font-bold text-slate-900">
+            <p className="flex items-center text-lg font-bold ">
               {coins.toLocaleString()}
-              <FaCoins className="ml-auto justify-self-end text-amber-500" />
+              <FaCoins className="ml-auto justify-self-end self-center text-2xl text-amber-500" />
             </p>
           </div>
         ))}

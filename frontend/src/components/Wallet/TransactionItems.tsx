@@ -77,12 +77,12 @@ export default function TransactionItem({ transaction }: TransactionItemProps) {
   return (
     <div className="flex items-center justify-between rounded-md border-y border-surface-dim p-4 first:border-t-0 last:border-b-0 hover:bg-surface-container-highest">
       <div className="flex items-center space-x-4">
-        <div className="flex size-16 items-center justify-center rounded-full bg-surface-container-lowest">
+        <div className="flex items-center justify-center rounded-full bg-surface-container-lowest">
           {details.icon}
         </div>
         <div>
           <h3 className="font-bold ">{details.title}</h3>
-          <p className="text-sm  ">{details.description}</p>
+          <p className="text-sm">{details.description}</p>
           <span className="text-xs ">
             {new Date(
               transaction.createdAt.seconds * 1000,
