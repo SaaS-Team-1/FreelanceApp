@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
+import { usersRef } from "@/utils/database/collections";
+import { useEffect, useState } from "react";
+import { query, orderBy, limit, getDocs } from "firebase/firestore";
 import { useFirestore } from "@/utils/reactfire";
-import "flowbite";
 import Loading from "react-loading";
 
 // Define the User interface
@@ -23,10 +23,9 @@ function LeaderboardView() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const usersCollection = collection(db, "users");
         const q = query(
-          usersCollection,
-          orderBy("stats.completedGigs", "desc"),
+          usersRef(db),
+          orderBy("completedGigs", "desc"),
           limit(10),
         );
         const querySnapshot = await getDocs(q);
@@ -35,7 +34,7 @@ function LeaderboardView() {
           return {
             id: doc.id,
             displayName: data.displayName,
-            completedGigs: data.stats.completedGigs,
+            completedGigs: data.completedGigs,
           } as User;
         });
         setUsers(usersList);
@@ -97,7 +96,7 @@ function LeaderboardView() {
             key={user.id}
             className="dark:bg-gray-800 rounded-lg border bg-surface hover:bg-surface-container-low"
           >
-            <div className="mb-2 flex items-center justify-between bg-primary-container w-full">
+            <div className="mb-2 flex w-full items-center justify-between bg-primary-container">
               <span className=" m-1 font-bold text-on-primary-container">
                 Position {index + 1}
               </span>

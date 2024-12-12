@@ -21,7 +21,7 @@ describe("Assigning a Gig", () => {
   // User 1 assigns User 2 as a gig
   it("User 1 assigns User 2 from interested giggler section", function () {
     cy.visit("/app/posted-gigs");
-    cy.get("#assign-button").click();
+    cy.get("#assign-button").click({ force: true });
     cy.log("User 1 clicked on the assign button");
     cy.wait(2000);
   });

@@ -28,6 +28,7 @@ export interface User {
   averageRating: number;
   loginStreak: number;
   lastActivity: Timestamp;
+  firstLogin: boolean;
 }
 
 export interface Gig {
