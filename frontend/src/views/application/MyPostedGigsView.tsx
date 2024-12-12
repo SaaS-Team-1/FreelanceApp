@@ -161,7 +161,7 @@ function MyPostedGigsView() {
   }
 
   return (
-    <div className="flex h-screen space-x-6 p-4">
+    <div className="flex h-screen w-full space-x-10 p-4 mx-24">
       <div className="h-full w-1/2 rounded-lg p-4">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-2xl font-bold text-primary">My Posted Gigs</h2>
@@ -179,7 +179,7 @@ function MyPostedGigsView() {
         </div>
       </div>
 
-      <div className="scrollbar max-h-[95vh] w-1/2 overflow-y-scroll rounded-lg">
+      <div className="scrollbar max-h-[95vh] w-1/2 overflow-y-scroll rounded-lg mt-16">
         {selectedGig ? (
           <>
             <GigDetails
@@ -201,7 +201,7 @@ function MyPostedGigsView() {
             )}
           </>
         ) : (
-          <p className="text-center text-slate-500">No available gigs</p>
+          <p className="text-center text-on-surface">No available gigs</p>
         )}
       </div>
     </div>
