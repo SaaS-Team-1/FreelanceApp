@@ -230,6 +230,7 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
               <span className="ml-3 text-slate-800">{user.displayName}</span>
               <div className="flex flex-row justify-center space-x-2 ">
                 <Button
+                id="assign-button"
                   onClick={() => handleAssignGig(user.userId)}
                   color="primary"
                   size="xs"
