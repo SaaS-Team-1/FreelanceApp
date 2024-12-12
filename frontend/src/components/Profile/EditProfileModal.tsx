@@ -3,16 +3,19 @@ import { User } from "@/utils/database/schema";
 import { Timestamp, doc, updateDoc } from "firebase/firestore";
 import CustomButton from "@/components/Buttons/CustomButton";
 import { useFirestore, useUser } from "@/utils/reactfire";
+import { Button, Modal } from "flowbite-react";
 
 interface EditProfileModalProps {
   onClose: () => void;
   onUpdate: (updatedUser: User) => void; // Callback for when the profile is updated
+  show: boolean;
   initialUserData: User; // Preloaded user data
 }
 
 const EditProfileModal: React.FC<EditProfileModalProps> = ({
   onClose,
   onUpdate,
+  show,
   initialUserData,
 }) => {
   const db = useFirestore(); // Firestore instance
@@ -65,18 +68,12 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30 backdrop-blur-sm"
-      onClick={onClose}
-    >
-      <div
-        className="scrollbar max-h-[90vh] w-[800px] max-w-full overflow-y-auto rounded-lg bg-white shadow-lg"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-white p-4 shadow-sm">
-          <h2 className="text-2xl font-semibold text-gray-800">Edit Profile</h2>
-        </div>
-        <div className="space-y-6 p-6">
+    <Modal dismissible onClose={onClose} show={show}>
+      <Modal.Header>
+        <h2 className="text-2xl font-semibold">Edit Profile</h2>
+      </Modal.Header>
+      <Modal.Body>
+        <div className="space-y-6">
           {/* Display Name Input */}
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">
@@ -155,29 +152,24 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
             </div>
           ))}
         </div>
-        {/* Buttons */}
-        <div className="sticky bottom-0 flex items-center justify-end gap-4 border-t bg-white p-4">
-          <CustomButton
-            label="Cancel"
-            onClick={onClose}
-            color="white"
-            textColor="primary"
-            size="small"
-            outline={true}
-            rounded={false}
-            customStyle={{ borderColor: "#44B0E8" }}
-          />
-          <CustomButton
-            label="Save Changes"
+      </Modal.Body>
+
+      <Modal.Footer>
+        <div className="flex flex-row w-full justify-end space-x-4">
+          <Button onClick={onClose} color="surface-container">
+            Cancel
+          </Button>
+          <Button
+            label=""
             onClick={handleSave}
             color="primary"
-            textColor="white"
-            size="small"
-            rounded={false}
-          />
+            className=""
+          >
+            Save Changes
+          </Button>
         </div>
-      </div>
-    </div>
+      </Modal.Footer>
+    </Modal>
   );
 };
 
