@@ -65,8 +65,8 @@ function Sidebar() {
   return (
     <aside
       className={`sticky top-0 h-screen ${
-        isExpanded ? "w-fit" : "w-20"
-      } fixed flex flex-col justify-between bg-surface-container p-4 text-on-surface transition-all duration-300`}
+        isExpanded ? "w-fit p-2 sm:p-4" : "w-14 px-1 py-4 sm:w-20"
+      } fixed flex flex-col justify-between bg-surface-container  text-on-surface transition-all duration-300`}
       style={{ fontFamily: "Inter, sans-serif" }}
     >
       {/* Toggle Button */}
@@ -81,7 +81,7 @@ function Sidebar() {
 
       {/* Profile Section */}
       {isExpanded && userDb && (
-        <div className="flex flex-col items-center rounded-xl bg-primary-container pb-2 pt-10">
+        <div className="flex flex-col items-center rounded-xl bg-primary-container py-2 sm:mb-1 sm:py-2">
           <div className="text-lg font-bold">🔥{userDb.loginStreak || 0}</div>
           <UserProfilePicture
             user={userDb}
@@ -95,19 +95,23 @@ function Sidebar() {
               {userDb.displayName}
             </h2>
           </div>
-          <p className="mb-2 text-xs text-on-primary-container">
-            {userDb.email}
-          </p>
-          <Tooltip content="New Gig">
-            <CreateGigButton color="transparent">
-              <FaCirclePlus className="text-3xl text-primary" />
-            </CreateGigButton>
-          </Tooltip>
         </div>
       )}
 
+      <div className="flex flex-col items-center py-2">
+        <Tooltip content="New Gig">
+          <CreateGigButton color="transparent">
+            <FaCirclePlus className="text-3xl text-primary" />
+          </CreateGigButton>
+        </Tooltip>
+      </div>
+
       {/* Navigation Items */}
-      <nav className="flex w-fit flex-col gap-1">
+      <nav
+        className={`my-1 flex w-fit flex-col justify-center gap-1 sm:my-1 ${
+          isExpanded ? "" : "px-1 sm:px-3"
+        }`}
+      >
         <SidebarItem
           icon={<FaHome />}
           label="Home"
@@ -123,7 +127,7 @@ function Sidebar() {
           onClick={() => navigate("/app/leaderBoard")}
         />
 
-        <div className="my-3 w-full border-t border-primary" />
+        <div className="my-1 w-full border-t border-primary sm:my-3" />
 
         <SidebarItem
           icon={<FaClipboardList />}
@@ -148,7 +152,7 @@ function Sidebar() {
           isActive={location.pathname === "/app/chat"}
           onClick={() => navigate("/app/chat")}
         />
-        <div className="my-3 w-full border-t border-primary" />
+        <div className="my-1 w-full border-t border-primary sm:my-3" />
         <SidebarItem
           icon={<FaWallet />}
           label="Wallet"
@@ -167,7 +171,7 @@ function Sidebar() {
         />
       </nav>
 
-      <div className="mt-3 border-t border-primary pt-3">
+      <div className="mt-1 border-t border-primary pt-3 sm:mt-3">
         <SidebarItem
           icon={<FaSignOutAlt />}
           label="Logout"
