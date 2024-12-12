@@ -132,16 +132,16 @@ export default function LoginView() {
   const loginSection = (
     <div className="w-full space-y-6">
       <div>
-        <h2 className="text-4xl font-extrabold text-gray-800 lg:text-5xl lg:leading-[55px]">
+        <h2 className="text-4xl font-extrabold text-on-surface lg:text-5xl lg:leading-[55px]">
           Welcome Back
         </h2>
         <div className="flex flex-row justify-stretch">
-          <p className="w-full text-sm text-gray-600">
+          <p className="w-full text-sm text-on-surface">
             Sign in to access your account
           </p>
           <button
             onClick={() => setScreen("forgot")}
-            className="w-fit text-nowrap text-sm text-blue-600 hover:underline"
+            className="w-fit text-nowrap text-sm text-on-surface underline"
             type="submit"
           >
             Forgot Password?
@@ -153,7 +153,7 @@ export default function LoginView() {
         <div>
           <label
             htmlFor="email"
-            className="mb-2 block text-sm font-medium text-gray-900"
+            className="mb-2 block text-sm font-medium text-on-surface"
           >
             Email
           </label>
@@ -164,14 +164,14 @@ export default function LoginView() {
               loginForm.email = e.target.value;
               setLoginData(loginForm);
             }}
-            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+            className="block w-full rounded-lg focus:border-0 focus:ring-4 focus:ring-primary/20 p-2.5 text-sm text-on-primary-container border-surface-dim bg-primary-container outline-none"
             required
           />
         </div>
         <div>
           <label
             htmlFor="password"
-            className="mb-2 block text-sm font-medium text-gray-900"
+            className="mb-2 block text-sm font-medium text-on-surface"
           >
             Password
           </label>
@@ -182,7 +182,7 @@ export default function LoginView() {
               loginForm.password = e.target.value;
               setLoginData(loginForm);
             }}
-            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+            className="block w-full rounded-lg focus:border-0 focus:ring-4 focus:ring-primary/20 p-2.5 text-sm text-on-primary-container border-surface-dim bg-primary-container outline-none"
             required
           />
         </div>
@@ -190,14 +190,14 @@ export default function LoginView() {
         <div className="flex flex-col space-y-4">
           <button
             onClick={handleLogin}
-            className="w-full rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300"
+            className="w-full rounded-lg bg-primary px-5 py-2.5 text-center text-sm font-medium text-on-primary hover:bg-primary/80"
           >
             Sign In
           </button>
 
           <button
             onClick={() => setScreen("register")}
-            className="font-extrabold text-blue-600 hover:underline"
+            className="font-extrabold text-primary hover:underline"
             type="submit"
           >
             Create New Account
@@ -209,7 +209,7 @@ export default function LoginView() {
   const forgotSection = (
     <div className="w-full space-y-6">
       <div>
-        <h2 className="text-4xl font-extrabold text-gray-800 lg:text-5xl lg:leading-[55px]">
+        <h2 className="text-4xl font-extrabold text-on-surface lg:text-5xl lg:leading-[55px]">
           Forgot password
         </h2>
       </div>
@@ -218,7 +218,7 @@ export default function LoginView() {
         <div>
           <label
             htmlFor="email"
-            className="mb-2 block text-sm font-medium text-gray-900"
+            className="mb-2 block text-sm font-medium text-on-surface"
           >
             Email
           </label>
@@ -229,7 +229,7 @@ export default function LoginView() {
               loginForm.email = e.target.value;
               setForgotData(loginForm);
             }}
-            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+            className="block w-full rounded-lg focus:border-0 focus:ring-4 focus:ring-primary/20 p-2.5 text-sm text-on-primary-container border-surface-dim bg-primary-container outline-none"
             required
           />
         </div>
@@ -237,14 +237,14 @@ export default function LoginView() {
         <div className="flex flex-col space-y-4">
           <button
             onClick={handleForgot}
-            className="w-full rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300"
+            className="w-full rounded-lg bg-primary px-5 py-2.5 text-center text-sm font-medium text-on-primary hover:bg-primary/80"
           >
             Reset Password
           </button>
 
           <button
             onClick={() => setScreen("login")}
-            className="font-extrabold text-blue-600 hover:underline"
+            className="font-extrabold text-primary hover:underline"
             type="submit"
           >
             Already have an account? Login
@@ -257,12 +257,12 @@ export default function LoginView() {
   const registrationSection = (
     <div className="w-full space-y-6">
       <div>
-        <h2 className="text-4xl font-extrabold text-gray-800 lg:text-5xl lg:leading-[55px]">
+        <h2 className="text-4xl font-extrabold text-on-surface lg:text-5xl lg:leading-[55px]">
           Create Your Account
         </h2>
-        <p className="mt-4 text-sm text-gray-600">
-          Join our platform by filling out the registration form. Fields with a
-          "*" are required
+        <p className="mt-4 text-sm text-on-surface">
+          Join our platform by filling out the registration form. Fields with an
+          * are required
         </p>
       </div>
       <div className="space-y-4">
@@ -270,7 +270,7 @@ export default function LoginView() {
           <div>
             <label
               htmlFor="email"
-              className="mb-2 block text-sm font-medium text-gray-900"
+              className="mb-2 block text-sm font-medium text-on-surface"
             >
               Email *
             </label>
@@ -281,7 +281,7 @@ export default function LoginView() {
                 registrationForm.email = e.target.value;
                 setRegistrationData(registrationForm);
               }}
-              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+              className="block w-full rounded-lg focus:border-0 focus:ring-4 focus:ring-primary/20 p-2.5 text-sm text-on-primary-container border-surface-dim bg-primary-container outline-none"
               required
             />
           </div>
@@ -289,7 +289,7 @@ export default function LoginView() {
           <div>
             <label
               htmlFor="displayName"
-              className="mb-2 block text-sm font-medium text-gray-900"
+              className="mb-2 block text-sm font-medium text-on-surface"
             >
               Display Name *
             </label>
@@ -300,7 +300,7 @@ export default function LoginView() {
                 registrationForm.displayName = e.target.value;
                 setRegistrationData(registrationForm);
               }}
-              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+              className="block w-full rounded-lg focus:border-0 focus:ring-4 focus:ring-primary/20 p-2.5 text-sm text-on-primary-container border-surface-dim bg-primary-container outline-none"
               required
             />
           </div>
@@ -310,7 +310,7 @@ export default function LoginView() {
           <div>
             <label
               htmlFor="password"
-              className="mb-2 block text-sm font-medium text-gray-900"
+              className="mb-2 block text-sm font-medium text-on-surface"
             >
               Password *
             </label>
@@ -321,7 +321,7 @@ export default function LoginView() {
                 registrationForm.password = e.target.value;
                 setRegistrationData(registrationForm);
               }}
-              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+              className="block w-full rounded-lg focus:border-0 focus:ring-4 focus:ring-primary/20 p-2.5 text-sm text-on-primary-container border-surface-dim bg-primary-container outline-none"
               required
             />
           </div>
@@ -329,7 +329,7 @@ export default function LoginView() {
           <div>
             <label
               htmlFor="location"
-              className="mb-2 block text-sm font-medium text-gray-900"
+              className="mb-2 block text-sm font-medium text-on-surface"
             >
               Location
             </label>
@@ -340,7 +340,7 @@ export default function LoginView() {
                 registrationForm.profile!.location = e.target.value;
                 setRegistrationData(registrationForm);
               }}
-              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+              className="block w-full rounded-lg focus:border-0 focus:ring-4 focus:ring-primary/20 p-2.5 text-sm text-on-primary-container border-surface-dim bg-primary-container outline-none"
             />
           </div>
         </div>
@@ -348,7 +348,7 @@ export default function LoginView() {
         <div>
           <label
             htmlFor="bio"
-            className="mb-2 block text-sm font-medium text-gray-900"
+            className="mb-2 block text-sm font-medium text-on-surface"
           >
             Bio
           </label>
@@ -358,21 +358,21 @@ export default function LoginView() {
               registrationForm.profile!.bio = e.target.value;
               setRegistrationData(registrationForm);
             }}
-            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+            className="block w-full rounded-lg focus:border-0 focus:ring-4 focus:ring-primary/20 p-2.5 text-sm text-on-primary-container border-surface-dim bg-primary-container outline-none"
           />
         </div>
 
         <div className="flex flex-col space-y-4">
           <button
             onClick={handleRegister}
-            className="w-full rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300"
+            className="w-full rounded-lg bg-primary px-5 py-2.5 text-center text-sm font-medium text-on-primary hover:bg-primary/80"
           >
             Create Account
           </button>
 
           <button
             onClick={() => setScreen("login")}
-            className="font-extrabold text-blue-600 hover:underline"
+            className="font-extrabold text-primary hover:underline"
             type="submit"
           >
             Already have an account? Login
@@ -398,7 +398,7 @@ export default function LoginView() {
   return (
     <div className="font-[sans-serif]" onKeyDown={handleKeyDown} tabIndex={0}>
       <div className="flex min-h-screen items-center justify-center px-4 py-6">
-        <div className="grid w-full max-w-2xl items-center gap-10 rounded-3xl bg-slate-200 p-10">
+        <div className="grid w-full max-w-2xl items-center gap-10 rounded-3xl bg-surface-container-low p-10">
           {child}
           {errorMessage && (
             <Alert color="failure" icon={HiInformationCircle}>
