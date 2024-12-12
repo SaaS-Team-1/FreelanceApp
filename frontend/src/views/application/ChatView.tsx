@@ -288,7 +288,7 @@ function ChatPage() {
                     chat.chatId === selectedChat?.chatId
                       ? "bg-primary text-on-primary"
                       : "bg-surface-container text-on-surface"
-                  } hover:bg-surface-container-highest`}
+                  } hover:opacity-70`}
                 >
                   <div>
                     <p className="truncate font-bold">{chat.partnerName}</p>

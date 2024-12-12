@@ -155,7 +155,7 @@ const GigDetails: React.FC<GigDetailsProps> = ({
         </p>
         <Badge
           size="sm"
-          className="capitalize"
+          className="capitalize text-nowrap"
           color={
             gig.status === "open"
               ? "tertiary"
