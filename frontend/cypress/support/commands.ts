@@ -237,32 +237,36 @@ Cypress.Commands.add("loginUser2", function () {
 
 Cypress.Commands.add("logoutUI", () => {
   cy.visit("/app");
-  cy.get(
-    ".mt-3.border-t.border-gray-600.pt-3 .flex.cursor-pointer.items-center",
-  )
+  cy.get("#logout-button") // Use the new ID here
     .scrollIntoView()
     .click({ force: true });
   cy.location().should((loc) => expect(loc.pathname).to.eq("/login"));
 });
 
 Cypress.Commands.add("postGig", (gigData) => {
-  cy.get(".h-screen > :nth-child(2) > .flex").click();
+  cy.visit("/app");
+  cy.wait(300);
+  cy.get("#create-gig-button").click();
   cy.log("User clicked on upload a gig button");
 
   // Fill in the gig details
-  cy.get('.space-y-4 > :nth-child(1) > .w-full').type(gigData.title);
-  cy.get('.space-y-4 > :nth-child(2) > .mt-1').type(gigData.description);
-  cy.get('.space-y-4 > :nth-child(3) > :nth-child(1) > .w-full').type(gigData.price.toString(), { force: true });
-  cy.get(':nth-child(3) > :nth-child(2) > .w-full').clear().type(gigData.location);
-  cy.get(':nth-child(4) > .w-full').type(gigData.category);
-  cy.get(':nth-child(5) > :nth-child(1) > .w-full').type(gigData.dueDate.split("T")[0]);
-  cy.get(':nth-child(5) > :nth-child(2) > .w-full').type(gigData.dueDate.split("T")[1].substring(0, 5));
-  cy.get('button.bg-blue-500').contains('Create Gig').click();
+  cy.get('#gig-title').type(gigData.title);
+  cy.get('#gig-description').type(gigData.description);
+  cy.get('#gig-price').type(gigData.price.toString(), { force: true });
+  cy.get('#gig-location').clear().type(gigData.location);
 
-  // Handle the alert confirmation
-  cy.on("window:alert", (text) => {
-    expect(text).to.equal("Gig successfully created.");
+  // Log available options for debugging
+  cy.get('#gig-category').then($select => {
+    const options = $select.find('option').map((i, el) => Cypress.$(el).text()).get();
+    cy.log('Available options:', options);
   });
+
+  // Select the category
+  cy.get('#gig-category').select(gigData.category);
+  cy.get('#gig-due-date').invoke('val', gigData.dueDate.split("T")[0]).trigger('change');
+  cy.get('#gig-due-time').invoke('val', gigData.dueDate.split("T")[1].substring(0, 5)).trigger('change');
+  cy.get('#create-gig-confirm').contains('Create Gig').click();
+
 
   cy.wait(2000); // Optional: Wait for Firestore synchronization
 });

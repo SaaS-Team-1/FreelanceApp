@@ -65,17 +65,15 @@ function Sidebar() {
 
   return (
     <aside
-      className={`sticky top-0 h-screen ${
-        isExpanded ? "w-fit" : "w-20"
-      } fixed flex flex-col justify-between bg-surface-container p-4 text-on-surface transition-all duration-300`}
+      className={`sticky top-0 h-screen ${isExpanded ? "w-fit" : "w-20"
+        } fixed flex flex-col justify-between bg-surface-container p-4 text-on-surface transition-all duration-300`}
       style={{ fontFamily: "Inter, sans-serif" }}
     >
       {/* Toggle Button */}
       <button
         onClick={toggleSidebar}
-        className={`mb-4 rounded-md text-lg hover:bg-surface-dim ${
-          isExpanded ? "self-end" : "self-center"
-        }`}
+        className={`mb-4 rounded-md text-lg hover:bg-surface-dim ${isExpanded ? "self-end" : "self-center"
+          }`}
       >
         <FaBars className="text-primary" />
       </button>
@@ -171,6 +169,7 @@ function Sidebar() {
           icon={<FaSignOutAlt />}
           label="Logout"
           isExpanded={isExpanded}
+          id="logout-button"
           onClick={() => auth.signOut()}
         />
       </div>
@@ -185,6 +184,7 @@ interface SidebarItemProps {
   isActive?: boolean;
   isExpanded: boolean;
   onClick?: () => void;
+  id?: string;
 }
 
 function SidebarItem({
@@ -193,13 +193,14 @@ function SidebarItem({
   isActive,
   isExpanded,
   onClick,
+  id,
 }: SidebarItemProps) {
   return (
     <div
+      id={id}
       onClick={onClick}
-      className={`flex cursor-pointer items-center rounded-lg p-3 text-primary transition-colors duration-200 ${
-        isActive && "bg-surface-dim"
-      } ${isExpanded ? "justify-start gap-3" : "justify-center"}
+      className={`flex cursor-pointer items-center rounded-lg p-3 text-primary transition-colors duration-200 ${isActive && "bg-surface-dim"
+        } ${isExpanded ? "justify-start gap-3" : "justify-center"}
       hover:`}
     >
       <div className={`text-lg`}>{icon}</div>

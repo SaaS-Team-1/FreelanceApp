@@ -141,6 +141,7 @@ function EditCreateGigModal({
                 Title
               </label>
               <input
+                id="gig-title"
                 type="text"
                 value={gigData.title}
                 onChange={(e) =>
@@ -158,6 +159,7 @@ function EditCreateGigModal({
                 Description
               </label>
               <textarea
+                id="gig-description"
                 value={gigData.description}
                 onChange={(e) =>
                   setGigData({ ...gigData, description: e.target.value })
@@ -175,6 +177,7 @@ function EditCreateGigModal({
                   Price
                 </label>
                 <input
+                  id="gig-price"
                   type="number"
                   disabled={editable}
                   value={gigData.price || ""}
@@ -198,6 +201,7 @@ function EditCreateGigModal({
                   Location
                 </label>
                 <input
+                  id="gig-location"
                   type="text"
                   value={gigData.location}
                   onChange={(e) =>
@@ -215,6 +219,7 @@ function EditCreateGigModal({
                 Category
               </label>
               <select
+                id="gig-category"
                 value={gigData.category}
                 onChange={(e) =>
                   setGigData({ ...gigData, category: e.target.value })
@@ -239,6 +244,7 @@ function EditCreateGigModal({
                   Due Date
                 </label>
                 <Datepicker
+                  id="gig-due-date"
                   minDate={new Date(Date.now())}
                   color="surface-container"
                   value={gigData.dueDate.toDate()}
@@ -252,6 +258,7 @@ function EditCreateGigModal({
                 </label>
                 <div className="relative">
                   <input
+                    id="gig-due-time"
                     type="time"
                     value={gigData.dueDate
                       .toDate()
@@ -276,7 +283,7 @@ function EditCreateGigModal({
             <Button onClick={onClose} color="surface-container" type="button">
               Close
             </Button>
-            <Button color="primary" type="submit">
+            <Button id="create-gig-confirm" color="primary" type="submit">
               {editable ? "Save Changes" : "Create Gig"}
             </Button>
           </div>
