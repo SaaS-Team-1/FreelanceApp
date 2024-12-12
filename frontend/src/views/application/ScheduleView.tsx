@@ -298,12 +298,12 @@ function ScheduleView() {
   };
 
   return (
-    <div className="relative h-screen w-full p-4">
+    <div className="relative h-screen w-full p-4 sm:p-4">
       {/* Horizontal Scrollable Container */}
       <Tabs aria-label="Schedule Tabs" variant="fullWidth">
         <Tabs.Item id="pending-gigs-tab" active title="Pending Gigs" icon={FaToggleOff}>
           <div id="pending-gigs" className="scrollbar size-full overflow-y-scroll rounded-lg p-4">
-            <h1 className="dark:text-white mb-3 text-xl font-bold">
+            <h1 className="dark:text-white mb-3 sm:text-xl font-bold">
               Pending Gigs
             </h1>
             <PostedGigListSmall

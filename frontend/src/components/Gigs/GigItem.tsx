@@ -31,8 +31,8 @@ function GigItem({
       `} // Hover effect applied conditionally
       onClick={() => enableSelection && onSeeMoreClick(gig, lister)} // Conditional click handler
     >
-      <div className="mb-2 flex w-full items-center rounded-lg bg-primary-container p-2">
-        <div className="ml-1 flex w-full flex-col">
+      <div className="mb-2 flex md:w-full items-center rounded-lg bg-primary-container p-2">
+        <div className="ml-1 flex md:w-full flex-col">
           <h3 className="line-clamp-2 text-lg font-bold text-on-primary-container" id="gig-title">
             {gig.title.toUpperCase()}
           </h3>

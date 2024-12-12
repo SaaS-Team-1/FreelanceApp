@@ -50,7 +50,7 @@ export const flowbiteTheme: CustomFlowbiteTheme = {
           "grid w-full grid-flow-col rounded-t-xl text-sm font-medium",
       },
       tabitem: {
-        base: "flex border-gray-300  border-b border-x items-center justify-center p-4 text-sm font-medium first:ml-0 disabled:cursor-not-allowed disabled:text-gray-400 disabled:dark:text-gray-500",
+        base: "flex border-gray-300 border-b border-x items-center justify-center p-4 text-sm font-medium first:ml-0 disabled:cursor-not-allowed disabled:text-gray-400 disabled:dark:text-gray-500",
         variant: {
           default: {
             base: "rounded-t-lg ",
