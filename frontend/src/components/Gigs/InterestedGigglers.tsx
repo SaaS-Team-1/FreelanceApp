@@ -336,16 +336,16 @@ const InterestedGigglers: React.FC<InterestedGigglersProps> = ({
 
   return (
     <div className="relative rounded-lg bg-white">
-      {applicantStatuses.length && (
-        <>
-          <h4 className="mb-2 text-2xl font-bold text-primary">
-            Interested Gigglers
-          </h4>
+      <h4 className="mb-2 text-2xl font-bold text-primary">
+        Interested Gigglers
+      </h4>
 
-          <div className="h-fit">
-            <div>{applicantStatuses.map(renderApplicationStatus)}</div>
-          </div>
-        </>
+      {applicantStatuses.length > 0 ? (
+        <div className="h-fit">
+          <div>{applicantStatuses.map(renderApplicationStatus)}</div>
+        </div>
+      ) : (
+        <div className="h-fit ml-1"> No interested Gigglers</div>
       )}
     </div>
   );
