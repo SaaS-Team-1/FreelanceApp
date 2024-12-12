@@ -274,11 +274,11 @@ function ChatPage() {
   }, [application?.applicationId, db]);
   if (!user) return;
   return (
-    <div className="flex h-screen w-full justify-center rounded-xl p-4">
+    <div id="chat-page" className="flex h-screen w-full justify-center rounded-xl p-4">
       {!chatsLoading ? (
         <>
-          <div className="flex w-full justify-center rounded-xl bg-surface-container">
-            <div className="scrollbar w-3/5 overflow-y-auto border-surface-dim border-r">
+          <div id="chat-list" className="flex w-full justify-center rounded-xl bg-surface-container">
+            <div id="active-chats" className="scrollbar w-3/5 overflow-y-auto border-surface-dim border-r">
               <h2 className="p-4 text-lg font-bold">Active Chats</h2>
               {chats.map((chat) => (
                 <div
@@ -299,7 +299,7 @@ function ChatPage() {
               ))}
             </div>
 
-            <div className="flex size-full w-full flex-col overflow-y-auto">
+            <div id="chat-window" className="flex size-full w-full flex-col overflow-y-auto">
               {selectedChat ? (
                 <>
                   <ChatHeader
@@ -315,7 +315,7 @@ function ChatPage() {
                     onSeeGigDetails={() => setIsGigDetailsOpen(true)}
                   />
 
-                  <div className="scrollbar flex size-full w-full flex-col overflow-y-scroll p-4">
+                  <div id="messages" className="scrollbar flex size-full w-full flex-col overflow-y-scroll p-4">
                     <ChatWindow
                       messages={messages.map((message) => ({
                         text: message.content,
@@ -328,7 +328,7 @@ function ChatPage() {
                       }))}
                     />
                     {gig && (
-                      <div className="sticky bottom-0 mt-4 flex justify-center">
+                      <div id="chat-card" className="sticky bottom-0 mt-4 flex justify-center">
                         <ChatCard
                           gig={gig}
                           application={application}
@@ -338,8 +338,9 @@ function ChatPage() {
                       </div>
                     )}
                   </div>
-
-                  <MessageInput
+<div id="message-input">
+<MessageInput
+                  
                     chatId={selectedChat.chatId}
                     currentUserId={user?.uid || ""}
                     recipientId={
@@ -350,9 +351,11 @@ function ChatPage() {
                     db={db}
                     onMessageSent={handleMessageSent} // Notify parent after message is sent
                   />
+</div>
+                  
                 </>
               ) : (
-                <div className="flex items-center justify-center text-gray-500">
+                <div id="no-chat-selected" className="flex items-center justify-center text-gray-500">
                   No chat selected
                 </div>
               )}

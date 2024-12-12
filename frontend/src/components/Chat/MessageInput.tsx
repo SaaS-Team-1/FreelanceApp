@@ -64,6 +64,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
         className="scrollbar focus:border-0 focus:ring-4 focus:ring-primary/20 h-12 flex-1 resize-none overflow-y-auto rounded-lg border-surface-dim bg-primary-container p-3 text-on-primary-container outline-none placeholder:text-on-primary-container/50"
       />
       <button
+        id="send-button"
         onClick={handleSend}
         className="ml-3 h-full rounded-lg bg-primary px-4 py-2 text-on-primary hover:bg-primary/80"
       >
