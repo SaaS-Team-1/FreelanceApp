@@ -12,8 +12,8 @@ export const createUser = onCall(async (request) => {
       };
     }
 
-    if (!email.toLowerCase().endsWith('kuleuven.be')){
-      return {status: "error", message: "Ku Leuven email is required"};
+    if (!email.toLowerCase().endsWith("kuleuven.be")) {
+      return { status: "error", message: "Ku Leuven email is required" };
     }
 
     // Create Firebase Authentication user
@@ -21,6 +21,9 @@ export const createUser = onCall(async (request) => {
       email: email,
       password: password,
       displayName: displayName,
+      photoURL: `https://randomuser.me/api/portraits/${
+        Math.random() < 0.5 ? "male" : "women"
+      }/${Math.floor(Math.random() * (99 - 1) + 1)}.jpg`,
     });
 
     // Prepare Firestore user document
@@ -34,8 +37,7 @@ export const createUser = onCall(async (request) => {
       profile: {
         bio: profile.bio || "",
         credits: 0,
-        picture:
-          profile.picture || "https://avatars.githubusercontent.com/u/18249920",
+        picture: userRecord.photoURL,
         location: profile.location || "",
         degree: profile.degree || "",
         skills: profile.skills || "",

@@ -116,19 +116,6 @@ export default function LoginView() {
     }
   };
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      if (screen == "login") {
-        handleLogin(e);
-      } else if (screen == "forgot") {
-        handleForgot(e);
-      } else {
-        handleRegister(e);
-      }
-    }
-  };
-
   const loginSection = (
     <div className="w-full space-y-6">
       <div>
@@ -398,8 +385,8 @@ export default function LoginView() {
   }
 
   return (
-    <div className="font-[sans-serif]" onKeyDown={handleKeyDown} tabIndex={0}>
-      <div className="flex flex-col min-h-screen items-center justify-center px-4 py-6 space-y-4">
+    <div className="font-[sans-serif]" tabIndex={0}>
+      <div className="flex min-h-screen flex-col items-center justify-center space-y-4 px-4 py-6">
         {errorMessage && (
           <Alert color="failure" icon={HiInformationCircle}>
             <span>
