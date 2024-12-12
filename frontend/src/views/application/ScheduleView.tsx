@@ -240,6 +240,7 @@ function ScheduleView() {
     }
   };
 
+  const isSmall = width < 700;
   return (
     <div className="relative h-screen w-full p-4 sm:p-4">
       {/* Horizontal Scrollable Container */}
@@ -247,7 +248,7 @@ function ScheduleView() {
         <Tabs.Item
           id="pending-gigs-tab"
           active
-          title="Pending Gigs"
+          title={!isSmall ? "Pending Gigs" : ""}
           icon={FaToggleOff}
         >
           <div
@@ -267,7 +268,7 @@ function ScheduleView() {
         <Tabs.Item
           id="scheduled-gigs-tab"
           active
-          title="Scheduled Gigs"
+          title={!isSmall ? "Scheduled Gigs" : ""}
           icon={FaCalendar}
         >
           <div
@@ -290,7 +291,7 @@ function ScheduleView() {
         <Tabs.Item
           id="awaiting-approval-tab"
           active
-          title="Awaiting Approval"
+          title={!isSmall ? "Awaiting Approval" : ""}
           icon={FaClock}
         >
           <div
@@ -311,7 +312,7 @@ function ScheduleView() {
         <Tabs.Item
           id="completed-gigs-tab"
           active
-          title="Completed Gigs"
+          title={!isSmall ? "Completed Gigs" : ""}
           icon={FaCheck}
         >
           <div
