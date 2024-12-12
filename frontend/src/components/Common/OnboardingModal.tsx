@@ -43,6 +43,7 @@ const tutorialSteps = [
       "Once you've created a gig you can see it in the My Posted Gigs page, accessible through the sidebar. This page also allows you to view who applied for your gig and to assign it to someone to complete.",
     image: "/screenshots/chat.png", // Screenshot for this step
   },
+  //HERE
   {
     title: "Coins",
     content:
