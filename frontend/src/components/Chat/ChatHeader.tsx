@@ -87,14 +87,14 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
         setOpenModal={setOpenError}
         title={<span className="ml-2 text-2xl">Report User</span>}
       >
-        <div className="flex w-fit flex-col text-on-surface">
+        <div className="flex flex-col w-full">
           <span className="mb-4 text-sm">
             If you wish to report a user, add the reason and send the generated
             email.
           </span>
           <textarea
             onChange={(e) => setMessage(e.target.value)}
-            className="scrollbar m-2 h-[20vh] w-full overflow-x-hidden overflow-y-scroll whitespace-pre-wrap text-pretty rounded-md bg-surface-container-low text-left text-sm"
+            className="scrollbar h-[20vh] w-full overflow-x-hidden overflow-y-scroll whitespace-pre-wrap text-pretty rounded-md bg-surface-container-low text-left text-sm"
           >
             {message}
           </textarea>

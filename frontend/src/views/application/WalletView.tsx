@@ -1,10 +1,9 @@
 import { Transaction, User } from "@/utils/database/schema";
 import { FaCoins, FaWallet } from "react-icons/fa6";
-import { Badge, Tabs } from "flowbite-react";
+import { Badge, Modal, Tabs } from "flowbite-react";
 import CoinPurchaseForm from "@/components/Wallet/CoinPurchaseForm";
 import TransactionItem from "@/components/Wallet/TransactionItems";
 import WithdrawForm from "@/components/Wallet/WithdrawForm";
-import CommonModal from "@/components/Common/CommonModal";
 import { useEffect, useState } from "react";
 import CheckoutForm from "@/components/Wallet/CheckoutForm";
 import { useSearchParams } from "react-router-dom";
@@ -74,8 +73,8 @@ export default function WalletView() {
           <h2 className="mb-4 text-xl font-bold text-white">Deposit</h2>
           <Tabs aria-label="Deposit Tabs" variant="fullWidth">
             <Tabs.Item active title="Deposit" icon={FaWallet}>
-              <div className="w-[50vw] justify-self-center px-6">
-                <div className="flex justify-between my-4 items-start">
+              <div className="w-[50vw] justify-self-center px-6 sm:w-fit">
+                <div className="my-4 flex items-start justify-between">
                   <h2 className="mb-4 text-xl font-semibold">Buy Coins</h2>
                   <div className="rounded px-2 py-1 text-sm ">
                     100 coins = 1€
@@ -92,8 +91,8 @@ export default function WalletView() {
             </Tabs.Item>
 
             <Tabs.Item title="Withdraw" icon={FaWallet}>
-              <div className="w-[50vw] justify-self-center px-6">
-                <div className="flex justify-between my-4 items-start">
+              <div className="w-[50vw] justify-self-center px-6 sm:w-fit">
+                <div className="my-4 flex items-start justify-between">
                   <h2 className="mb-4 text-xl font-semibold">
                     Withdraw to bank account
                   </h2>
@@ -126,32 +125,25 @@ export default function WalletView() {
           </div>
         </div>
       </div>
-      {returnOpen && sessionId ? (
-        <CommonModal
-          onClose={() => {
-            setReturnOpen(false);
-            setSearchParams({});
-          }}
-          isOpen={returnOpen}
-        >
-          <div className="h-40 w-96 p-5">
+      <Modal
+        onClose={() => {
+          setReturnOpen(false);
+          setSearchParams({});
+        }}
+        show={returnOpen}
+      >
+        <div className="h-40 w-96 p-5">
+          {sessionId && (
             <PurchaseReturn email={userDoc?.email} sessionId={sessionId} />
-          </div>
-        </CommonModal>
-      ) : (
-        <></>
-      )}
-      {checkoutOpen ? (
-        <CommonModal
-          scroll
-          onClose={() => setCheckoutOpen(false)}
-          isOpen={checkoutOpen}
-        >
+          )}
+        </div>
+      </Modal>
+      <Modal onClose={() => setCheckoutOpen(false)} show={checkoutOpen}>
+        <Modal.Header></Modal.Header>
+        <Modal.Body>
           <CheckoutForm coins={coins}></CheckoutForm>
-        </CommonModal>
-      ) : (
-        <></>
-      )}
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }

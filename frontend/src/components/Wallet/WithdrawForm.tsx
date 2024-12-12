@@ -30,7 +30,7 @@ export default function WithdrawForm({ currentUser }: { currentUser?: User }) {
 
   if ((currentUser.coins || 0) < 1000)
     return (
-      <div className="flex items-center justify-center space-y-4 2xl:h-[35vh] 2xl:w-[25vw]">
+      <div className="flex items-center justify-center space-y-4 sm:mx-4">
         <h2 className="mb-4 text-xl font-semibold text-error">
           Minimum amount to withdraw is 1,000 Coins!
         </h2>
