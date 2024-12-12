@@ -43,7 +43,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
 
   return (
     <>
-      <div className="flex w-full items-center justify-between p-4 border-b border-surface-dim">
+      <div className="flex w-full items-center justify-between border-b border-surface-dim p-4">
         <div className="flex items-center gap-4">
           <UserProfilePicture
             user={chatPartner}
@@ -76,7 +76,19 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
         <div className="font-bold">
           {" "}
           {isLister ? "Gig Status:  " : "Application Status:  "}
-          <Badge color={isLister ? "secondary" : "primary"} size="sm">
+          <Badge
+            size="sm"
+            className="ml-auto justify-self-end text-nowrap capitalize"
+            color={
+              status === "open"
+                ? "tertiary"
+                : status === "in-progress"
+                  ? "primary"
+                  : status === "awaiting-confirmation"
+                    ? "warning"
+                    : "surface-container"
+            }
+          >
             {status}
           </Badge>
         </div>
@@ -87,14 +99,14 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
         setOpenModal={setOpenError}
         title={<span className="ml-2 text-2xl">Report User</span>}
       >
-        <div className="flex w-fit flex-col text-on-surface">
+        <div className="flex w-full flex-col">
           <span className="mb-4 text-sm">
             If you wish to report a user, add the reason and send the generated
             email.
           </span>
           <textarea
             onChange={(e) => setMessage(e.target.value)}
-            className="scrollbar m-2 h-[20vh] w-full overflow-x-hidden overflow-y-scroll whitespace-pre-wrap text-pretty rounded-md bg-surface-container-low text-left text-sm"
+            className="scrollbar h-[20vh] w-full overflow-x-hidden overflow-y-scroll whitespace-pre-wrap text-pretty rounded-md bg-surface-container-low text-left text-sm"
           >
             {message}
           </textarea>

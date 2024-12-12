@@ -33,7 +33,7 @@ export default function CheckoutForm({ coins }: CheckoutFormParams) {
   }, [coins, email, functions]);
 
   return (
-    <div id="checkout" className="w-fit min-w-[25vw] justify-self-center">
+    <div id="checkout" className="w-full justify-self-center">
       <EmbeddedCheckoutProvider
         stripe={stripePromise}
         options={{ fetchClientSecret }}
