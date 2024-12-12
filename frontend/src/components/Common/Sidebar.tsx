@@ -25,10 +25,10 @@ function Sidebar() {
   const [userDb, setUser] = useState<User | null>(null);
   const auth = useAuth();
   const { data: firebaseUser } = useUser(); // Firebase user object
-  const [isExpanded, setIsExpanded] = useState(true);
+  const { width } = useWindowDimensions();
+  const [isExpanded, setIsExpanded] = useState(width>640);
   const navigate = useNavigate();
   const location = useLocation();
-  const { height, width } = useWindowDimensions();
 
   // Toggle the sidebar expanded/collapsed state
   const toggleSidebar = () => {
