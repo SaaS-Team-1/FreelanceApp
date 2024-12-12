@@ -54,25 +54,25 @@ const tutorialSteps = [
     title: "Profile",
     content:
       "Navigating to Profile with the sidebar allows you to view and edit details such as your bio, number of credits taken in university, and faculty.",
-    image: "/onboarding/chat.png", // Screenshot for this step
+    image: "/onboarding/profile.png", // Screenshot for this step
   },
   {
     title: "Login Streak",
     content:
       "Logging in daily rewards you with a small number of coins, increasing every week the streak continues. Simply navigate to the home page to view new available gigs and receive your reward. Remember to login everyday or your streak will reset :).",
-    image: "/onboarding/chat.png", // Screenshot for this step
+    image: "/onboarding/login-streak.png", // Screenshot for this step
   },
   {
     title: "Account Level",
     content:
       "The number of gigs you've completed is saved and allows you to level up, which allows other users to see how experienced you are. Complete plenty of gigs to reach Pro level!",
-    image: "/onboarding/chat.png", // Screenshot for this step
+    image: "/onboarding/level.png", // Screenshot for this step
   },
   {
     title: "Leaderboard",
     content:
       "Users who complete the most gigs will be displayed in the leaderboard for everyone to see.",
-    image: "/onboarding/chat.png", // Screenshot for this step
+    image: "/onboarding/leaderboard.png", // Screenshot for this step
   },
 ];
 
