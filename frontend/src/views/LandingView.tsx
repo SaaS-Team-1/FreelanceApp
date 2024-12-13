@@ -4,18 +4,6 @@ import { Link } from "react-router-dom";
 const LandingPage = () => {
   return (
     <div className="w-full bg-surface text-on-surface">
-      {/* Navigation */}
-      <nav className="bg-white shadow-lg">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 justify-between">
-            <div className="flex items-center">
-              <span className="text-2xl font-bold text-primary">UniGig</span>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      {/* Hero Section */}
       <div className="w-full bg-primary text-on-primary">
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-2">
@@ -30,17 +18,18 @@ const LandingPage = () => {
               </p>
 
               <div className="flex items-center space-x-4">
-              
-              <Button 
-                color="on-primary" 
-                to={"login?register=1"} as = {Link} 
-                className="border-2 bg-on-secondary font-bold px-4 py-2 rounded-md text-primary hover:opacity-80">
-                Post A Gig
-              </Button>
+                <Button
+                  color="surface-container"
+                  to={"login?register=1"}
+                  as={Link}
+                  className="text-on-surface"
+                >
+                  Get Started
+                </Button>
               </div>
             </div>
             <div className="hidden md:block">
-              <img src="/homepage.webp" className="rounded-xl"/>
+              <img src="/homepage.webp" className="rounded-xl" />
             </div>
           </div>
         </div>
@@ -71,9 +60,9 @@ const LandingPage = () => {
               },
             ].map((feature, index) => (
               <div key={index} className="p-6 text-center">
-                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary-container">
+                <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-primary-container">
                   <svg
-                    className="h-8 w-8 text-primary"
+                    className="size-8 text-primary"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -125,7 +114,7 @@ const LandingPage = () => {
       <div className="w-full bg-primary py-16 text-on-primary">
         <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
           <h2 className="mb-4 text-3xl font-bold">Ready to Get Started?</h2>
-          <p className="mb-8 text-xl">
+          <p className="text-xl">
             Join thousands of students helping each other succeed
           </p>
         </div>
