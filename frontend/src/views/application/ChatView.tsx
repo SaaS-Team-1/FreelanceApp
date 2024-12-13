@@ -21,10 +21,8 @@ import ChatHeader from "@/components/Chat/ChatHeader";
 import ChatWindow from "@/components/Chat/ChatWindow";
 import MessageInput from "@/components/Chat/MessageInput";
 import ChatCard from "@/components/Chat/ChatCard";
-import GigDetailsModal from "@/components/Chat/GigDetailsModal";
-import { useNavigate } from "react-router";
 import Loading from "@/components/Loading";
-import { Gig, User, Application } from "@/utils/database/schema";
+import { Gig, Application } from "@/utils/database/schema";
 import GigDetailModal from "@/components/Gigs/GigDetailModal";
 
 interface ExtendedChat {
@@ -245,12 +243,6 @@ function ChatPage() {
     setChats(updatedChats);
   };
 
-  const navigate = useNavigate();
-
-  const handleGoToMyGigs = () => {
-    navigate("/app/posted-gigs");
-  };
-
   useEffect(() => {
     if (gig?.gigId) {
       const gigRef = doc(gigsRef(db), gig.gigId);
@@ -274,11 +266,20 @@ function ChatPage() {
   }, [application?.applicationId, db]);
   if (!user) return;
   return (
-    <div id="chat-page" className="flex h-screen w-full justify-center rounded-xl p-4">
+    <div
+      id="chat-page"
+      className="flex h-screen w-full justify-center rounded-xl p-4"
+    >
       {!chatsLoading ? (
         <>
-          <div id="chat-list" className="flex w-full justify-center rounded-xl bg-surface-container">
-            <div id="active-chats" className="scrollbar w-3/5 overflow-y-auto border-surface-dim border-r">
+          <div
+            id="chat-list"
+            className="flex w-full justify-center rounded-xl bg-surface-container"
+          >
+            <div
+              id="active-chats"
+              className="scrollbar w-3/5 overflow-y-auto border-r border-surface-dim"
+            >
               <h2 className="p-4 text-lg font-bold">Active Chats</h2>
               {chats.map((chat) => (
                 <div
@@ -299,7 +300,10 @@ function ChatPage() {
               ))}
             </div>
 
-            <div id="chat-window" className="flex size-full w-full flex-col overflow-y-auto">
+            <div
+              id="chat-window"
+              className="flex size-full w-full flex-col overflow-y-auto"
+            >
               {selectedChat ? (
                 <>
                   <ChatHeader
@@ -315,7 +319,10 @@ function ChatPage() {
                     onSeeGigDetails={() => setIsGigDetailsOpen(true)}
                   />
 
-                  <div id="messages" className="scrollbar flex size-full w-full flex-col overflow-y-scroll p-4">
+                  <div
+                    id="messages"
+                    className="scrollbar flex size-full w-full flex-col overflow-y-scroll p-4"
+                  >
                     <ChatWindow
                       messages={messages.map((message) => ({
                         text: message.content,
@@ -328,7 +335,10 @@ function ChatPage() {
                       }))}
                     />
                     {gig && (
-                      <div id="chat-card" className="sticky bottom-0 mt-4 flex justify-center">
+                      <div
+                        id="chat-card"
+                        className="sticky bottom-0 mt-4 flex justify-center"
+                      >
                         <ChatCard
                           gig={gig}
                           application={application}
@@ -338,24 +348,25 @@ function ChatPage() {
                       </div>
                     )}
                   </div>
-<div id="message-input">
-<MessageInput
-                  
-                    chatId={selectedChat.chatId}
-                    currentUserId={user?.uid || ""}
-                    recipientId={
-                      selectedChat.listerId === user?.uid
-                        ? selectedChat.applicantId
-                        : selectedChat.listerId
-                    }
-                    db={db}
-                    onMessageSent={handleMessageSent} // Notify parent after message is sent
-                  />
-</div>
-                  
+                  <div id="message-input">
+                    <MessageInput
+                      chatId={selectedChat.chatId}
+                      currentUserId={user?.uid || ""}
+                      recipientId={
+                        selectedChat.listerId === user?.uid
+                          ? selectedChat.applicantId
+                          : selectedChat.listerId
+                      }
+                      db={db}
+                      onMessageSent={handleMessageSent} // Notify parent after message is sent
+                    />
+                  </div>
                 </>
               ) : (
-                <div id="no-chat-selected" className="flex items-center justify-center text-gray-500">
+                <div
+                  id="no-chat-selected"
+                  className="flex items-center justify-center text-gray-500"
+                >
                   No chat selected
                 </div>
               )}

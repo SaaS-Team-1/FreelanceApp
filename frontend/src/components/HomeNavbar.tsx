@@ -1,6 +1,7 @@
 import { Navbar, NavbarBrand, Button } from "flowbite-react";
 import { Link } from "react-router";
 
+
 export default function HomeNavbar() {
   return (
     <Navbar fluid>
