@@ -23,14 +23,15 @@ import {
 import { useCallback } from "react";
 import GigDetailModal from "@/components/Gigs/GigDetailModal";
 import { Tabs } from "flowbite-react";
-import { FaCalendar, FaCheck, FaClock, FaComments, FaToggleOff } from "react-icons/fa";
+import { FaCalendar, FaCheck, FaClock, FaToggleOff } from "react-icons/fa";
 import { toast } from "react-toastify";
+import useWindowDimensions from "@/utils/useWindowDimensions";
 
 function ScheduleView() {
   const db = useFirestore();
   const auth = useAuth();
   const currUser = auth.currentUser;
-
+  const { height, width } = useWindowDimensions();
   const [selectedGig, setSelectedGig] = useState<Gig | null>(null);
   const [selectedLister, setSelectedLister] = useState<User | null>(null);
   const [isGigDetailsOpen, setIsGigDetailsOpen] = useState(false);
@@ -176,64 +177,6 @@ function ScheduleView() {
     }
   };
 
-  const handleUndoClick = async (gigId: string) => {
-    if (!currUser) {
-      console.error("No current user found");
-      return;
-    }
-
-    try {
-      const applicationQuery = query(
-        applicationsRef(db),
-        where("applicantId", "==", currUser.uid),
-        where("gigId", "==", gigId),
-        where("status", "==", "pending"),
-      );
-
-      const applicationSnapshot = await getDocs(applicationQuery);
-
-      if (!applicationSnapshot.empty) {
-        const applicationDoc = applicationSnapshot.docs[0];
-        const applicationId = applicationDoc.id;
-
-        await updateDoc(doc(applicationsRef(db), applicationId), {
-          status: "discarded",
-        });
-
-        const chatQuery = query(
-          chatsRef(db),
-          where("gigId", "==", gigId),
-          where("applicantId", "==", currUser.uid),
-        );
-        const chatSnapshot = await getDocs(chatQuery);
-        const chatUpdates = chatSnapshot.docs.map((chatDoc) =>
-          updateDoc(chatDoc.ref, {
-            lastUpdate: serverTimestamp(),
-          }),
-        );
-        await Promise.all(chatUpdates);
-
-        const gigDoc = await getDoc(doc(gigsRef(db), gigId));
-        if (gigDoc.exists()) {
-          const gigData = gigDoc.data() as Gig;
-          await addDoc(notificationsRef(db), {
-            userId: gigData.listerId,
-            notificationMessage: `${currUser.displayName}'s application has been canceled.`,
-            createdAt: serverTimestamp(),
-          });
-        }
-
-        setPendingGigs((prevPending) =>
-          prevPending.filter(({ gig }) => gig.gigId !== gigId),
-        );
-        await fetchGigs();
-      }
-    } catch (error) {
-      console.error("Error undoing application:", error);
-      toast.error("Failed to undo application. Please try again.");
-    }
-  };
-
   const handleCompleteGig = async (gigId: string) => {
     if (!currUser) {
       console.error("No current user found");
@@ -301,9 +244,17 @@ function ScheduleView() {
     <div className="relative h-screen w-full p-4 sm:p-4">
       {/* Horizontal Scrollable Container */}
       <Tabs aria-label="Schedule Tabs" variant="fullWidth">
-        <Tabs.Item id="pending-gigs-tab" active title="Pending Gigs" icon={FaToggleOff}>
-          <div id="pending-gigs" className="scrollbar size-full overflow-y-scroll rounded-lg p-4">
-            <h1 className="dark:text-white mb-3 sm:text-xl font-bold">
+        <Tabs.Item
+          id="pending-gigs-tab"
+          active
+          title="Pending Gigs"
+          icon={FaToggleOff}
+        >
+          <div
+            id="pending-gigs"
+            className="scrollbar size-full overflow-y-scroll rounded-lg p-4"
+          >
+            <h1 className="dark:text-white mb-3 font-bold sm:text-xl">
               Pending Gigs
             </h1>
             <PostedGigListSmall
@@ -313,8 +264,16 @@ function ScheduleView() {
             />
           </div>
         </Tabs.Item>
-        <Tabs.Item id="scheduled-gigs-tab" active title="Scheduled Gigs" icon={FaCalendar}>
-          <div id="scheduled-gigs" className="scrollbar size-full overflow-y-scroll rounded-lg p-4">
+        <Tabs.Item
+          id="scheduled-gigs-tab"
+          active
+          title="Scheduled Gigs"
+          icon={FaCalendar}
+        >
+          <div
+            id="scheduled-gigs"
+            className="scrollbar size-full overflow-y-scroll rounded-lg p-4"
+          >
             <h1 className="dark:text-white mb-3 text-xl font-bold">
               Scheduled Gigs
             </h1>
@@ -328,8 +287,16 @@ function ScheduleView() {
           </div>
         </Tabs.Item>
 
-        <Tabs.Item id="awaiting-approval-tab" active title="Awaiting Approval" icon={FaClock}>
-          <div id="awaiting-approval" className="scrollbar size-full overflow-y-scroll rounded-lg p-4">
+        <Tabs.Item
+          id="awaiting-approval-tab"
+          active
+          title="Awaiting Approval"
+          icon={FaClock}
+        >
+          <div
+            id="awaiting-approval"
+            className="scrollbar size-full overflow-y-scroll rounded-lg p-4"
+          >
             <h1 className="dark:text-white mb-3 text-xl font-bold">
               Awaiting Approval
             </h1>
@@ -341,8 +308,16 @@ function ScheduleView() {
           </div>
         </Tabs.Item>
 
-        <Tabs.Item id="completed-gigs-tab" active title="Completed Gigs" icon={FaCheck}>
-          <div id="completed-gigs" className="scrollbar size-full overflow-y-scroll rounded-lg p-4">
+        <Tabs.Item
+          id="completed-gigs-tab"
+          active
+          title="Completed Gigs"
+          icon={FaCheck}
+        >
+          <div
+            id="completed-gigs"
+            className="scrollbar size-full overflow-y-scroll rounded-lg p-4"
+          >
             <h1 className="dark:text-white mb-3 text-xl font-bold">
               Completed Gigs
             </h1>

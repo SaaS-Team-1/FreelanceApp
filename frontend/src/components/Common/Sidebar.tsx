@@ -18,6 +18,7 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import CreateGigButton from "../Gigs/CreateGigButton";
 import { Tooltip } from "flowbite-react";
 import { FaCirclePlus } from "react-icons/fa6";
+import useWindowDimensions from "@/utils/useWindowDimensions";
 
 function Sidebar() {
   const db = useFirestore();
@@ -27,6 +28,7 @@ function Sidebar() {
   const [isExpanded, setIsExpanded] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
+  const { height, width } = useWindowDimensions();
 
   // Toggle the sidebar expanded/collapsed state
   const toggleSidebar = () => {
