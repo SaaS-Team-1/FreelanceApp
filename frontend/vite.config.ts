@@ -12,7 +12,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        assetFileNames: "[name]-DbvIPUr9.[ext]",
+        assetFileNames: "assets/[name]-DbvIPUr9.[ext]",
       },
     },
   },
