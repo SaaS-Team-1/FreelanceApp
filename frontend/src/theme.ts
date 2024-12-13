@@ -71,7 +71,7 @@ export const flowbiteTheme: CustomFlowbiteTheme = {
       },
     },
     tabitemcontainer: {
-      base: "",
+      base: "overflow-y-scroll scrollbar",
       variant: {
         default: "",
         underline: "",
