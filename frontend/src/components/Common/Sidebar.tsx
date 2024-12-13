@@ -9,7 +9,6 @@ import {
   FaBars,
   FaWallet,
   FaTable,
-  FaPlus,
 } from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth, useFirestore, useUser } from "@/utils/reactfire";
@@ -83,6 +82,7 @@ function Sidebar() {
       {/* Profile Section */}
       {isExpanded && userDb && (
         <div className="flex flex-col items-center rounded-xl bg-primary-container pb-2 pt-10">
+          <div className="text-lg font-bold">🔥{userDb.loginStreak || 0}</div>
           <UserProfilePicture
             user={userDb}
             size="large"
@@ -98,7 +98,6 @@ function Sidebar() {
           <p className="mb-2 text-xs text-on-primary-container">
             {userDb.email}
           </p>
-
           <Tooltip content="New Gig">
             <CreateGigButton color="transparent">
               <FaCirclePlus className="text-3xl text-primary" />

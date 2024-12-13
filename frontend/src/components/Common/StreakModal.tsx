@@ -45,29 +45,31 @@ export default function StreakModal({
       popup
       dismissible
     >
-      <Modal.Header />
+      <Modal.Header><div className="p-2">Login Streak!</div></Modal.Header>
 
       <Modal.Body>
-        <div className="text-center">
-          <HiOutlineGift className="mx-auto mb-4 size-14 text-yellow-500 dark:text-yellow-400" />
-          <h3 className="mb-2 text-lg font-medium text-gray-900 dark:text-gray-100">
-            Login Streak Achieved!
-          </h3>
-          <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+        <div className="mt-10 rounded-xl bg-surface-container py-8 text-center text-on-surface">
+          <HiOutlineGift className=" mx-auto size-20 text-amber-500 mb-6 text-bold" />
+
+          <p className="mb-4 text-lg ">
             You've logged in for{" "}
             <span className="font-semibold">{loginStreak} days</span> in a row!
           </p>
-          <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-lg">
             Your reward: <span className="font-semibold">{reward} coins</span>{" "}
             🎉
           </p>
-          <div className="flex justify-center gap-4">
-            <Button onClick={handleCloseModal} color="success">
-              Claim Reward
-            </Button>
-          </div>
         </div>
       </Modal.Body>
+      <Modal.Footer>
+        <Button
+          onClick={handleCloseModal}
+          color="tertiary"
+          className="ml-auto justify-self-end"
+        >
+          Claim Reward
+        </Button>
+      </Modal.Footer>
     </Modal>
   );
 }
