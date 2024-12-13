@@ -6,5 +6,5 @@ import "./gigs/gigPost.ts";
 import "./gigs/gigApply.ts";
 import "./chat.ts";
 import "./gigs/gigAssign.ts";
-// import "./notification.ts";
+import "./notification.ts";
 import "./gigs/gigComplete.ts";
