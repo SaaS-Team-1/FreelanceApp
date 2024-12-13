@@ -204,6 +204,17 @@ Cypress.Commands.add("loginUser", (email, password) => {
 
   cy.get(".firebaseui-id-submit").click();
   cy.visit("/app");
+  cy.get('.w-full > .bg-primary > .flex').contains("Next").click();
+  cy.get('.w-full > .bg-primary > .flex').contains("Next").click();
+  cy.get('.w-full > .bg-primary > .flex').contains("Next").click();
+  cy.get('.w-full > .bg-primary > .flex').contains("Next").click();
+  cy.get('.w-full > .bg-primary > .flex').contains("Next").click();
+  cy.get('.w-full > .bg-primary > .flex').contains("Next").click();
+  cy.get('.w-full > .bg-primary > .flex').contains("Next").click();
+  cy.get('.w-full > .bg-primary > .flex').contains("Next").click();
+  cy.get('.w-full > .bg-primary > .flex').contains("Next").click();
+  cy.get('.w-full > .bg-primary > .flex').contains("Next").click();
+  cy.get('.w-full > .bg-primary > .flex').contains("Close").click();
   cy.contains(email);
 });
 
