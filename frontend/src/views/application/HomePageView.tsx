@@ -8,6 +8,7 @@ import {
   orderBy,
   updateDoc,
   Timestamp,
+  increment,
 } from "firebase/firestore";
 import { useUser, useFirestore } from "@/utils/reactfire";
 import { Gig, User, Notification } from "@/utils/database/schema";
@@ -20,6 +21,7 @@ import CreateGigButton from "@/components/Gigs/CreateGigButton";
 import StreakModal from "@/components/Common/StreakModal";
 import { Badge } from "flowbite-react";
 import { FaCirclePlus } from "react-icons/fa6";
+import OnboardingModal from "@/components/Common/OnboardingModal";
 
 export default function OverviewView() {
   const { data: user } = useUser();
@@ -35,6 +37,7 @@ export default function OverviewView() {
   const [extendedUser, setExtendedUser] = useState<User | null>(null);
   const [openLoginStreak, setOpenLogStr] = useState(false);
   const [loginStreak, setLogStr] = useState(1);
+  const [openOnboarding, setOpenOnboarding] = useState(false);
 
   const fetchNotifications = async () => {
     if (!user) return;
@@ -165,6 +168,13 @@ export default function OverviewView() {
           const userDocRef = userDoc.ref;
           const userData = userDoc.data() as User; // Cast Firestore data to User type
           setExtendedUser(userData);
+          
+          if(!userData.firstLogin){
+            setOpenOnboarding(true);
+            await updateDoc(userDocRef, {
+              firstLogin: true,
+            });
+          }
 
           // Convert Firestore Timestamp to JavaScript Date for comparison
           const lastActivityDate = userData.lastActivity.toDate(); // Assuming lastActivity is a Firestore Timestamp
@@ -187,7 +197,7 @@ export default function OverviewView() {
             const loginStreak = userData.loginStreak;
             await updateDoc(userDocRef, {
               lastActivity: now,
-              loginStreak: loginStreak + 1,
+              loginStreak: increment(1),
             });
             setOpenLogStr(true);
             setLogStr(loginStreak + 1);
@@ -302,6 +312,8 @@ export default function OverviewView() {
           setOpenModal={setOpenLogStr}
           loginStreak={loginStreak}
         ></StreakModal>
+
+        <OnboardingModal isOpen={openOnboarding} onClose={() => setOpenOnboarding(false)}></OnboardingModal>
       </div>
 
       {/* Fixed Right Column for Notifications */}
