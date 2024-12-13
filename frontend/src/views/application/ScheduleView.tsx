@@ -246,7 +246,7 @@ function ScheduleView() {
       <Tabs
         aria-label="Schedule Tabs"
         variant="fullWidth"
-        className="xl:max-w-[70vw]"
+        className="w-full xl:w-[70vw]"
       >
         <Tabs.Item
           id="pending-gigs-tab"
