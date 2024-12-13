@@ -65,24 +65,24 @@ function Sidebar() {
 
   return (
     <aside
-      className={`sticky top-0 h-screen ${isExpanded ? "w-fit" : "w-20"
-        } fixed flex flex-col justify-between bg-surface-container p-4 text-on-surface transition-all duration-300`}
+      className={`sticky top-0 h-screen ${
+        isExpanded ? "w-fit" : "w-20"
+      } fixed flex flex-col justify-between bg-surface-container p-4 text-on-surface transition-all duration-300`}
       style={{ fontFamily: "Inter, sans-serif" }}
     >
       {/* Toggle Button */}
       <button
         onClick={toggleSidebar}
-        className={`mb-4 rounded-md text-lg hover:bg-surface-dim ${isExpanded ? "self-end" : "self-center"
-          }`}
+        className={`mb-4 rounded-md text-lg hover:bg-surface-dim ${
+          isExpanded ? "self-end" : "self-center"
+        }`}
       >
         <FaBars className="text-primary" />
       </button>
 
       {/* Profile Section */}
       {isExpanded && userDb && (
-        <div
-          className="flex flex-col items-center rounded-xl bg-primary-container pt-10 pb-2"
-        >
+        <div className="flex flex-col items-center rounded-xl bg-primary-container pb-2 pt-10">
           <UserProfilePicture
             user={userDb}
             size="large"
@@ -95,7 +95,9 @@ function Sidebar() {
               {userDb.displayName}
             </h2>
           </div>
-          <p className="text-xs mb-2 text-on-primary-container">{userDb.email}</p>
+          <p className="mb-2 text-xs text-on-primary-container">
+            {userDb.email}
+          </p>
 
           <Tooltip content="New Gig">
             <CreateGigButton color="transparent">
@@ -130,6 +132,7 @@ function Sidebar() {
           isExpanded={isExpanded}
           isActive={location.pathname === "/app/posted-gigs"}
           onClick={() => navigate("/app/posted-gigs")}
+          hideOnSmall
         />
         <SidebarItem
           icon={<FaCalendarAlt />}
@@ -153,6 +156,7 @@ function Sidebar() {
           isExpanded={isExpanded}
           isActive={location.pathname === "/app/wallet"}
           onClick={() => navigate("/app/wallet")}
+          hideOnSmall
         />
 
         <SidebarItem
@@ -185,6 +189,7 @@ interface SidebarItemProps {
   isExpanded: boolean;
   onClick?: () => void;
   id?: string;
+  hideOnSmall?: boolean;
 }
 
 function SidebarItem({
@@ -194,13 +199,16 @@ function SidebarItem({
   isExpanded,
   onClick,
   id,
+  hideOnSmall = false,
 }: SidebarItemProps) {
   return (
     <div
       id={id}
       onClick={onClick}
-      className={`flex cursor-pointer items-center rounded-lg p-3 text-primary transition-colors duration-200 ${isActive && "bg-surface-dim"
-        } ${isExpanded ? "justify-start gap-3" : "justify-center"}
+      className={`flex cursor-pointer items-center rounded-lg p-3 text-primary transition-colors duration-200 ${
+        isActive && "bg-surface-dim"
+      } ${isExpanded ? "justify-start gap-3" : "justify-center"}
+      ${hideOnSmall && "hidden md:flex"}
       hover:`}
     >
       <div className={`text-lg`}>{icon}</div>
