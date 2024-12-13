@@ -5,14 +5,19 @@ import { Button } from "flowbite-react";
 function CreateGigButton({
   children,
   color,
-}: React.PropsWithChildren<{ color: string }>) {
+  className,
+}: React.PropsWithChildren<{ color: string; className: string }>) {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   return (
     <>
       {/* Button to open the Create Modal */}
 
-      <Button color={color} onClick={() => setIsCreateModalOpen(true)}>
+      <Button
+        color={color}
+        className={className}
+        onClick={() => setIsCreateModalOpen(true)}
+      >
         {children}
       </Button>
 

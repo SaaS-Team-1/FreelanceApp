@@ -236,7 +236,7 @@ export default function OverviewView() {
   };
 
   return (
-    <div className="mt-10 flex h-screen w-full flex-row justify-center">
+    <div className="mt-10 flex h-screen w-full flex-row justify-center md:ml-8 xl:ml-0">
       {/* Fixed Left Column for Gigs */}
       <div className="mx-4 flex min-w-[40vw] flex-col items-center md:mx-10 xl:min-w-10 xl:max-w-[40vw]">
         {/* Filters */}
@@ -324,7 +324,7 @@ export default function OverviewView() {
           <MyPostedGigListCompressed gigs={myPostedGigs} user={extendedUser} />
         )}
         <div id="create-gig-button">
-          <CreateGigButton color="primary">
+          <CreateGigButton className="w-full" color="primary">
             <span className="text-nowrap text-xl font-bold text-on-primary flex">
               <FaCirclePlus className="text-on-primary mt-1 mr-2" />
               Create A New Gig{" "}
