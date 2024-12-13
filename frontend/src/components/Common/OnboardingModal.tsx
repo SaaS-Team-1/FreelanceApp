@@ -11,7 +11,7 @@ const tutorialSteps = [
     title: "Welcome to UniGig",
     content:
       "This website allows students to post and apply for gigs, providing them with a convenient and safe platform to freelance.",
-    image: "/onboarding/welcome.png", // Screenshot for this step
+    image: "/homepage.webp", // Screenshot for this step
   },
   {
     title: "Home Page",
