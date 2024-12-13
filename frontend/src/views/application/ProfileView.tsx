@@ -6,6 +6,7 @@ import UserProfilePicture from "@/components/Avatar/UserProfilePicture";
 import EditProfileModal from "@/components/Profile/EditProfileModal";
 import UserLevelDisplay from "@/components/Common/UserLevelDisplay";
 import { Button } from "flowbite-react";
+import Loading from "@/components/Loading";
 
 export default function ProfileView() {
   const { data: userU } = useUser();
@@ -40,11 +41,11 @@ export default function ProfileView() {
   };
 
   if (!userU) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   if (!user) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   return (

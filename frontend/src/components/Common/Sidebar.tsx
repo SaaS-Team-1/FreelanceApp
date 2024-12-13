@@ -19,6 +19,7 @@ import CreateGigButton from "../Gigs/CreateGigButton";
 import { Tooltip } from "flowbite-react";
 import { FaCirclePlus } from "react-icons/fa6";
 import useWindowDimensions from "@/utils/useWindowDimensions";
+import Loading from "../Loading";
 
 function Sidebar() {
   const db = useFirestore();
@@ -26,7 +27,7 @@ function Sidebar() {
   const auth = useAuth();
   const { data: firebaseUser } = useUser(); // Firebase user object
   const { width } = useWindowDimensions();
-  const [isExpanded, setIsExpanded] = useState(width>640);
+  const [isExpanded, setIsExpanded] = useState(width > 640);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -61,7 +62,7 @@ function Sidebar() {
   }, [firebaseUser?.uid]);
 
   if (!userDb) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   return (
