@@ -35,7 +35,7 @@ export const flowbiteTheme: CustomFlowbiteTheme = {
       "tertiary-container":
         "bg-tertiary-container text-on-tertiary-container group-hover:bg-tertiary-container/90",
       "surface-container":
-        "bg-surface-container text-on-surface-container group-hover:bg-surface-container/90",
+        "bg-surface-container text-on-surface group-hover:bg-surface-container/90",
       yellow: "bg-amber-200 text-amber-700 group-hover:bg-on-secondary/80",
     },
   },
