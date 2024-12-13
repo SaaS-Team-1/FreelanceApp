@@ -6,7 +6,7 @@ import TransactionItem from "@/components/Wallet/TransactionItems";
 import WithdrawForm from "@/components/Wallet/WithdrawForm";
 import { useEffect, useState } from "react";
 import CheckoutForm from "@/components/Wallet/CheckoutForm";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 import PurchaseReturn from "@/components/Wallet/PurchaseReturn";
 import { useFirestore, useUser } from "@/utils/reactfire";
 import { transactionsRef, usersRef } from "@/utils/database/collections";

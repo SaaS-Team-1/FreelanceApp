@@ -1,5 +1,5 @@
 import HomeNavbar from "@/components/HomeNavbar";
-import { Outlet } from "react-router-dom";
+import { Outlet } from "react-router";
 
 export default function LandingRoot() {
   return (

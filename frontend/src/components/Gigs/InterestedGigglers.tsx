@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { User, Gig, Application } from "@/utils/database/schema";
 
 import CustomButton from "@/components/Buttons/CustomButton";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useFirestore } from "@/utils/reactfire";
 import { FaUserCheck, FaEnvelope } from "react-icons/fa6";
 

@@ -2,7 +2,7 @@ import { Gig, User } from "@/utils/database/schema";
 import GigItem from "./GigItem";
 import { Button } from "flowbite-react";
 import { FaCheck, FaComments, FaUndo } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 interface PostedGigListSmallProps {
   gigs: { gig: Gig; lister: User }[];

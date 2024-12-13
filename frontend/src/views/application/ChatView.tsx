@@ -22,7 +22,7 @@ import ChatWindow from "@/components/Chat/ChatWindow";
 import MessageInput from "@/components/Chat/MessageInput";
 import ChatCard from "@/components/Chat/ChatCard";
 import GigDetailsModal from "@/components/Chat/GigDetailsModal";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import Loading from "@/components/Loading";
 import { Gig, User, Application } from "@/utils/database/schema";
 import GigDetailModal from "@/components/Gigs/GigDetailModal";

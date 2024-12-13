@@ -12,7 +12,7 @@ import {
 import { query, where, getDocs, doc, getDoc } from "firebase/firestore";
 import Loading from "@/components/Loading";
 import FilterButton from "@/components/Buttons/FilterButton";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 
 const STATUS_ORDER: Gig["status"][] = [
   "open",

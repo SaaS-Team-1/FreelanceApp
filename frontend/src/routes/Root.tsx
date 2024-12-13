@@ -13,7 +13,7 @@ import {
 import { getAnalytics } from "firebase/analytics";
 import { Functions } from "firebase/functions";
 import { Suspense } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet } from "react-router";
 
 export default function Root() {
   const app = useFirebaseApp();

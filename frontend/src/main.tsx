@@ -6,7 +6,7 @@ import {
   createBrowserRouter,
   Navigate,
   RouterProvider,
-} from "react-router-dom";
+} from "react-router";
 
 //Firebase
 import { FirebaseAppProvider } from "./utils/reactfire/index.ts";

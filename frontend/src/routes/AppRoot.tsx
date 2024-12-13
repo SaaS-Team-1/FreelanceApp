@@ -1,10 +1,10 @@
 import { Suspense, startTransition, useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import Loading from "@/components/Loading";
 import { getFirestoreInstance } from "@/utils/firebase/firebaseConfig";
 import { FirestoreProvider, useInitFirestore } from "@/utils/reactfire";
 import { Firestore } from "firebase/firestore";
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router";
 import { AuthWrapper } from "@/utils/firebase/auth";
 import Sidebar from "@/components/Common/Sidebar";
 import pathNames from "@/utils/pathNames";

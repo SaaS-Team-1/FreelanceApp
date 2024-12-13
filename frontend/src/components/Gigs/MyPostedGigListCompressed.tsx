@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { Gig, User } from "@/utils/database/schema";
 import GigItem from "./GigItem";
 import CompressedGigItem from "./CompressedGigItem";

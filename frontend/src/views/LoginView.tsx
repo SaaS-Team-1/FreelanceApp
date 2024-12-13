@@ -6,7 +6,7 @@ import {
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router";
 import { Alert } from "flowbite-react";
 import { HiInformationCircle } from "react-icons/hi";
 

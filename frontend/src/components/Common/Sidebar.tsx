@@ -10,7 +10,7 @@ import {
   FaWallet,
   FaTable,
 } from "react-icons/fa";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router";
 import { useAuth, useFirestore, useUser } from "@/utils/reactfire";
 import UserProfilePicture from "@/components/Avatar/UserProfilePicture";
 import { User } from "@/utils/database/schema";
