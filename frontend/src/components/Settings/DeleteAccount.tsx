@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import CustomButton from "../Buttons/CustomButton";
+import { toast } from "react-toastify";
 
 const DeleteAccount: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -13,7 +14,7 @@ const DeleteAccount: React.FC = () => {
   };
 
   const handleConfirm = () => {
-    console.log("Account deletion confirmed.");
+    toast("Account deletion confirmed.");
     setIsModalOpen(false);
   };
 

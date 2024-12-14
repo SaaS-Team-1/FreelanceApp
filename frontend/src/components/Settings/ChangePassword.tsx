@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import CustomButton from "../Buttons/CustomButton";
-import ArrowButton from "../Buttons/ArrowButton";
 import { toast } from "react-toastify";
 
 const ChangePassword: React.FC = () => {
@@ -23,10 +21,7 @@ const ChangePassword: React.FC = () => {
       return;
     }
     // Perform password update logic here
-    console.log("Password successfully updated.");
-    console.log("Old Password:", oldPassword);
-    console.log("New Password:", newPassword);
-
+    toast("Password successfully updated.");
     // Reset fields and close modal
     setOldPassword("");
     setNewPassword("");

@@ -1,10 +1,10 @@
 import { FirebaseApp } from "firebase/app";
+import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 import { connectAuthEmulator, getAuth } from "firebase/auth";
 import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
 import { connectFunctionsEmulator, getFunctions } from "firebase/functions";
-import { connectStorageEmulator, getStorage } from "firebase/storage";
 
-// Your web app's Firebase configuration
+// Clientside (public)
 export const config = {
   apiKey: import.meta.env.VITE_PUBLIC_FIREBASE_API_KEY || "fake-key",
   authDomain:
@@ -35,20 +35,6 @@ export function getAuthInstance(app: FirebaseApp) {
 }
 
 // Instantiate services
-export function getServices(app: FirebaseApp) {
-  const db = getFirestore(app);
-  const functions = getFunctions(app, "europe-west1");
-  const storage = getStorage(app);
-
-  if (import.meta.env.DEV) {
-    connectFunctionsEmulator(functions, "127.0.0.1", 5001);
-    connectFirestoreEmulator(db, "127.0.0.1", 8080);
-    connectStorageEmulator(storage, "127.0.0.1", 9199);
-  }
-  return { db, functions, storage };
-}
-
-// Instantiate services
 export async function getFirestoreInstance(app: FirebaseApp) {
   const db = getFirestore(app);
 
@@ -69,4 +55,15 @@ export async function getFunctionsInstance(app: FirebaseApp) {
     connectFunctionsEmulator(functions, "127.0.0.1", 5001);
   }
   return functions;
+}
+
+export async function getAppCheckInstance(app: FirebaseApp) {
+  const appCheck = initializeAppCheck(app, {
+    provider: new ReCaptchaV3Provider(
+      "6Letn5sqAAAAAKoZp45jW-hQfQGndIG32rns8j--",
+    ),
+
+    isTokenAutoRefreshEnabled: true,
+  });
+  return appCheck;
 }

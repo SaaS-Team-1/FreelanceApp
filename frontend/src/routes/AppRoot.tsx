@@ -8,7 +8,7 @@ import { Navigate, Outlet } from "react-router";
 import { AuthWrapper } from "@/utils/firebase/auth";
 import Sidebar from "@/components/Common/Sidebar";
 import pathNames from "@/utils/pathNames";
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from "react-toastify";
 
 function FirebaseInitializer({ children }: { children: React.ReactNode }) {
   const { data: firestoreInstance } = useInitFirestore(getFirestoreInstance);
@@ -65,16 +65,16 @@ export default function AppRoot() {
               <div className="flex w-full p-1">
                 <Outlet />
                 <ToastContainer
-                position="top-right"
-                autoClose={5000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="light"
+                  position="top-right"
+                  autoClose={5000}
+                  hideProgressBar={false}
+                  newestOnTop={false}
+                  closeOnClick
+                  rtl={false}
+                  pauseOnFocusLoss
+                  draggable
+                  pauseOnHover
+                  theme="light"
                 />
               </div>
             </div>

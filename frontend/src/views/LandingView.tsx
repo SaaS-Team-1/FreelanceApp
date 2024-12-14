@@ -3,7 +3,7 @@ import { Link } from "react-router";
 
 const LandingPage = () => {
   return (
-    <div className="w-full bg-surface text-on-surface">
+    <div className="size-full bg-surface text-on-surface">
       <div className="w-full bg-primary text-on-primary">
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-2">

@@ -99,7 +99,6 @@ function ScheduleView() {
               ) {
                 return null;
               }
-              console.log(gigData);
               const listerDoc = await getDoc(
                 doc(usersRef(db), gigData.listerId),
               );

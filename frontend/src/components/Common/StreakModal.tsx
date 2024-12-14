@@ -3,6 +3,7 @@ import { httpsCallable } from "firebase/functions";
 import { Button, Modal } from "flowbite-react";
 import { PropsWithChildren } from "react";
 import { HiOutlineGift } from "react-icons/hi";
+import { toast } from "react-toastify";
 
 interface StreakModalProps {
   openModal: boolean;
@@ -31,9 +32,9 @@ export default function StreakModal({
     )();
     const { paymentStatus } = result.data;
     if (paymentStatus === "paid") {
-      console.log("Reward successfully added to the user's account.");
+      toast("Reward successfully added to the user's account.");
     } else {
-      console.error("Error adding reward:", paymentStatus);
+      toast.error("Error adding reward:" + paymentStatus);
     }
   };
 
@@ -45,11 +46,13 @@ export default function StreakModal({
       popup
       dismissible
     >
-      <Modal.Header><div className="p-2">Login Streak!</div></Modal.Header>
+      <Modal.Header>
+        <div className="p-2">Login Streak!</div>
+      </Modal.Header>
 
       <Modal.Body>
         <div className="mt-10 rounded-xl bg-surface-container py-8 text-center text-on-surface">
-          <HiOutlineGift className=" mx-auto size-20 text-amber-500 mb-6 text-bold" />
+          <HiOutlineGift className=" text-bold mx-auto mb-6 size-20 text-amber-500" />
 
           <p className="mb-4 text-lg ">
             You've logged in for{" "}
