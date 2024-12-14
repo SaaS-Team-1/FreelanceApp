@@ -29,12 +29,18 @@ export default function LoginView() {
     "login",
   );
 
-  const [searchParams, ] = useSearchParams();
+  const [searchParams] = useSearchParams();
   useEffect(() => {
     if (searchParams.get("register")) {
       setScreen("register");
-    }else{
+    } else {
       setScreen("login");
+      const email = searchParams.get("email");
+      const password = searchParams.get("password");
+      if (email && password) {
+        signInWithEmailAndPassword(auth, email, password);
+        navigate("/app");
+      }
     }
   }, []);
 
