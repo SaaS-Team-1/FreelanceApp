@@ -56,10 +56,7 @@ For more details, refer to the full research paper: "UniGigs: Motivational Desig
 - **Database**: Firestore
 - **Testing**: Cypress
 - **Payments**: Stripe integration
-# UniGigs
-
-[Previous sections remain the same until Getting Started]
-
+  
 ## Getting Started
 
 1. Clone the repository
